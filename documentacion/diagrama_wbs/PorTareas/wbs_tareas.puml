@@ -1,0 +1,81 @@
+@startwbs
+* Proyecto: Aplicación Web de Gestión de Libros (Enfoque Tareas)
+** Diseño UI/UX
+*** Front-end
+*** Back-end
+** Configuración de Proyectos
+*** Front-end
+*** Back-end
+*** Repositorio Git
+** Diseño y Creación de Base de Datos
+*** Modelado de Entidades
+*** Diagrama ER
+*** Migraciones y Seeds
+*** Documentación
+** Implementación de Autenticación y Roles
+*** Front-end
+*** Back-end
+*** Tests
+** Gestión de Perfil de Usuario
+*** Front-end
+*** Back-end
+*** Tests
+** Gestión de Libros
+*** Front-end Cliente
+*** Front-end Admin
+*** Back-end
+*** Tests
+** Gestión de Reservas
+*** Front-end Cliente
+*** Front-end Admin
+*** Back-end
+*** Tests
+** Carrito de Compras
+*** Front-end
+*** Back-end
+*** Tests
+** Favoritos
+*** Front-end
+*** Back-end
+*** Tests
+** Calificaciones, Reseñas y Comentarios
+*** Front-end
+*** Back-end
+*** Tests
+** Suscripciones a Planes
+*** Front-end
+*** Back-end
+*** Tests
+** Gestión de Reclamos y Bloqueo de Usuarios
+*** Front-end Admin
+*** Back-end
+*** Tests
+** Gestión de Novedades
+*** Front-end Admin
+*** Back-end
+*** Tests
+** Gestión de Roles y Permisos
+*** Front-end Admin
+*** Back-end
+*** Tests
+** Rol Bibliotecario (Opcional)
+*** Front-end
+*** Back-end
+*** Tests
+** Integración Front-End / Back-End
+*** Consumo de APIs
+*** Manejo de errores HTTP
+** Testing General
+*** Front-end
+*** Back-end
+*** Cobertura 80%
+** Documentación Técnica
+*** Manuales de usuario
+*** Documentación API
+*** Arquitectura y decisiones
+** Deploy y Entrega
+*** Deploy Front-end
+*** Deploy Back-end
+*** Deploy Base de Datos
+*** Validación de build
+@endwbs
