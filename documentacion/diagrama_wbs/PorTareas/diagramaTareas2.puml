@@ -1,0 +1,168 @@
+@startwbs
+* Proyecto: Aplicación Web de Gestión de Libros (Enfoque Tareas Dividido)
+** Front-end
+*** Configuración inicial de proyecto NextJS + TypeScript
+**** Crear proyecto NextJS
+**** Configurar TypeScript
+**** Configurar ESLint y Prettier
+*** Estructura de rutas, layouts y temas globales
+**** Definir estructura de carpetas
+**** Implementar Layout principal
+**** Definir rutas básicas (Home, Login, Registro, Admin)
+*** Autenticación (registro, login, logout)
+**** Crear páginas de registro y login
+**** Formularios de validación
+**** Consumir API de autenticación
+**** Implementar logout
+*** Manejo de sesiones y redirecciones según rol
+**** Almacenar token JWT
+**** Proteger rutas según roles
+*** Diseño de Home y Catálogo de Libros
+**** Crear página Home
+**** Crear página Catálogo
+**** Implementar búsqueda y filtros
+*** Página de Detalle de Libro
+**** Mostrar información detallada
+**** Mostrar reseñas y comentarios
+*** Funcionalidad de Reservar Libros
+**** Botón de reservar
+**** Confirmación de reserva
+*** Agregar a Favoritos
+**** Botón "Agregar a favoritos"
+**** Vista de favoritos
+*** Carrito de Compras (agregar, eliminar libros)
+**** Agregar al carrito
+**** Eliminar del carrito
+**** Vista de carrito
+*** Selección de Tipo de Libro (físico, virtual, audio)
+**** Selector de tipo en el detalle del libro
+*** Calificar Libros y Crear Reseñas
+**** Formulario de calificaciones
+**** Mostrar promedio de calificaciones
+*** Comentar en Libros
+**** Formulario de comentario
+**** Listar comentarios
+*** Vista y Formulario de Suscripciones
+**** Vista de planes disponibles
+**** Formulario de alta de suscripción
+*** Perfil de Usuario (ver, editar datos personales)
+**** Mostrar información del usuario
+**** Formulario para actualizar datos
+*** Panel de Administración: ABM de Libros
+**** Crear libro
+**** Editar libro
+**** Eliminar libro
+*** Panel de Administración: Visualizar y gestionar Reservas
+**** Listar reservas
+**** Cambiar estado de reserva
+*** Panel de Reclamos y Bloqueo de Usuarios
+**** Listar reclamos
+**** Botón para bloquear usuario
+*** Panel de Publicación de Novedades
+**** Crear y editar novedades
+**** Publicar novedades
+*** Gestión de Usuarios y Roles (Admin)
+**** Listar usuarios
+**** Asignar roles
+*** Vista Bibliotecario (opcional)
+**** Vista limitada para bibliotecario
+*** Implementación de Filtros, Búsquedas y Paginación en Catálogo
+**** Implementar filtros de autor, categoría
+**** Implementar paginación
+*** Integración con APIs (consumo seguro de backend)
+**** Setup Axios o Fetch
+**** Manejar tokens y errores de API
+*** Manejo de errores de APIs
+**** Mostrar mensajes de error amigables
+*** Testing Front-end (React Testing Library)
+**** Tests de componentes
+**** Tests de integración
+*** Validación de formularios en Front
+**** Usar librerías como react-hook-form/yup
+*** Documentación de Manual de Usuario Cliente y Admin
+**** Crear manual cliente
+**** Crear manual admin
+*** Deploy en plataforma (Vercel o similar)
+**** Preparar proyecto para producción
+**** Subir a hosting
+
+** Back-end
+*** Configuración inicial de proyecto NestJS + TypeScript
+**** Crear proyecto NestJS
+**** Configurar TypeScript
+**** Setup ESLint y Prettier
+*** Configuración de estructura modular de NestJS
+**** Crear módulos principales (Auth, Users, Books, etc.)
+*** Implementación de Autenticación (JWT)
+**** Crear DTOs de login y registro
+**** Crear servicios de autenticación
+**** Crear controladores
+**** Generar y validar tokens JWT
+*** Middleware de autorización según roles (Admin, Usuario)
+**** Crear guards de roles
+**** Aplicar guards en rutas
+*** Modelado de Base de Datos PostgreSQL
+**** Definir entidades
+**** Crear relaciones
+*** Creación de Diagrama Entidad-Relación (ER)
+**** Dibujar modelo ER
+*** Migraciones y Seeds de Base de Datos
+**** Crear scripts de migraciones
+**** Crear seeds iniciales
+*** API de Registro/Login/Logout de Usuario
+**** Endpoints de registro/login/logout
+*** API de Perfil de Usuario (GET, PUT)
+**** Obtener perfil
+**** Actualizar perfil
+*** API de Libros (CRUD)
+**** Crear libro
+**** Listar libros
+**** Actualizar libro
+**** Eliminar libro
+*** API de Reservas (Crear, Listar, Actualizar Estado)
+**** Crear reserva
+**** Listar reservas
+**** Actualizar estado de reservas
+*** API de Favoritos (Agregar, Listar)
+**** Agregar libro favorito
+**** Listar favoritos
+*** API de Carrito de Compras (Agregar, Eliminar, Ver)
+**** Agregar al carrito
+**** Eliminar del carrito
+**** Ver carrito
+*** API de Calificaciones y Reseñas de Libros
+**** Crear reseña
+**** Listar reseñas
+*** API de Comentarios en Libros
+**** Crear comentario
+**** Listar comentarios
+*** API de Suscripciones
+**** Crear suscripción
+**** Listar planes
+*** API de Reclamos de Daños y Bloqueo de Usuarios
+**** Crear reclamo
+**** Bloquear usuario
+*** API de Novedades
+**** Crear novedad
+**** Editar novedad
+*** API de Gestión de Roles y Permisos
+**** Listar roles
+**** Asignar roles
+*** Endpoints específicos para Bibliotecario (opcional)
+**** Definir acceso bibliotecario
+*** Implementación de Logs de Operaciones
+**** Crear servicio de logging
+*** Validación de datos de entrada (DTOs, Pipes)
+**** Crear DTOs y pipes para cada recurso
+*** Manejo centralizado de Errores
+**** Implementar filters globales
+*** Testing Unitario e Integración (Jest y Supertest)
+**** Tests de servicios
+**** Tests de controladores
+*** Documentación API (Swagger o Postman)
+**** Documentar endpoints
+*** Asegurar cobertura de código +80%
+**** Medir cobertura con Jest
+*** Deploy en Railway/Render (Backend y Base de Datos)
+**** Configurar despliegue continuo
+@endwbs
