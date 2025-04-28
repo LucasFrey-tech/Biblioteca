@@ -1,0 +1,85 @@
+Table users {
+  id_user int [pk, increment]
+  name varchar
+  email varchar
+  password varchar
+  role varchar
+  registration_date datetime
+  status varchar
+}
+
+Table books {
+  id_book int [pk, increment]
+  title varchar
+  author varchar
+  genre varchar
+  description text
+  type varchar
+  price float
+  stock int
+  virtual_url varchar
+  exclusive boolean
+}
+
+Table orders {
+  id_order int [pk, increment]
+  id_user int [ref: > users.id_user]
+  order_date datetime
+  status varchar
+  total float
+}
+
+Table order_books {
+  id_order int [ref: > orders.id_order]
+  id_book int [ref: > books.id_book]
+  quantity int
+  Primary Key (id_order, id_book)
+}
+
+
+Table shopping_cart {
+  id_cart SERIAL [pk]
+  id_user INTEGER [ref: > users.id_user]
+  id_book int [ref: > books.id_book]
+  creation_date TIMESTAMP
+}
+
+Table reviews {
+  id_review SERIAL [pk]
+  id_user INTEGER [ref: > users.id_user]
+  id_book INTEGER [ref: > books.id_book]
+  rating INTEGER
+  comment TEXT
+  review_date TIMESTAMP
+}
+
+Table reservations {
+  id_reservation SERIAL [pk]
+  id_user INTEGER [ref: > users.id_user]
+  id_book INTEGER [ref: > books.id_book]
+  reservation_date TIMESTAMP
+  status VARCHAR
+}
+
+Table subscriptions {
+  id_subscription int [pk, increment]
+  name varchar
+  description text
+  discount_percentage float
+  exclusive_access boolean
+}
+
+Table user_subscriptions {
+  id_user int [ref: > users.id_user]
+  id_subscription int [ref: > subscriptions.id_subscription]
+  start_date datetime
+  end_date datetime
+  status varchar
+  Primary Key (id_user, id_subscription)
+}
+
+Table subscription_books {
+  id_book int [ref: > books.id_book]
+  id_subscription int [ref: > subscriptions.id_subscription]
+  Primary Key (id_book, id_subscription)
+}
