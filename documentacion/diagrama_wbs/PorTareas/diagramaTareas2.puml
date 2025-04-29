@@ -77,8 +77,6 @@
 *** Testing Front-end (React Testing Library)
 **** Tests de componentes
 **** Tests de integración
-*** Validación de formularios en Front
-**** Usar librerías como react-hook-form/yup
 *** Documentación de Manual de Usuario Cliente y Admin
 **** Crear manual cliente
 **** Crear manual admin
