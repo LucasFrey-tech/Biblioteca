@@ -1,0 +1,102 @@
+.container {
+    padding: 20px;
+    font-family: sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(100, 97, 97);
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .searchBar {
+    flex: 1;
+    margin: 0 20px;
+    padding: 8px;
+    font-size: 16px;
+    border: 2px solid #000;
+    border-radius: 10px;
+    outline: none;
+    background-color: rgb(224, 214, 214);
+    color: black;
+    width: 50%;
+  }
+  
+  .icons{
+    display: flex;
+    align-items: center;
+  }
+  
+  .icons img {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  
+  .banner {
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .banner video{
+    height: 80vb;
+    width: 100%;
+  }
+  
+  .bannerText {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    color: white;
+    font-size: 10vb;
+  }
+  
+  .bannerText p{
+    background-color: rgba(0,0,0,0.5);
+    font-size: 2vb;
+    box-shadow: #000;
+    border-radius: 8px;
+  }
+  
+  .smallLogos {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .smallLogos img {
+    margin: 0 5px;
+  }
+  
+  .slider {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0;
+  }
+  
+  .slide {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .slide:hover {
+    transform: scale(1.05);
+  }
+  
+  .catalogo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+  }
+  
+  .bookCard {
+    text-align: center;
+  }
+  
