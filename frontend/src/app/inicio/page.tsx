@@ -5,6 +5,7 @@ import styles from '../../styles/home.module.css'
 import 'swiper/css';
 import { useRouter } from 'next/navigation';
 
+
 export default function HomePage() {
 
     const router = useRouter();
@@ -72,4 +73,5 @@ export default function HomePage() {
 
     </div>
   );
+
 }
