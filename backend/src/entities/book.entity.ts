@@ -11,8 +11,8 @@ export class Book {
   @Column({ type: 'varchar', length: 255 })
   author: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  genre: string;
+  @Column({ type: 'varchar', array: true })
+  genre: string[];
 
   @Column({ type: 'text' })
   description: string;

@@ -74,4 +74,21 @@
 .cartIcon {
     font-size: 1rem;
     /* 16px / 1rem */
+    display: none;
+    /* Hidden by default */
+}
+
+.buyText {
+    display: inline;
+    /* Visible by default */
+}
+
+.buyButton:hover .cartIcon {
+    display: inline;
+    /* Show icon on hover */
+}
+
+.buyButton:hover .buyText {
+    display: none;
+    /* Hide text on hover */
 }
