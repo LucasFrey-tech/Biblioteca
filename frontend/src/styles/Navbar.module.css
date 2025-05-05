@@ -1,0 +1,30 @@
+.nav {
+    display: flex;
+    justify-content: space-between;
+    align-items:  center;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: #333;
+}
+
+.navList {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.navList li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.navList li a:hover {
+    color: #0070f3;
+}

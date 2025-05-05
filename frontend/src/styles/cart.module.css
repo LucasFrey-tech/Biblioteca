@@ -1,0 +1,9 @@
+.cartList {
+    list-style: none;
+    padding: 0;
+}
+
+.cartList l1 {
+    padding:  10px;
+    border-bottom: 1px solid #ddd;
+}
