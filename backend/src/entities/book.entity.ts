@@ -17,6 +17,9 @@ export class Book {
   @Column({ type: 'text' })
   description: string;
 
+  @Column({ type: 'varchar', length: 20, unique: true})
+  isbn: string;
+
   @Column({ type: 'float' })
   price: number;
 
