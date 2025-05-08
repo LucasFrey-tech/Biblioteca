@@ -37,7 +37,7 @@ export default function LogIn() {
             <button className={styles.boton} type="submit">Siguiente</button>
             </div>
             <div className={styles.bottomItems}>
-                <p className={styles.pCuentaExistente} >ya tienes cuenta?</p>
+                <p className={styles.pCuentaExistente} >¿Ya tienes cuenta?</p>
                 <a href="http://localhost:3000/login" className={styles.cuentaExistente}>iniciar sesion</a>
             </div>
             </form>
