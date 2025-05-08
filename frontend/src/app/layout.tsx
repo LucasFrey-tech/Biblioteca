@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -10,6 +11,24 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+const fedora = localFont({
+  src: [
+    {
+      path: "../../public/Fonts/SF FEDORA/SFFedora.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    // Si tienes más fuentes locales, las puedes agregar aquí.
+    /*{
+      path: "./fonts/MiFuente-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },*/
+  ],
+  variable: "--font-SF-Fedora",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${fedora.variable} antialiased`}
       >
         {children}
       </body>

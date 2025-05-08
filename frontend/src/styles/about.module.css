@@ -8,6 +8,7 @@
 
 .Header{
     display: flex;
+    font-family: var(--font-SF-Fedora), sans-serif;
     border-bottom: solid 2px grey;
     width: 100%;
     height: 50%;
@@ -17,10 +18,20 @@
 
 .TituloPagina{
     margin-left: 10px;
+    transform: scaleX(1.1);
+}
+
+.TituloPagina h1{
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    -webkit-background-clip: text;
+    color: transparent;
 }
 
 .TituloPagina h2{
-    padding-left: 30px;
+    background: linear-gradient(to bottom, #ff2100, #ff9e00, #ffda00);
+    -webkit-background-clip: text;
+    color: transparent;
+    padding-left: 25px;
 }
 
 .Navegacion{
@@ -28,6 +39,10 @@
     width: 50%;
     align-self: center;
     justify-content: space-between;
+}
+
+.Pipes{
+    color: rgb(54, 54, 54);
 }
 
 .Usuario{
@@ -48,6 +63,16 @@
 .Bienvenida{
     padding: 50px;
     text-align: center;
+}
+
+.Bienvenida h3{
+    font-family: var(--font-SF-Fedora), sans-serif;
+    font-size: 45px;
+    padding-bottom: 15px;
+}
+
+.Bienvenida p{
+    font-size: 24px;
 }
 
 .Posibilidades{
@@ -81,6 +106,10 @@
     width: 90%;
 }
 
+.SobreNosotros h4{
+    font-family: var(--font-SF-Fedora), sans-serif;
+    font-size: 25px;
+}
 
 .Contacto{
     display: flex;
@@ -134,9 +163,15 @@
 
 .Pie{
     background-color: rgb(54, 54, 54);
+    color: white;
     width: 100%;
+    text-align: center;
 }
 
-.Pipes{
-    color: rgb(54, 54, 54);
+.Pie div nav{
+    display: flex;
+    align-self: center;
+    
+    justify-content: space-around;
 }
+
