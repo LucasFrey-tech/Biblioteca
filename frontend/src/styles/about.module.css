@@ -1,0 +1,142 @@
+.Contenido{
+    display: flex;
+    flex-wrap: wrap;
+    background-color: rgb(221, 235, 254);
+    color: black;
+    min-height: 100vh;
+}
+
+.Header{
+    display: flex;
+    border-bottom: solid 2px grey;
+    width: 100%;
+    height: 50%;
+    background-color: white;
+    justify-content:stretch;
+}
+
+.TituloPagina{
+    margin-left: 10px;
+}
+
+.TituloPagina h2{
+    padding-left: 30px;
+}
+
+.Navegacion{
+    display: flex;
+    width: 50%;
+    align-self: center;
+    justify-content: space-between;
+}
+
+.Usuario{
+    display: flex;
+    align-self:center;
+    justify-self: right;
+}
+
+.Usuario p{
+    align-self: center;
+    padding-right: 10px;
+}
+
+.Principal{
+    justify-items: center;
+}
+
+.Bienvenida{
+    padding: 50px;
+    text-align: center;
+}
+
+.Posibilidades{
+    display: flex;
+    width: 70%;
+    justify-content: space-evenly;
+}
+
+.Tarjeta{
+    background-color: white;
+    border-radius: 5px;
+    width: 15%;
+    padding: 10px;
+    justify-items: center;
+    align-content: center;
+    text-align: center;
+}
+
+.BotonExplorar{
+    padding: 50px;
+}
+
+.BotonExplorar button{
+    background-color: black;
+    color: white;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.SobreNosotros{
+    width: 90%;
+}
+
+
+.Contacto{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+}
+
+.Contacto h4{
+    text-align: center;
+    padding-top: 20px;
+}
+
+
+.Campos{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 20px;
+}
+
+.Input{
+    background-color: white;
+    border: solid 1px;
+    border-radius: 5px;
+    margin-right: 5px;
+    width: 44%;
+}
+
+.Enviar{
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    padding: 0px 15px;
+}
+
+.CampoConsulta{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.Consulta{
+    background-color: white;
+    border: solid 1px;
+    border-radius: 10px;
+    padding: 5px;
+    width: 50%;
+    height: auto;
+}
+
+.Pie{
+    background-color: rgb(54, 54, 54);
+    width: 100%;
+}
+
+.Pipes{
+    color: rgb(54, 54, 54);
+}
