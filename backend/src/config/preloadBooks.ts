@@ -66,7 +66,7 @@ export async function preloadBooks(bookRepository: Repository<Book>) {
     ];
 
     for (const bookData of booksToPreload) {
-        // Check if book exists by isbn to avoid duplicates
+        
         const existingBook = await bookRepository.findOne({ where: { isbn: bookData.isbn } });
         if (!existingBook) {
             const book = bookRepository.create(bookData);

@@ -2,7 +2,7 @@ import '../styles/globals.css';
 import Navbar from "../components/Navbar";
 
 export const metadata = {
-  title: 'Biblioteca ALEjandria',
+  title: 'Biblioteca Alejandria',
   description: 'Libreria del pueblo llena de libros con carimsa'
 };
 
