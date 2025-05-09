@@ -9,7 +9,7 @@ export default function AboutPage() {
     <div className={styles.Contenido}>
       <header className={styles.Header}>
         <div className={styles.TituloPagina}>
-          <h1>ALEjandria</h1>
+          <h1>alejandria</h1>
           <h2>Biblioteca Virtual</h2>
         </div>
         <nav className={styles.Navegacion}>
@@ -70,7 +70,7 @@ export default function AboutPage() {
 
       <footer className={styles.Pie}>
         <div>
-          <p>&copy; 2025 Alejandría. Todos los derechos reservados.</p>
+          <p>&copy; 2025 alejandría. Todos los derechos reservados.</p>
             <nav>
               <a href="/about">Sobre Nosotros</a>
               <a href="/contact">Contacto</a>
