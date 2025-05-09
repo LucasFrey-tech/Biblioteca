@@ -42,7 +42,7 @@ export default function HomePage() {
 
       {/* Banner central */}
       <section className={styles.banner}>
-        <Image src="/banner.webp" alt='banner' />
+        <Image src="/banner.webp" alt='banner' width={1200} height={400} />
         <div className={styles.bannerText}>
           <h2>Mi Biblioteca</h2>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui fugiat, facilis corporis laboriosam exercitationem quod, ducimus, numquam illo molestiae dicta et aspernatur quisquam! Deleniti ex earum numquam ratione, voluptate alias.</p>

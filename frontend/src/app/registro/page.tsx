@@ -7,7 +7,7 @@ export default function LogIn() {
         <div className={styles.container}>
           {/* Header */}
       <header className={styles.header}>
-        <h1 className={styles.logo}>alejandria</h1>
+        <h1 className={styles.logo}>Biblioteca alejandria</h1>
         <nav className = {styles.navegacion}>
             <a href="">novedades</a>
             <a href="">catalogo</a>
