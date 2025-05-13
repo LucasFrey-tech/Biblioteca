@@ -21,7 +21,7 @@
   font-size: 2vw;
   font-weight: bold;
   color: black;
-  
+
 }
 
 .searchBar {
@@ -38,7 +38,7 @@
 
 }
 
-.icons{
+.icons {
   display: flex;
   align-items: center;
   gap: 1vw;
@@ -59,11 +59,50 @@
 
 /* Banner central */
 
+.banner {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  /* Default height for desktop */
+  overflow: hidden;
+  /* Prevent overflow if image is larger */
+}
+
+.bannerImageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bannerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.bannerText h2 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.bannerText p {
+  margin: 10px 0 0;
+  font-size: 1.2rem;
+  max-width: 600px;
+}
+
 
 
 
 /* ------------------------------------- */
-  
+/*   
   .banner {
     margin: 20px 0;
     text-align: center;
@@ -72,7 +111,7 @@
   .banner video{
     height: 80vb;
     width: 100%;
-    filter: blur(5px);
+
   }
   
   .bannerText {
@@ -89,41 +128,62 @@
     font-size: 2vb;
     box-shadow: #000;
     border-radius: 8px;
+  } */
+
+.slider {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.slide {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.slide:hover {
+  transform: scale(1.05);
+}
+
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+
+.bookCard {
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .banner {
+    height: 250px;
+    /* Smaller height for mobile */
   }
-  
-  .smallLogos {
-    display: flex;
-    justify-content: center;
-    margin-top: 10px;
+
+  .bannerText h2 {
+    font-size: 1.8rem;
   }
-  
-  .smallLogos img {
-    margin: 0 5px;
+
+  .bannerText p {
+    font-size: 1rem;
+    max-width: 90%;
+    /* Prevent text overflow on small screens */
   }
-  
-  .slider {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin: 20px 0;
+}
+
+@media (max-width: 480px) {
+  .banner {
+    height: 200px;
+    /* Even smaller for very small screens */
   }
-  
-  .slide {
-    cursor: pointer;
-    transition: transform 0.2s ease;
+
+  .bannerText h2 {
+    font-size: 1.5rem;
   }
-  
-  .slide:hover {
-    transform: scale(1.05);
+
+  .bannerText p {
+    font-size: 0.9rem;
   }
-  
-  .catalogo {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 20px;
-  }
-  
-  .bookCard {
-    text-align: center;
-  }
-  
+}

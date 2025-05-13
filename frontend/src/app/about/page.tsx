@@ -2,30 +2,10 @@
 
 import Image from "next/image"
 import styles from "../../styles/about.module.css";
-import 'swiper/css';
 
 export default function AboutPage() {
   return (
     <div className={styles.Contenido}>
-      <header className={styles.Header}>
-        <div className={styles.TituloPagina}>
-          <h1>alejandria</h1>
-          <h2>Biblioteca Virtual</h2>
-        </div>
-        <nav className={styles.Navegacion}>
-          <a href="../inicio">Novedades</a>
-          <p className={styles.Pipes}>|</p>
-          <a href="">Catalogo</a>
-          <p className={styles.Pipes}>|</p>
-          <a href="">Libreria</a>
-          <p className={styles.Pipes}>|</p>
-          <a href="../about">Sobre Nosotros</a>
-        </nav>
-        <div className={styles.Usuario}>
-          <p>Username</p>
-          <Image className={styles.Perfil} src="/logos/usuario.png" alt="Usuario" width={30} height={30} />
-        </div>
-      </header>
         <main className={styles.Principal}>
           <div className={styles.Bienvenida}>
             <h3>Bienvenido a la Biblioteca Virtual</h3>

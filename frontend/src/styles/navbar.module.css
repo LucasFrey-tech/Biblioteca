@@ -1,0 +1,103 @@
+.Header {
+    display: flex;
+    font-family: var(--font-SF-Fedora), sans-serif;
+    border-bottom: solid 2px grey;
+    width: 100%;
+    height: 80px; /* Fixed height for consistency */
+    background-color: white;
+    align-items: center; /* Vertically center all children */
+    padding: 0 20px; /* Add padding to prevent content from touching edges */
+    box-sizing: border-box; /* Ensure padding doesn’t increase width */
+}
+
+.TituloPagina {
+    margin-left: 10px;
+    transform: none; /* Remove scaleX to prevent overflow */
+    min-width: 200px; /* Ensure enough space for the title */
+}
+
+.TituloPagina h1 {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0; /* Remove default margins */
+    font-size: 1.5rem; /* Adjust font size for better fit */
+}
+
+.TituloPagina h2 {
+    background: linear-gradient(to bottom, #ff2100, #ff9e00, #ffda00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-left: 25px;
+    margin: 0; /* Remove default margins */
+    font-size: 1rem; /* Adjust font size for better fit */
+}
+
+.Navegacion {
+    display: flex;
+    flex: 1;
+    align-self: center;
+    /* width: 50%; */
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.navList {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.navList li {
+    position: relative;
+    padding: 0 20px;
+    color: black;
+}
+
+.navList li:not(:last-child)::after {
+    content: '|';
+    position: absolute;
+    right: -2px;
+    color: rgb(54, 54, 54);
+}
+
+.Usuario {
+    display: flex;
+    align-self: center;
+    /* justify-self: flex-end; */
+    /* margin-left: auto; */
+    margin-left: auto; /* Push to the right */    
+    color: black;
+}
+
+.Usuario p {
+    align-self: center;
+    padding-right: 10px;
+    margin: 0; /* Remove default margin */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .TituloPagina {
+        min-width: 150px;
+    }
+
+    .TituloPagina h1 {
+        font-size: 1.2rem;
+    }
+
+    .TituloPagina h2 {
+        font-size: 0.8rem;
+        padding-left: 15px;
+    }
+
+    .navList li {
+        padding: 0 10px;
+    }
+}
