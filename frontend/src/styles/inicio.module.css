@@ -1,0 +1,291 @@
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #111b29;
+}
+
+.banner {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.bannerImageWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bannerText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  width: 90%;
+  max-width: 800px;
+  padding: 0 20px;
+}
+
+.bannerText h2 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3rem); /* Responsive font size */
+  font-family: var(--font-SF-Fedora), sans-serif;
+  margin-bottom: 1rem;
+}
+
+.bannerText p {
+  margin: 0;
+  font-size: clamp(1rem, 2.5vw, 1.5rem); /* Responsive font size */
+  line-height: 1.6;
+}
+
+.slider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  padding: 60px 20px;
+  background: #111b29;
+  min-height: 100vh;
+  flex-wrap: wrap;
+}
+
+.slide {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  width: 200px;
+  height: 300px;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.slide:hover {
+  transform: scale(1.05);
+}
+
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 25px;
+  padding: 60px 20px;
+  background: #111b29;
+  min-height: 100vh;
+}
+
+.bookCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #1c2a44;
+  padding: 15px;
+  border-radius: 8px;
+  color: white;
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.bookCard img {
+  width: 150px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.bookCard:hover {
+  transform: scale(1.05);
+}
+
+.bookCard h3 {
+  margin: 15px 0 5px;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.bookCard p {
+  margin: 0;
+  font-size: 1rem;
+  color: #a0b3d9;
+}
+
+/* ============ RESPONSIVE ADJUSTMENTS ============ */
+
+/* Tablets (768px - 1024px) */
+@media (max-width: 1024px) {
+  .slider {
+    gap: 25px;
+    padding: 50px 20px;
+  }
+  
+  .slide {
+    width: 180px;
+    height: 270px;
+  }
+  
+  .catalogo {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 50px 20px;
+  }
+  
+  .bookCard img {
+    width: 130px;
+    height: 180px;
+  }
+}
+
+/* Small Tablets (600px - 768px) */
+@media (max-width: 768px) {
+  .bannerText {
+    width: 95%;
+  }
+  
+  .bannerText h2 {
+    margin-bottom: 0.8rem;
+  }
+  
+  .slider {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 40px 20px;
+    min-height: auto;
+  }
+  
+  .slide {
+    width: 160px;
+    height: 240px;
+    margin-bottom: 0;
+  }
+  
+  .catalogo {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    padding: 40px 20px;
+    min-height: auto;
+  }
+  
+  .bookCard {
+    padding: 12px;
+  }
+  
+  .bookCard img {
+    width: 120px;
+    height: 160px;
+  }
+  
+  .bookCard h3 {
+    font-size: 1rem;
+    margin: 10px 0 5px;
+  }
+}
+
+/* Mobile Devices (480px - 600px) */
+@media (max-width: 600px) {
+  .bannerText {
+    width: 100%;
+    padding: 0 15px;
+  }
+  
+  .bannerText p {
+    line-height: 1.5;
+  }
+  
+  .slider {
+    gap: 15px;
+    padding: 30px 15px;
+  }
+  
+  .slide {
+    width: 140px;
+    height: 210px;
+  }
+  
+  .catalogo {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 30px 15px;
+  }
+  
+  .bookCard {
+    padding: 10px;
+  }
+  
+  .bookCard img {
+    width: 110px;
+    height: 150px;
+  }
+}
+
+/* Small Mobile Devices (<= 480px) */
+@media (max-width: 480px) {
+  .bannerText h2 {
+    margin-bottom: 0.6rem;
+  }
+  
+  .slider {
+    flex-direction: column;
+    gap: 20px;
+    padding: 30px 10px;
+  }
+  
+  .slide {
+    width: 180px;
+    height: 270px;
+  }
+  
+  .catalogo {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    padding: 30px 10px;
+  }
+  
+  .bookCard img {
+    width: 100px;
+    height: 140px;
+  }
+  
+  .bookCard h3 {
+    font-size: 0.9rem;
+  }
+  
+  .bookCard p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra Small Mobile Devices (<= 360px) */
+@media (max-width: 360px) {
+  .catalogo {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .bookCard {
+    flex-direction: row;
+    text-align: left;
+    padding: 15px;
+  }
+  
+  .bookCard img {
+    width: 80px;
+    height: 110px;
+    margin-right: 15px;
+  }
+  
+  .bookCard h3 {
+    margin: 0 0 5px 0;
+  }
+}
