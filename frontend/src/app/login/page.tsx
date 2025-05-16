@@ -7,7 +7,8 @@ export default function LogIn() {
     return (
         <div className={styles.container}>
           {/* Header */}
-      <header className={styles.header}>
+
+          {/*       <header className={styles.header}>
         <h1 className={styles.logo}>Biblioteca alejandria</h1>
         <nav className = {styles.navegacion}>
             <a href="">novedades</a>
@@ -16,7 +17,8 @@ export default function LogIn() {
             <a href="">sobre nosotros</a>
         </nav>
         <a className={styles.boton} href="">acceder</a>
-      </header>
+      </header> */}
+
 
     <main className={styles.mainLog}>
         <div className={styles.containerLog}>

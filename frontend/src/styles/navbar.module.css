@@ -82,6 +82,31 @@
     margin: 0; /* Remove default margin */
 }
 
+/* Boton */
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .boton {
+    text-transform: capitalize;
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .boton:hover {
+    background-color: #ffc400;
+    color: black;
+  }
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .TituloPagina {

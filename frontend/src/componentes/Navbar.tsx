@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+/*import Image from "next/image";*/
 import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
@@ -26,8 +26,7 @@ export default function Navbar() {
                 </ul>
             </nav>
             <div className={styles.Usuario}>
-                <p>Username</p>
-                <Image className={styles.Perfil} src="/logos/usuario.png" alt="Usuario" width={30} height={30} />
+                <a className={styles.boton} href="">acceder</a>
             </div>
         </header>
     );
