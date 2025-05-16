@@ -85,24 +85,43 @@
     background-color: white;
     border-radius: 5px;
     width: 15%;
-    padding: 10px;
+    padding: 1vw;
     justify-items: center;
     align-content: center;
     text-align: center;
+    font-weight: bold;
+    box-shadow: 3px 3px 10px 10px rgba(70, 70, 70, 0.5);
 }
 
-.BotonExplorar{
-    padding: 50px;
-}
+/* Boton */
 
-.BotonExplorar button{
-    background-color: black;
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .BotonExplorar {
+    margin-top: 2vw;
+    text-transform: capitalize;
+    background-color: #000;
     color: white;
-    border-radius: 10px;
-    padding: 5px;
-}
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .BotonExplorar:hover {
+    background-color: #ffc400;
+    color: black;
+  }
+
 
 .SobreNosotros{
+    margin-top: 1vw;
     width: 90%;
 }
 
@@ -111,15 +130,26 @@
     font-size: 25px;
 }
 
+.Contacto h4 {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 .Contacto{
+    margin-top: 2vw;
     display: flex;
     flex-direction: column;
-    width: 70%;
+    border-radius: 5px;
+    width: 50%;
+    background-color: #4d4d4d;
+    height: 20vw;
+    margin-bottom: 1vw;
 }
 
 .Contacto h4{
     text-align: center;
-    padding-top: 20px;
+    padding-top: 1vw;
+    color: white;
 }
 
 
@@ -127,8 +157,8 @@
     display: flex;
     justify-content: center;
     width: 100%;
-    padding-top: 15px;
-    padding-bottom: 20px;
+    padding-top: 1vw;
+    padding-bottom: 1vw;
 }
 
 .Input{
@@ -136,7 +166,7 @@
     border: solid 1px;
     border-radius: 5px;
     margin-right: 5px;
-    width: 44%;
+    width: 40%;
 }
 
 .Enviar{
@@ -144,12 +174,19 @@
     border-radius: 5px;
     color: white;
     padding: 0px 15px;
+    cursor: pointer;
+}
+
+.Enviar:hover{
+    background-color: #ffc400;
+    color: black;
 }
 
 .CampoConsulta{
     display: flex;
     justify-content: center;
     width: 100%;
+    margin-bottom: 2vw;
 }
 
 .Consulta{

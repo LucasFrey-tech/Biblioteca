@@ -48,16 +48,6 @@ export default function AboutPage() {
           </section>
         </main>
 
-      <footer className={styles.Pie}>
-        <div>
-          <p>&copy; 2025 alejandría. Todos los derechos reservados.</p>
-            <nav>
-              <a href="/about">Sobre Nosotros</a>
-              <a href="/contact">Contacto</a>
-              <a href="/terms">Términos y Condiciones</a>
-            </nav>
-        </div>
-      </footer>
     </div>
   );
 }
