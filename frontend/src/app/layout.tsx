@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import Navbar from "@/componentes/Navbar";
+import Footer from "@/componentes/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,6 +47,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} ${fedora.variable} antialiased`}>
         <Navbar />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
