@@ -1,12 +1,12 @@
 .Header {
     display: flex;
     font-family: var(--font-SF-Fedora), sans-serif;
-    border-bottom: solid 2px grey;
+    border-bottom: solid 1px rgb(168, 168, 168);
     width: 100%;
-    height: 80px; /* Fixed height for consistency */
+    height: 4vw; /* Fixed height for consistency */
     background-color: white;
     align-items: center; /* Vertically center all children */
-    padding: 0 20px; /* Add padding to prevent content from touching edges */
+    padding: 0 1vw; /* Add padding to prevent content from touching edges */
     box-sizing: border-box; /* Ensure padding doesn’t increase width */
 }
 
@@ -30,7 +30,7 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    padding-left: 25px;
+    padding-left: 2vw;
     margin: 0; /* Remove default margins */
     font-size: 1rem; /* Adjust font size for better fit */
 }
@@ -56,7 +56,7 @@
 
 .navList li {
     position: relative;
-    padding: 0 20px;
+    padding: 0 1vw;
     color: black;
 }
 
@@ -78,7 +78,7 @@
 
 .Usuario p {
     align-self: center;
-    padding-right: 10px;
+    padding-right: 3vw;
     margin: 0; /* Remove default margin */
 }
 
