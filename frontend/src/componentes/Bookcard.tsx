@@ -2,6 +2,7 @@ import styles from '../styles/BookCard.module.css';
 
 type Book = {
     id_book: number;
+    isbn: string
     title: string;
     author: string;
     price: number;
@@ -10,7 +11,7 @@ type Book = {
 
 export default function BookCard({ book }: { book: Book }) {
 
-    const imagePath = `/libros/book_${book.id_book}.png`;
+    const imagePath = `/libros/book_${book.isbn}.png`;
 
     const precioFormateado = `$${book.price.toFixed(2)
         .replace('.', ',')

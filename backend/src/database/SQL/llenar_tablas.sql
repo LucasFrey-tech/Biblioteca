@@ -6,25 +6,25 @@ insert into users(username,email,password) values ('paredes','paredes@gmail.com'
 insert into users(username,email,password,admin) values ('adm','adm@gmail.com','adm',true);
 
 -- AÑADIR DATOS DE PRUEBA A BOOKS
-insert into books(tittle,author,description,isbn,stock,price ) values (
+insert into books(tittle,author_id,description,isbn,stock,price ) values (
 	'1984',
-	'George Orwell',
+	1,
 	'Una descripción.',
 	'1',
 	9,
 	99.9
 );
-insert into books(tittle,author,description,isbn,stock,price ) values (
+insert into books(tittle,author_id,description,isbn,stock,price ) values (
 	'Rebelion En La Granja',
-	'George Orwell',
+	1,
 	'Una descripción.',
 	'2',
 	9,
 	99.9
 );
-insert into books(tittle,author,description,isbn,stock,price ) values (
+insert into books(tittle,author_id,description,isbn,stock,price ) values (
 	'Cómo hablar con tu perro acerca de homosexualidad, comunismo y otros temas variados',
-	'Juan Polaco',
+	2,
 	'Una descripción.',
 	'3',
 	9,
@@ -37,6 +37,12 @@ insert into genres(name) values ('Acción');
 insert into genres(name) values ('Misterio');
 insert into genres(name) values ('Ciencia Ficción');
 insert into genres(name) values ('Fantasía');
+
+-- AÑADIR DATOS DE PRUEBA A AUTHOR
+insert into authors(name) values ('George Orwell');
+insert into authors(name) values ('Juan Polaco');
+insert into authors(name) values ('J.K. Rowling');
+
 
 -- AÑADIR DATOS DE PRUEBA A BOOK_GENRES
 insert into book_genres (id_book,id_genre) values (1,1);
