@@ -8,7 +8,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   findAll() {
     return this.usersRepository.find();
@@ -18,7 +18,11 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { id } });
   }
 
-  create(user: Partial<User>) {
+  async create(user: Partial<User>) {
+    const existing = await this.usersRepository.findOne({ where: { email: user.email } });
+    if (existing) {
+      throw new Error('El correo ya está registrado');
+    }
     return this.usersRepository.save(user);
   }
 

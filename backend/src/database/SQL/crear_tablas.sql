@@ -3,7 +3,7 @@
 create table users (
 	id serial primary key,
 	username varchar(100) not null,
-	email varchar(100) not null,
+	email varchar(100) not null unique,
 	password varchar(100) not null,
 	admin bool default(false),
 	disabled bool default(false),
@@ -15,7 +15,6 @@ create table users (
 create table books (
 	id serial primary key,
 	tittle varchar(100) not null,
-	-- author varchar(100) not null,
 	author_id INTEGER NOT NULL,
 	description text not null,
 	isbn varchar(20) unique,
