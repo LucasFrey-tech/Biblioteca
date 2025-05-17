@@ -18,6 +18,7 @@ export default function LogIn() {
       </header>
 
     <main className={styles.mainLog}>
+        
         <div className={styles.containerLog}>
         <div className={styles.formulario}>
 
