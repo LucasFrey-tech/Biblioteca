@@ -1,27 +1,27 @@
 import { Request, Response } from "express";
 import Book from "./libro.model";
-import Autor from "../autor/autor.model";
+import Autor from '../autor/autor.model';
 
 interface BookGetAll{
-    author: string;
-    limit: string;
-    offset: string;
+  author: string;
+  limit: string;
+  offset: string;
 }
 
-interface BookParams{
-    id: string;
+interface BookParams {
+  id: string;
 }
 
 export const getAllBooks = async (req: Request, res: Response): Promise<Response> => {
-    try {
-        console.log("getAllBooks");
-        console.log(`Query: ${JSON.stringify(req.query)}`);
-        console.log(`Params: ${JSON.stringify(req.params)}`);
-        console.log("-----------------------------------");
-        const queryString: BookGetAll = req.query as unknown as BookGetAll;
-        let params = undefined;
-        if (queryString.author === "true") {
-            params = {
+  try {
+    console.log('getAllBooks');
+    console.log(`Query: ${JSON.stringify(req.query)}`);
+    console.log(`Params: ${JSON.stringify(req.params)}`);
+    console.log("-----------------------------------");
+    const queryString: BookGetAll = req.query as unknown as BookGetAll;
+    let params = undefined;
+    if (queryString.author === "true") {
+      params = {
                 include: [
                 { model: Autor }
             ],

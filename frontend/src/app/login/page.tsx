@@ -1,4 +1,3 @@
-
 /*2:20*/
 import styles from '../../styles/formAuth.module.css'
 
@@ -6,21 +5,7 @@ export default function LogIn() {
     
     return (
         <div className={styles.container}>
-          {/* Header */}
-
-          {/*       <header className={styles.header}>
-        <h1 className={styles.logo}>Biblioteca alejandria</h1>
-        <nav className = {styles.navegacion}>
-            <a href="">novedades</a>
-            <a href="">catalogo</a>
-            <a href="">libreria</a>
-            <a href="">sobre nosotros</a>
-        </nav>
-        <a className={styles.boton} href="">acceder</a>
-      </header> */}
-
-
-    <main className={styles.mainLog}>
+        <main className={styles.mainLog}>
         <div className={styles.containerLog}>
         <div className={styles.formulario}>
 
