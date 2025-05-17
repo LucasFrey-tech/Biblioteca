@@ -38,6 +38,7 @@ insert into genres(name) values ('Misterio');
 insert into genres(name) values ('Ciencia Ficción');
 insert into genres(name) values ('Fantasía');
 
+-- AÑADIR DATOS DE PRUEBA A AUTHOR
 insert into authors(name) values ('George Orwell');
 insert into authors(name) values ('Juan Polaco');
 insert into authors(name) values ('J.K. Rowling');
