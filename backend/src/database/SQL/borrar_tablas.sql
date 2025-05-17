@@ -11,6 +11,9 @@ drop table genres;
 -- BORRAR TABLA BOOK_GENRES
 drop table book_genres;
 
+-- BORRAR TABLA AUTHORS
+drop table authors;
+
 -- BORRAR TABLA VIRTUAL_BOOK_CONTENT
 drop table virtual_book_content;
 

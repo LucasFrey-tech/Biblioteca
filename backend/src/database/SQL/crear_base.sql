@@ -6,7 +6,7 @@ create database alejandria
 create table users (
 	id serial primary key,
 	username varchar(100) not null,
-	email varchar(100) not null,
+	email varchar(100) not null unique,
 	password varchar(100) not null,
 	admin bool default(false),
 	disabled bool default(false),
@@ -18,8 +18,7 @@ create table users (
 create table books (
 	id serial primary key,
 	tittle varchar(100) not null,
-	author varchar(100) not null,
-	-- author_id INTEGER NOT NULL,
+	author_id INTEGER NOT NULL,
 	description text not null,
 	isbn varchar(20) unique,
     image text default(''),
@@ -41,11 +40,11 @@ create table book_genres(
 	id_book integer not null
 );
 
--- -- CREAR TABLA AUTHOR
--- CREATE TABLE authors (
--- 	id SERIAL PRIMARY KEY,
--- 	name VARCHAR(100) NOT NULL
--- );
+-- CREAR TABLA AUTHOR
+CREATE TABLE authors (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL
+);
 
 -- CREAR TABLA VIRTUAL_BOOK_CONTENT
 create table virtual_book_content(
