@@ -1,38 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../../entidades/user.entity';
 import { Repository } from 'typeorm';
+import { User } from '../../entidades/user.entity';
 
 @Injectable()
-export class AuthService {
+export class UsersService {
   constructor(
-    @InjectRepository(User) private userRepo: Repository<User>,
-    private jwtService: JwtService
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
   ) {}
 
-  async register(data: { username: string; email: string; password: string }) {
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-    const user = this.userRepo.create({ ...data, password: hashedPassword });
-    await this.userRepo.save(user);
-    return { message: 'Usuario registrado' };
+  findAll() {
+    return this.usersRepository.find();
   }
 
-  async login(data: { email: string; password: string }) {
-    const user = await this.userRepo.findOne({ where: { email: data.email } });
-    if (!user || user.disabled) {
-      throw new Error('Usuario no válido o deshabilitado');
-    }
+  findOne(id: number) {
+    return this.usersRepository.findOne({ where: { id } });
+  }
 
-    const match = await bcrypt.compare(data.password, user.password);
-    if (!match) {
-      throw new Error('Credenciales inválidas');
-    }
+  create(user: Partial<User>) {
+    return this.usersRepository.save(user);
+  }
 
-    const payload = { id: user.id, email: user.email, admin: user.admin };
-    const token = this.jwtService.sign(payload);
+  async update(id: number, updateData: Partial<User>) {
+    await this.usersRepository.update(id, updateData);
+    return this.findOne(id);
+  }
 
-    return { access_token: token };
+  delete(id: number) {
+    return this.usersRepository.delete(id);
   }
 }
