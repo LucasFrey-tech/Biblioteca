@@ -40,8 +40,9 @@ insert into genres(name) values ('Fantasía');
 
 -- AÑADIR DATOS DE PRUEBA A AUTHOR
 insert into authors(name) values ('George Orwell');
-insert into authors(name) values ('Juan Polaco');
+insert into authors(name) values ('Dan Brown');
 insert into authors(name) values ('J.K. Rowling');
+insert into authors(name) values ('Juan Polaco');
 
 -- AÑADIR DATOS DE PRUEBA A BOOK_GENRES
 insert into book_genres (id_book,id_genre) values (1,1);

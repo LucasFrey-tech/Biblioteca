@@ -3,37 +3,37 @@
         {
             "id_book": 1,
             "title": "1984",
-            "author": "George Orwell",
+            "author": 1,
             "price": 15.000
         },
         {
             "id_book": 2,
             "title": "Asesino de Brujas Libro II",
-            "author": "Dan Brown",
+            "author": 2,
             "price": 18.000
         },
         {
             "id_book": 3,
             "title": "Harry Potter y la Piedra Filosofal",
-            "author": "J.K. Rowling",
+            "author": 3,
             "price": 22.000
         },
         {
             "id_book": 4,
             "title": "El Codigo Da Vinci",
-            "author": "Dan Brown",
+            "author": 2,
             "price": 16.000
         },
         {
             "id_book": 5,
             "title": "EL Jardin de las Rosas",
-            "author": "Dan Brown",
+            "author": 4,
             "price": 18.000
         },
         {
             "id_book": 6,
             "title": "Harry Potter y la Piedra Filosofal",
-            "author": "J.K. Rowling",
+            "author": 3,
             "price": 20.000
         }
     ]

@@ -1,0 +1,8 @@
+{
+    "authors": [
+        { "id": 1, "name": "George Orwell" },
+        { "id": 2, "name": "Shelby Mahurin" },
+        { "id": 3, "name": "J.K. Rowling" },
+        { "id": 4, "name": "Juan Polaco" }
+    ]
+}
