@@ -10,20 +10,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 450px;
 }
-
- /* .cover { */
-    /* width: 100%; */
-    /* max-height: 200px; */
-    /* 12.5rem */
-    /* object-fit: cover; */
-    /* border-radius: 4px; */
-    /* 0.25rem */
-    /* margin-bottom: 10px; */
-    /* 0.625rem */
-
-/* } */
-
 
 .cover {
     width: 100%;
@@ -36,11 +24,24 @@
 }
 
 .title {
-    font-size: 1.2rem;
-    /* 19.2px / 1.2rem */
+    font-size: clamp(1rem, 4vw, 1.2rem);
     margin: 0;
     text-transform: uppercase;
     color: #373d45;
+    line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.title-container {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px; /* Altura mínima para el título */
 }
 
 .author {

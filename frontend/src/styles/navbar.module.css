@@ -3,17 +3,22 @@
     font-family: var(--font-SF-Fedora), sans-serif;
     border-bottom: solid 1px rgb(168, 168, 168);
     width: 100%;
-    height: 4vw; /* Fixed height for consistency */
+    height: auto;
+    min-height: 4vw;
     background-color: white;
-    align-items: center; /* Vertically center all children */
-    padding: 0 1vw; /* Add padding to prevent content from touching edges */
-    box-sizing: border-box; /* Ensure padding doesn’t increase width */
+    align-items: center;
+    padding: 0 1vw;
+    box-sizing: border-box;
+    position: relative;
+
 }
 
 .TituloPagina {
     margin-left: 10px;
-    transform: none; /* Remove scaleX to prevent overflow */
-    min-width: 200px; /* Ensure enough space for the title */
+    min-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .TituloPagina h1 {
@@ -21,8 +26,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    margin: 0; /* Remove default margins */
-    font-size: 1.5rem; /* Adjust font size for better fit */
+    margin: 0;
+    font-size: 1.5rem;
 }
 
 .TituloPagina h2 {
@@ -31,15 +36,14 @@
     background-clip: text;
     color: transparent;
     padding-left: 2vw;
-    margin: 0; /* Remove default margins */
-    font-size: 1rem; /* Adjust font size for better fit */
+    margin: 0;
+    font-size: 1rem;
 }
 
 .Navegacion {
     display: flex;
     flex: 1;
     align-self: center;
-    /* width: 50%; */
     justify-content: space-between;
     max-width: 600px;
     margin: 0 auto;
@@ -70,16 +74,14 @@
 .Usuario {
     display: flex;
     align-self: center;
-    /* justify-self: flex-end; */
-    /* margin-left: auto; */
-    margin-left: auto; /* Push to the right */    
+    margin-left: auto;
     color: black;
 }
 
 .Usuario p {
     align-self: center;
     padding-right: 3vw;
-    margin: 0; /* Remove default margin */
+    margin: 0;
 }
 
 /* Boton */
@@ -89,9 +91,9 @@
     justify-content: center;
     gap: 1rem;
     margin-top: 1rem;
-  }
-  
-  .boton {
+}
+
+.boton {
     text-transform: capitalize;
     background-color: #000;
     color: white;
@@ -100,29 +102,115 @@
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-  }
+}
 
-  .boton:hover {
+.boton:hover {
     background-color: #ffc400;
     color: black;
-  }
+}
 
-/* Responsive adjustments */
+.menuButton {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0.5rem;
+}
+
+.menuButton img {
+    width: 32px;
+    height: 32px;
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    padding-top: 20px;
+    font-family: var(--font-SF-Fedora), sans-serif; /* Misma fuente que el header */
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+.sidebarList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebarList li {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.sidebarList a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-size: 1rem; /* Tamaño consistente */
+}
+
+.sidebarList .boton {
+    text-transform: capitalize;
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    width: auto;
+    display: inline-block;
+    margin: 0.5rem auto;
+    font-family: var(--font-SF-Fedora), sans-serif; /* Misma fuente */
+}
+
+.sidebarList .boton:hover {
+    background-color: #ffc400;
+    color: black;
+}
+
+.sidebarBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.sidebarBackdrop.active {
+    display: block;
+}
+
+/* Responsive celular */
 @media (max-width: 768px) {
+    .menuButton {
+        display: block;
+    }
+
+    .Navegacion, .Usuario {
+        display: none;
+    }
+
+    .Header {
+        justify-content: space-between;
+    }
+
     .TituloPagina {
-        min-width: 150px;
-    }
-
-    .TituloPagina h1 {
-        font-size: 1.2rem;
-    }
-
-    .TituloPagina h2 {
-        font-size: 0.8rem;
-        padding-left: 15px;
-    }
-
-    .navList li {
-        padding: 0 10px;
+        margin-left: 0;
     }
 }

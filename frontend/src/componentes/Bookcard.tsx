@@ -46,10 +46,18 @@ export default function BookCard({ book }: { book: Book }) {
                 className={styles.cover}
                 onError={(e) => (e.currentTarget.src = '/libros/placeholder.png')}
             />
-            <h3 className={styles.title}>{book.title}</h3>
+            <div className={styles.titleContainer}>
+                <h3 className={styles.title}>{book.title}</h3>
+            </div>
             <p className={styles.author}>{book.author_name}</p>
-            <strong className={styles.price}>{book.price}</strong>
-            {/* <p className={styles.price}>{book.price}</p> */}
+            <strong className={styles.price}>
+                {book.price.toLocaleString('es-AR', {
+                    style: 'currency',
+                    currency: 'ARS',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}
+            </strong>
             <button className={styles.buyButton} onClick={handleBuyClick}>
                 <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>COMPRAR</span>
