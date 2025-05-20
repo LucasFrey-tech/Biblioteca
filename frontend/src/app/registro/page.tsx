@@ -50,7 +50,7 @@ const userSchema = z.object({
 
 type UserType = z.infer<typeof userSchema>;
 
-function Page() {
+function Registro() {
   const form = useForm<UserType>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -172,4 +172,4 @@ function Page() {
   );
 }
 
-export default Page;
+export default Registro;
