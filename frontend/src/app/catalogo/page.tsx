@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
-import BookCard from '../../componentes/Bookcard';
+import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 import BooksJson from '../../../assets/json/books_preload.json';
 import AuthorsJson from '../../../assets/json/authors_preload.json';
