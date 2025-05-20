@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${fedora.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${fedora.variable} antialiased cuerpo`}>
         <Navbar />
         <main>{children}</main>
         <Footer />
