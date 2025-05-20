@@ -19,6 +19,8 @@
     display: flex;
     padding: 20px;
     gap: 20px;
+    background-color: #2c2c2b;
+
 }
 
 .sidebar {
@@ -35,6 +37,8 @@
     display: flex;
     justify-content: center;
     margin: 20px 0;
+    background-color: #2c2c2b;
+
 }
 
 .searchBarContainer {

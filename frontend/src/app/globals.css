@@ -120,3 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.cuerpo {
+  background-color: #2c2c2b;
+}
