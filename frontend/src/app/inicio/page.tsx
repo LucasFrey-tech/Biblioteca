@@ -107,8 +107,10 @@ export default function HomePage() {
           />
         </div>
         <div className={styles.bannerText} ref={bannerTextRef}>
-          <h2>Mi Biblioteca</h2>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui fugiat, facilis corporis laboriosam exercitationem quod, ducimus, numquam illo molestiae dicta et aspernatur quisquam! Deleniti ex earum numquam ratione, voluptate alias.</p>
+          {/* <h2>Mi Biblioteca</h2> */}
+          {/* <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui fugiat, facilis corporis laboriosam exercitationem quod, ducimus, numquam illo molestiae dicta et aspernatur quisquam! Deleniti ex earum numquam ratione, voluptate alias.</p> */}
+          <h2>Bienvenido a la Biblioteca Virtual</h2>
+          <p>Explora nuestra coleccion de libros y sumergete en el mundo de la lectura</p>
         </div>
       </section>
 
