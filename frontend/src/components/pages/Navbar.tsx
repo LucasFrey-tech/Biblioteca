@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState } from "react"
 import styles from '../styles/navbar.module.css';
 
 export default function Navbar() {
