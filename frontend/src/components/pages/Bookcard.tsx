@@ -2,8 +2,9 @@
 
 import { FaCartPlus } from 'react-icons/fa';
 import { useRouter } from 'next/router';
-import styles from '../styles/BookCard.module.css';
+import styles from '../../styles/BookCard.module.css';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 
 type Book = {
@@ -33,8 +34,8 @@ export default function BookCard({ book }: { book: Book }) {
     // };
 
     const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        e.stopPropagation(); // Prevent card click event from firing
-        // Temporarily do nothing
+        e.stopPropagation();
+        
     };
 
     return (
