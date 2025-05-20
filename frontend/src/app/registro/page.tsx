@@ -1,5 +1,5 @@
 "use client";
-import styles from '../../styles/login.module.css';
+import styles from '../../styles/registro.module.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
@@ -81,7 +81,7 @@ function Page() {
               name="name"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Nombre</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} placeholder='Ingresa tu nombre' />
@@ -95,7 +95,7 @@ function Page() {
               name="lastname"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Apellido</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} placeholder='Ingresa tu apellido' />
@@ -110,7 +110,7 @@ function Page() {
               name="username"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Nombre de usuario</FormLabel>
                   <FormControl>
                     <Input type="text" {...field} placeholder='Ingresa tu usuario' />
@@ -124,7 +124,7 @@ function Page() {
               name="email"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Email</FormLabel>
                   <FormControl>
                     <Input type="email" {...field} placeholder='Debe contener "@" y ".com" '/>
@@ -139,7 +139,7 @@ function Page() {
               name="password"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Crea una contraseña</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} placeholder ="Ingresa contraseña" />
@@ -153,7 +153,7 @@ function Page() {
               name="confirmPassword"
               control={form.control}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="mb-4">
                   <FormLabel className={styles.tituloLabel}>Repetir la contraseña</FormLabel>
                   <FormControl>
                     <Input type="password" {...field} placeholder = "Ingresa contraseña"  />
