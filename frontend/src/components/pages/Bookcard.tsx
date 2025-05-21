@@ -35,17 +35,23 @@ export default function BookCard({ book }: { book: Book }) {
 
     const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
-        
+
     };
 
     return (
         // <div className={styles.card} onClick={handleCardClick}>
         <div className={styles.card} >
-            <img
+            <Image
                 src={imagePath}
                 alt={book.title}
                 className={styles.cover}
-                onError={(e) => (e.currentTarget.src = '/libros/placeholder.png')}
+                width={200}
+                height={300}
+                placeholder="blur"
+                blurDataURL="/libros/placeholder.png"
+                onError={(e) => {
+                    e.currentTarget.src = '/libros/placeholder.png';
+                }}
             />
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>

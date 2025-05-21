@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import styles from '../../styles/navbar.module.css';
+import Image from "next/image";
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -45,7 +46,12 @@ export default function Navbar() {
                 </div>
 
                 <button className={styles.menuButton} onClick={toggleSidebar}>
-                    <img src="../logos/menu.png" alt="menu" />
+                    <Image
+                        src="/logos/menu.png"
+                        alt="menu"
+                        width={32} // Ajusta según el tamaño deseado
+                        height={32} // Ajusta según el tamaño deseado
+                    />
                 </button>
             </header>
 
