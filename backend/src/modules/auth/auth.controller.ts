@@ -1,25 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { LoginRequestBody,RegisterRequestBody } from './auth.interface';
-import { AuthService } from "./auth.service"
+import { LoginRequestBody, RegisterRequestBody } from './auth.interface';
+import { AuthService } from './auth.service';
 
-@Controller('login')
-export class LoginController {
-    constructor(private authService: AuthService) {}
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
 
-    @Post()
-    loginUser(@Body() requestBody: LoginRequestBody): {} {
-        this.authService.Login(requestBody);
-        return 'This action returns all cats';
-    }
+  @Post('login')
+  async loginUser(@Body() requestBody: LoginRequestBody) {
+    return this.authService.login(requestBody);
+  }
+
+  @Post('register')
+  async registerUser(@Body() requestBody: RegisterRequestBody) {
+    console.log("asd")
+    return this.authService.register(requestBody);
+  }
 }
 
-@Controller('register')
-export class RegisterController {
-    constructor(private authService: AuthService) {}
-    
-    @Post()
-    registerUser(@Body() requestBody: RegisterRequestBody): {} {
-        this.authService.Register(requestBody);
-        return 'This action returns all cats';
-    }
-}

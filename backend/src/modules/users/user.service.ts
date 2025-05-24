@@ -8,7 +8,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) { }
+  ) {}
 
   findAll() {
     return this.usersRepository.find();
@@ -26,6 +26,10 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+  return this.usersRepository.findOne({ where: { email } });
+}
+
   async update(id: number, updateData: Partial<User>) {
     await this.usersRepository.update(id, updateData);
     return this.findOne(id);
@@ -35,3 +39,5 @@ export class UsersService {
     return this.usersRepository.delete(id);
   }
 }
+
+
