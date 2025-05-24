@@ -8,12 +8,13 @@ export class AuthController {
 
   @Post('login')
   async loginUser(@Body() requestBody: LoginRequestBody) {
+    console.log(requestBody)
     return this.authService.login(requestBody);
   }
 
   @Post('register')
   async registerUser(@Body() requestBody: RegisterRequestBody) {
-    console.log("asd")
+    console.log(requestBody)
     return this.authService.register(requestBody);
   }
 }

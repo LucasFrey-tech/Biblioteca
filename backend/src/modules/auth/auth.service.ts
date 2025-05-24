@@ -37,6 +37,7 @@ export class AuthService {
 
   async login(requestBody: LoginRequestBody) {
   // Validamos el usuario y la contraseña
+  console.log(requestBody)
   const user = await this.validateUser(requestBody.email, requestBody.password);
 
   // Creamos el payload del JWT (puedes agregar más info si querés)
