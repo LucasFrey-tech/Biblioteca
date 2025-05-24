@@ -18,25 +18,40 @@ type Book = {
 };
 
 export default function BookPage() {
+    const [books, setBooks] = useState<Book[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [books, setBooks] = useState<Book[]>([]);
 
     useEffect(() => {
         const fetchBooks = async () => {
-            const res = await fetch('/api/books');
-            const data = await res.json();
-            setBooks(data);
+            try {
+                const res = await fetch('http://localhost:3001/books');
+                if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                if (!Array.isArray(data)) {
+                    throw new Error('La respuesta de la API no es un arreglo');
+                }
+                console.log('Libros recibidos:', data);
+                setBooks(data);
+            } catch (error) {
+                console.error('Error al obtener libros:', error);
+                setBooks([]);
+            }
         };
         fetchBooks();
     }, []);
 
-    const filteredBooks = books.filter((book) =>
-        book.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredBooks = Array.isArray(books)
+        ? books.filter((book) =>
+              book.title.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+        : [];
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
+        console.log('Búsqueda enviada:', searchTerm);
         setSearchQuery(searchTerm);
     };
 
@@ -70,21 +85,15 @@ export default function BookPage() {
                 </aside>
 
                 <div className={styles.mainGrid}>
-                    {filteredBooks.map((book) => (
-                        <BookCard key={book.id_book} book={book} />
-                    ))}
+                    {filteredBooks.length > 0 ? (
+                        filteredBooks.map((book) => (
+                            <BookCard key={book.id_book} book={book} />
+                        ))
+                    ) : (
+                        <p>No se encontraron libros.</p>
+                    )}
                 </div>
             </div>
         </>
     );
 }
-
-//BASE
-// {books.map((book) => (
-// <BookCard key={book.id_book} book={book} />
-// ))}
-
-//JSON
-// {BooksJson.books.map((book:Book) => (
-//     <BookCard key={book.id_book} book={book} />
-//     ))}

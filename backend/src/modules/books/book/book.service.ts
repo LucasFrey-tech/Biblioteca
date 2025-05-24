@@ -15,7 +15,7 @@ export class BooksService {
   }
 
   findOne(id: number) {
-    return this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
+    return this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
   }
 
   create(book: Partial<Book>) {
