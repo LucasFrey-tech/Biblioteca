@@ -63,11 +63,9 @@ function Registro() {
     }
   });
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-
   const onSubmit = form.handleSubmit(async (values: UserType) => {
     try {
-      const res = await fetch(`${API_URL}/auth/register`, {
+      const res = await fetch('http://localhost:3001/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
