@@ -1,0 +1,30 @@
+.container {
+    padding: 2rem;
+}
+
+.bookDetail {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.coverContainer img {
+    max-width: 300px;
+    border-radius: 8px;
+}
+
+.infoContainer h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.synopsis, .comments {
+    margin-top: 2rem;
+}
+
+.commentCard {
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+}

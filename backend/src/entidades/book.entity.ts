@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
 import { Genre } from '../entidades/genre.entity';
+import { Author } from './author.entity';
 
 @Entity('books')
 export class Book {
@@ -37,4 +38,8 @@ export class Book {
     inverseJoinColumn: { name: 'id_genre', referencedColumnName: 'id' }
   })
   genres: Genre[];
+
+  @ManyToOne(() => Author, (author) => author.books, { eager: true })
+  @JoinColumn({ name: 'author_id' })
+  author: Author;
 }

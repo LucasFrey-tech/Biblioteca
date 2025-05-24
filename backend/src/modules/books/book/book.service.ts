@@ -10,12 +10,12 @@ export class BooksService {
     private booksRepository: Repository<Book>,
   ) {}
 
-  findAll() {
-    return this.booksRepository.find({ relations: ['genres'] });
+  findAll(): Promise<Book[]> {
+    return this.booksRepository.find({ relations: ['author', 'genres'] });
   }
 
   findOne(id: number) {
-    return this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
+    return this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
   }
 
   create(book: Partial<Book>) {

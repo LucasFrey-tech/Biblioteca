@@ -1,18 +1,21 @@
 'use client';
 
 import { FaCartPlus } from 'react-icons/fa';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import styles from '../../styles/BookCard.module.css';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
+type Author = {
+    id: number;
+    name: string;
+};
 
 type Book = {
     id_book: number;
     title: string;
-    author: number;
-    author_name: string;
     price: number;
+    author: Author;
 };
 
 export default function BookCard({ book }: { book: Book }) {
@@ -27,11 +30,11 @@ export default function BookCard({ book }: { book: Book }) {
 
     const imagePath = `/libros/book_${book.id_book}.png`;
 
-    // const router = useRouter();
+    const router = useRouter();
 
-    // const handleCardClick = () => {
-    //     router.push(`/book/${book.id_book}`);
-    // };
+    const handleCardClick = () => {
+        router.push(`/book/${book.id_book}`);
+    };
 
     const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -39,8 +42,7 @@ export default function BookCard({ book }: { book: Book }) {
     };
 
     return (
-        // <div className={styles.card} onClick={handleCardClick}>
-        <div className={styles.card} >
+        <div className={styles.card} onClick={handleCardClick}>
             <Image
                 src={imagePath}
                 alt={book.title}
@@ -56,13 +58,13 @@ export default function BookCard({ book }: { book: Book }) {
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
-            <p className={styles.author}>{book.author_name}</p>
+            <p className={styles.author}>{book.author?.name ?? 'Desconocido'}</p>
             <strong className={styles.price}>
                 {book.price.toLocaleString('es-AR', {
                     style: 'currency',
                     currency: 'ARS',
                     minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    maximumFractionDigits: 2,
                 })}
             </strong>
             <button className={styles.buyButton} onClick={handleBuyClick}>

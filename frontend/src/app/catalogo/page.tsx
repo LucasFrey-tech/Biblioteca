@@ -1,39 +1,37 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { useEffect, useState, FormEvent } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
-import BooksJson from '../../../assets/json/books_preload.json';
-import AuthorsJson from '../../../assets/json/authors_preload.json';
-
-type Book = {
-    id_book: number;
-    title: string;
-    author: number;
-    price: number;
-};
 
 type Author = {
     id: number;
     name: string;
 };
 
-type BookWithAuthorName = Book & { author_name: string };
+type Book = {
+    id_book: number;
+    title: string;
+    price: number;
+    author: Author;
+};
 
 export default function BookPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [books, setBooks] = useState<Book[]>([]);
 
-    const booksWithAuthors: BookWithAuthorName[] = BooksJson.books.map((book) => {
-        const author = AuthorsJson.authors.find((a) => a.id === book.author);
-        return {
-            ...book,
-            author_name: author ? author.name : 'Desconocido',
+    useEffect(() => {
+        const fetchBooks = async () => {
+            const res = await fetch('/api/books');
+            const data = await res.json();
+            setBooks(data);
         };
-    });
+        fetchBooks();
+    }, []);
 
-    const filteredBooks = booksWithAuthors.filter((book) =>
+    const filteredBooks = books.filter((book) =>
         book.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
@@ -62,12 +60,10 @@ export default function BookPage() {
                     >
                         <FaSearch className={styles.searchIcon} aria-hidden="true" />
                     </button>
-
                 </div>
             </form>
 
             <div className={styles.wrapper}>
-                {/* FILTROS */}
                 <aside className={styles.sidebar}>
                     <h3>Filtros</h3>
                     <p>Próximamente...</p>
