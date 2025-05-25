@@ -60,8 +60,8 @@ export default function LogIn() {
       });
 
       console.log('Estado de la respuesta:', res.status, res.statusText);
+
       // Verifica la respuesta del servidor
-      
       if (!res.ok) {
         let errorData;
         try {
