@@ -16,7 +16,8 @@ export class AuthService {
     // Verificar si ya existe el usuario por email
     const existingUserEmail = await this.usersService.findByEmail(requestBody.email);
     // Verificar si ya existe el usuario por nombre de usuario
-    const existingUserName = await this.usersService.findByUser(requestBody.email);
+    const existingUserName = await this.usersService.findByUser(requestBody.username);
+    
     console.log('existingUserEmail:', existingUserEmail);
     console.log('existingUserName:', existingUserName);
     if (existingUserEmail) {
