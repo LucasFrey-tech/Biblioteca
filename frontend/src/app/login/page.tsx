@@ -66,6 +66,7 @@ export default function LogIn() {
         let errorData;
         try {
           errorData = await res.json();
+          console.log(errorData);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
           Swal.fire({
@@ -78,7 +79,7 @@ export default function LogIn() {
         Swal.fire({
         icon: 'error',
         title: 'Login fallido',
-        text: errorData.message || 'Usuario o contraseña incorrectos',
+        text:'Email o contraseña son incorrectos',
         });
         return;
       }

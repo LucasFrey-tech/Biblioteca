@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 const userSchema = z.object({
   name: z.string({
@@ -64,6 +65,7 @@ function Registro() {
     }
   });
 
+  const router = useRouter();
   const onSubmit = form.handleSubmit(async (values: UserType) => {
     try {
       const res = await fetch('http://localhost:3001/auth/register', {
@@ -90,12 +92,20 @@ function Registro() {
         return;
       }
 
+
       const data = await res.json();
       console.log('Token recibido:', data.access_token);
       localStorage.setItem('token', data.access_token);
-
-      // Redirigir si hace falta
-      // router.push('/dashboard');
+      
+      Swal.fire({
+        title: "Usuario registrado con exito!",
+        text: "Registro completado!",
+        icon: "success"
+      }).then((result) => {
+      if (result.isConfirmed) {
+        router.push('/login');
+      }
+    });
     } catch (error) {
       console.error('Error de red:', error);
       alert('Error de conexión con el servidor');
