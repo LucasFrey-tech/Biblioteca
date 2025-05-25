@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import Swal from 'sweetalert2';
 
 const userSchema = z.object({
   name: z.string({
@@ -80,8 +81,12 @@ function Registro() {
       });
 
       if (!res.ok) {
-        const errorData = await res.json();
-        alert('Error: ' + (errorData.message || 'No se pudo registrar el usuario'));
+        const error = await res.json();
+        Swal.fire({
+        icon: 'error',
+        title: 'Error al registrar',
+        text: error.message,
+  });
         return;
       }
 

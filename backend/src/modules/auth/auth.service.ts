@@ -14,9 +14,16 @@ export class AuthService {
   // REGISTRO
   async register(requestBody: RegisterRequestBody) {
     // Verificar si ya existe el usuario por email
-    const existingUser = await this.usersService.findByEmail(requestBody.email);
-    if (existingUser) {
+    const existingUserEmail = await this.usersService.findByEmail(requestBody.email);
+    // Verificar si ya existe el usuario por nombre de usuario
+    const existingUserName = await this.usersService.findByUser(requestBody.email);
+    console.log('existingUserEmail:', existingUserEmail);
+    console.log('existingUserName:', existingUserName);
+    if (existingUserEmail) {
       throw new BadRequestException('El correo ya está registrado');
+    }
+    if(existingUserName) {
+      throw new BadRequestException('Este nombre de usuario ya existe');
     }
 
     // Hashear la contraseña

@@ -16,8 +16,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation'; // ✅ Import correcto para App Router
-
+import { useRouter } from 'next/navigation'; 
+import Swal from 'sweetalert2'
 
 // Validación
 const userSchema = z.object({
@@ -46,9 +46,10 @@ export default function LogIn() {
     }
   });
 
+    // ENVIAR FORM
   const onSubmit = form.handleSubmit(async (values: UserType) => {
     console.log('Enviando solicitud con:', values);
-
+    // Consulta a la base de datos 
     try {
       const res = await fetch('http://localhost:3001/auth/login', {
         method: 'POST',
@@ -59,39 +60,61 @@ export default function LogIn() {
       });
 
       console.log('Estado de la respuesta:', res.status, res.statusText);
-
+      // Verifica la respuesta del servidor
+      
       if (!res.ok) {
         let errorData;
         try {
           errorData = await res.json();
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
-          alert('Error: Respuesta del servidor no es JSON válido');
+          Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'La respuesta del servidor no es JSON válido',
+          });
           return;
         }
-        alert('Error: ' + (errorData.message || 'Usuario o contraseña incorrectos'));
+        Swal.fire({
+        icon: 'error',
+        title: 'Login fallido',
+        text: errorData.message || 'Usuario o contraseña incorrectos',
+        });
         return;
       }
-
+      // Verifica los datos enviados
       const data = await res.json();
       console.log('Datos:', data);
-
+      // Si el token coincide con la base de datos...
       if (data.access_token) {
         //Guardo el user en el local
         localStorage.setItem('token', data.access_token);
         router.push('/inicio'); 
+        
       } else {
-        alert('Login fallido: No se recibió el token');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de inicio de sesión',
+          text: 'Hubo un problema al procesar tu ingreso. Por favor, intentá nuevamente.',
+        });
         console.error('Error en la respuesta:', data);
       }
 
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error de red:', error.message);
-        alert('Error de conexión con el servidor: ' + error.message);
+        Swal.fire({
+          title: "Error en la red",
+          text: "Se perdio la conexion a la red",
+          icon: "question"
+        });
       } else {
         console.error('Error desconocido:', error);
-        alert('Ocurrió un error inesperado.');
+        Swal.fire({
+          title: "Error desconocido",
+          text: "Enviar mensaje al soporte para arreglar este problema",
+          icon: "question"
+        });
   }
     }
     console.log(localStorage);
