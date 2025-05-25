@@ -20,6 +20,11 @@ export class AuthService {
     
     console.log('existingUserEmail:', existingUserEmail);
     console.log('existingUserName:', existingUserName);
+
+    if(existingUserEmail && existingUserName){
+      throw new BadRequestException('El correo y el usuario ya existen!');
+    }
+
     if (existingUserEmail) {
       throw new BadRequestException('El correo ya está registrado');
     }
