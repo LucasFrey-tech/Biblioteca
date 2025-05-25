@@ -61,5 +61,4 @@ async validateUser(email: string, pass: string): Promise<any> {
   const { password, ...result } = user;
   return result;
 }
-
 }

@@ -1,4 +1,5 @@
 "use client";
+
 import styles from '../../styles/login.module.css';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -15,6 +16,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation'; // ✅ Import correcto para App Router
+
 
 // Validación
 const userSchema = z.object({
@@ -33,6 +36,8 @@ const userSchema = z.object({
 type UserType = z.infer<typeof userSchema>;
 
 export default function LogIn() {
+  const router = useRouter();
+
   const form = useForm<UserType>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -41,9 +46,55 @@ export default function LogIn() {
     }
   });
 
-  const onSubmit = form.handleSubmit((values: UserType) => {
-    console.log(values);
-    // enviar datos al servidor
+  const onSubmit = form.handleSubmit(async (values: UserType) => {
+    console.log('Enviando solicitud con:', values);
+
+    try {
+      const res = await fetch('http://localhost:3001/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+
+      console.log('Estado de la respuesta:', res.status, res.statusText);
+
+      if (!res.ok) {
+        let errorData;
+        try {
+          errorData = await res.json();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e) {
+          alert('Error: Respuesta del servidor no es JSON válido');
+          return;
+        }
+        alert('Error: ' + (errorData.message || 'Usuario o contraseña incorrectos'));
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Datos:', data);
+
+      if (data.access_token) {
+        //Guardo el user en el local
+        localStorage.setItem('token', data.access_token);
+        router.push('/inicio'); 
+      } else {
+        alert('Login fallido: No se recibió el token');
+        console.error('Error en la respuesta:', data);
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error de red:', error.message);
+        alert('Error de conexión con el servidor: ' + error.message);
+      } else {
+        console.error('Error desconocido:', error);
+        alert('Ocurrió un error inesperado.');
+  }
+    }
+    console.log(localStorage);
   });
 
   return (
@@ -81,12 +132,11 @@ export default function LogIn() {
                   </FormItem>
                 )}
               />
-
               <div className={styles.botonContainer}>
                 <Button className={styles.botonEnviar} type="submit">
                   Enviar
                 </Button>
-                <Button asChild className={styles.botonEnviar} >
+                <Button asChild className={styles.botonEnviar}>
                   <Link href="/registro" className={styles.linkSinEstilo}>
                     Registrarse
                   </Link>
