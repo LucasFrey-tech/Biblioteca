@@ -49,6 +49,7 @@ export default function Navbar() {
                 </nav>
 
                 <div className={styles.Usuario}>
+                    {/*Muestra Usuario al iniciar sesion*/}
                     {username ? (
                         <span className={styles.nombreUsuario}>{username}</span>
                     ) : (

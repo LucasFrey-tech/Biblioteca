@@ -102,7 +102,8 @@ export default function LogIn() {
         const decoded: JwtPayload = jwtDecode(data.access_token)
         //Guardo el user en el local
         localStorage.setItem('token', data.access_token);
-        localStorage.setItem('username', decoded.nombre)
+        //Guardo el nombre en el local
+        localStorage.setItem('username', decoded.nombre);
         router.push('/inicio'); 
         
       } else {
