@@ -54,7 +54,7 @@ export class AuthService {
   const user = await this.validateUser(requestBody.email, requestBody.password);
 
   // Creamos el payload del JWT (puedes agregar más info si querés)
-  const payload = { email: user.email, sub: user.id };
+  const payload = { email: user.email, sub: user.id, nombre: user.username };
 
   // Firmamos el token
   const access_token = this.jwtService.sign(payload);

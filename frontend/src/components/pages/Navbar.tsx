@@ -1,12 +1,12 @@
 'use client';
-
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [username, setUsername] = useState<string>();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -15,6 +15,13 @@ export default function Navbar() {
     const closeSidebar = () => {
         setIsSidebarOpen(false);
     };
+
+    useEffect(() => {
+        const storedUsername = localStorage.getItem('username');
+        if (storedUsername) {
+            setUsername(storedUsername);
+        }
+    }, []);
 
     return (
         <>
@@ -42,7 +49,11 @@ export default function Navbar() {
                 </nav>
 
                 <div className={styles.Usuario}>
-                    <a className={styles.boton} href="http://localhost:3000/login">acceder</a>
+                    {username ? (
+                        <span className={styles.nombreUsuario}>{username}</span>
+                    ) : (
+                        <a className={styles.boton} href="http://localhost:3000/login">acceder</a>
+                    )}
                 </div>
 
                 <button className={styles.menuButton} onClick={toggleSidebar}>

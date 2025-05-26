@@ -17,7 +17,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation'; 
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { jwtDecode } from 'jwt-decode';
+
+
+interface JwtPayload {
+  sub: number;
+  email: string;
+  nombre: string;
+  iat: number;
+  exp: number;
+}
 
 // Validación
 const userSchema = z.object({
@@ -88,8 +98,11 @@ export default function LogIn() {
       console.log('Datos:', data);
       // Si el token coincide con la base de datos...
       if (data.access_token) {
+        //Decodifico el token
+        const decoded: JwtPayload = jwtDecode(data.access_token)
         //Guardo el user en el local
         localStorage.setItem('token', data.access_token);
+        localStorage.setItem('username', decoded.nombre)
         router.push('/inicio'); 
         
       } else {
