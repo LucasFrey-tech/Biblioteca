@@ -27,8 +27,10 @@ export default function Navbar() {
         <>
             <header className={styles.Header}>
                 <div className={styles.TituloPagina}>
-                    <h1>alejandria</h1>
-                    <h2>Biblioteca Virtual</h2>
+                    <a href="http://localhost:3000/inicio">
+                        <h1>alejandria</h1>
+                        <h2>Biblioteca Virtual</h2>
+                    </a>
                 </div>
 
                 <nav className={styles.Navegacion}>
