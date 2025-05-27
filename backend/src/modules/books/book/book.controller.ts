@@ -8,6 +8,7 @@ export class BooksController {
 
   @Get()
   findAll(): Promise<Book[]> {
+    console.log("PROBAMOS TEXTO")
     return this.booksService.findAll();
   }
 

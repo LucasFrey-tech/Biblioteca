@@ -9,6 +9,4 @@ export class Author {
     @Column( {length: 100 })
     name: string;
 
-    @OneToMany(() => Book, (book) => book.author_id)
-    books: Book[];
 }

@@ -31,15 +31,12 @@ export class Book {
   @Column('float')
   price: number;
 
-  @ManyToMany(() => Genre)
-  @JoinTable({
-    name: 'book_genres',
-    joinColumn: { name: 'id_book', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'id_genre', referencedColumnName: 'id' }
-  })
-  genres: Genre[];
+  // @ManyToMany(() => Genre)
+  // @JoinTable({
+  //   name: 'book_genres',
+  //   joinColumn: { name: 'id_book', referencedColumnName: 'id' },
+  //   inverseJoinColumn: { name: 'id_genre', referencedColumnName: 'id' }
+  // })
+  // genres: Genre[];
 
-  @ManyToOne(() => Author, (author) => author.books, { eager: true })
-  @JoinColumn({ name: 'author_id' })
-  author: Author;
 }
