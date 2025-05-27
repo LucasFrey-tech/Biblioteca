@@ -24,7 +24,9 @@ import { jwtDecode } from 'jwt-decode';
 interface JwtPayload {
   sub: number;
   email: string;
-  nombre: string;
+  userName: string;
+  firstname: string;
+  lastname: string
   iat: number;
   exp: number;
 }
@@ -100,8 +102,9 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
     if (data.access_token) {
       const decoded: JwtPayload = jwtDecode(data.access_token);
       localStorage.setItem('token', data.access_token);
-      localStorage.setItem('username', decoded.nombre);
-
+      localStorage.setItem('userName', decoded.userName);
+      localStorage.setItem('firstname', decoded.firstname);
+      localStorage.setItem('lastname', decoded.lastname);
       Swal.fire({
         title: 'Iniciando sesión!',
         text: 'Redirigiendo a la página de inicio...',

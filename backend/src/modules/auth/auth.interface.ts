@@ -5,7 +5,9 @@ export class LoginRequestBody {
 
 export class RegisterRequestBody {
   username: string;
+  fistname: string;
+  lastname: string;
   email: string;
-  password: string;
   image: string;
+  password: string;
 }

@@ -1,0 +1,104 @@
+.name {
+    font-family: var(--font-SF-Fedora), sans-serif;
+    font-size: 25px;
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+}
+
+.background {
+    background-color: #1e2836;
+}
+
+.info {
+    font-family: var(--font-SF-Fedora), sans-serif;
+    width: 50%;
+    height: 50%;
+    border-radius: 10px;
+    padding: 10px;
+    justify-self: center;
+    background-color: #272f3c;
+}
+
+.info form {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.info label {
+    margin-left: 10px;
+    color: white;
+    font-size: 15px;
+}
+
+.info input {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+    border: solid 2px;
+    border-color: white;
+    border-radius: 10px;
+    padding-left: 10px;
+    margin: 5px 10px;
+    font-size: 14px;
+}
+
+.campoNombre {
+    grid-column: 1/2;
+    grid-row: 1/2;
+}
+
+.inputNombre {
+    grid-column: 1/2;
+    grid-row: 2/3;
+}
+
+.campoApellido {
+    grid-column: 2/2;
+    grid-row: 1/2;
+}
+
+.inputApellido {
+    grid-column: 2/3;
+    grid-row: 2/3;
+}
+
+.campoUsuario {
+    grid-column: 1/2;
+    grid-row: 3/4;
+}
+
+.inputUName{
+    grid-column: 1/2;
+    grid-row: 4/5;
+}
+
+.campoEmail {
+    grid-column: 2/3;
+    grid-row: 3/4;
+}
+
+.inputEmail{
+    grid-column: 2/3;
+    grid-row: 4/5;
+}
+
+.campoContraseña {
+    grid-column: 1/2;
+    grid-row: 5/6;
+}
+
+.inputContraseña {
+    grid-column: 1/2;
+    grid-row: 6/7;
+}
+
+.campoTel {
+    grid-column: 2/3;
+    grid-row: 5/6;
+}
+
+.inputTel {
+    grid-column: 2/3;
+    grid-row: 6/7;
+}

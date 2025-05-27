@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 
 const userSchema = z.object({
-  name: z.string({
+  firstname: z.string({
     required_error: "Nombre es requerido",
   }).min(3, "Tu nombre tiene que tener al menos 3 caracteres"),
 
@@ -56,7 +56,7 @@ function Registro() {
   const form = useForm<UserType>({
     resolver: zodResolver(userSchema),
     defaultValues: {
-      name: "",
+      firstname: "",
       lastname: "",
       username: "",
       email: "",
@@ -74,7 +74,7 @@ function Registro() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: values.name,
+          firstname: values.firstname,
           lastname: values.lastname,
           username: values.username,
           email: values.email,
@@ -122,7 +122,7 @@ function Registro() {
           <Form {...form}>
             <form className="flex flex-col gap-y-2" onSubmit={onSubmit}>
               <FormField
-                name="name"
+                name="firstname"
                 control={form.control}
                 render={({ field }) => (
                   <FormItem className="mb-4">

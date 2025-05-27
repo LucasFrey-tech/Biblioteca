@@ -52,7 +52,7 @@ export default function Navbar() {
 
                 <div className={styles.Usuario}>
                     {/*Muestra Usuario al iniciar sesion*/}
-                    {username ? (
+                    {username !== undefined && username !== null  ? (
                         <span className={styles.nombreUsuario}>{username}</span>
                     ) : (
                         <a className={styles.boton} href="http://localhost:3000/login">acceder</a>
