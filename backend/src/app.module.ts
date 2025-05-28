@@ -1,17 +1,28 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Book } from './entidades/book.entity';
-// import { Genre } from './entidades/genre.entity';
-// import { Author } from './entidades/author.entity';
+import { User } from './entidades/user.entity';
+import { UsersModule } from './modules/users/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book])],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'admin123',
+      database: 'alejandria',
+      entities: [User],
+      synchronize: true, 
+    }),
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
+    TypeOrmModule.forFeature([User]),
+    UsersModule,
+    AuthModule,
+  ],
 })
 export class AppModule {}
-
-
-//TypeOrmModule.forFeature([Book, Genre]), BooksModule

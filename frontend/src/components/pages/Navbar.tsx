@@ -1,12 +1,21 @@
 'use client';
-
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
+import { jwtDecode } from 'jwt-decode';
+
+interface User {
+  sub: number;
+  email: string;
+  username: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [user, setUser] = useState<User>();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -15,13 +24,49 @@ export default function Navbar() {
     const closeSidebar = () => {
         setIsSidebarOpen(false);
     };
+    
+    
+    useEffect(() => {
+        const obtenerUsuario = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+            console.error('No hay token en localStorage');
+            return;
+            }
+
+            const { sub: id } = jwtDecode<{ sub: string }>(token);
+
+            const response = await fetch(`http://localhost:3001/users/${id}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            });
+
+            if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario');
+            }
+
+            const data = await response.json();
+            setUser(data);
+        } catch (error) {
+            console.error('Hubo un error:', error);
+        }
+    };
+
+    obtenerUsuario();
+  }, []);
 
     return (
         <>
             <header className={styles.Header}>
                 <div className={styles.TituloPagina}>
-                    <h1>alejandria</h1>
-                    <h2>Biblioteca Virtual</h2>
+                    <a href="http://localhost:3000/inicio">
+                        <h1>alejandria</h1>
+                        <h2>Biblioteca Virtual</h2>
+                    </a>
                 </div>
 
                 <nav className={styles.Navegacion}>
@@ -42,7 +87,12 @@ export default function Navbar() {
                 </nav>
 
                 <div className={styles.Usuario}>
-                    <a className={styles.boton} href="http://localhost:3000/login">acceder</a>
+                    {/*Muestra Usuario al iniciar sesion*/}
+                    {user ? (
+                        <span className={styles.nombreUsuario}>{user.username}</span>
+                    ) : (
+                        <a className={styles.boton} href="http://localhost:3000/login">Acceder</a>
+                    )}
                 </div>
 
                 <button className={styles.menuButton} onClick={toggleSidebar}>

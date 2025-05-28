@@ -6,6 +6,12 @@ export class User {
   id: number;
 
   @Column()
+  firstname: string;
+
+  @Column()
+  lastname: string;
+
+  @Column()
   username: string;
 
   @Column({ unique: true })
