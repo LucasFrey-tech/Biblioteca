@@ -12,7 +12,7 @@
 // };
 
 // type Book = {
-//     id_book: number;
+//     id: number;
 //     title: string;
 //     price: number;
 //     author: Author;
@@ -28,12 +28,12 @@
 //             .catch(() => setAuthorName('Desconocido'));
 //     }, [book.author]);
 
-//     const imagePath = `/libros/book_${book.id_book}.png`;
+//     const imagePath = `/libros/book_${book.id}.png`;
 
 //     const router = useRouter();
 
 //     const handleCardClick = () => {
-//         router.push(`/book/${book.id_book}`);
+//         router.push(`/book/${book.id}`);
 //     };
 
 //     const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,7 +83,7 @@ import styles from '../../styles/BookCard.module.css';
 import Image from 'next/image';
 
 type Book = {
-    id_book: number;
+    id: number;
     title: string;
     price: number;
     author: {
@@ -94,11 +94,11 @@ type Book = {
 
 export default function BookCard({ book }: { book: Book }) {
     const authorName = book.author?.name ?? 'Desconocido';
-    const imagePath = `/libros/book_${book.id_book}.png`;
+    const imagePath = `/libros/book_${book.id}.png`;
     const router = useRouter();
 
     const handleCardClick = () => {
-        router.push(`/book/${book.id_book}`);
+        router.push(`/book/${book.id}`);
     };
 
     const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {

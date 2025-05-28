@@ -11,7 +11,7 @@ type Author = {
 };
 
 type Book = {
-    id_book: number;
+    id: number;
     title: string;
     price: number;
     author: Author;
@@ -26,14 +26,19 @@ export default function BookPage() {
         const fetchBooks = async () => {
             try {
                 const res = await fetch('http://localhost:3001/books');
+
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
+                
                 const data = await res.json();
+                
                 if (!Array.isArray(data)) {
                     throw new Error('La respuesta de la API no es un arreglo');
                 }
+                
                 console.log('Libros recibidos:', data);
+                
                 setBooks(data);
             } catch (error) {
                 console.error('Error al obtener libros:', error);
@@ -87,7 +92,7 @@ export default function BookPage() {
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard key={book.id_book} book={book} />
+                            <BookCard key={book.id} book={book} />
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>

@@ -6,29 +6,37 @@ insert into users(username,email,password) values ('paredes','paredes@gmail.com'
 insert into users(username,email,password,admin) values ('adm','adm@gmail.com','adm',true);
 
 -- AÑADIR DATOS DE PRUEBA A BOOKS
-insert into books(tittle,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,isbn,stock,price ) values (
 	'1984',
 	1,
 	'Una descripción.',
 	'1',
 	9,
-	99.9
+	28000
 );
-insert into books(tittle,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,isbn,stock,price ) values (
 	'Rebelion En La Granja',
 	1,
 	'Una descripción.',
 	'2',
 	9,
-	99.9
+	18000
 );
-insert into books(tittle,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,isbn,stock,price ) values (
 	'Cómo hablar con tu perro acerca de homosexualidad, comunismo y otros temas variados',
 	2,
 	'Una descripción.',
 	'3',
 	9,
-	99.9
+	15000.50
+);
+insert into books(title,author_id,description,isbn,stock,price ) values (
+	'Harry Poter y la Piedra Filosofal',
+	3,
+	'Una descripción.',
+	'4',
+	9,
+	30000
 );
 
 -- AÑADIR DATOS DE PRUEBA A GENRES

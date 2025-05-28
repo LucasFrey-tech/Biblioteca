@@ -8,9 +8,10 @@ import { Author } from 'src/entidades/author.entity';
 import {CatalogueBooksModule} from '../catalogue/catalogue_books.module';
 import {LibraryBooksModule} from '../library/library_books.module';
 import {BookReviewsModule} from '../reviews/book_reviews.module';
+import { BookGenre } from 'src/entidades/book_genres.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book, Genre, Author]),CatalogueBooksModule,LibraryBooksModule,BookReviewsModule],
+  imports: [TypeOrmModule.forFeature([Book, Genre, Author, BookGenre]),CatalogueBooksModule,LibraryBooksModule,BookReviewsModule],
   controllers: [BooksController],
   providers: [BooksService],
 })

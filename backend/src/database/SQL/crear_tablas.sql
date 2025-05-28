@@ -17,7 +17,7 @@ create table users (
 -- CREAR TABLA BOOKS
 create table books (
 	id serial primary key,
-	tittle varchar(100) not null,
+	title varchar(100) not null,
 	author_id INTEGER NOT NULL,
 	description text not null,
 	isbn varchar(20) unique,
