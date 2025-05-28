@@ -3,10 +3,19 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
+import { jwtDecode } from 'jwt-decode';
+
+interface User {
+  sub: number;
+  email: string;
+  username: string;
+  iat: number;
+  exp: number;
+}
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [username, setUsername] = useState<string>();
+    const [user, setUser] = useState<User>();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -15,13 +24,40 @@ export default function Navbar() {
     const closeSidebar = () => {
         setIsSidebarOpen(false);
     };
-
+    
+    
     useEffect(() => {
-        const storedUsername = localStorage.getItem('username');
-        if (storedUsername) {
-            setUsername(storedUsername);
+        const obtenerUsuario = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+            console.error('No hay token en localStorage');
+            return;
+            }
+
+            const { sub: id } = jwtDecode<{ sub: string }>(token);
+
+            const response = await fetch(`http://localhost:3001/users/${id}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            });
+
+            if (!response.ok) {
+            throw new Error('Error al obtener los datos del usuario');
+            }
+
+            const data = await response.json();
+            setUser(data);
+        } catch (error) {
+            console.error('Hubo un error:', error);
         }
-    }, []);
+    };
+
+    obtenerUsuario();
+  }, []);
 
     return (
         <>
@@ -52,10 +88,10 @@ export default function Navbar() {
 
                 <div className={styles.Usuario}>
                     {/*Muestra Usuario al iniciar sesion*/}
-                    {username !== undefined && username !== null  ? (
-                        <span className={styles.nombreUsuario}>{username}</span>
+                    {user ? (
+                        <span className={styles.nombreUsuario}>{user.username}</span>
                     ) : (
-                        <a className={styles.boton} href="http://localhost:3000/login">acceder</a>
+                        <a className={styles.boton} href="http://localhost:3000/login">Acceder</a>
                     )}
                 </div>
 
