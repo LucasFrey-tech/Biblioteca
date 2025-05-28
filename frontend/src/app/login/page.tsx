@@ -18,18 +18,17 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation'; 
 import Swal from 'sweetalert2';
-import { jwtDecode } from 'jwt-decode';
 
 
-interface JwtPayload {
+/*interface JwtPayload {
   sub: number;
   email: string;
-  userName: string;
+  username: string;
   firstname: string;
   lastname: string
   iat: number;
   exp: number;
-}
+}*/
 
 // Validación
 const userSchema = z.object({
@@ -100,11 +99,8 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
     console.log('Datos:', data);
 
     if (data.access_token) {
-      const decoded: JwtPayload = jwtDecode(data.access_token);
       localStorage.setItem('token', data.access_token);
-      localStorage.setItem('userName', decoded.userName);
-      localStorage.setItem('firstname', decoded.firstname);
-      localStorage.setItem('lastname', decoded.lastname);
+
       Swal.fire({
         title: 'Iniciando sesión!',
         text: 'Redirigiendo a la página de inicio...',
