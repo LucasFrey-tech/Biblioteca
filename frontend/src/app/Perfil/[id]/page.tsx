@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import styles from '../../styles/profile.module.css'
+import { useParams } from 'next/navigation';
+import styles from '../../../styles/profile.module.css'
 
-interface Usuario {
+interface User {
   id: number;
   email: string;
   nombre: string;
@@ -11,26 +12,53 @@ interface Usuario {
 }
 
 export default function profilePage() {
+    const { id } = useParams();
     const bannerRef = useRef<HTMLDivElement>(null);
-
-    const [username, setUsername] = useState<string>();
+    const [user, setUser] = useState<User>();
 
     useEffect(() => {
-        const storedUsername = localStorage.getItem('username');
-        console.log("TOKEN:", );
-        if (storedUsername) {
-            setUsername(storedUsername);
+        const getProfile = async () => {
+            if (!id){
+                console.error('No se proporcionó un Id de usuario');
+            }
+            try{
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Faltan datos de autenticación');
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:3001/users/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al obtener el perfil del usuario');
+                }
+
+                const data = await response.json();
+                setUser(data);
+            }catch (error){
+                console.error('Hubo un error al cargar el perfil: ', error);
+            }
         }
-    }, []);
+        getProfile();
+    }, [id]); 
+
+
+    if (!user) return;
 
     return (
         <div className={styles.container}>
             <section className={styles.banner} ref={bannerRef}></section>
             <div className={styles.background}>
                 <main className={styles.info}>
-                    <div className={styles.name}>{username}</div>
+                    <div className={styles.name}>{user.nombre}</div>
                     <div className={styles.userInfo}>
-                        <form>
+                        {/*<form>
                             <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br />
                             <input type='text' id='fname' name='fname' className={styles.inputNombre}/><br />
                             <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br />
@@ -43,7 +71,8 @@ export default function profilePage() {
                             <input type='text' name='pass' id='pass' className={styles.inputContraseña}/><br />
                             <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br />
                             <input type='"text"' id='tel' name='tel' className={styles.inputTel}/>
-                        </form>
+                        </form>*/}
+                        {user.email}
                     </div>
                 </main>
             </div>

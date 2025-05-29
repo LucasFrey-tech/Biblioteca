@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
 import { jwtDecode } from 'jwt-decode';
+import { useRouter} from 'next/navigation';
 
 interface User {
   sub: number;
@@ -15,7 +16,9 @@ interface User {
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<User | null>();
+    const [menuDropDown, setDropDown] = useState<boolean>();
+    const router = useRouter();
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -25,38 +28,43 @@ export default function Navbar() {
         setIsSidebarOpen(false);
     };
     
-    
+    const toggleMenu = () => {
+        setDropDown(!menuDropDown);
+    };
+
+    const closeSession = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        setDropDown(false);
+        router.push('/login');
+    };
+
+    ////////////////////////////////////////
+    const handleProfileClick = () => {
+        if (user?.sub) {
+            router.push(`/Perfil/${user.sub}`);
+            setDropDown(false);
+        }
+    };
+    ///////////////////////////////////////
+
     useEffect(() => {
-        const obtenerUsuario = async () => {
+        const getUser = async () => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-            console.error('No hay token en localStorage');
-            return;
+                console.error('No hay token en localStorage');
+                return;
             }
 
-            const { sub: id } = jwtDecode<{ sub: string }>(token);
-
-            const response = await fetch(`http://localhost:3001/users/${id}`, {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            });
-
-            if (!response.ok) {
-            throw new Error('Error al obtener los datos del usuario');
-            }
-
-            const data = await response.json();
-            setUser(data);
+            const decoded = jwtDecode<User>(token);
+            setUser(decoded);
         } catch (error) {
             console.error('Hubo un error:', error);
         }
     };
 
-    obtenerUsuario();
+    getUser();
   }, []);
 
     return (
@@ -89,7 +97,19 @@ export default function Navbar() {
                 <div className={styles.Usuario}>
                     {/*Muestra Usuario al iniciar sesion*/}
                     {user ? (
-                        <span className={styles.nombreUsuario}>{user.username}</span>
+                        <div className={styles.menuDesplegable}>
+                            <button className={styles.nombreUsuario} onClick={toggleMenu}>{user.username}</button>
+                            {menuDropDown && (
+                                <div className={styles.dropDownMenu}>
+                                    {user && (
+                                        <button onClick={handleProfileClick}>
+                                            Mi Perfil
+                                        </button>
+                                    )}
+                                    <button onClick={closeSession}>Cerrar Sesion</button>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <a className={styles.boton} href="http://localhost:3000/login">Acceder</a>
                     )}
