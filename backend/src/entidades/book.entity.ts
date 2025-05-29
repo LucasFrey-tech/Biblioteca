@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
-import { Genre } from '../entidades/genre.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { BookGenre } from './book_genres.entity';
+import { Author } from './author.entity';
 
 @Entity('books')
 export class Book {
@@ -30,11 +31,10 @@ export class Book {
   @Column('float')
   price: number;
 
-  @ManyToMany(() => Genre)
-  @JoinTable({
-    name: 'book_genres',
-    joinColumn: { name: 'id_book', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'id_genre', referencedColumnName: 'id' }
-  })
-  genres: Genre[];
+  @ManyToOne(() => Author)
+  @JoinColumn({ name: 'author_id', referencedColumnName: 'id' })
+  author: Author;
+
+  @OneToMany(() => BookGenre, (bookGenre) => bookGenre.idBook)
+  genresRelations: BookGenre[];
 }
