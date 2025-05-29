@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { User } from '../../entidades/user.entity';
 import { BadRequestException } from '@nestjs/common';
 
@@ -11,9 +11,16 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  findAll() {
-    return this.usersRepository.find();
-  }
+async findAll(search = ''): Promise<User[]> {
+  return this.usersRepository.find({
+    where: [
+      { firstname: ILike(`%${search}%`) },
+      { lastname: ILike(`%${search}%`) },
+      { email: ILike(`%${search}%`) }
+    ],
+    order: { id: 'ASC' },
+  });
+}
 
   findOne(id: number) {
     return this.usersRepository.findOne({ where: { id } });
