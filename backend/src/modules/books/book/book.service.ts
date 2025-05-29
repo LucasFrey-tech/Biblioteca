@@ -1,48 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Book } from 'src/entidades/book.entity';
+import { Book } from '../../../entidades/book.entity';
 
 @Injectable()
 export class BooksService {
   constructor(
     @InjectRepository(Book)
-    private bookRepository: Repository<Book>,
+    private booksRepository: Repository<Book>,
   ) {}
 
-  async findAll(): Promise<Book[]> {
-    return await this.bookRepository.find({
-      relations: ['author', 'genresRelations.genre'],
-    });
+  findAll(): Promise<Book[]> {
+    // return this.booksRepository.find({ relations: ['author', 'genres'] });
+    return this.booksRepository.find();
   }
 
-  async findOne(id: number): Promise<Book> {
-    const book = await this.bookRepository.findOne({
-      where: { id },
-      relations: ['author', 'genresRelations.genre'],
-    });
-
-    if (!book) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
-
-    return book;
+  findOne(id: number) {
+    return this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
   }
 
-  async create(book: Partial<Book>): Promise<Book> {
-    const newBook = this.bookRepository.create(book);
-    return await this.bookRepository.save(newBook);
+  create(book: Partial<Book>) {
+    return this.booksRepository.save(book);
   }
 
-  async update(id: number, updateData: Partial<Book>): Promise<Book> {
-    await this.bookRepository.update(id, updateData);
+  async update(id: number, updateData: Partial<Book>) {
+    await this.booksRepository.update(id, updateData);
     return this.findOne(id);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.bookRepository.delete(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
+  delete(id: number) {
+    return this.booksRepository.delete(id);
   }
 }

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entidades/user.entity';
 import { Book } from './entidades/book.entity';
 import { Genre } from './entidades/genre.entity';
+import { Author } from './entidades/author.entity';
 
 // Modulos
 import { BookGenre } from './entidades/book_genres.entity';
@@ -24,18 +25,20 @@ import { GenresModule } from './modules/genres/genre.module';
       username: 'postgres',
       password: 'admin123',
       database: 'alejandria',
-      entities: [User, Book],
+      entities: [User],
+      // entities: [Book, Author, Genre, BookGenre],
       synchronize: true, 
     }),
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    TypeOrmModule.forFeature([User, Book, Genre, BookGenre]),
+    TypeOrmModule.forFeature([User]),
+    // TypeOrmModule.forFeature([User, Book, Genre, BookGenre]),
     UsersModule,
     AuthModule,
     GenresModule,
   ],
-  controllers: [BooksController],
-  providers: [BooksService],
+  // controllers: [BooksController],
+  // providers: [BooksService],
 })
 export class AppModule {}

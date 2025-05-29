@@ -8,26 +8,27 @@ export class BooksController {
 
   @Get()
   findAll(): Promise<Book[]> {
+    console.log("PROBAMOS TEXTO")
     return this.booksService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Book> {
+  findOne(@Param('id') id: number) {
     return this.booksService.findOne(id);
   }
 
   @Post()
-  create(@Body() newBook: Partial<Book>): Promise<Book> {
-    return this.booksService.create(newBook);
+  create(@Body() book: Partial<Book>) {
+    return this.booksService.create(book);
   }
 
   @Put(':id')
-  update(@Param('id') id: number, @Body() book: Partial<Book>): Promise<Book> {
+  update(@Param('id') id: number, @Body() book: Partial<Book>) {
     return this.booksService.update(id, book);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.booksService.remove(id);
+  delete(@Param('id') id: number) {
+    return this.booksService.delete(id);
   }
 }

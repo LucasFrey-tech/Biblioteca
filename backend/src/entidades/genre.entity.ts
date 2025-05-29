@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { BookGenre } from './book_genres.entity';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('genres')
 export class Genre {
@@ -8,7 +7,4 @@ export class Genre {
 
   @Column()
   name: string;
-
-  @OneToMany(() => BookGenre, (bg) => bg.idGenre)
-  booksRelations: BookGenre[];
 }
