@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
       password: 'admin123',
       database: 'alejandria',
       entities: [User],
-      synchronize: true, 
+      synchronize: false, 
     }),
     ConfigModule.forRoot({
     isGlobal: true, 

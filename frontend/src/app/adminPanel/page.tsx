@@ -1,6 +1,4 @@
 'use client';
-
-import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from 'lucide-react';
@@ -42,7 +40,7 @@ export default function PanelAdmin() {
     );
   };
 
-  const handleUpdateUser = async (id: number, updates: Partial<User>, successMsg: string) => {
+  const updateUser = async (id: number, updates: Partial<User>, successMsg: string) => {
     try {
       const res = await fetch(`http://localhost:3001/users/${id}`, {
         method: 'PATCH',
@@ -67,53 +65,51 @@ export default function PanelAdmin() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={`${styles.contenido} flex flex-col items-center justify-center p-4`}>
-        <div className="flex flex-row justify-center items-center gap-4 p-[1%] text-center">
-          <Button
-            className={`px-4 py-2 text-sm md:px-16 md:py-6 md:text-lg 
-             ${activeTab === 'users' ? 'bg-blue-600 text-white' : ''
-            }`}
-            onClick={() => setActiveTab('users')}
-          >Usuarios</Button>
-          
-          <Button
-            className={`px-4 py-2 text-sm md:px-16 md:py-6 md:text-lg ${
-              activeTab === 'books' ? 'bg-blue-600 text-white' : ''
-            }`}
-            onClick={() => setActiveTab('books')}
-          >
-            Libros
-          </Button>
-        </div>
+      <h1 className={styles.titulo}>PANEL DE ADMINISTRADOR</h1>
+      <div className={styles.navButtons}>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'users' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('users')}
+        >
+          Usuarios
+        </button>
+        <button
+          className={`${styles.tabButton} ${activeTab === 'books' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('books')}
+        >
+          Libros
+        </button>
+      </div>
 
+      <div className={styles.contenido}>
         {activeTab === 'users' && (
           <>
             <Input
               placeholder='Buscar usuario'
-              className="mb-4 w-full max-w-md"
+              className={styles.inputSearch}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
 
             {filteredUsers.map(user => (
-              <div key={user.id} className="w-full max-w-md border-[3px] border-gray-400 bg-white p-4 rounded-md mb-4">
+              <div key={user.id} className={styles.userCard}>
                 <div
-                  className="flex justify-between items-center cursor-pointer"
+                  className={styles.userHeader}
                   onClick={() => toggleUserOpen(user.id)}
                 >
-                  <span className="font-medium text-lg">{user.firstname} {user.lastname}</span>
+                  <span className={styles.userName}>{user.firstname} {user.lastname}</span>
                   {userOpenIds.includes(user.id) ? <ChevronUp /> : <ChevronDown />}
                 </div>
 
                 {userOpenIds.includes(user.id) && (
-                  <div className="mt-3 p-3 border rounded bg-gray-100 space-y-4">
+                  <div className={styles.userDetails}>
                     {/* Sección Administrador */}
-                    <div className="flex justify-between items-center">
-                      <p className="font-medium">Administrador</p>
-                      <div className="flex gap-2">
+                    <div className={styles.userActionRow}>
+                      <p className={styles.actionTitle}>Administrador</p>
+                      <div className={styles.actionButtons}>
                         <button
                           disabled={user.admin}
-                          className={`text-green-600 text-xl hover:scale-110 transition ${user.admin && 'opacity-50 cursor-not-allowed'}`}
+                          className={`${styles.actionButton} ${user.admin ? styles.disabledButton : styles.enableButton}`}
                           onClick={() =>
                             Swal.fire({
                               title: "¿Hacer administrador a este usuario?",
@@ -123,14 +119,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                handleUpdateUser(user.id, { admin: true }, 'Usuario ahora es administrador');
+                                updateUser(user.id, { admin: true }, 'Usuario ahora es administrador');
                               }
                             })
                           }
                         >✅</button>
                         <button
                           disabled={!user.admin}
-                          className={`text-red-600 text-xl hover:scale-110 transition ${!user.admin && 'opacity-50 cursor-not-allowed'}`}
+                          className={`${styles.actionButton} ${!user.admin ? styles.disabledButton : styles.enableButton}`}
                           onClick={() =>
                             Swal.fire({
                               title: "¿Quitar administrador a este usuario?",
@@ -140,7 +136,7 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                handleUpdateUser(user.id, { admin: false }, 'Se quitó el rol de administrador');
+                                  updateUser(user.id, { admin: false }, 'Se quitó el rol de administrador');
                               }
                             })
                           }
@@ -149,12 +145,12 @@ export default function PanelAdmin() {
                     </div>
 
                     {/* Sección Bloquear */}
-                    <div className="flex justify-between items-center">
-                      <p className="font-medium">Bloquear</p>
-                      <div className="flex gap-2">
+                    <div className={styles.userActionRow}>
+                      <p className={styles.actionTitle}>Bloquear</p>
+                      <div className={styles.actionButtons}>
                         <button
                           disabled={user.disabled}
-                          className={`text-green-600 text-xl hover:scale-110 transition ${user.disabled && 'opacity-50 cursor-not-allowed'}`}
+                          className={`${styles.actionButton} ${user.disabled ? styles.disabledButton : styles.enableButton}`}
                           onClick={() =>
                             Swal.fire({
                               title: "¿Bloquear a este usuario?",
@@ -164,14 +160,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                handleUpdateUser(user.id, { disabled: true }, 'Usuario bloqueado');
+                                updateUser(user.id, { disabled: true }, 'Usuario bloqueado');
                               }
                             })
                           }
                         >✅</button>
                         <button
                           disabled={!user.disabled}
-                          className={`text-red-600 text-xl hover:scale-110 transition ${!user.disabled && 'opacity-50 cursor-not-allowed'}`}
+                          className={`${styles.actionButton} ${!user.disabled ? styles.disabledButton : styles.enableButton}`}
                           onClick={() =>
                             Swal.fire({
                               title: "¿Desbloquear a este usuario?",
@@ -181,7 +177,7 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                handleUpdateUser(user.id, { disabled: false }, 'Usuario desbloqueado');
+                                updateUser(user.id, { disabled: false }, 'Usuario desbloqueado');
                               }
                             })
                           }
@@ -198,3 +194,6 @@ export default function PanelAdmin() {
     </div>
   );
 }
+
+
+
