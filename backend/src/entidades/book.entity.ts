@@ -7,7 +7,7 @@ export class Book {
   id: number;
 
   @Column()
-  tittle: string;
+  title: string;
 
   @Column()
   author_id: number;
