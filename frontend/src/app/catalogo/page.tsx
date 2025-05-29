@@ -2,6 +2,10 @@
 
 import { useEffect, useState, FormEvent } from 'react';
 import { FaSearch } from 'react-icons/fa';
+
+import { Book } from '../../../../backend/src/entidades/book.entity';
+
+
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 
@@ -10,36 +14,46 @@ type Author = {
     name: string;
 };
 
-type Book = {
-    id: number;
-    title: string;
-    price: number;
-    author: Author;
-};
-
 export default function BookPage() {
     const [books, setBooks] = useState<Book[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [authors, setAuthors] = useState<Author[]>([]);
+
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
-                const res = await fetch('http://localhost:3001/books');
+                const res = await fetch('http://localhost:3001/books', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const resAuthors = await fetch('http://localhost:3001/authors', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
-                
+
                 const data = await res.json();
-                
+                const dataAuthors = await resAuthors.json();
+
                 if (!Array.isArray(data)) {
                     throw new Error('La respuesta de la API no es un arreglo');
                 }
-                
+
                 console.log('Libros recibidos:', data);
-                
+
                 setBooks(data);
+                setAuthors(dataAuthors);
+
             } catch (error) {
                 console.error('Error al obtener libros:', error);
                 setBooks([]);
@@ -50,8 +64,8 @@ export default function BookPage() {
 
     const filteredBooks = Array.isArray(books)
         ? books.filter((book) =>
-              book.title.toLowerCase().includes(searchQuery.toLowerCase())
-          )
+            book.title.toLowerCase().includes(searchQuery.toLowerCase())
+        )
         : [];
 
     const handleSubmit = (e: FormEvent) => {
@@ -92,7 +106,7 @@ export default function BookPage() {
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard key={book.id} book={book} />
+                            <BookCard key={book.id} book={{id: book.id, title: book.title, price: book.price, author: authors.find((a) => a.id == book.author_id)?.name}} />
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>

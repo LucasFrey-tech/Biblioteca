@@ -11,13 +11,12 @@ export class AuthorService {
     ) { }
 
     findAll(): Promise<Author[]> {
-        return this.authorRepository.find({ relations: ['books'] });
+        return this.authorRepository.find({});
     }
 
     async findOne(id: number): Promise<Author> {
     const author = await this.authorRepository.findOne({
-        where: { id },
-        relations: ['books'],
+        where: { id }
     });
 
     if (!author) {

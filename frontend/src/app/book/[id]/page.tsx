@@ -2,6 +2,11 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { Book } from '../../../../../backend/src/entidades/book.entity';
+// import { Author } from '../../../../../backend/src/entidades/author.entity';
+// import { Review } from '../../../../../backend/src/entidades/author.entity';
+
 import styles from '../../../styles/BookDetail.module.css';
 
 type Author = {
@@ -9,30 +14,32 @@ type Author = {
     name: string;
 };
 
-type Book = {
-    id_book: number;
-    title: string;
-    author: string;
-    price: number;
-    synopsis?: string;
-};
+// type Book = {
+//     id_book: number;
+//     title: string;
+//     author_id: number;
+//     price: number;
+//     synopsis?: string;
+// };
 
-type Comment = {
-    id: number;
-    user: string;
-    comment: string;
-    rating: number;
-};
+// type Comment = {
+//     id: number;
+//     user: string;
+//     comment: string;
+//     rating: number;
+// };
 
 export default function BookDetail() {
     const params = useParams();
     const [book, setBook] = useState<Book | null>(null);
-    const [author, setAuthor] = useState<Author | null>(null);
+    const [author, setAuthor] = useState<Author>({id:0, name:''});
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-      useEffect(() => {
+    // let author = new Author ;
+    
+    useEffect(() => {
         if (!params || !params.id) {
             setError('ID del libro no proporcionado.');
             setLoading(false);
@@ -46,23 +53,30 @@ export default function BookDetail() {
             setLoading(false);
             return;
         }
+        
 
         const fetchData = async () => {
             try {
-                const resBook = await fetch(`/api/books/${bookId}`);
+                const resBook = await fetch(`http://localhost:3001/books/${bookId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
                 const dataBook = await resBook.json();
 
                 if (!resBook.ok) throw new Error('Libro no encontrado');
 
-                const resAuthor = await fetch(`/api/authors/${dataBook.author}`);
-                const dataAuthor = await resAuthor.json();
+                const resAuthor = await fetch(`http://localhost:3001/authors/${dataBook.author_id}`);
+                setAuthor(await resAuthor.json());
+                // console.log(authors)
 
-                const resComments = await fetch(`/api/comments?bookId=${bookId}`);
-                const dataComments = await resComments.json();
+                // const resComments = await fetch(`/api/comments?bookId=${bookId}`);
+                // const dataComments = await resComments.json();
 
                 setBook(dataBook);
-                setAuthor(dataAuthor);
-                setComments(dataComments);
+                // setAuthor(dataAuthor); - BORRAR
+                // setComments(dataComments);
             } catch (err: any) {
                 setError(err.message || 'Error al cargar los datos');
             } finally {
@@ -75,15 +89,18 @@ export default function BookDetail() {
 
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
-    if (!book || !author) return <p>Libro no encontrado</p>;
+    console.log(book)
+    if (!book) return <p>Libro no encontrado!!!</p>;
 
+    // console.log(author.find((a) => a.id == book.author_id));
+    console.log(author)
 
     return (
         <div className={styles.container}>
             <div className={styles.bookDetail}>
                 <div className={styles.coverContainer}>
                     <img
-                        src={`/libros/book_${book.id_book}.png`}
+                        src={`/libros/book_${book.id}.png`}
                         alt={book.title}
                         width={300}
                         height={450}
@@ -103,9 +120,9 @@ export default function BookDetail() {
 
             <section className={styles.synopsis}>
                 <h2>Sinopsis</h2>
-                <p>{book.synopsis || 'Sin sinopsis disponible.'}</p>
+                {/* <p>{book.synopsis || 'Sin sinopsis disponible.'}</p> */}
             </section>
-
+{/*  
             <section className={styles.comments}>
                 <h2>Comentarios</h2>
                 {comments.length > 0 ? (
@@ -120,6 +137,9 @@ export default function BookDetail() {
                     <p>No hay comentarios aún.</p>
                 )}
             </section>
+           
+*/}
+
         </div>
     );
 }
