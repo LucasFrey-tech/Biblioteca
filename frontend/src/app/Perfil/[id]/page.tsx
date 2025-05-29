@@ -7,14 +7,73 @@ import styles from '../../../styles/profile.module.css'
 interface User {
   id: number;
   email: string;
-  nombre: string;
-  telefono?: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  tel?: string;
 }
 
 export default function profilePage() {
     const { id } = useParams();
     const bannerRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<User>();
+    const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
+    const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> }>({});
+
+    const fetchGet = async (url: string) => {
+        const response = await fetch(url);
+        const data = await response.json;
+        return data;
+    }
+
+    const editActivate = (u: User) => {
+        setEditMode(prev => ({...prev, [u.id]: true }));
+        setEditedProduct(prev => ({
+            ...prev,
+            [u.id]: {
+                email: u.email,
+                username: u.username,
+                firstname: u.firstname,
+                lastname: u.lastname,
+                tel: u.tel,
+            },
+        }));
+    };
+
+    const saveChanges = async (id: number) => {
+        const datos = editedProduct[id];
+        try {
+            const response = await fetch(`http://localhost:3001/users/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: datos.username,
+                    email: datos.email,
+                    firstname: datos.firstname,
+                    lastname: datos.lastname,
+                    tel: datos.tel
+                }),
+            })
+
+            const result = await response.json()
+
+            if (!response.ok) {
+                alert(`Error al guardar: ${result.message}`)
+                return
+            }else{
+                console.log("HOLA");
+                console.log(result);
+            }
+
+            setUser(result);
+        }catch(error){
+            console.error('Error al guardar producto: ', error);
+            alert('Error de red al guardar el producto');
+        }
+
+    }
 
     useEffect(() => {
         const getProfile = async () => {
@@ -56,23 +115,42 @@ export default function profilePage() {
             <section className={styles.banner} ref={bannerRef}></section>
             <div className={styles.background}>
                 <main className={styles.info}>
-                    <div className={styles.name}>{user.nombre}</div>
+                    <div className={styles.name}>{user.username}</div>
                     <div className={styles.userInfo}>
-                        {/*<form>
-                            <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br />
-                            <input type='text' id='fname' name='fname' className={styles.inputNombre}/><br />
-                            <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br />
-                            <input type='text' id='lname' name='lname' className={styles.inputApellido}/><br />
-                            <label htmlFor='uname' className={styles.campoUsuario}>Nombre de Usuario</label><br />
-                            <input type='text' id='uname' name='uname' className={styles.inputUName}/><br />
-                            <label htmlFor='email' className={styles.campoEmail}>Correo Electronico</label><br />
-                            <input type='text' id='e-mail' name='e-mail' className={styles.inputEmail}/><br />
-                            <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br />
-                            <input type='text' name='pass' id='pass' className={styles.inputContraseña}/><br />
-                            <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br />
-                            <input type='"text"' id='tel' name='tel' className={styles.inputTel}/>
-                        </form>*/}
-                        {user.email}
+                        {editMode[user.id] ? (
+                            <form>
+                                <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br />
+                                <input type='text' id='fname' name='fname' className={styles.inputNombre} value={editedProduct[user.id]?.firstname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], firstname: e.target.value}}))}/><br />
+                                <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br />
+                                <input type='text' id='lname' name='lname' className={styles.inputApellido} value={editedProduct[user.id]?.lastname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], lastname: e.target.value}}))}/><br />
+                                <label htmlFor='uname' className={styles.campoUsuario}>Nombre de Usuario</label><br />
+                                <input type='text' id='uname' name='uname' className={styles.inputUName} value={editedProduct[user.id]?.username} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], username: e.target.value}}))}/><br />
+                                <label htmlFor='email' className={styles.campoEmail}>Correo Electronico</label><br />
+                                <input type='text' id='e-mail' name='e-mail' className={styles.inputEmail} value={editedProduct[user.id]?.email} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value}}))}/><br />
+                                <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br />
+                                <input type='text' name='pass' id='pass' className={styles.inputContraseña}/><br />
+                                <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br />
+                                <input type='text' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: e.target.value}}))}/>
+                                <button className={styles.saveChanges} type="button" onClick={() => saveChanges(user.id)}>Guardar</button>
+                                <button className={styles.cancel}>Cancelar</button>
+                            </form>
+                        ) : (
+                            <div className={styles.user}>
+                                <label className={styles.campoNombre}>Nombre</label>
+                                <span className={styles.inputNombre} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.firstname}</span>
+                                <label className={styles.campoApellido}>Apellido</label>
+                                <span className={styles.inputApellido} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.lastname}</span>
+                                <label className={styles.campoUsuario}>Nombre de Usuario</label>
+                                <span className={styles.inputUName} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.username}</span>
+                                <label className={styles.campoEmail}>Correo Electronico</label>
+                                <span className={styles.inputEmail} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.email}</span>
+                                <label className={styles.campoContraseña}>Contraseña</label>
+                                <span className={styles.inputContraseña} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>******</span>
+                                <label>Numero de Telefono</label>
+                                <span onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.tel}</span>
+                                <button className={styles.edit} type="button" onClick={() => editActivate(user)}>Editar</button>
+                            </div>
+                        )}
                     </div>
                 </main>
             </div>

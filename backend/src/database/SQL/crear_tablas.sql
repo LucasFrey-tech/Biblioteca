@@ -7,7 +7,7 @@ create table users (
 	lastname varchar(100) not null,
 	email varchar(100) not null unique,
 	password varchar(100) not null,
-	tel varchar(20),
+	tel varchar(20) default(''),
 	admin bool default(false),
 	disabled bool default(false),
 	image text default(''),
