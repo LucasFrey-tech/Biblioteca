@@ -18,13 +18,13 @@ export default function profilePage() {
     const bannerRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<User>();
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
-    const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> }>({});
+    const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
 
-    const fetchGet = async (url: string) => {
+    /*const fetchGet = async (url: string) => {
         const response = await fetch(url);
         const data = await response.json;
         return data;
-    }
+    }*/
 
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
@@ -53,6 +53,7 @@ export default function profilePage() {
                     email: datos.email,
                     firstname: datos.firstname,
                     lastname: datos.lastname,
+                    ...(datos.pass ? { password: datos.pass } : {}),
                     tel: datos.tel
                 }),
             })
@@ -68,12 +69,14 @@ export default function profilePage() {
             }
 
             setUser(result);
+            setEditMode(prev => ({ ...prev, [id]: false }));
         }catch(error){
             console.error('Error al guardar producto: ', error);
             alert('Error de red al guardar el producto');
         }
 
     }
+
 
     useEffect(() => {
         const getProfile = async () => {
@@ -82,6 +85,7 @@ export default function profilePage() {
             }
             try{
                 const token = localStorage.getItem('token');
+
                 if (!token) {
                     console.error('Faltan datos de autenticación');
                     return;
@@ -119,20 +123,20 @@ export default function profilePage() {
                     <div className={styles.userInfo}>
                         {editMode[user.id] ? (
                             <form>
-                                <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br />
+                                <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br/>
                                 <input type='text' id='fname' name='fname' className={styles.inputNombre} value={editedProduct[user.id]?.firstname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], firstname: e.target.value}}))}/><br />
-                                <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br />
+                                <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br/>
                                 <input type='text' id='lname' name='lname' className={styles.inputApellido} value={editedProduct[user.id]?.lastname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], lastname: e.target.value}}))}/><br />
-                                <label htmlFor='uname' className={styles.campoUsuario}>Nombre de Usuario</label><br />
+                                <label htmlFor='uname' className={styles.campoUsuario}>Nombre de Usuario</label><br/>
                                 <input type='text' id='uname' name='uname' className={styles.inputUName} value={editedProduct[user.id]?.username} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], username: e.target.value}}))}/><br />
-                                <label htmlFor='email' className={styles.campoEmail}>Correo Electronico</label><br />
-                                <input type='text' id='e-mail' name='e-mail' className={styles.inputEmail} value={editedProduct[user.id]?.email} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value}}))}/><br />
-                                <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br />
-                                <input type='text' name='pass' id='pass' className={styles.inputContraseña}/><br />
-                                <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br />
-                                <input type='text' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: e.target.value}}))}/>
+                                <label htmlFor='email' className={styles.campoEmail}>Correo Electronico</label><br/>
+                                <input type='email' id='e-mail' name='e-mail' className={styles.inputEmail} value={editedProduct[user.id]?.email} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value}}))}/><br />
+                                <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br/>
+                                <input type='password' name='pass' id='pass' className={styles.inputContraseña} value={editedProduct[user.id]?.pass ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], pass: e.target.value}}))}/><br/>
+                                <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br/>
+                                <input type='tel' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: e.target.value}}))}/>
                                 <button className={styles.saveChanges} type="button" onClick={() => saveChanges(user.id)}>Guardar</button>
-                                <button className={styles.cancel}>Cancelar</button>
+                                <button className={styles.cancel} onClick={() => setEditMode(prev => ({ ...prev, [user.id]: false }))}>Cancelar</button>
                             </form>
                         ) : (
                             <div className={styles.user}>
