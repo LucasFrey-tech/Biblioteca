@@ -5,8 +5,10 @@ on:
     branches: [ "main", "Develop" ]
 name: Test
 jobs:
-  test:
+  defaults:
     runs-on: ubuntu-latest
+    working-directory: ./backend
+  test:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
