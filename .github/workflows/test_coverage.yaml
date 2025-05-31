@@ -5,6 +5,7 @@ name: Test
 jobs:
   test:
     runs-on: ubuntu-latest
+    working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@master
