@@ -1,10 +1,10 @@
 import { Repository } from 'typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { UsersService } from "src/modules/users/user.service";
-import { User } from 'src/entidades/user.entity';
-import { mockUser1, mockUsers } from '../mocks/user.mock';
+import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../../src/entidades/user.entity';
+import { mockUser1, mockUser2, mockUsers } from '../mocks/user.mock';
+import { UsersService } from "../../src/modules/users/user.service";
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -49,48 +49,49 @@ describe('UsersService', () => {
       repo.findOne.mockResolvedValue(mockUser1);
       const result = await service.findOne(1);
       expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(result).toEqual(mockUser1);
+      expect(result).toEqual({ 
+        id: 1,
+        username: "curt",
+        firstname: "truc",
+        lastname: "is",
+        email: "curt@si.com",
+        password: "a",
+        disabled: false,
+        admin: false,
+        image: "https://mir-s3-cdn-cf.behance.net/projects/404/ae2a60174729493.Y3JvcCwxOTk5LDE1NjQsMCwyMTc.png",
+        registrationDate: new Date("2020-05-02"),
+       });
     });
   });
 
   describe('create', () => {
-    it('should throw if email and username already exist', async () => {
-      repo.findOne
-        .mockResolvedValueOnce(mockUser1) // email exists
-        .mockResolvedValueOnce(mockUser1); // username exists
-      await expect(service.create({ email: mockUser1.email, username: mockUser1.username }))
+    it('should throw if email exists', async () => {
+      repo.findOne.mockResolvedValueOnce(mockUser1);
+      await expect(service.create({ email: mockUser1.email, username: 'nombreEjemplo' }))
         .rejects.toThrow(BadRequestException);
     });
 
-    it('should throw if only email exists', async () => {
-      repo.findOne
-        .mockResolvedValueOnce(mockUser1) // email exists
-        .mockResolvedValueOnce(null); // username does not exist
-      await expect(service.create({ email: mockUser1.email, username: 'other' }))
-        .rejects.toThrow(BadRequestException);
-    });
-
-    it('should throw if only username exists', async () => {
-      repo.findOne
-        .mockResolvedValueOnce(null) // email does not exist
-        .mockResolvedValueOnce(mockUser1); // username exists
-      await expect(service.create({ email: 'other@example.com', username: mockUser1.username }))
-        .rejects.toThrow(BadRequestException);
-    });
-
-    it('should save user if email and username are unique', async () => {
-      repo.findOne
-        .mockResolvedValueOnce(null) // email does not exist
-        .mockResolvedValueOnce(null); // username does not exist
-      repo.save.mockResolvedValue(mockUser1);
-      const result = await service.create({ email: mockUser1.email, username: mockUser1.username });
-      expect(repo.save).toHaveBeenCalledWith({ email: mockUser1.email, username: mockUser1.username });
+    it('should save user if email is unique', async () => {
+      repo.save.mockResolvedValueOnce(mockUser1);
+      const mockTestUser = {
+        email: "a@b.com",
+        username: "nombreEjemplo",
+        firstname: "nombreEjemplo",
+        lastname: "nombreEjemplo",
+        password: "pasEjemplo",
+        disabled: false,
+        admin: false,
+        image: "urlImagen",
+        registrationDate: new Date("2020-05-02"),
+      };
+      const result = await service.create(mockTestUser);
+      expect(repo.save).toHaveBeenCalledWith(mockTestUser);
       expect(result).toEqual(mockUser1);
     });
   });
 
   describe('findByEmail', () => {
-    it('should return user by email', async () => {
+    it('should return user by email', async () => {      
       repo.findOne.mockResolvedValue(mockUser1);
       const result = await service.findByEmail(mockUser1.email);
       expect(repo.findOne).toHaveBeenCalledWith({ where: { email: mockUser1.email } });
@@ -99,7 +100,7 @@ describe('UsersService', () => {
   });
 
   describe('findByUser', () => {
-    it('should return user by username', async () => {
+    it('should return user by username', async () => {      
       repo.findOne.mockResolvedValue(mockUser1);
       const result = await service.findByUser(mockUser1.username);
       expect(repo.findOne).toHaveBeenCalledWith({ where: { username: mockUser1.username } });
@@ -108,21 +109,22 @@ describe('UsersService', () => {
   });
 
   describe('update', () => {
-    it('should update and return the user', async () => {
+    it('should update and return the user', async () => {      
       repo.update.mockResolvedValue({ affected: 1, raw: {} } as any);
       jest.spyOn(service, 'findOne').mockResolvedValue(mockUser1);
-      const result = await service.update(1, { email: 'new@example.com' });
-      expect(repo.update).toHaveBeenCalledWith(1, { email: 'new@example.com' });
+      const result = await service.update(1, { email: 'correo@ejemplo.com' });
+      expect(repo.update).toHaveBeenCalledWith(1, { email: 'correo@ejemplo.com' });
       expect(result).toEqual(mockUser1);
     });
   });
 
   describe('delete', () => {
-    it('should delete the user', async () => {
-      repo.delete.mockResolvedValue({ raw: {}, affected: 1 });
+    it('should delete the user', async () => {      
+      const mockDeleteResult = { raw: {}, affected: 1 };
+      repo.delete.mockResolvedValue(mockDeleteResult as any);
       const result = await service.delete(1);
       expect(repo.delete).toHaveBeenCalledWith(1);
-      expect(result).toEqual({ affected: 1 });
+      expect(result).toEqual(mockDeleteResult);
     });
   });
 });

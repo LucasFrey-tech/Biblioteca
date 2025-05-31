@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserSubscriptionService } from '../../src/modules/subscriptions/subscription_user.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserSubscription } from 'src/entidades/subscription_user.entity';
-import { User } from 'src/entidades/user.entity';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '../../src/entidades/user.entity';
+import { UserSubscription } from '../../src/entidades/subscription_user.entity';
+import { UserSubscriptionService } from '../../src/modules/subscriptions/subscription_user.service';
 
 describe('UserSubscriptionService', () => {
   let service: UserSubscriptionService;

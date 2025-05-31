@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Author } from "src/entidades/author.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { Author } from "../../entidades/author.entity";
 
 @Injectable()
 export class AuthorService {

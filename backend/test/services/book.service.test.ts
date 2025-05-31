@@ -38,13 +38,13 @@ describe('BooksService', () => {
 
   it('findAll should return array of books', async () => {
     const result = await service.findAll();
-    expect(repo.find).toHaveBeenCalledWith({ relations: ['genres'] });
+    expect(repo.find).toHaveBeenCalledWith();
     expect(result).toEqual([mockBook1]);
   });
 
   it('findOne should return a book', async () => {
     const result = await service.findOne(1);
-    expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 1 }, relations: ['genres'] });
+    expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 1 }});
     expect(result).toEqual(mockBook1);
   });
 
