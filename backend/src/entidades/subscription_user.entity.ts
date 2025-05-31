@@ -8,11 +8,7 @@ export class UserSubscription {
 
     @Column({ name: 'id_user' })
     idUser: number;
-
-    @ManyToOne(() => User, { eager: true })
-    @JoinColumn({ name: 'id_user' })
-    user: User;
-
+    
     @Column({ name: 'start_date', type: 'timestamp' })
     startDate: Date;
 
