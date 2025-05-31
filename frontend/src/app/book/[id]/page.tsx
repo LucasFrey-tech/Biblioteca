@@ -4,8 +4,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Book } from '../../../../../backend/src/entidades/book.entity';
-// import { Author } from '../../../../../backend/src/entidades/author.entity';
-// import { Review } from '../../../../../backend/src/entidades/author.entity';
 
 import styles from '../../../styles/BookDetail.module.css';
 
@@ -14,31 +12,28 @@ type Author = {
     name: string;
 };
 
-// type Book = {
-//     id_book: number;
-//     title: string;
-//     author_id: number;
-//     price: number;
-//     synopsis?: string;
-// };
+type Review = {
+    id: number;
+    username: string;
+    comment: string;
+    rating: number;
+    date: string;
+};
 
-// type Comment = {
-//     id: number;
-//     user: string;
-//     comment: string;
-//     rating: number;
-// };
+type User = {
+    id: number;
+    username: string;
+}
 
 export default function BookDetail() {
     const params = useParams();
     const [book, setBook] = useState<Book | null>(null);
-    const [author, setAuthor] = useState<Author>({id:0, name:''});
-    const [comments, setComments] = useState<Comment[]>([]);
+    const [author, setAuthor] = useState<Author>({ id: 0, name: '' });
+    const [review, setReview] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // let author = new Author ;
-    
+
     useEffect(() => {
         if (!params || !params.id) {
             setError('ID del libro no proporcionado.');
@@ -53,7 +48,6 @@ export default function BookDetail() {
             setLoading(false);
             return;
         }
-        
 
         const fetchData = async () => {
             try {
@@ -69,14 +63,22 @@ export default function BookDetail() {
 
                 const resAuthor = await fetch(`http://localhost:3001/authors/${dataBook.author_id}`);
                 setAuthor(await resAuthor.json());
-                // console.log(authors)
 
-                // const resComments = await fetch(`/api/comments?bookId=${bookId}`);
-                // const dataComments = await resComments.json();
-
+                const resReviews = await fetch(`http://localhost:3001/reviews/book/${dataBook.id}`);
+                const reviewsData = await resReviews.json();
+                
+                // Transformación de datos aquí
+                const formattedReviews = reviewsData.map((r: any) => ({
+                    id: r.id,
+                    username: `User ${r.idUser}`, // -> pepito = id: 2 => username: ElPep
+                    comment: r.comment,
+                    rating: r.rating,
+                    date: r.reviewDate
+                }));
+        
+                setReview(formattedReviews);
+                
                 setBook(dataBook);
-                // setAuthor(dataAuthor); - BORRAR
-                // setComments(dataComments);
             } catch (err: any) {
                 setError(err.message || 'Error al cargar los datos');
             } finally {
@@ -89,57 +91,86 @@ export default function BookDetail() {
 
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
-    console.log(book)
     if (!book) return <p>Libro no encontrado!!!</p>;
 
-    // console.log(author.find((a) => a.id == book.author_id));
-    console.log(author)
+    console.log(review);
+    // setAuthor(await resAuthor.json());
+    // const reviewsData = await resReviews.json();
 
     return (
         <div className={styles.container}>
             <div className={styles.bookDetail}>
-                <div className={styles.coverContainer}>
-                    <img
-                        src={`/libros/book_${book.id}.png`}
-                        alt={book.title}
-                        width={300}
-                        height={450}
-                        onError={(e) => e.currentTarget.src = '/libros/placeholder.png'}
-                    />
+                <div className={styles.leftColumn}>
+                    <h1 className={styles.title}>{book.title}</h1>
+                    <div className={styles.coverContainer}>
+                        <img
+                            src={`/libros/book_${book.id}.png`}
+                            alt={book.title}
+                            width={300}
+                            height={450}
+                            onError={(e) => e.currentTarget.src = '/libros/placeholder.png'}
+                        />
+                    </div>
+                    <div className={styles.synopsis}>
+                        <h2>Sinopsis:</h2>
+                        <p>{book.description}</p>
+                    </div>
                 </div>
 
-                <div className={styles.infoContainer}>
-                    <h1>{book.title}</h1>
-                    <p><strong>Autor:</strong> {author.name}</p>
-                    <p><strong>Precio:</strong> {new Intl.NumberFormat('es-AR', {
-                        style: 'currency',
-                        currency: 'ARS'
-                    }).format(book.price)}</p>
+                <div className={`${styles.middleColumn}`}>
+                    <div className={styles.meta}>
+                        <p><strong>Autor:</strong> {author.name}</p>
+                        <p><strong>Año:</strong>1999991111199999</p>
+                        <p><strong>Categorías:</strong></p>
+                        {/* <ul>
+                            {book.categories.map((cat, idx) => (
+                                <li key={idx}>{cat}</li>
+                            ))}
+                        </ul> */}
+                    </div>
+                </div>
+
+                <div className={styles.rightColumn}>
+                    <div className={styles.priceBox}>
+                        <p className={styles.price}>
+                            {new Intl.NumberFormat('es-AR', {
+                                style: 'currency',
+                                currency: 'ARS'
+                            }).format(book.price)}
+                        </p>
+                        <button className={styles.buyButton}>Comprar Ahora</button>
+                        <button className={styles.cartButton}>Agregar al Carrito</button>
+                    </div>
+
+                    <div className={styles.formatButtons}>
+                        <button className={styles.format}>Físico</button>
+                        <button className={styles.format}>eBook</button>
+                    </div>
+
+                    <div className={styles.stock}>
+                        <p><strong>Stock Disponible</strong></p>
+                        <p>Cantidad: {book.stock} Unidades</p>
+                    </div>
                 </div>
             </div>
 
-            <section className={styles.synopsis}>
-                <h2>Sinopsis</h2>
-                {/* <p>{book.synopsis || 'Sin sinopsis disponible.'}</p> */}
-            </section>
-{/*  
-            <section className={styles.comments}>
-                <h2>Comentarios</h2>
-                {comments.length > 0 ? (
-                    comments.map((comment) => (
-                        <div key={comment.id} className={styles.commentCard}>
-                            <p><strong>{comment.user}</strong></p>
-                            <p>{comment.comment}</p>
-                            <p><em>Calificación: {comment.rating}/5</em></p>
+            <div className={styles.reviews}>
+                <h2>Reviews:</h2>
+                {review.length === 0 ? (
+                    <p>No hay reviews aún.</p>
+                ) : (
+                    review.map((r) => (
+                        <div key={r.id} className={styles.reviewCard}>
+                            <div className={styles.avatar}></div>
+                            <div>
+                                <strong>{r.username}</strong>
+                                <p>{r.comment}</p>
+                                <small>{new Date(r.date).toLocaleDateString('es-AR')}</small>
+                            </div>
                         </div>
                     ))
-                ) : (
-                    <p>No hay comentarios aún.</p>
                 )}
-            </section>
-           
-*/}
-
+            </div>
         </div>
     );
 }
