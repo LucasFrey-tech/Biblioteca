@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
-        working-directory: ./backend
 
       - name: Install Project Packages
         run: npm i
