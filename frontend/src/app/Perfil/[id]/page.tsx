@@ -1,17 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import styles from '../../../styles/profile.module.css'
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  tel?: string;
-}
+import { User } from '@/API/types/user';
+import { APIContext } from '@/API/context/apiContext';
+import { UsersStrategy } from '@/API/strategies/usersStrategy';
 
 export default function profilePage() {
     const { id } = useParams();
@@ -20,11 +14,7 @@ export default function profilePage() {
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
 
-    /*const fetchGet = async (url: string) => {
-        const response = await fetch(url);
-        const data = await response.json;
-        return data;
-    }*/
+    const api = useMemo(() => new APIContext<User>(new UsersStrategy()), []);
 
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
@@ -43,29 +33,13 @@ export default function profilePage() {
     const saveChanges = async (id: number) => {
         const datos = editedProduct[id];
         try {
-            const response = await fetch(`http://localhost:3001/users/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: datos.username,
-                    email: datos.email,
-                    firstname: datos.firstname,
-                    lastname: datos.lastname,
-                    ...(datos.pass ? { password: datos.pass } : {}),
-                    tel: datos.tel
-                }),
-            })
+            const response = await api.update(id, datos);
 
-            const result = await response.json()
+            const result = response;
 
-            if (!response.ok) {
-                alert(`Error al guardar: ${result.message}`)
-                return
-            }else{
-                console.log("HOLA");
-                console.log(result);
+            if (!response) {
+                alert(`Error al actualizar datos`);
+                return;
             }
 
             setUser(result);
@@ -82,6 +56,7 @@ export default function profilePage() {
         const getProfile = async () => {
             if (!id){
                 console.error('No se proporcionó un Id de usuario');
+                return;
             }
             try{
                 const token = localStorage.getItem('token');
@@ -91,25 +66,20 @@ export default function profilePage() {
                     return;
                 }
                 
-                const response = await fetch(`http://localhost:3001/users/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await api.getOne(Number(id));
 
-                if (!response.ok) {
+                if (!response) {
                     throw new Error('Error al obtener el perfil del usuario');
                 }
 
-                const data = await response.json();
+                const data = response;
                 setUser(data);
             }catch (error){
                 console.error('Hubo un error al cargar el perfil: ', error);
             }
         }
         getProfile();
-    }, [id]); 
+    }, [id, api]); 
 
 
     if (!user) return;
@@ -134,7 +104,7 @@ export default function profilePage() {
                                 <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br/>
                                 <input type='password' name='pass' id='pass' className={styles.inputContraseña} value={editedProduct[user.id]?.pass ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], pass: e.target.value}}))}/><br/>
                                 <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br/>
-                                <input type='tel' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: e.target.value}}))}/>
+                                <input type='tel' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: Number(e.target.value)}}))}/>
                                 <button className={styles.saveChanges} type="button" onClick={() => saveChanges(user.id)}>Guardar</button>
                                 <button className={styles.cancel} onClick={() => setEditMode(prev => ({ ...prev, [user.id]: false }))}>Cancelar</button>
                             </form>
