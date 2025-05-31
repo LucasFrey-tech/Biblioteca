@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, JoinColumn } from 'typeorm';
-// import { Genre } from '../entidades/genre.entity';
-// import { Author } from './author.entity';
+import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
 
 @Entity('books')
 export class Book {
@@ -30,5 +28,4 @@ export class Book {
 
   @Column('float')
   price: number;
-
 }

@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
 
 @Entity('user_virtual_favorites_books')
-export class Book {
+export class UserFavoriteBook {
     @PrimaryGeneratedColumn()
     id: number;
 
