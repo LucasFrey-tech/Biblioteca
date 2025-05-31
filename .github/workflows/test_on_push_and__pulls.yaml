@@ -3,11 +3,10 @@ on:
     branches: [ "main", "Develop", "Testing" ]
   pull_request:
     branches: [ "main", "Develop" ]
-name: Test
+name: Test on Push and Pull Requests
 jobs:
-  defaults:
+  test:
     runs-on: ubuntu-latest
-    working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@master
@@ -19,6 +18,8 @@ jobs:
 
       - name: Install Project Packages
         run: npm i
+        working-directory: ./backend
 
       - name: Run tests
         run: npm run test
+        working-directory: ./backend
