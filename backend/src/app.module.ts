@@ -28,15 +28,17 @@ import { BooksService } from './modules/books/book/book.service';
 import { AuthorService } from './modules/authors/author.service';
 import { BookReviewsService } from './modules/books/reviews/book_reviews.service';
 
+const database_config = require('../private/database.config.json');
+
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'admin123',
-      database: 'alejandria',
+      host: database_config.host,
+      port: database_config.port,
+      username: database_config.username,
+      password: database_config.password,
+      database: database_config.database,
       entities: [User, Book, Author, Review],
       // entities: [Book, Author, Genre, BookGenre],
       synchronize: false, 
