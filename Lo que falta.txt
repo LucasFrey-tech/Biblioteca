@@ -1,0 +1,18 @@
+. Carrito
+. Novedades
+. Panel Admin => Falta libros
+. Libreria
+. Lectura de Libros
+. Historial compras usuario
+
+
+.documentacion
+.tests
+
+
+Si hay tiempo:
+. Favoritos
+. Ratings => En caso borrar
+. Imagen de usuario
+. admin => historial ventas
+
