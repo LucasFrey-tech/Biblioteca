@@ -34,7 +34,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
     'Adiestrado desde su nacimiento en esgrima y combate, un joven caballero llamado Siris ha luchado ferozmente para poder enfrentarse al tiránico Rey Dios en un combate cara a cara. Esta es la misión que ha heredado de toda su estirpe y que se remonta a incontables generaciones, en un continuo esfuerzo por liberar a su pueblo de la esclavitud. Pero cuando finalmente parece lograr su cometido, Siris se verá de pronto arrojado a un mundo mucho más peligroso, lleno de guerreros, ladrones, antiguos conflictos, peleas y alianzas cambiantes, entre mortales, inmortales y aspirantes a reyes. Sus ansias de libertad le llevarán a un viaje épico en busca de un ser, el único ser en el mundo, que podrá desentrañar los verdaderos secretos de Infinity Blade, la Espada Infinita.',
 	2013,
 	'9788466653619',
-    'infinity_blade_aweakening',
+    'infinity_blade_awakening',
 	33,
 	39200
 );

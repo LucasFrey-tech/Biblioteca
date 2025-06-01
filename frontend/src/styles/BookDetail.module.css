@@ -73,6 +73,10 @@
     cursor: pointer;
 }
 
+.buyButton:hover{
+    background-color: #0449aac5;
+}
+
 .cartButton {
     background-color: #e3eefd;
     border: none;
