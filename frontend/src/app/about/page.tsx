@@ -2,6 +2,8 @@
 
 import Image from "next/image"
 import styles from "../../styles/about.module.css";
+import Link from 'next/link';
+import { Button } from "@/components/ui/button";
 
 export default function AboutPage() {
   return (
@@ -9,7 +11,7 @@ export default function AboutPage() {
         <main className={styles.Principal}>
           <div className={styles.Bienvenida}>
             <h3>Bienvenido a la Biblioteca Virtual</h3>
-            <p>Explora nuestra coleccion de libros y sumergete en el mundo de la lectura</p>
+            <p className={styles.subTitulo}> Explora nuestra coleccion de libros y sumergete en el mundo de la lectura</p>
           </div>
           <div className={styles.Posibilidades}>
             <section className={styles.Tarjeta}>
@@ -28,16 +30,23 @@ export default function AboutPage() {
               <p>Disfruta de la lectura en nuestro espacio</p>
             </section>
           </div>
-          <div className={styles.BotonExplorar}>
-            <button type="button">Explorar Biblioteca</button>
+          <div >
+             <Link href="/catalogo">
+              <Button className={styles.BotonExplorar} type="button">Explorar Biblioteca</Button>
+             </Link>
+ 
           </div>
           <section className={styles.SobreNosotros}>
             <h4>Sobre Nosotros:</h4>
-            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            <p>
+              En nuestra librería, creemos en el poder de la lectura para transformar vidas. Por eso, ofrecemos una amplia selección de libros físicos y digitales para que cada lector pueda elegir la forma que más le guste de disfrutar una buena historia o aprender algo nuevo.
+              Ya sea que prefieras el aroma de las páginas de un libro impreso o la practicidad de llevar tus lecturas en un dispositivo, acá vas a encontrar lo que buscás.
+              Además, brindamos un servicio de librería accesible y flexible, aceptando múltiples formas de pago para que comprar sea fácil y seguro para todos.
+              Nos apasiona conectar a las personas con los libros. Gracias por ser parte de esta comunidad lectora.
             </p>
           </section>
           <section className={styles.Contacto}>
-            <h4>Contactanos!</h4>
+            <h4 className={styles.tituloContacto}>Contactanos!</h4>
             <div className={styles.Campos}>
               <input className={styles.Input} type="text" placeholder="Correo@dominio.com"/>
               <button className={styles.Enviar} type="button">Enviar</button>

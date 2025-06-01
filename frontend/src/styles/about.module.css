@@ -16,6 +16,10 @@
     justify-content:stretch;
 }
 
+.subTitulo{
+    font-size: 1rem;
+}
+
 .TituloPagina{
     margin-left: 10px;
     transform: scaleX(1.1);
@@ -79,6 +83,8 @@
     display: flex;
     width: 70%;
     justify-content: space-evenly;
+    margin-top: 1vw;
+    margin-bottom: 4vw;
 }
 
 .Tarjeta{
@@ -103,15 +109,17 @@
   }
   
   .BotonExplorar {
-    margin-top: 2vw;
+    margin-top: 1vw;
     text-transform: capitalize;
     background-color: #000;
     color: white;
     border: none;
-    padding: 0.6rem 1.2rem;
+    padding: 1.7rem;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1.2rem;
+
   }
 
   .BotonExplorar:hover {
@@ -135,27 +143,30 @@
     font-weight: bold;
 }
 
+
+
 .Contacto{
     margin-top: 2vw;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
-    width: 50%;
-    background-color: #4d4d4d;
-    height: 20vw;
+    width: 35%;
+    background-color: #ffffff;
     margin-bottom: 1vw;
+    text-align: center;
 }
 
-.Contacto h4{
+.tituloContacto{
     text-align: center;
     padding-top: 1vw;
-    color: white;
+    color: rgb(0, 0, 0);
 }
 
 
 .Campos{
     display: flex;
     justify-content: center;
+    text-align: center;
     width: 100%;
     padding-top: 1vw;
     padding-bottom: 1vw;

@@ -8,6 +8,7 @@
 
 .background {
     background-color: #1e2836;
+    padding-top: 20px;
 }
 
 .info {
@@ -34,6 +35,30 @@
 }
 
 .info input {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+    border: solid 2px;
+    border-color: white;
+    border-radius: 10px;
+    padding-left: 10px;
+    margin: 5px 10px;
+    font-size: 14px;
+}
+
+
+.user {
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+
+.user label {
+    margin-left: 10px;
+    color: white;
+    font-size: 15px;
+}
+
+.user span {
     background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
     background-clip: text;
     color: transparent;
@@ -103,4 +128,43 @@
 .inputTel {
     grid-column: 2/3;
     grid-row: 6/7;
+}
+
+.saveChanges {
+    cursor: pointer;
+    color: white;
+    grid-column: 1/2;
+    grid-row: 7/8;
+}
+
+.saveChanges:hover {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+}
+
+.cancel {
+    cursor: pointer;
+    color: white;
+    grid-column: 2/3;
+    grid-row: 7/8;
+}
+
+.cancel:hover {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+}
+
+.edit {
+    cursor: pointer;
+    color: white;
+    grid-column: 1/3;
+    grid-row: 7/8;
+}
+
+.edit:hover {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
 }
