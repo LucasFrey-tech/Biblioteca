@@ -14,6 +14,9 @@ export class Book {
   @Column('text')
   description: string;
 
+  @Column()
+  anio: number;
+
   @Column({ unique: true })
   isbn: string;
 

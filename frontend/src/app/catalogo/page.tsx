@@ -51,7 +51,8 @@ export default function BookPage() {
 
                 console.log('Libros recibidos:', data);
 
-                setBooks(data);
+                // setBooks(data);
+                setBooks(data.sort((a, b) => a.id - b.id));
                 setAuthors(dataAuthors);
 
             } catch (error) {
@@ -106,7 +107,7 @@ export default function BookPage() {
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard key={book.id} book={{id: book.id, title: book.title, price: book.price, author: authors.find((a) => a.id == book.author_id)?.name}} />
+                            <BookCard key={book.id} book={{id: book.id, title: book.title, image: book.image, price: book.price, author: authors.find((a) => a.id == book.author_id)?.name}} />
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>
