@@ -8,7 +8,8 @@ export class CatalogueBookDTO {
     image: string,
     stock: number,
     subscriber_exclusive: boolean,
-    price: number
+    price: number,
+    anio: number
   ) {
     this.id = id;
     this.title = title;
@@ -19,6 +20,7 @@ export class CatalogueBookDTO {
     this.stock = stock;
     this.subscriber_exclusive = subscriber_exclusive;
     this.price = price;
+    this.anio = anio;
   }
   
   id: number;
@@ -30,4 +32,5 @@ export class CatalogueBookDTO {
   stock: number;
   subscriber_exclusive: boolean;
   price: number;
+  anio: number;
 }

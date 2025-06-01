@@ -10,6 +10,7 @@ export let mockBook1:Book = {
     stock: 10,
     subscriber_exclusive: false,
     price: 12.4,
+    anio: 2021
 };
 
 export let mockBook2:Book = {
@@ -22,6 +23,7 @@ export let mockBook2:Book = {
     stock: 10,
     subscriber_exclusive: false,
     price: 12.4,
+    anio: 2021
 };
 
 export let mockBook3:Book = {
@@ -34,6 +36,7 @@ export let mockBook3:Book = {
     stock: 10,
     subscriber_exclusive: false,
     price: 12.4,
+    anio: 2021
 };
 
 export let mockBooks = [mockBook1, mockBook2, mockBook3];

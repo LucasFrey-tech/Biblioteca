@@ -46,6 +46,7 @@ describe('CatalogueBooksService', () => {
         stock: mockBook1.stock,
         subscriber_exclusive: mockBook1.subscriber_exclusive,
         price: mockBook1.price,
+        anio: mockBook1.anio,
       });
     });
   });

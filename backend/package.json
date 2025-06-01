@@ -74,7 +74,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "test",
+    "rootDir": ".",
     "testRegex": [".*\\.spec\\.ts$",".*\\.test\\.ts$"],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -83,6 +83,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
+    "coveragePathIgnorePatterns": [
+      ".json$",".md$","mjs$",".gitignore$",".prettierrc$",".js$",".d.ts$",".module.ts$",".mock.ts","app.controller.ts","app.service.ts","main.ts","index.ts"
+    ], 
     "testEnvironment": "node"
     
   }
