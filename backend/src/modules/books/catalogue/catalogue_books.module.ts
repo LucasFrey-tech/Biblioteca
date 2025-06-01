@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import {CatalogueBooksController} from './catalogue_books.controller'
 import {CatalogueBooksService} from './catalogue_books.service'
-import { BooksService } from '../book/book.service';
+import { BooksModule } from '../book/book.module';
 
 @Module({
-  imports: [BooksService],
+  imports: [BooksModule],
   controllers: [CatalogueBooksController],
   providers: [CatalogueBooksService],
 })
