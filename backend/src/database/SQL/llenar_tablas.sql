@@ -6,34 +6,38 @@ insert into users(username,email,password) values ('paredes','paredes@gmail.com'
 insert into users(username,email,password,admin) values ('adm','adm@gmail.com','adm',true);
 
 -- AÑADIR DATOS DE PRUEBA A BOOKS
-insert into books(title,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,anio,isbn,stock,price ) values (
 	'1984',
 	1,
 	'Una descripción.',
+	1949,
 	'1',
 	9,
 	28000
 );
-insert into books(title,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,anio,isbn,stock,price ) values (
 	'Rebelion En La Granja',
 	1,
 	'Una descripción.',
+	1945,
 	'2',
 	9,
 	18000
 );
-insert into books(title,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,anio,isbn,stock,price ) values (
 	'Cómo hablar con tu perro acerca de homosexualidad, comunismo y otros temas variados',
 	2,
 	'Una descripción.',
+	1842,
 	'3',
 	9,
 	15000.50
 );
-insert into books(title,author_id,description,isbn,stock,price ) values (
+insert into books(title,author_id,description,anio,isbn,stock,price ) values (
 	'Harry Poter y la Piedra Filosofal',
 	3,
 	'Una descripción.',
+	1997,
 	'4',
 	9,
 	30000
@@ -47,10 +51,13 @@ insert into genres(name) values ('Ciencia Ficción');
 insert into genres(name) values ('Fantasía');
 
 -- AÑADIR DATOS DE PRUEBA A AUTHOR
-insert into authors(name) values ('George Orwell');
-insert into authors(name) values ('Dan Brown');
-insert into authors(name) values ('J.K. Rowling');
-insert into authors(name) values ('Juan Polaco');
+insert into authors(name) values ('George Orwell'); --1
+insert into authors(name) values ('Dan Brown'); --2
+insert into authors(name) values ('J.K. Rowling'); --3
+insert into authors(name) values ('Juan Polaco'); --4
+insert into authors(name) values ('Alice Hoffman'); --5
+insert into authors(name) values ('Brandon Sanderson'); --6
+insert into authors(name) values ('Shelby Mahurin'); --7
 
 -- AÑADIR DATOS DE PRUEBA A BOOK_GENRES
 insert into book_genres (id_book,id_genre) values (1,1);

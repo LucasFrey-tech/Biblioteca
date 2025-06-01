@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 import { Book } from '../../../../../backend/src/entidades/book.entity';
 
@@ -66,7 +67,7 @@ export default function BookDetail() {
 
                 const resReviews = await fetch(`http://localhost:3001/reviews/book/${dataBook.id}`);
                 const reviewsData = await resReviews.json();
-                
+
                 // Transformación de datos aquí
                 const formattedReviews = reviewsData.map((r: any) => ({
                     id: r.id,
@@ -75,9 +76,9 @@ export default function BookDetail() {
                     rating: r.rating,
                     date: r.reviewDate
                 }));
-        
+
                 setReview(formattedReviews);
-                
+
                 setBook(dataBook);
             } catch (err: any) {
                 setError(err.message || 'Error al cargar los datos');
@@ -93,9 +94,9 @@ export default function BookDetail() {
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
-    console.log(review);
-    // setAuthor(await resAuthor.json());
-    // const reviewsData = await resReviews.json();
+    const imagePath = book.image
+    ? `/libros/${book.image}.png`
+    : '/libros/placeholder.png';
 
     return (
         <div className={styles.container}>
@@ -103,12 +104,14 @@ export default function BookDetail() {
                 <div className={styles.leftColumn}>
                     <h1 className={styles.title}>{book.title}</h1>
                     <div className={styles.coverContainer}>
-                        <img
-                            src={`/libros/book_${book.id}.png`}
+                        <Image
+                            src={imagePath}
                             alt={book.title}
+                            className={styles.cover}
                             width={300}
                             height={450}
-                            onError={(e) => e.currentTarget.src = '/libros/placeholder.png'}
+                            placeholder="blur"
+                            blurDataURL="/libros/placeholder.png"
                         />
                     </div>
                     <div className={styles.synopsis}>
@@ -120,7 +123,7 @@ export default function BookDetail() {
                 <div className={`${styles.middleColumn}`}>
                     <div className={styles.meta}>
                         <p><strong>Autor:</strong> {author.name}</p>
-                        <p><strong>Año:</strong>1999991111199999</p>
+                        <p><strong>Año:</strong> {book.anio}</p>
                         <p><strong>Categorías:</strong></p>
                         {/* <ul>
                             {book.categories.map((cat, idx) => (

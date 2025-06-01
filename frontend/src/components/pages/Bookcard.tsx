@@ -7,6 +7,7 @@ import Image from 'next/image';
 
 type Book = {
     id: number;
+    image: string;
     title: string;
     price: number;
     author: string | undefined;
@@ -14,7 +15,11 @@ type Book = {
 
 export default function BookCard({ book }: { book: Book }) {
     const authorName = book.author ?? 'Desconocido';
-    const imagePath = `/libros/book_${book.id}.png`;
+
+    const imagePath = book.image
+        ? `/libros/${book.image}.png`
+        : '/libros/placeholder.png';
+
     const router = useRouter();
 
     const handleCardClick = () => {
@@ -35,9 +40,6 @@ export default function BookCard({ book }: { book: Book }) {
                 height={300}
                 placeholder="blur"
                 blurDataURL="/libros/placeholder.png"
-                onError={(e) => {
-                    e.currentTarget.src = '/libros/placeholder.png';
-                }}
             />
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>
