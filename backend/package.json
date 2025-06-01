@@ -30,13 +30,15 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "jwt-decode": "^4.0.0",
+    "nest-winston": "^1.10.2",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
-    "typeorm": "^0.3.24"
+    "typeorm": "^0.3.24",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -75,7 +77,10 @@
       "ts"
     ],
     "rootDir": ".",
-    "testRegex": [".*\\.spec\\.ts$",".*\\.test\\.ts$"],
+    "testRegex": [
+      ".*\\.spec\\.ts$",
+      ".*\\.test\\.ts$"
+    ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
@@ -84,9 +89,20 @@
     ],
     "coverageDirectory": "../coverage",
     "coveragePathIgnorePatterns": [
-      ".json$",".md$","mjs$",".gitignore$",".prettierrc$",".js$",".d.ts$",".module.ts$",".mock.ts","app.controller.ts","app.service.ts","main.ts","index.ts"
-    ], 
+      ".json$",
+      ".md$",
+      "mjs$",
+      ".gitignore$",
+      ".prettierrc$",
+      ".js$",
+      ".d.ts$",
+      ".module.ts$",
+      ".mock.ts",
+      "app.controller.ts",
+      "app.service.ts",
+      "main.ts",
+      "index.ts"
+    ],
     "testEnvironment": "node"
-    
   }
 }
