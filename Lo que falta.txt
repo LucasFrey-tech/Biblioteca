@@ -6,7 +6,7 @@
 . Historial compras usuario
 
 
-.documentacion
+.documentacion proyecto (typedoc) y api (no me acuerdo :D)
 .tests
 
 

@@ -3,18 +3,37 @@ import { AppModule } from './app.module';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
 
+/**
+ * Archivo principal que arranca la aplicación NestJS.
+ * 
+ * - Crea la instancia de la aplicación.
+ * - Configura Winston como logger.
+ * - Habilita CORS para el frontend.
+ * - Inicia el servidor en el puerto 3001.
+ */
+
 const logger_Config = require('../private/logger.config.json');
 
-/* Los niveles de log de Winston son:
-    error: 0,
-    warn: 1,
-    info: 2,
-    http: 3,
-    verbose: 4,
-    debug: 5,
-    silly: 
-*/
+/**
+ * Niveles disponibles de log en Winston:
+ * 
+ * - error: 0
+ * - warn: 1
+ * - info: 2
+ * - http: 3
+ * - verbose: 4
+ * - debug: 5
+ * - silly: 6
+ */
 
+
+/**
+ * Función principal que inicia la aplicación NestJS.
+ * 
+ * Configura los transportes de Winston para la consola y archivo.
+ * Habilita CORS para permitir el acceso desde el frontend en localhost:3000.
+ * Inicia el servidor en el puerto 3001.
+ */
 async function bootstrap() {
   const app = await NestFactory.create(AppModule,{
     logger: WinstonModule.createLogger({
@@ -37,7 +56,6 @@ async function bootstrap() {
     })
   });
 
-  // Habilitar CORS permitiendo solo el origen de tu frontend
   app.enableCors({
     origin: 'http://localhost:3000', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

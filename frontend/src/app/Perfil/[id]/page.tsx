@@ -14,7 +14,7 @@ export default function profilePage() {
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
 
-    const api = useMemo(() => new APIContext<User>(new UsersStrategy()), []);
+    const api = useMemo(() => new APIContext<User>(new UsersStrategy(localStorage.getItem('token'))), []);
 
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
