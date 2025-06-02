@@ -5,50 +5,15 @@ insert into users(username,email,password) values ('armando','armando@gmail.com'
 insert into users(username,email,password) values ('paredes','paredes@gmail.com','1234');
 insert into users(username,email,password,admin) values ('adm','adm@gmail.com','adm',true);
 
--- AÑADIR DATOS DE PRUEBA A BOOKS
-insert into books(title,author_id,description,anio,isbn,stock,price ) values (
-	'1984',
-	1,
-	'Una descripción.',
-	1949,
-	'1',
-	9,
-	28000
-);
-insert into books(title,author_id,description,anio,isbn,stock,price ) values (
-	'Rebelion En La Granja',
-	1,
-	'Una descripción.',
-	1945,
-	'2',
-	9,
-	18000
-);
-insert into books(title,author_id,description,anio,isbn,stock,price ) values (
-	'Cómo hablar con tu perro acerca de homosexualidad, comunismo y otros temas variados',
-	2,
-	'Una descripción.',
-	1842,
-	'3',
-	9,
-	15000.50
-);
-insert into books(title,author_id,description,anio,isbn,stock,price ) values (
-	'Harry Poter y la Piedra Filosofal',
-	3,
-	'Una descripción.',
-	1997,
-	'4',
-	9,
-	30000
-);
 
 -- AÑADIR DATOS DE PRUEBA A GENRES
-insert into genres(name) values ('Aventura');
-insert into genres(name) values ('Acción');
-insert into genres(name) values ('Misterio');
-insert into genres(name) values ('Ciencia Ficción');
-insert into genres(name) values ('Fantasía');
+insert into genres(name) values ('Aventura'); --1
+insert into genres(name) values ('Acción'); --2
+insert into genres(name) values ('Misterio'); --3
+insert into genres(name) values ('Ciencia Ficción'); --4
+insert into genres(name) values ('Fantasía'); --5
+insert into genres(name) values ('Historico'); --6
+insert into genres(name) values ('Romance'); --7
 
 -- AÑADIR DATOS DE PRUEBA A AUTHOR
 insert into authors(name) values ('George Orwell'); --1

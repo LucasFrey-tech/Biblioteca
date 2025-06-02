@@ -10,18 +10,18 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
-async findAll(search = ''): Promise<User[]> {
-  return this.usersRepository.find({
-    where: [
-      { firstname: ILike(`%${search}%`) },
-      { lastname: ILike(`%${search}%`) },
-      { email: ILike(`%${search}%`) }
-    ],
-    order: { id: 'ASC' },
-  });
-}
+  async findAll(search = ''): Promise<User[]> {
+    return this.usersRepository.find({
+      where: [
+        { firstname: ILike(`%${search}%`) },
+        { lastname: ILike(`%${search}%`) },
+        { email: ILike(`%${search}%`) }
+      ],
+      order: { id: 'ASC' },
+    });
+  }
 
   findOne(id: number) {
     return this.usersRepository.findOne({ where: { id } });
@@ -30,7 +30,7 @@ async findAll(search = ''): Promise<User[]> {
   async create(user: Partial<User>) {
     const existingUserEmail = await this.usersRepository.findOne({ where: { email: user.email } });
     const existingUserName = await this.usersRepository.findOne({ where: { username: user.username } });
-      // Si el que registra es tanto un mail como un username
+    // Si el que registra es tanto un mail como un username
     if (existingUserEmail && existingUserName) {
       throw new BadRequestException('El correo y el nombre de usuario ya están registrados');
     }
@@ -46,14 +46,14 @@ async findAll(search = ''): Promise<User[]> {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-  return this.usersRepository.findOne({ where: { email } });
-}
+    return this.usersRepository.findOne({ where: { email } });
+  }
   async findByUser(username: string): Promise<User | null> {
-  return this.usersRepository.findOne({ where: {  username } });
-}
+    return this.usersRepository.findOne({ where: { username } });
+  }
 
   async update(id: number, updateData: Partial<User>) {
-    if(updateData.password) {
+    if (updateData.password) {
       const saltRounds = 10;
       updateData.password = await bcrypt.hash(updateData.password, saltRounds);
     }

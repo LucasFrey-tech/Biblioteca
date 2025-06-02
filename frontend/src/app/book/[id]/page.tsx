@@ -72,17 +72,20 @@ export default function BookDetail() {
                 const reviewsData = await resReviews.json();
 
 
-                const formattedReviews = reviewsData.map((r: Review) => ({
-                    id: r.id,
-                    username: `${r.username}`,
-                    comment: r.comment,
-                    rating: r.rating,
-                    date: r.reviewDate
+                const formattedReviews = await Promise.all(reviewsData.map(async (r: Review) => {
+                    const resUser = await fetch(`http://localhost:3001/users/${r.id_user}`);
+                    const user = await resUser.json();
+                    return {
+                        id: r.id,
+                        username: user.username,
+                        comment: r.comment,
+                        rating: r.rating,
+                        date: r.reviewDate
+                    };
                 }));
 
-                
                 console.log(review);
-                
+
                 setBook(dataBook);
                 setReview(formattedReviews);
 
@@ -185,4 +188,3 @@ export default function BookDetail() {
         </div>
     );
 }
-

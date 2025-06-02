@@ -5,7 +5,6 @@ import { FaSearch } from 'react-icons/fa';
 
 import { Book } from '../../../../backend/src/entidades/book.entity';
 
-
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 
@@ -14,17 +13,33 @@ type Author = {
     name: string;
 };
 
+type Genre = {
+    id: number;
+    name: string;
+};
+
+type BookGenre = {
+    id: number;
+    idBook: number;
+    idGenre: number;
+};
+
 export default function BookPage() {
     const [books, setBooks] = useState<Book[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [authors, setAuthors] = useState<Author[]>([]);
-
+    const [genres, setGenres] = useState<Genre[]>([]);
+    const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
+    const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
+    const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
+    const [showMoreGenres, setShowMoreGenres] = useState(false);
+    const [showMoreAuthors, setShowMoreAuthors] = useState(false);
 
     useEffect(() => {
-        const fetchBooks = async () => {
+        const fetchData = async () => {
             try {
-                const res = await fetch('http://localhost:3001/books', {
+                const resBooks = await fetch('http://localhost:3001/books', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -38,34 +53,94 @@ export default function BookPage() {
                     },
                 });
 
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
+                const resGenres = await fetch('http://localhost:3001/genres', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const resBookGenres = await fetch('http://localhost:3001/book_genres', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!resBooks.ok) {
+                    throw new Error(`HTTP error! status: ${resBooks.status}`);
+                }
+                if (!resAuthors.ok) {
+                    throw new Error(`HTTP error! status: ${resAuthors.status}`);
+                }
+                if (!resGenres.ok) {
+                    throw new Error(`HTTP error! status: ${resGenres.status}`);
+                }
+                if (!resBookGenres.ok) {
+                    throw new Error(`HTTP error! status: ${resBookGenres.status}`);
                 }
 
-                const data = await res.json();
+                const dataBooks = await resBooks.json();
                 const dataAuthors = await resAuthors.json();
+                const dataGenres = await resGenres.json();
+                const dataBookGenres = await resBookGenres.json();
 
-                if (!Array.isArray(data)) {
-                    throw new Error('La respuesta de la API no es un arreglo');
+                if (!Array.isArray(dataBooks)) {
+                    throw new Error('La respuesta de la API de libros no es un arreglo');
+                }
+                if (!Array.isArray(dataAuthors)) {
+                    throw new Error('La respuesta de la API de autores no es un arreglo');
+                }
+                if (!Array.isArray(dataGenres)) {
+                    throw new Error('La respuesta de la API de géneros no es un arreglo');
+                }
+                if (!Array.isArray(dataBookGenres)) {
+                    throw new Error('La respuesta de la API de book_genres no es un arreglo');
                 }
 
-                console.log('Libros recibidos:', data);
+                console.log('Libros recibidos:', dataBooks);
+                console.log('Géneros recibidos:', dataGenres);
+                console.log('Asociaciones libro-género recibidas:', dataBookGenres);
+                console.log('Autores recibidos:', dataAuthors);
 
-                // setBooks(data);
-                setBooks(data.sort((a, b) => a.id - b.id));
+                setBooks(dataBooks.sort((a, b) => a.id - b.id));
                 setAuthors(dataAuthors);
+                setGenres(dataGenres);
+                setBookGenres(dataBookGenres);
 
             } catch (error) {
-                console.error('Error al obtener libros:', error);
+                console.error('Error al obtener datos:', error);
                 setBooks([]);
+                setAuthors([]);
+                setGenres([]);
+                setBookGenres([]);
             }
         };
-        fetchBooks();
+        fetchData();
     }, []);
+
+    const handleGenreToggle = (genreId: number) => {
+        setSelectedGenres((prev) =>
+            prev.includes(genreId)
+                ? prev.filter((id) => id !== genreId)
+                : [...prev, genreId]
+        );
+    };
+
+    const handleAuthorToggle = (authorId: number) => {
+        setSelectedAuthors((prev) =>
+            prev.includes(authorId)
+                ? prev.filter((id) => id !== authorId)
+                : [...prev, authorId]
+        );
+    };
 
     const filteredBooks = Array.isArray(books)
         ? books.filter((book) =>
-            book.title.toLowerCase().includes(searchQuery.toLowerCase())
+            book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            (selectedGenres.length === 0 ||
+                bookGenres.some((bg) => bg.idBook === book.id && selectedGenres.includes(bg.idGenre))) &&
+            (selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id))
         )
         : [];
 
@@ -101,13 +176,84 @@ export default function BookPage() {
             <div className={styles.wrapper}>
                 <aside className={styles.sidebar}>
                     <h3>Filtros</h3>
-                    <p>Próximamente...</p>
+                    <div className={styles.genreFilter}>
+                        <h4>Géneros</h4>
+                        {genres.length > 0 ? (
+                            <>
+                                <ul className={showMoreGenres ? styles.expanded : ''}>
+                                    {genres.map((genre) => (
+                                        <li key={genre.id}>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedGenres.includes(genre.id)}
+                                                    onChange={() => handleGenreToggle(genre.id)}
+                                                />
+                                                {genre.name}
+                                            </label>
+                                        </li>
+                                    ))}
+                                </ul>
+                                {genres.length > 4 && (
+                                    <button
+                                        className={styles.showMoreBtn}
+                                        onClick={() => setShowMoreGenres(!showMoreGenres)}
+                                    >
+                                        {showMoreGenres ? 'Mostrar menos' : 'Mostrar más'}
+                                    </button>
+                                )}
+                            </>
+                        ) : (
+                            <p>No hay géneros disponibles.</p>
+                        )}
+                    </div>
+                    <hr />
+                    <div className={styles.authorFilter}>
+                        <h4>Autor</h4>
+                        {authors.length > 0 ? (
+                            <>
+                                <ul className={showMoreAuthors ? styles.expanded : ''}>
+                                    {authors.map((author) => (
+                                        <li key={author.id}>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedAuthors.includes(author.id)}
+                                                    onChange={() => handleAuthorToggle(author.id)}
+                                                />
+                                                {author.name}
+                                            </label>
+                                        </li>
+                                    ))}
+                                </ul>
+                                {authors.length > 4 && (
+                                    <button
+                                        className={styles.showMoreBtn}
+                                        onClick={() => setShowMoreAuthors(!showMoreAuthors)}
+                                    >
+                                        {showMoreAuthors ? 'Mostrar menos' : 'Mostrar más'}
+                                    </button>
+                                )}
+                            </>
+                        ) : (
+                            <p>No hay autores disponibles.</p>
+                        )}
+                    </div>
                 </aside>
 
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard key={book.id} book={{id: book.id, title: book.title, image: book.image, price: book.price, author: authors.find((a) => a.id == book.author_id)?.name}} />
+                            <BookCard
+                                key={book.id}
+                                book={{
+                                    id: book.id,
+                                    title: book.title,
+                                    image: book.image,
+                                    price: book.price,
+                                    author: authors.find((a) => a.id === book.author_id)?.name
+                                }}
+                            />
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>
