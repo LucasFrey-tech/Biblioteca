@@ -23,7 +23,8 @@ export abstract class BaseStrategy<T> implements APIClient<T> {
       if (!res.ok) throw new Error(`Error: ${res.status} ${res.statusText}`);
       return res;
     } catch (error) {
-      throw new Error(`Error de red: ${error.message}`);
+      const message = error instanceof Error ? error.message : 'Error desconocido';
+      throw new Error(`Error de red: ${message}`);
     }
   }
 
