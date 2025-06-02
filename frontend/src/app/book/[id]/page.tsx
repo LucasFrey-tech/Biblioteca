@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import StarRating from "@/components/ui/StarRating";
 import Image from "next/image";
 
 import { Book } from '../../../../../backend/src/entidades/book.entity';
@@ -18,13 +19,8 @@ type Review = {
     username: string;
     comment: string;
     rating: number;
-    date: string;
+    reviewDate: string;
 };
-
-type User = {
-    id: number;
-    username: string;
-}
 
 export default function BookDetail() {
     const params = useParams();
@@ -68,16 +64,18 @@ export default function BookDetail() {
                 const resReviews = await fetch(`http://localhost:3001/reviews/book/${dataBook.id}`);
                 const reviewsData = await resReviews.json();
 
-                // Transformación de datos aquí
-                const formattedReviews = reviewsData.map((r: any) => ({
+                
+                const formattedReviews = reviewsData.map((r: Review) => ({
                     id: r.id,
-                    username: `User ${r.idUser}`, // -> pepito = id: 2 => username: ElPep
+                    username: `${r.username}`,
                     comment: r.comment,
                     rating: r.rating,
                     date: r.reviewDate
                 }));
 
                 setReview(formattedReviews);
+            
+                console.log(review);
 
                 setBook(dataBook);
             } catch (err: any) {
@@ -98,9 +96,9 @@ export default function BookDetail() {
     ? `/libros/${book.image}.png`
     : '/libros/placeholder.png';
 
+
     return (
         <div className={styles.container}>
-            <div className={styles.bookDetail}>
                 <div className={styles.leftColumn}>
                     <h1 className={styles.title}>{book.title}</h1>
                     <div className={styles.coverContainer}>
@@ -154,7 +152,6 @@ export default function BookDetail() {
                         <p><strong>Stock Disponible</strong></p>
                         <p>Cantidad: {book.stock} Unidades</p>
                     </div>
-                </div>
             </div>
 
             <div className={styles.reviews}>
@@ -167,8 +164,9 @@ export default function BookDetail() {
                             <div className={styles.avatar}></div>
                             <div>
                                 <strong>{r.username}</strong>
+                                <StarRating rating={r.rating} />
                                 <p>{r.comment}</p>
-                                <small>{new Date(r.date).toLocaleDateString('es-AR')}</small>
+                                <small>{r.reviewDate}</small>
                             </div>
                         </div>
                     ))
@@ -177,3 +175,4 @@ export default function BookDetail() {
         </div>
     );
 }
+
