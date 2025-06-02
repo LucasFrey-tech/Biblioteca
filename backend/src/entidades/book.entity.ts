@@ -3,32 +3,32 @@ import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
 @Entity('books')
 export class Book {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  author_id: number;
+  author_id!: number;
 
   @Column('text')
-  description: string;
+  description!: string;
 
   @Column()
-  anio: number;
+  anio!: number;
 
   @Column({ unique: true })
-  isbn: string;
+  isbn!: string;
 
   @Column({ default: '' })
-  image: string;
+  image!: string;
 
   @Column()
-  stock: number;
+  stock!: number;
 
   @Column({ default: false })
-  subscriber_exclusive: boolean;
+  subscriber_exclusive!: boolean;
 
   @Column('float')
-  price: number;
+  price!: number;
 }
