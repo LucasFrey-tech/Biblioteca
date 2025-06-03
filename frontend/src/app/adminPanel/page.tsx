@@ -57,8 +57,12 @@ export default function PanelAdmin() {
   };
 
   // Maneja cambios en inputs de edición
-  const handleBookChange = (bookId: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+  const handleBookChange = (
+    bookId: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const target = e.target as HTMLInputElement; // <-- casting para que TS sepa que tiene checked
+    const { name, value, type, checked } = target;
     setBooksEditState(prev => {
       const bookState = prev[bookId];
       if (!bookState) return prev;
@@ -339,14 +343,13 @@ export default function PanelAdmin() {
                       {editState.editMode ? (
                         <>
                           <label>
-                            Título:
+                            Título: 
                             <Input
                               name="title"
                               value={editState.formData.title}
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </label>
-
                           <label>
                             Autor:
                             <Input
@@ -355,48 +358,26 @@ export default function PanelAdmin() {
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </label>
-
+                          <label>
+                            Precio:
+                            <Input
+                              type="number"
+                              name="price"
+                              value={editState.formData.price}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
                           <label>
                             Año:
                             <Input
-                              name="anio"
                               type="number"
+                              name="anio"
                               value={editState.formData.anio}
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </label>
-
                           <label>
-                            Stock:
-                            <Input
-                              name="stock"
-                              type="number"
-                              value={editState.formData.stock}
-                              onChange={(e) => handleBookChange(book.id, e)}
-                            />
-                          </label>
-
-                          <label>
-                            ISBN:
-                            <Input
-                              name="isbn"
-                              value={editState.formData.isbn}
-                              onChange={(e) => handleBookChange(book.id, e)}
-                            />
-                          </label>
-
-                          <label>
-                            Descripción:
-                            <textarea
-                              name="description"
-                              value={editState.formData.description}
-                              onChange={(e) => handleBookChange(book.id, e)}
-                              className={styles.textarea}
-                            />
-                          </label>
-
-                          <label>
-                            Exclusivo para suscriptores:
+                            Exclusivo suscriptores:
                             <input
                               type="checkbox"
                               name="subscriber_exclusive"
@@ -404,34 +385,28 @@ export default function PanelAdmin() {
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </label>
-
                           <label>
-                            Precio:
-                            <Input
-                              name="price"
-                              type="number"
-                              step="0.01"
-                              value={editState.formData.price}
+                            Descripción:
+                            <textarea
+                              name="description"
+                              value={editState.formData.description}
                               onChange={(e) => handleBookChange(book.id, e)}
+                              rows={3}
                             />
                           </label>
-
                           <div className={styles.editButtons}>
                             <Button onClick={() => saveChanges(book.id)}>Guardar</Button>
-                            <Button variant="secondary" onClick={() => cancelEdit(book.id)}>Cancelar</Button>
+                            <Button onClick={() => cancelEdit(book.id)}>Cancelar</Button>
                           </div>
                         </>
                       ) : (
                         <>
                           <p><strong>Autor:</strong> {book.author_name}</p>
+                          <p><strong>Precio:</strong> ${book.price}</p>
                           <p><strong>Año:</strong> {book.anio}</p>
-                          <p><strong>Stock:</strong> {book.stock}</p>
-                          <p><strong>ISBN:</strong> {book.isbn}</p>
                           <p><strong>Descripción:</strong> {book.description}</p>
-                          <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? "Sí" : "No"}</p>
-                          <p><strong>Precio:</strong> ${book.price.toFixed(2)}</p>
-
-                          <Button onClick={() => startEdit(book)}>Editar</Button>
+                          <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                          <Button onClick={() => startEdit(book)}>✏️ Editar</Button>
                         </>
                       )}
                     </div>
