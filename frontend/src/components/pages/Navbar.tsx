@@ -4,33 +4,27 @@ import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
 import { jwtDecode } from 'jwt-decode';
-import { useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
+
+import { useUser } from "@/app/context/UserContext";
 
 interface User {
-  sub: number;
-  email: string;
-  username: string;
-  iat: number;
-  exp: number;
+    sub: number;
+    email: string;
+    username: string;
+    iat: number;
+    exp: number;
 }
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [user, setUser] = useState<User | null>();
     const [menuDropDown, setDropDown] = useState<boolean>();
+    const { user, setUser } = useUser();
     const router = useRouter();
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
-
-    const closeSidebar = () => {
-        setIsSidebarOpen(false);
-    };
-    
-    const toggleMenu = () => {
-        setDropDown(!menuDropDown);
-    };
+    const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+    const closeSidebar = () => setIsSidebarOpen(false);
+    const toggleMenu = () => setDropDown(!menuDropDown);
 
     const closeSession = () => {
         localStorage.removeItem('token');
@@ -50,22 +44,22 @@ export default function Navbar() {
 
     useEffect(() => {
         const getUser = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                console.error('No hay token en localStorage');
-                return;
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('No hay token en localStorage');
+                    return;
+                }
+
+                const decoded = jwtDecode<User>(token);
+                setUser(decoded);
+            } catch (error) {
+                console.error('Hubo un error:', error);
             }
+        };
 
-            const decoded = jwtDecode<User>(token);
-            setUser(decoded);
-        } catch (error) {
-            console.error('Hubo un error:', error);
-        }
-    };
-
-    getUser();
-  }, []);
+        getUser();
+    }, []);
 
     return (
         <>
@@ -119,8 +113,8 @@ export default function Navbar() {
                     <Image
                         src="/logos/menu.png"
                         alt="menu"
-                        width={32} // Ajusta según el tamaño deseado
-                        height={32} // Ajusta según el tamaño deseado
+                        width={32}
+                        height={32}
                     />
                 </button>
             </header>

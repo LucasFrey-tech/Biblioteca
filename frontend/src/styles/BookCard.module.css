@@ -11,6 +11,7 @@
     flex-direction: column;
     justify-content: space-between;
     min-height: 450px;
+    cursor: pointer;
 }
 
 .cover {
@@ -30,7 +31,7 @@
     color: #373d45;
     line-height: 1.2;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 líneas */
+    -webkit-line-clamp: 3; /* Limita a 2 líneas */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
