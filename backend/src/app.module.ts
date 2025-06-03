@@ -8,6 +8,7 @@ import { Author } from './entidades/author.entity';
 import { Review } from './entidades/review.entity';
 import { Genre } from './entidades/genre.entity';
 import { BookGenre } from './entidades/book_genres.entity';
+import { ShoppingCartBook } from './entidades/shopping_cart_book.entity';
 
 
 // Modulos
@@ -19,7 +20,7 @@ import { AuthorModule } from './modules/authors/author.module';
 import { BookReviewsModule } from './modules/books/reviews/book_reviews.module';
 import { GenresModule } from './modules/genres/genre.module';
 import { BookGenresModule } from './modules/book_genre/book_genres.module';
-
+import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
 
 //Controllers
 import { BooksController } from './modules/books/book/book.controller';
@@ -35,6 +36,8 @@ import { AuthorService } from './modules/authors/author.service';
 import { BookReviewsService } from './modules/books/reviews/book_reviews.service';
 import { GenresService } from './modules/genres/genre.service';
 import { BookGenresService } from './modules/book_genre/book_genres.service';
+import { ShoppingCartController } from './modules/shopping_cart/shopping_cart.controller';
+import { ShoppingCartService } from './modules/shopping_cart/shopping_cart.service';
 
 
 const database_config = require('../private/database.config.json');
@@ -54,7 +57,7 @@ const database_config = require('../private/database.config.json');
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre]),
+    TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
     AuthModule,
     UsersModule,
     AuthorModule,
@@ -62,9 +65,9 @@ const database_config = require('../private/database.config.json');
     BookReviewsModule,
     GenresModule,
     BookGenresModule,
-
+    // ShoppingCartModule,
   ],
-  controllers: [BooksController, AuthorController, BookReviewsController, GenresController, BookGenresController],
-  providers: [BooksService, AuthorService, BookReviewsService, GenresService, BookGenresService],
+  controllers: [BooksController, AuthorController, BookReviewsController, GenresController, BookGenresController, ShoppingCartController],
+  providers: [BooksService, AuthorService, BookReviewsService, GenresService, BookGenresService, ShoppingCartService],
 })
 export class AppModule {}
