@@ -11,6 +11,7 @@ import { BookGenre } from './entidades/book_genres.entity';
 
 
 // Modulos
+import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { BooksModule } from './modules/books/book/book.module';
@@ -54,6 +55,7 @@ const database_config = require('../private/database.config.json');
       isGlobal: true, 
     }),
     TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre]),
+    AuthModule,
     UsersModule,
     AuthorModule,
     BooksModule,
