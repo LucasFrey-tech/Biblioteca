@@ -1,5 +1,5 @@
 // frontend/pages/login.tsx
-import { login } from '../apiGPT/auth';
+import { login } from './auth';
 
 const handleLogin = async (email: string, password: string) => {
   try {
