@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import styles from '../../styles/panelAdmin.module.css';
 import Swal from 'sweetalert2';
+import { Button } from "@/components/ui/button";
 
 type User = {
   id: number;
@@ -14,12 +15,108 @@ type User = {
   disabled: boolean;
 };
 
+type Book = {
+  id: number;
+  title: string;
+  author_id: number;
+  author_name: string;
+  description: string;
+  anio: number;
+  isbn: string;
+  image: string;
+  stock: number;
+  subscriber_exclusive: boolean;
+  price: number;
+}
+
 export default function PanelAdmin() {
   const [activeTab, setActiveTab] = useState<'users' | 'books'>('users');
   const [userOpenIds, setUserOpenIds] = useState<number[]>([]);
+  const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState('');
 
+  // Estado para manejar la edición de libros
+  const [booksEditState, setBooksEditState] = useState<{
+    [key: number]: {
+      editMode: boolean;
+      formData: Book;
+    }
+  }>({});
+
+  // Función para iniciar la edición de un libro
+  const startEdit = (book: Book) => {
+    setBooksEditState(prev => ({
+      ...prev,
+      [book.id]: {
+        editMode: true,
+        formData: { ...book }
+      }
+    }));
+  };
+
+  // Maneja cambios en inputs de edición
+  const handleBookChange = (
+    bookId: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const target = e.target as HTMLInputElement; // <-- casting para que TS sepa que tiene checked
+    const { name, value, type, checked } = target;
+    setBooksEditState(prev => {
+      const bookState = prev[bookId];
+      if (!bookState) return prev;
+      return {
+        ...prev,
+        [bookId]: {
+          ...bookState,
+          formData: {
+            ...bookState.formData,
+            [name]: type === "checkbox" ? checked : (type === "number" ? Number(value) : value),
+          }
+        }
+      };
+    });
+  };
+
+  // Guarda los cambios haciendo fetch PUT y actualizando el estado
+  const saveChanges = async (bookId: number) => {
+    const bookState = booksEditState[bookId];
+    if (!bookState) return;
+
+    try {
+      const res = await fetch(`http://localhost:3001/books/${bookId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookState.formData),
+      });
+      if (!res.ok) throw new Error("Error al guardar cambios");
+
+      // Actualizo localmente el estado de libros
+      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
+
+      // Salgo del modo edición
+      setBooksEditState(prev => ({
+        ...prev,
+        [bookId]: { ...prev[bookId], editMode: false }
+      }));
+
+      Swal.fire("Éxito", "Libro actualizado correctamente", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo guardar el libro", "error");
+    }
+  };
+
+  // Cancela la edición
+  const cancelEdit = (bookId: number) => {
+    setBooksEditState(prev => ({
+      ...prev,
+      [bookId]: { ...prev[bookId], editMode: false }
+    }));
+  };
+
+  // Fetch usuarios
   const fetchUsers = async () => {
     try {
       const res = await fetch('http://localhost:3001/users');
@@ -30,13 +127,31 @@ export default function PanelAdmin() {
     }
   };
 
+  // Fetch libros
+  const fetchBooks = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/books');
+      const data = await res.json();
+      setBooks(data);
+    } catch (error) {
+      console.error('Error al obtener libros', error);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchBooks();
   }, []);
 
   const toggleUserOpen = (id: number) => {
     setUserOpenIds((prev) =>
       prev.includes(id) ? prev.filter(uid => uid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleBookOpen = (id: number) => {
+    setBookOpenIds((prev) =>
+      prev.includes(id) ? prev.filter(bid => bid !== id) : [...prev, id]
     );
   };
 
@@ -61,6 +176,10 @@ export default function PanelAdmin() {
 
   const filteredUsers = users.filter(user =>
     user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -91,7 +210,7 @@ export default function PanelAdmin() {
               onChange={(e) => setSearch(e.target.value)}
             />
 
-            {filteredUsers.map(user => (
+            {filteredUsers.map((user: User) => (
               <div key={user.id} className={styles.userCard}>
                 <div
                   className={styles.userHeader}
@@ -103,7 +222,7 @@ export default function PanelAdmin() {
 
                 {userOpenIds.includes(user.id) && (
                   <div className={styles.userDetails}>
-                    {/* Sección Administrador */}
+                    {/* Administrador */}
                     <div className={styles.userActionRow}>
                       <p className={styles.actionTitle}>Administrador</p>
                       <div className={styles.actionButtons}>
@@ -136,7 +255,7 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                  updateUser(user.id, { admin: false }, 'Se quitó el rol de administrador');
+                                updateUser(user.id, { admin: false }, 'Se quitó el rol de administrador');
                               }
                             })
                           }
@@ -144,7 +263,7 @@ export default function PanelAdmin() {
                       </div>
                     </div>
 
-                    {/* Sección Bloquear */}
+                    {/* Bloquear */}
                     <div className={styles.userActionRow}>
                       <p className={styles.actionTitle}>Bloquear</p>
                       <div className={styles.actionButtons}>
@@ -190,10 +309,118 @@ export default function PanelAdmin() {
             ))}
           </>
         )}
+
+        {activeTab === "books" && (
+          <>
+            <Input
+              placeholder="Buscar libro"
+              className={styles.inputSearch}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div className={styles.agregarLibro}>
+              <Button>Agregar libro</Button>
+            </div>
+
+            {filteredBooks.map((book: Book) => {
+              const editState = booksEditState[book.id] || {
+                editMode: false,
+                formData: book
+              };
+
+              return (
+                <div key={book.id} className={styles.bookCard}>
+                  <div
+                    className={styles.bookHeader}
+                    onClick={() => toggleBookOpen(book.id)}
+                  >
+                    <span className={styles.bookName}>{book.title}</span>
+                    {bookOpenIds.includes(book.id) ? <ChevronUp /> : <ChevronDown />}
+                  </div>
+
+                  {bookOpenIds.includes(book.id) && (
+                    <div className={styles.bookDetails}>
+                      {editState.editMode ? (
+                        <>
+                          <label>
+                            Título: 
+                            <Input
+                              name="title"
+                              value={editState.formData.title}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
+                          <label>
+                            Autor:
+                            <Input
+                              name="author_name"
+                              value={editState.formData.author_name}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
+                          <label>
+                            Precio:
+                            <Input
+                              type="number"
+                              name="price"
+                              value={editState.formData.price}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
+                          <label>
+                            Año:
+                            <Input
+                              type="number"
+                              name="anio"
+                              value={editState.formData.anio}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
+                          <label>
+                            Exclusivo suscriptores:
+                            <input
+                              type="checkbox"
+                              name="subscriber_exclusive"
+                              checked={editState.formData.subscriber_exclusive}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </label>
+                          <label>
+                            Descripción:
+                            <textarea
+                              name="description"
+                              value={editState.formData.description}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                              rows={3}
+                            />
+                          </label>
+                          <div className={styles.editButtons}>
+                            <Button onClick={() => saveChanges(book.id)}>Guardar</Button>
+                            <Button onClick={() => cancelEdit(book.id)}>Cancelar</Button>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <p><strong>Autor:</strong> {book.author_name}</p>
+                          <p><strong>Precio:</strong> ${book.price}</p>
+                          <p><strong>Año:</strong> {book.anio}</p>
+                          <p><strong>Descripción:</strong> {book.description}</p>
+                          <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                          <Button onClick={() => startEdit(book)}>✏️ Editar</Button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );
 }
+
 
 
 
