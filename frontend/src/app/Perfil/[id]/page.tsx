@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import styles from '../../../styles/profile.module.css'
+
 import { User } from '@/API/types/user';
-import { APIContext } from '@/API/context/apiContext';
-import { UsersStrategy } from '@/API/strategies/usersStrategy';
+import { BaseApi } from '@/API/baseApi';
 
 export default function profilePage() {
     const { id } = useParams();
@@ -14,8 +14,8 @@ export default function profilePage() {
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
 
-    const api = useMemo(() => new APIContext<User>(new UsersStrategy(localStorage.getItem('token') || undefined)), []);
-
+    const api = useMemo(() => new BaseApi(localStorage.getItem('token') || undefined), []);
+    
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
         setEditedProduct(prev => ({
@@ -33,7 +33,7 @@ export default function profilePage() {
     const saveChanges = async (id: number) => {
         const datos = editedProduct[id];
         try {
-            const response = await api.update(id, datos);
+            const response = await api.users.update(id, datos);
 
             const result = response;
 
@@ -66,7 +66,7 @@ export default function profilePage() {
                     return;
                 }
                 
-                const response = await api.getOne(Number(id));
+                const response = await api.users.getOne(Number(id));
 
                 if (!response) {
                     throw new Error('Error al obtener el perfil del usuario');

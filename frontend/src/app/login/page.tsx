@@ -18,17 +18,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation'; 
 import Swal from 'sweetalert2';
-
-
-/*interface JwtPayload {
-  sub: number;
-  email: string;
-  username: string;
-  firstname: string;
-  lastname: string
-  iat: number;
-  exp: number;
-}*/
+import { BaseApi } from '@/API/baseApi';
 
 // Validación
 const userSchema = z.object({
@@ -48,7 +38,7 @@ type UserType = z.infer<typeof userSchema>;
 
 export default function LogIn() {
   const router = useRouter();
-
+  const api = new BaseApi();
   const form = useForm<UserType>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -59,23 +49,17 @@ export default function LogIn() {
 
     // ENVIAR FORM
 const onSubmit = form.handleSubmit(async (values: UserType) => {
+  //localStorage.removeItem('token');
   console.log('Enviando solicitud con:', values);
 
   try {
-    const res = await fetch('http://localhost:3001/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(values),
-    });
-
-    console.log('Estado de la respuesta:', res.status, res.statusText);
-
-    if (!res.ok) {
+    const res = await api.log.login(values);
+    
+    console.log('Datos: ', res);
+    if (!res.success) {
       let errorData;
       try {
-        errorData = await res.json();
+        errorData = res;
         console.log(errorData);
       } catch (e) {
         console.log(e);
@@ -95,12 +79,12 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
       return;
     }
 
-    const data = await res.json();
+    const data = res;
     console.log('Datos:', data);
     
-    if (data.access_token) {
-      localStorage.setItem('token', data.access_token);
-
+    if (data.success) {
+      localStorage.setItem('token', data.data.access_token);
+      
       Swal.fire({
         title: 'Iniciando sesión!',
         text: 'Redirigiendo a la página de inicio...',
