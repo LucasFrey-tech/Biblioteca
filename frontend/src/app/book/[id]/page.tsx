@@ -99,10 +99,6 @@ export default function BookDetail() {
         ? `/libros/${book.image}.png`
         : '/libros/placeholder.png';
 
-    // console.log('Genres:', book.genre);
-    // console.log('Type of genres:', typeof book.genre);
-    // console.log('Is Array:', Array.isArray(book.genre));
-
     return (
         <div className={styles.container}>
             <div className={styles.leftColumn}>
