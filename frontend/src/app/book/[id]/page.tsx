@@ -5,14 +5,27 @@ import { useEffect, useState } from "react";
 import StarRating from "@/components/ui/StarRating";
 import Image from "next/image";
 
-import { Book } from '../../../../../backend/src/entidades/book.entity';
-
 import styles from '../../../styles/BookDetail.module.css';
 
 type Author = {
     id: number;
     name: string;
 };
+
+type Book = {
+    id: number;
+    title: string;
+    author: string;
+    author_id: number;
+    description: string;
+    genre: string[];
+    anio: number;
+    isbn: string;
+    image: string;
+    stock: number;
+    subscriber_exclusive: boolean;
+    price: number;
+}
 
 type Review = {
     id: number;
@@ -23,16 +36,11 @@ type Review = {
     reviewDate: string;
 };
 
-type User = {
-    id: number;
-    username: string;
-}
-
 export default function BookDetail() {
     const params = useParams();
-    const [book, setBook] = useState<Book | null>(null);
-    const [author, setAuthor] = useState<Author>({ id: 0, name: '' });
+    const [book, setBook] = useState<Book>();
     const [review, setReview] = useState<Review[]>([]);
+
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -53,6 +61,7 @@ export default function BookDetail() {
             return;
         }
 
+
         const fetchData = async () => {
             try {
                 const resBook = await fetch(`http://localhost:3001/books/${bookId}`, {
@@ -63,31 +72,14 @@ export default function BookDetail() {
                 });
                 const dataBook = await resBook.json();
 
+                setBook(dataBook);
+
                 if (!resBook.ok) throw new Error('Libro no encontrado');
 
-                const resAuthor = await fetch(`http://localhost:3001/authors/${dataBook.author_id}`);
-                setAuthor(await resAuthor.json());
-
-                const resReviews = await fetch(`http://localhost:3001/reviews/book/${dataBook.id}`);
+                const resReviews = await fetch(`http://localhost:3001/reviews/book/${bookId}`);
                 const reviewsData = await resReviews.json();
 
-
-                const formattedReviews = await Promise.all(reviewsData.map(async (r: Review) => {
-                    const resUser = await fetch(`http://localhost:3001/users/${r.id_user}`);
-                    const user = await resUser.json();
-                    return {
-                        id: r.id,
-                        username: user.username,
-                        comment: r.comment,
-                        rating: r.rating,
-                        date: r.reviewDate
-                    };
-                }));
-
-                console.log(review);
-
-                setBook(dataBook);
-                setReview(formattedReviews);
+                setReview(reviewsData);
 
             } catch (error) {
                 console.error('Error al cargar los datos', error);
@@ -107,6 +99,9 @@ export default function BookDetail() {
         ? `/libros/${book.image}.png`
         : '/libros/placeholder.png';
 
+    // console.log('Genres:', book.genre);
+    // console.log('Type of genres:', typeof book.genre);
+    // console.log('Is Array:', Array.isArray(book.genre));
 
     return (
         <div className={styles.container}>
@@ -131,14 +126,14 @@ export default function BookDetail() {
 
             <div className={`${styles.middleColumn}`}>
                 <div className={styles.meta}>
-                    <p><strong>Autor:</strong> {author.name}</p>
+                    <p><strong>Autor:</strong> {book.author}</p>
                     <p><strong>Año:</strong> {book.anio}</p>
                     <p><strong>Categorías:</strong></p>
-                    {/* <ul>
-                            {book.categories.map((cat, idx) => (
-                                <li key={idx}>{cat}</li>
-                            ))}
-                        </ul> */}
+                    <ul>
+                        {book.genre.map((cat, idx) => (
+                            <li key={idx}>{cat}</li>
+                        ))}
+                    </ul>
                 </div>
             </div>
 

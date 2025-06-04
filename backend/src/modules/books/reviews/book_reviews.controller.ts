@@ -17,8 +17,8 @@ export class BookReviewsController {
     }
 
     @Get('book/:bookId')
-    findByBookId(@Param('bookId') bookId: string) {
-        return this.reviewService.findByBookId(+bookId);
+    findReviewsByBookId(@Param('bookId') bookId: string) {
+        return this.reviewService.findReviewsByBookId(+bookId);
     }
 
     @Delete(':id')
