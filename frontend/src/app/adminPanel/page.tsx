@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import styles from '../../styles/panelAdmin.module.css';
 import Swal from 'sweetalert2';
 import { Button } from "@/components/ui/button";
+import AddBookDialog from "@/components/pages/agregarLibro";
 
 type User = {
   id: number;
@@ -318,8 +319,9 @@ export default function PanelAdmin() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
+
             <div className={styles.agregarLibro}>
-              <Button>Agregar libro</Button>
+              <AddBookDialog />
             </div>
 
             {filteredBooks.map((book: Book) => {
@@ -378,12 +380,30 @@ export default function PanelAdmin() {
                           </label>
                           <label>
                             Exclusivo suscriptores:
-                            <input
-                              type="checkbox"
+                            <select
                               name="subscriber_exclusive"
-                              checked={editState.formData.subscriber_exclusive}
-                              onChange={(e) => handleBookChange(book.id, e)}
-                            />
+                              value={editState.formData.subscriber_exclusive ? "true" : "false"}
+                              onChange={(e) => {
+                                const value = e.target.value === "true";
+                                setBooksEditState(prev => {
+                                  const bookState = prev[book.id];
+                                  if (!bookState) return prev;
+                                  return {
+                                    ...prev,
+                                    [book.id]: {
+                                      ...bookState,
+                                      formData: {
+                                        ...bookState.formData,
+                                        subscriber_exclusive: value,
+                                      }
+                                    }
+                                  }
+                                });
+                              }}
+                            >
+                              <option value="true">Sí</option>
+                              <option value="false">No</option>
+                            </select>
                           </label>
                           <label>
                             Descripción:
@@ -395,8 +415,8 @@ export default function PanelAdmin() {
                             />
                           </label>
                           <div className={styles.editButtons}>
-                            <Button onClick={() => saveChanges(book.id)}>Guardar</Button>
-                            <Button onClick={() => cancelEdit(book.id)}>Cancelar</Button>
+                            <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
+                            <Button className={styles.botonEditar}  onClick={() => cancelEdit(book.id)}>Cancelar</Button>
                           </div>
                         </>
                       ) : (

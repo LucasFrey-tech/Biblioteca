@@ -272,3 +272,18 @@
 .saveButton:hover {
   background-color: #1d4ed8;
 }
+
+.editButtons {
+  gap: 1vw;
+  display: flex;
+}
+
+.botonEditar:hover{
+  background-color: orange;
+  color: white;
+}
+
+.agregarLibro{
+  margin: 1vw;
+
+}

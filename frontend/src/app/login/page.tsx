@@ -16,20 +16,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation'; 
 import Swal from 'sweetalert2';
-
-import { useUser } from '../context/UserContext'; /////-----------------------------------------
-
-/*interface JwtPayload {
-  sub: number;
-  email: string;
-  username: string;
-  firstname: string;
-  lastname: string
-  iat: number;
-  exp: number;
-}*/
+import { BaseApi } from '@/API/baseApi';
 
 // Validación
 const userSchema = z.object({
@@ -49,7 +38,7 @@ type UserType = z.infer<typeof userSchema>;
 
 export default function LogIn() {
   const router = useRouter();
-
+  const api = new BaseApi();
   const form = useForm<UserType>({
     resolver: zodResolver(userSchema),
     defaultValues: {
@@ -58,98 +47,86 @@ export default function LogIn() {
     }
   });
 
+    // ENVIAR FORM
+const onSubmit = form.handleSubmit(async (values: UserType) => {
+  //localStorage.removeItem('token');
+  console.log('Enviando solicitud con:', values);
 
-  const { refreshUser } = useUser(); /////-----------------------------------------
-
-
-  // ENVIAR FORM
-  const onSubmit = form.handleSubmit(async (values: UserType) => {
-    console.log('Enviando solicitud con:', values);
-
-    try {
-      const res = await fetch('http://localhost:3001/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      });
-
-      console.log('Estado de la respuesta:', res.status, res.statusText);
-
-      if (!res.ok) {
-        let errorData;
-        try {
-          errorData = await res.json();
-          console.log(errorData);
-        } catch (e) {
-          console.log(e);
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'La respuesta del servidor no es JSON válido',
-          });
-          return;
-        }
-
+  try {
+    const res = await api.log.login(values);
+    
+    console.log('Datos: ', res);
+    if (!res.success) {
+      let errorData;
+      try {
+        errorData = res;
+        console.log(errorData);
+      } catch (e) {
+        console.log(e);
         Swal.fire({
           icon: 'error',
-          title: 'Login fallido',
-          text: 'Email o contraseña son incorrectos',
+          title: 'Error',
+          text: 'La respuesta del servidor no es JSON válido',
         });
         return;
       }
 
-      const data = await res.json();
-      console.log('Datos:', data);
-
-      if (data.access_token) {
-        localStorage.setItem('token', data.access_token);
-
-        refreshUser(); /////-----------------------------------------
-
-        Swal.fire({
-          title: 'Iniciando sesión!',
-          text: 'Redirigiendo a la página de inicio...',
-          icon: 'success',
-          timer: 3000,
-          showConfirmButton: false,
-          timerProgressBar: true,
-        });
-
-        setTimeout(() => {
-          router.push('/inicio');
-        }, 3000);
-
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error de inicio de sesión',
-          text: 'Hubo un problema al procesar tu ingreso. Por favor, intentá nuevamente.',
-        });
-        console.error('Error en la respuesta:', data);
-      }
-
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error de red:', error.message);
-        Swal.fire({
-          title: 'Error en la red',
-          text: 'Se perdió la conexión a la red',
-          icon: 'question',
-        });
-      } else {
-        console.error('Error desconocido:', error);
-        Swal.fire({
-          title: 'Error desconocido',
-          text: 'Enviar mensaje al soporte para arreglar este problema',
-          icon: 'question',
-        });
-      }
+      Swal.fire({
+        icon: 'error',
+        title: 'Login fallido',
+        text: 'Email o contraseña son incorrectos',
+      });
+      return;
     }
 
-    console.log(localStorage);
-  });
+    const data = res;
+    console.log('Datos:', data);
+    
+    if (data.success) {
+      localStorage.setItem('token', data.data.access_token);
+      
+      Swal.fire({
+        title: 'Iniciando sesión!',
+        text: 'Redirigiendo a la página de inicio...',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+
+      setTimeout(() => {
+        router.push('/inicio');
+      }, 3000);
+
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de inicio de sesión',
+        text: 'Hubo un problema al procesar tu ingreso. Por favor, intentá nuevamente.',
+      });
+      console.error('Error en la respuesta:', data);
+    }
+
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Error de red:', error.message);
+      Swal.fire({
+        title: 'Error en la red',
+        text: 'Se perdió la conexión a la red',
+        icon: 'question',
+      });
+    } else {
+      console.error('Error desconocido:', error);
+      Swal.fire({
+        title: 'Error desconocido',
+        text: 'Enviar mensaje al soporte para arreglar este problema',
+        icon: 'question',
+      });
+    }
+  }
+
+  console.log(localStorage);
+});
 
   return (
     <div className={styles.pageContainer}>
