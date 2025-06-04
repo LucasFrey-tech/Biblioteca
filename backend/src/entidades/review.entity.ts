@@ -6,7 +6,7 @@ export class Review{
     id: number;
 
     @Column({name: 'id_user', type: 'integer' })
-    idUser: number;
+    id_user: number;
 
     @Column({name: 'id_book', type: 'integer' })
     idBook: number;

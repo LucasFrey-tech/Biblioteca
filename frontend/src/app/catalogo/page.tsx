@@ -253,11 +253,11 @@ export default function BookPage() {
                                     price: book.price,
                                     author: authors.find((a) => a.id === book.author_id)?.name
                                 }}
-                            />
-                        ))
-                    ) : (
-                        <p>No se encontraron libros.</p>
-                    )}
+                                />
+                            ))
+                        ) : (
+                            <p>No se encontraron libros.</p>
+                        )}
                 </div>
             </div>
         </>
