@@ -13,9 +13,19 @@ export default function profilePage() {
     const [user, setUser] = useState<User>();
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
-
-    const api = useMemo(() => new BaseApi(localStorage.getItem('token') || undefined), []);
     
+    const apiRef = useRef<BaseApi | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            apiRef.current = new BaseApi(token || undefined);
+        }else{
+            console.error("Falla validacion token");
+            return;
+        }
+    }, []);
+
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
         setEditedProduct(prev => ({
@@ -31,9 +41,13 @@ export default function profilePage() {
     };
 
     const saveChanges = async (id: number) => {
+        if (!apiRef.current) {
+            console.error("API no inicializada");
+            return;
+        }
         const datos = editedProduct[id];
         try {
-            const response = await api.users.update(id, datos);
+            const response = await apiRef.current.users.update(id, datos);
 
             const result = response;
 
@@ -51,22 +65,18 @@ export default function profilePage() {
 
     }
 
-
     useEffect(() => {
         const getProfile = async () => {
             if (!id){
                 console.error('No se proporcionó un Id de usuario');
                 return;
             }
+            if(!apiRef.current) {
+                console.error('API aún no inicializada');
+                return;
+            }
             try{
-                const token = localStorage.getItem('token');
-
-                if (!token) {
-                    console.error('Faltan datos de autenticación');
-                    return;
-                }
-                
-                const response = await api.users.getOne(Number(id));
+                const response = await apiRef.current.users.getOne(Number(id));
 
                 if (!response) {
                     throw new Error('Error al obtener el perfil del usuario');
@@ -79,7 +89,8 @@ export default function profilePage() {
             }
         }
         getProfile();
-    }, [id, api]); 
+    }, [id]); 
+
 
 
     if (!user) return;
