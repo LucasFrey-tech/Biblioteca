@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, } from '@nestjs/common';
 import { ShoppingCartService } from './shopping_cart.service';
-import { ShoppingCart } from 'src/entidades/shopping_cart.entity';
+import { ShoppingCartBook } from 'src/entidades/shopping_cart_book.entity';
 import { CartDTO } from './shopping_cart.dto';
 
 
@@ -14,14 +14,14 @@ export class ShoppingCartController {
   }
 
   @Post()
-  create(@Body() book: Partial<ShoppingCart>) {
+  create(@Body() book: Partial<ShoppingCartBook>) {
     return this.shoppingCartService.create(book);
   }
 
   @Put(':idUser')
   update(
     @Param('idUser', ParseIntPipe) idUser: number,
-    @Body() updateData: Partial<ShoppingCart>,
+    @Body() updateData: Partial<ShoppingCartBook>,
   ) {
     return this.shoppingCartService.update(idUser, updateData);
   }

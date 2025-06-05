@@ -5,7 +5,7 @@ export class BookCartDTO {
     author: string,
     image: string,
     price: number,
-    subscriber_exclusive: boolean,
+    virtual:boolean,
     amount?: number,
   ) {
     this.id = id;
@@ -13,7 +13,7 @@ export class BookCartDTO {
     this.author = author;
     this.image = image;
     this.price = price;
-    this.subscriber_exclusive = subscriber_exclusive;
+    this.virtual = virtual;
     this.amount = amount;
   }
   id: number;
@@ -21,6 +21,6 @@ export class BookCartDTO {
   author: string;
   image: string;
   price: number;
-  subscriber_exclusive: boolean;
+  virtual:boolean;
   amount?: number;
 }

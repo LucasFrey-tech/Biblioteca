@@ -1,4 +1,4 @@
-import { ShoppingCart } from "src/entidades/shopping_cart.entity";
+import { ShoppingCart } from "src/entidades/shopping_cart_book.entity";
 
 export const mockShoppingCart1:ShoppingCart = {
     id: 1,

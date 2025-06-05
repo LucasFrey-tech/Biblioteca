@@ -2,60 +2,83 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/shoppingCart.module.css';
 
-interface Book {
+
+import { useParams } from 'next/navigation';
+
+interface BookI {
     id: number;
     title: string;
     author: string;
     image: string;
     price: number;
-    amount?: number;
     subscriber_exclusive: boolean;
+    amount?: number;
 }
-
 interface ShoppingCartItem {
     id: number;
     idUser: number;
+    usuario: string;
     idBook: number;
+    book: BookI;
     amount: number;
-    book?: Book;
 }
 
 export default function ShoppingCartPage() {
+    const params = useParams();
     const [cartItems, setCartItems] = useState<ShoppingCartItem[]>([]);
-    const [books, setBooks] = useState<Book[]>([]);
+    const [books, setBooks] = useState<BookI[]>([]);
     const [loading, setLoading] = useState(true);
-    const [userId] = useState(1);
+    const [error, setError] = useState<string | null>(null);
+
+
+    const userId = React.useMemo(() => {
+        if (!params || !params.id) return null;
+        const id = Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id);
+        return isNaN(id) ? null : id;
+    }, [params]);
 
     useEffect(() => {
-        const fetchCartData = async () => {
+
+        if (userId === null) {
+            setError('ID del usuario no proporcionado o inválido.');
+            setLoading(false);
+            return;
+        }
+
+        const fetchData = async () => {
             try {
+                const resCart = await fetch(`http://localhost:3000/shopping-cart/user/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-                const cartResponse = await fetch(`http://localhost:3000/shopping-cart/${userId}`);
-                const cartData = await cartResponse.json();
-
-                if (cartData) {
-                    setCartItems(Array.isArray(cartData) ? cartData : [cartData]);
-
-
-                    const bookIds = Array.isArray(cartData)
-                        ? cartData.map(item => item.idBook)
-                        : [cartData.idBook];
-
-                    if (bookIds.length > 0) {
-                        const booksResponse = await fetch(`http://localhost:3000/books?ids=${bookIds.join(',')}`);
-                        const booksData = await booksResponse.json();
-                        setBooks(booksData);
-                    }
+                if (!resCart.ok) {
+                    throw new Error('No se pudo cargar el carrito');
                 }
+
+                const cartData: ShoppingCartItem[] = await resCart.json();
+
+                
+                const booksData = cartData
+                    .filter((item) => item.book)
+                    .map((item) => item.book);
+
+                setCartItems(cartData);
+                setBooks(booksData);
+
             } catch (error) {
-                console.error('Error fetching cart data:', error);
+                console.error('Error al cargar los datos:', error);
+                setError('Error al cargar el carrito');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchCartData();
+        fetchData();
     }, [userId]);
+
 
     const updateCartItem = async (idBook: number, newAmount: number) => {
         try {

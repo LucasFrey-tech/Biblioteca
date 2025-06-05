@@ -2,7 +2,7 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import {mockShoppingCart1, mockShoppingCarts} from '../mocks/shopping_cart_book.mock';
-import { ShoppingCart } from '../../src/entidades/shopping_cart.entity';
+import { ShoppingCart } from '../../src/entidades/shopping_cart_book.entity';
 import { ShoppingCartService } from '../../src/modules/shopping_cart/shopping_cart.service';
 
 describe('ShoppingCartService', () => {

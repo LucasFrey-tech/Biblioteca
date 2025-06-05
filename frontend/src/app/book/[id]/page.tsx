@@ -1,16 +1,15 @@
 'use client';
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "@/components/ui/StarRating";
 import Image from "next/image";
 
+import { BaseApi } from "@/API/baseApi";
+import { User } from "@/API/types/user";
+
 import styles from '../../../styles/BookDetail.module.css';
 
-type Author = {
-    id: number;
-    name: string;
-};
 
 type Book = {
     id: number;
@@ -40,11 +39,13 @@ export default function BookDetail() {
     const params = useParams();
     const [book, setBook] = useState<Book>();
     const [review, setReview] = useState<Review[]>([]);
-
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const [user, setUser] = useState<User>();
+    const [amount, setAmount] = useState<number>(1);
+
+    const refAPI = useRef<BaseApi | null>(null);
 
     useEffect(() => {
         if (!params || !params.id) {
@@ -61,9 +62,24 @@ export default function BookDetail() {
             return;
         }
 
-
         const fetchData = async () => {
             try {
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
+
+                if (!token || !userId) {
+                    console.warn('No hay token o userId en localStorage');
+                } else {
+                    // Inicializamos la API y guardamos la referencia
+                    const api = new BaseApi(token);
+                    refAPI.current = api;
+
+                    // Obtenemos el usuario desde la API
+                    const userData = await api.users.getOne(Number(userId));
+                    setUser(userData);
+                }
+
+
                 const resBook = await fetch(`http://localhost:3001/books/${bookId}`, {
                     method: 'GET',
                     headers: {
@@ -90,6 +106,32 @@ export default function BookDetail() {
 
         fetchData();
     }, [params]);
+
+    const handleAddToCart = async () => {
+        if (!book || !user) return;
+        try {
+            const payload = {
+                idUser: user.id,
+                idBook: book.id,
+                amount: amount
+            };
+
+            const res = await fetch(`http://localhost:3000/shopping-cart/${user.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) throw new Error('No se pudo agregar al carrito');
+            alert('Libro agregado al carrito ✅');
+        } catch (error) {
+            console.error('Error agregando al carrito:', error);
+            alert('Error al agregar al carrito ❌');
+        }
+    };
+
 
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
@@ -142,7 +184,7 @@ export default function BookDetail() {
                         }).format(book.price)}
                     </p>
                     <button className={styles.buyButton}>Comprar Ahora</button>
-                    <button className={styles.cartButton}>Agregar al Carrito</button>
+                    <button className={styles.cartButton} onClick={handleAddToCart}>Agregar al Carrito</button>
                 </div>
 
                 <div className={styles.formatButtons}>
@@ -153,6 +195,18 @@ export default function BookDetail() {
                 <div className={styles.stock}>
                     <p><strong>Stock Disponible</strong></p>
                     <p>Cantidad: {book.stock} Unidades</p>
+                    <div className={styles.amountSelector}>
+                        <label htmlFor="amount">Cantidad: </label>
+                        <input
+                            id="amount"
+                            type="number"
+                            min={1}
+                            max={book.stock}
+                            value={amount}
+                            onChange={(e) => setAmount(Number(e.target.value))}
+                            className={styles.amountInput}
+                        />
+                    </div>
                 </div>
             </div>
 

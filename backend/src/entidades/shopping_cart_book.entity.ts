@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
 
-@Entity('shopping_cart')
-export class ShoppingCart {
+@Entity('shopping_cart_book')
+export class ShoppingCartBook {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -11,6 +11,6 @@ export class ShoppingCart {
     @Column({name: 'id_book', type: 'integer' })
     idBook: number;
 
-    @Column('amount')
+    @Column({ name: 'amount', type: 'integer' })
     amount: number;
 }
