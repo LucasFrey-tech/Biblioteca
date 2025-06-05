@@ -1,24 +1,24 @@
-import { ShoppingCartBook } from "src/entidades/shopping_cart_book.entity";
+import { ShoppingCart } from "src/entidades/shopping_cart.entity";
 
-export const mockShoppingCartBook1:ShoppingCartBook = {
+export const mockShoppingCart1:ShoppingCart = {
     id: 1,
     idUser:  1,
     idBook:  1,
     amount:  1,
 };
 
-export const mockShoppingCartBook2:ShoppingCartBook = {
+export const mockShoppingCart2:ShoppingCart = {
     id: 2,
     idUser:  1,
     idBook:  2,
     amount:  2,
 };
 
-export const mockShoppingCartBook3:ShoppingCartBook = {
+export const mockShoppingCart3:ShoppingCart = {
     id: 3,
     idUser:  2,
     idBook:  1,
     amount:  1,
 };
 
-export const mockShoppingCartBooks = [mockShoppingCartBook1, mockShoppingCartBook2, mockShoppingCartBook3];
+export const mockShoppingCarts = [mockShoppingCart1, mockShoppingCart2, mockShoppingCart3];
