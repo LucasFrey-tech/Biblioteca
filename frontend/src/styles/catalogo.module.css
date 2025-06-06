@@ -38,6 +38,9 @@
     background-color: #2c2c2b;
 }
 
+.container {
+    background-color: red;
+}
 .searchBarContainer {
     background-color: #f4f4f4;
     padding: 10px;
