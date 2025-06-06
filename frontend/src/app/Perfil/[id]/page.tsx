@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import styles from '../../../styles/profile.module.css'
 
@@ -19,7 +19,7 @@ export default function profilePage() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if(token){
-            apiRef.current = new BaseApi(token || undefined);
+            apiRef.current = new BaseApi(token);
         }else{
             console.error("Falla validacion token");
             return;
