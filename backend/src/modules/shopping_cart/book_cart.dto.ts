@@ -6,7 +6,7 @@ export class BookCartDTO {
     image: string,
     price: number,
     virtual:boolean,
-    amount?: number,
+    amount: number,
   ) {
     this.id = id;
     this.title = title;
@@ -22,5 +22,5 @@ export class BookCartDTO {
   image: string;
   price: number;
   virtual:boolean;
-  amount?: number;
+  amount: number;
 }

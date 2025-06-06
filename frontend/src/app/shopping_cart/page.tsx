@@ -11,33 +11,23 @@ interface BookI {
     author: string;
     image: string;
     price: number;
-    subscriber_exclusive: boolean;
-    amount?: number;
-}
-interface ShoppingCartItem {
-    id: number;
-    idUser: number;
-    usuario: string;
-    idBook: number;
-    book: BookI;
+    virtual: boolean;
     amount: number;
 }
 
+
 export default function ShoppingCartPage() {
     const params = useParams();
-    const [cartItems, setCartItems] = useState<ShoppingCartItem[]>([]);
-    const [books, setBooks] = useState<BookI[]>([]);
+    const [booksCartShopping, setBooksCartShopping] = useState<BookI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-
-    const userId = React.useMemo(() => {
-        if (!params || !params.id) return null;
-        const id = Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id);
-        return isNaN(id) ? null : id;
-    }, [params]);
-
+    let userId = 0;
+    
     useEffect(() => {
+        
+        userId = Number(localStorage.getItem('userId'));
+        console.log(userId);
 
         if (userId === null) {
             setError('ID del usuario no proporcionado o inválido.');
@@ -45,9 +35,10 @@ export default function ShoppingCartPage() {
             return;
         }
 
+
         const fetchData = async () => {
             try {
-                const resCart = await fetch(`http://localhost:3000/shopping-cart/user/${userId}`, {
+                const resCart = await fetch(`http://localhost:3001/shopping-cart/${userId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -58,15 +49,10 @@ export default function ShoppingCartPage() {
                     throw new Error('No se pudo cargar el carrito');
                 }
 
-                const cartData: ShoppingCartItem[] = await resCart.json();
+                const cartData: BookI[] = await resCart.json();
 
-                
-                const booksData = cartData
-                    .filter((item) => item.book)
-                    .map((item) => item.book);
+                setBooksCartShopping(cartData);
 
-                setCartItems(cartData);
-                setBooks(booksData);
 
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
@@ -75,6 +61,7 @@ export default function ShoppingCartPage() {
                 setLoading(false);
             }
         };
+        console.log("2",userId);
 
         fetchData();
     }, [userId]);
@@ -82,11 +69,12 @@ export default function ShoppingCartPage() {
 
     const updateCartItem = async (idBook: number, newAmount: number) => {
         try {
-            const existingItem = cartItems.find(item => item.idBook === idBook);
+            const existingItem = booksCartShopping.find(item => item.id === idBook);
 
             if (existingItem) {
                 const updatedItem = { ...existingItem, amount: newAmount };
-                await fetch(`http://localhost:3000/shopping-cart/${userId}`, {
+
+                await fetch(`http://localhost:3001/shopping-cart/${userId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -94,8 +82,8 @@ export default function ShoppingCartPage() {
                     body: JSON.stringify(updatedItem),
                 });
 
-                setCartItems(cartItems.map(item =>
-                    item.idBook === idBook ? updatedItem : item
+                setBooksCartShopping(booksCartShopping.map(item =>
+                    item.id === idBook ? updatedItem : item
                 ));
             }
         } catch (error) {
@@ -105,19 +93,19 @@ export default function ShoppingCartPage() {
 
     const removeFromCart = async (id: number) => {
         try {
-            await fetch(`http://localhost:3000/shopping-cart/${id}`, {
+            await fetch(`http://localhost:3001/shopping-cart/${id}`, {
                 method: 'DELETE',
             });
 
-            setCartItems(cartItems.filter(item => item.id !== id));
+            setBooksCartShopping(booksCartShopping.filter(item => item.id !== id));
         } catch (error) {
             console.error('Error removing item from cart:', error);
         }
     };
 
     const calculateTotal = () => {
-        return cartItems.reduce((total, item) => {
-            const book = books.find(b => b.id === item.idBook);
+        return booksCartShopping.reduce((total, item) => {
+            const book = booksCartShopping.find(b => b.id === item.id);
             return total + (book ? book.price * item.amount : 0);
         }, 0);
     };
@@ -132,18 +120,18 @@ export default function ShoppingCartPage() {
                     <div className={styles.cartSection}>
                         <h2 className={styles.sectionTitle}>Productos</h2>
 
-                        {cartItems.length === 0 ? (
+                        {booksCartShopping.length === 0 ? (
                             <p className={styles.emptyCart}>Carrito de compras vacio</p>
                         ) : (
                             <div className={styles.itemsContainer}>
-                                {cartItems.map(item => {
-                                    const book = books.find(b => b.id === item.idBook);
+                                {booksCartShopping.map(item => {
+                                    const book = booksCartShopping.find(b => b.id === item.id);
                                     if (!book) return null;
 
                                     return (
                                         <div key={item.id} className={styles.cartItem}>
                                             <div className={styles.itemImage}>
-                                                <img src={book.image || '/book-placeholder.jpg'} alt={book.title} />
+                                                <img src={book.image || '/placeholder.png'} alt={book.title} />
                                             </div>
                                             <div className={styles.itemDetails}>
                                                 <h3>{book.title}</h3>
@@ -152,14 +140,14 @@ export default function ShoppingCartPage() {
 
                                                 <div className={styles.quantityControl}>
                                                     <button
-                                                        onClick={() => updateCartItem(item.idBook, Math.max(1, item.amount - 1))}
+                                                        onClick={() => updateCartItem(item.id, Math.max(1, item.amount - 1))}
                                                         className={styles.quantityButton}
                                                     >
                                                         -
                                                     </button>
                                                     <span className={styles.quantity}>{item.amount}</span>
                                                     <button
-                                                        onClick={() => updateCartItem(item.idBook, item.amount + 1)}
+                                                        onClick={() => updateCartItem(item.id, item.amount + 1)}
                                                         className={styles.quantityButton}
                                                     >
                                                         +
@@ -190,7 +178,7 @@ export default function ShoppingCartPage() {
                         <h2 className={styles.sectionTitle}>Resumen de compra</h2>
                         <div className={styles.summaryDetails}>
                             <div className={styles.summaryRow}>
-                                <span>Productos ({cartItems.length})</span>
+                                <span>Productos ({booksCartShopping.length})</span>
                                 <span>${calculateTotal().toLocaleString()}</span>
                             </div>
                             <div className={styles.summaryRow}>

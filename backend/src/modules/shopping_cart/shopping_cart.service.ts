@@ -38,13 +38,13 @@ export class ShoppingCartService {
 
         const results = await Promise.all (
             cartItems.map(async (cart) => {
-                const book = await this.booksRepository.findOne({ where: { id: cart.id } });
+                const book = await this.booksRepository.findOne({ where: { id: cart.idBook } });
                 if (!book) return null;
 
                 const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
          
                 return new BookCartDTO(
-                   cart.id,
+                    book.id,
                     book.title,
                     author ? author.name : '',
                     book.image,

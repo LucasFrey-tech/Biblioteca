@@ -33,4 +33,4 @@ drop table user_subscription;
 drop table subscription_book_discount;
 
 -- BORRAR TABLA SHOPPING_CART_BOOK
-drop table shopping_cart;
+drop table shopping_cart_book;

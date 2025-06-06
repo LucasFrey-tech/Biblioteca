@@ -94,8 +94,8 @@ create table subscription_book_discount(
 	discount float not null default(0) check(discount >= 0)
 );
 
--- CREAR TABLA SHOPPING_CART
-create table shopping_cart(
+-- CREAR TABLA SHOPPING_CART_BOOK
+create table shopping_cart_book(
 	id serial primary key,
 	id_user integer not null,
 	id_book integer not null,

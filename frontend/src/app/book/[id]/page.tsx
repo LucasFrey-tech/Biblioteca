@@ -116,7 +116,7 @@ export default function BookDetail() {
                 amount: amount
             };
 
-            const res = await fetch(`http://localhost:3000/shopping-cart/${user.id}`, {
+            const res = await fetch(`http://localhost:3001/shopping-cart/${user.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
