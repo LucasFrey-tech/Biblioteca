@@ -51,7 +51,7 @@ const database_config = require('../private/database.config.json');
       username: database_config.username,
       password: database_config.password,
       database: database_config.database,
-      entities: [User, Book, Author, Review, Genre, BookGenre],
+      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook],
       synchronize: false, 
     }),
     ConfigModule.forRoot({
@@ -65,7 +65,7 @@ const database_config = require('../private/database.config.json');
     BookReviewsModule,
     GenresModule,
     BookGenresModule,
-    // ShoppingCartModule,
+    ShoppingCartModule,
   ],
   controllers: [BooksController, AuthorController, BookReviewsController, GenresController, BookGenresController, ShoppingCartController],
   providers: [BooksService, AuthorService, BookReviewsService, GenresService, BookGenresService, ShoppingCartService],

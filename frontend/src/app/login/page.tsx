@@ -20,6 +20,10 @@ import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BaseApi } from '@/API/baseApi';
 
+////////////////////////////////////////////////////////////
+import { jwtDecode } from 'jwt-decode';
+////////////////////////////////////////////////////////////
+
 // Validación
 const userSchema = z.object({
   email: z.string({
@@ -84,6 +88,11 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
     
     if (data.success) {
       localStorage.setItem('token', data.data.access_token);
+
+      ////////////////////////////////////////////////////////////
+      const decoded: any = jwtDecode(data.data.access_token);
+      localStorage.setItem('userId', decoded.sub);
+      ////////////////////////////////////////////////////////////
       
       Swal.fire({
         title: 'Iniciando sesión!',
