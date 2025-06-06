@@ -115,7 +115,7 @@ export default function AddBookDialog() {
             <SelectContent>
               {authors.map((author) => (
                 <SelectItem key={author.id} value={String(author.id)}>
-                  {author.name} 
+                  {author.name}        
                 </SelectItem>
               ))}
             </SelectContent>
