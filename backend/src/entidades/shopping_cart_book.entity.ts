@@ -16,6 +16,6 @@ export class ShoppingCartBook {
     idBook: number;
 
     @ApiProperty({example: 20000, description: 'Valor Total del Carrito'})
-    @Column('amount')
+    @Column({ name: 'amount', type: 'integer' })
     amount: number;
 }

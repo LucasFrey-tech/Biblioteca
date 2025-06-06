@@ -54,14 +54,14 @@ create table virtual_book_content(
 	content text not null
 );
 
--- CREAR TABLA USER_VIRTUAL_BOOKS
+-- CREAR TABLA USER_VIRTUAL_BOOKS 
 create table user_virtual_books(
 	id serial primary key,
 	id_user integer not null,
 	id_book integer not null
 );
 
--- CREAR TABLA USER_FAVORITE_VIRTUAL_BOOKS
+-- CREAR TABLA USER_FAVORITE_VIRTUAL_BOOKS XXXXXXXXXXXX
 create table user_favorite_virtual_books(
 	id serial primary key,
 	id_user integer not null,
@@ -78,7 +78,7 @@ create table reviews (
 	review_date timestamp default(CURRENT_TIMESTAMP)
 );
 
--- CREAR TABLA USER_SUBSCRIPTION
+-- CREAR TABLA USER_SUBSCRIPTION XXXXXX
 create table user_subscription(
 	id serial primary key,
 	id_user integer not null,
@@ -87,7 +87,7 @@ create table user_subscription(
 	ongoing boolean default(false)
 );
 
--- CREAR TABLA SUBSCRIPTION_BOOK_DISCOUNT
+-- CREAR TABLA SUBSCRIPTION_BOOK_DISCOUNT XXXXXXXX
 create table subscription_book_discount(
 	id serial primary key,
 	id_book integer not null,
