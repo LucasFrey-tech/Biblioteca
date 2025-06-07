@@ -21,21 +21,31 @@ export default function ShoppingCartPage() {
     const [booksCartShopping, setBooksCartShopping] = useState<BookI[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<number | null>(null);
 
-    let userId = 0;
-    
+    // let userId = 0;
+
     useEffect(() => {
-        
-        userId = Number(localStorage.getItem('userId'));
-        console.log(userId);
 
-        if (userId === null) {
+        // userId = Number(localStorage.getItem('userId'));
+        // console.log(userId);
+
+        // if (userId === null) {
+        //     setError('ID del usuario no proporcionado o inválido.');
+        //     setLoading(false);
+        //     return;
+        // }
+
+        const id = localStorage.getItem('userId');
+        if (id) {
+            setUserId(Number(id));
+        } else {
             setError('ID del usuario no proporcionado o inválido.');
             setLoading(false);
-            return;
         }
 
-
+        if (userId === null) return;
+        
         const fetchData = async () => {
             try {
                 const resCart = await fetch(`http://localhost:3001/shopping-cart/${userId}`, {
@@ -61,7 +71,7 @@ export default function ShoppingCartPage() {
                 setLoading(false);
             }
         };
-        console.log("2",userId);
+        console.log("2", userId);
 
         fetchData();
     }, [userId]);

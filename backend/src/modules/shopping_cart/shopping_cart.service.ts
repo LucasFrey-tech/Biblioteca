@@ -27,12 +27,6 @@ export class ShoppingCartService {
         const cartItems = await this.cartBookShopingRepository.find({ where: { idUser } });
         if (!cartItems.length) return null;
 
-        /**
-         * 1 [..] _> usuario 1 --> [book1]
-         * 1 [..] _> usuario 1 --> [book2]
-         * 1 [..] _> usuario 1 --> [book3]
-         */
-
         const user = await this.userRepository.findOne({ where: { id: idUser } });
         if (!user) return null;
 
