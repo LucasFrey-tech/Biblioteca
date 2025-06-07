@@ -1,7 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import * as express from 'express';
+import { existsSync, mkdirSync } from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { WinstonModule } from 'nest-winston';
+import { AppModule } from './app.module';
 
 /**
  * Archivo principal que arranca la aplicación NestJS.
@@ -11,8 +13,6 @@ import * as winston from 'winston';
  * - Habilita CORS para el frontend.
  * - Inicia el servidor en el puerto 3001.
  */
-
-const logger_Config = require('../private/logger.config.json');
 
 /**
  * Niveles disponibles de log en Winston:
@@ -34,7 +34,21 @@ const logger_Config = require('../private/logger.config.json');
  * Habilita CORS para permitir el acceso desde el frontend en localhost:3000.
  * Inicia el servidor en el puerto 3001.
  */
+
+const logger_Config = require('..//private/logger.config.json');
+const myapp_config = require('../private/app.config.json');
+
 async function bootstrap() {
+  
+  // Setup users image directory
+  if (!existsSync(myapp_config.static_resources.users_images.path)) {
+    mkdirSync(myapp_config.static_resources.users_images.path);
+  }
+  // Setup books image directory
+  if (!existsSync(myapp_config.static_resources.books_images.path)) {
+    mkdirSync(myapp_config.static_resources.books_images.path);
+  }
+  
   const app = await NestFactory.create(AppModule,{
     logger: WinstonModule.createLogger({
       transports: [
@@ -49,17 +63,19 @@ async function bootstrap() {
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.simple())
-          ,filename: logger_Config.log_file
-          ,level: logger_Config.file_details_level
-        })
-      ],
-    })
-  });
-
-  app.enableCors({
-    origin: 'http://localhost:3000', 
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
+            ,filename: logger_Config.log_file
+            ,level: logger_Config.file_details_level
+          })
+        ],
+      })
+    });
+    
+    app.use(myapp_config.static_resources.books_images.prefix, express.static(myapp_config.static_resources.books_images.path));
+    
+    app.enableCors({
+      origin: myapp_config.front_url, 
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      credentials: true,
   });
 
   await app.listen(3001);
