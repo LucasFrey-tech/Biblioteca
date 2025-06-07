@@ -67,7 +67,5 @@ const database_config = require('../private/database.config.json');
     BookGenresModule,
     // ShoppingCartModule,
   ],
-  controllers: [BooksController, AuthorController, BookReviewsController, GenresController, BookGenresController, ShoppingCartController],
-  providers: [BooksService, AuthorService, BookReviewsService, GenresService, BookGenresService, ShoppingCartService],
 })
 export class AppModule {}

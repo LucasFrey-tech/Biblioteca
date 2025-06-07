@@ -6,10 +6,13 @@ import { Book } from '../../../entidades/book.entity';
 import { Author } from 'src/entidades/author.entity';
 import { Genre } from 'src/entidades/genre.entity';
 import { BookGenre } from 'src/entidades/book_genres.entity';
+import { SettingsService } from 'src/settings.service';
 
 @Injectable()
 export class BooksService {
   constructor(
+    private readonly settingsService: SettingsService,
+
     @InjectRepository(Book)
     private booksRepository: Repository<Book>,
 
@@ -28,31 +31,19 @@ export class BooksService {
     const authors = await this.authorRepository.find();
     const genres = await this.genreRepository.find();
     const booksGenres = await this.bookGenreRepository.find();
-
-    const result = books.map((b) => {
-      const idAuthor = b.author_id;
+    
+    console.log(books);
+    const result = books.map((book) => {
+      const idAuthor = book.author_id;
       const author = authors.find((element) => element.id === idAuthor);
 
 
-      const filteredBookGenres = booksGenres.filter((bg) => { return bg.idBook == b.id });
+      const filteredBookGenres = booksGenres.filter((bg) => { return bg.idBook == book.id });
 
-      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fb) => fb.idBook == g.id));
+      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.idBook == g.id));
 
       const bookGenres = filteredGenres.map((fbg) => fbg.name);
-      return new BookDTO(
-        b.id,
-        b.title,
-        author ? author.name : "",
-        b.author_id,
-        b.description,
-        bookGenres,
-        b.anio,
-        b.isbn,
-        b.image,
-        b.stock,
-        b.subscriber_exclusive,
-        b.price,
-      );
+      return BookDTO.Book2BookDTO(book, author ? author.name : "", bookGenres); 
     });
 
     return result;
@@ -76,27 +67,16 @@ export class BooksService {
       genres = genreEntities.map((g) => g.name);
     }
 
-    return new BookDTO(
-      book.id,
-      book.title,
-      author ? author.name : "",
-      book.author_id,
-      book.description,
-      genres,
-      book.anio,
-      book.isbn,
-      book.image,
-      book.stock,
-      book.subscriber_exclusive,
-      book.price
-    );
+    return BookDTO.Book2BookDTO(book, author ? author.name : "", genres);
   }
 
-  create(book: Partial<Book>) {
+  create(bookDTO: BookDTO) {
+    const book = BookDTO.BookDTO2Book(bookDTO);    
     return this.booksRepository.save(book);
   }
 
-  async update(id: number, updateData: Partial<Book>) {
+  async update(id: number, bookDTO: BookDTO) {
+    const updateData = BookDTO.BookDTO2Book(bookDTO);
     await this.booksRepository.update(id, updateData);
     return this.findOne(id);
   }
@@ -104,9 +84,9 @@ export class BooksService {
   delete(id: number) {
     return this.booksRepository.delete(id);
   }
+  
+  bookImageUrl = (imageName:string):string=>{
+    const path = require('path');
+    return this.settingsService.getHostUrl()+this.settingsService.getBooksImagesPrefix()+"/"+imageName;
+  }
 }
-
-//form multipart!!
-/**
- * upload archivos en NextJS y NestJS y unirlos
- */
