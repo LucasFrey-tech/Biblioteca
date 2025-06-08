@@ -1,12 +1,13 @@
-import { Controller, Get, Param, Delete } from "@nestjs/common";
+import { Controller, Get, Param, Delete, Post, Body } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { Author } from "src/entidades/author.entity";
+import { CreateAuthorDto } from "src/modules/authors/crear-autor.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Autores')
 @Controller('authors')
 export class AuthorController {
-    constructor(private readonly authorService: AuthorService) { }
+    constructor(private readonly authorService: AuthorService) {}
 
     @Get()
     @ApiOperation({ summary: 'Listar Todos los Autores' })
@@ -21,6 +22,14 @@ export class AuthorController {
     @ApiResponse({ status: 200, description: 'Autor Encontrado', type: Author})
     findOne(@Param('id') id: string) {
         return this.authorService.findOne(+id);
+    }
+
+    @Post()
+    @ApiOperation({ summary: 'Crear Autor' })
+    @ApiBody({ type: CreateAuthorDto })
+    @ApiResponse({ status: 201, description: 'Autor creado', type: Author })
+    create(@Body() createAuthorDto: CreateAuthorDto): Promise<Author> {
+        return this.authorService.create(createAuthorDto);
     }
 
     @Delete(':id')
