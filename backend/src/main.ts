@@ -1,8 +1,11 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import * as express from 'express';
+import * as winston from 'winston';
+import { existsSync, mkdirSync } from 'fs';
+import { NestFactory } from '@nestjs/core';
+import { WinstonModule } from 'nest-winston';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 /**
  * Archivo principal que arranca la aplicación NestJS.
@@ -12,8 +15,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
  * - Habilita CORS para el frontend.
  * - Inicia el servidor en el puerto 3001.
  */
-
-const logger_Config = require('../private/logger.config.json');
 
 /**
  * Niveles disponibles de log en Winston:
@@ -35,28 +36,43 @@ const logger_Config = require('../private/logger.config.json');
  * Habilita CORS para permitir el acceso desde el frontend en localhost:3000.
  * Inicia el servidor en el puerto 3001.
  */
+
+const myapp_config = require('../private/app.config.json');
+
 async function bootstrap() {
+  
+  // Setup users image directory
+  if (!existsSync(myapp_config.static_resources.users_images.path)) {
+    mkdirSync(myapp_config.static_resources.users_images.path);
+  }
+  // Setup books image directory
+  if (!existsSync(myapp_config.static_resources.books_images.path)) {
+    mkdirSync(myapp_config.static_resources.books_images.path);
+  }
+  
   const app = await NestFactory.create(AppModule,{
     logger: WinstonModule.createLogger({
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
-            winston.format.colorize({ all: logger_Config.colorize_logs })
+            winston.format.colorize({ all: myapp_config.logger.colorize_logs })
             ,winston.format.simple()
           )
-          ,level: logger_Config.console_details_level
+          ,level: myapp_config.logger.console_details_level
         }),
         new winston.transports.File({
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.simple())
-          ,filename: logger_Config.log_file
-          ,level: logger_Config.file_details_level
-        })
-      ],
-    })
-  });
-
+            ,filename: myapp_config.logger.log_file
+            ,level: myapp_config.logger.file_details_level
+          })
+        ],
+      })
+    });
+    
+  app.use(myapp_config.static_resources.books_images.prefix, express.static(myapp_config.static_resources.books_images.path));
+    
   const config = new DocumentBuilder()
     .setTitle('API Biblioteca ALEjandria')
     .setDescription('Esta API se encarga de manejar la informacion de la base de datos de ALEjandria.')
@@ -67,12 +83,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  
   app.enableCors({
-    origin: 'http://localhost:3000', 
+    origin: myapp_config.front_url, 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
-  await app.listen(3001);
+  await app.listen(myapp_config.host.port);
 }
 bootstrap();
