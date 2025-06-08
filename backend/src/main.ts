@@ -35,7 +35,6 @@ import { AppModule } from './app.module';
  * Inicia el servidor en el puerto 3001.
  */
 
-const logger_Config = require('..//private/logger.config.json');
 const myapp_config = require('../private/app.config.json');
 
 async function bootstrap() {
@@ -54,17 +53,17 @@ async function bootstrap() {
       transports: [
         new winston.transports.Console({
           format: winston.format.combine(
-            winston.format.colorize({ all: logger_Config.colorize_logs })
+            winston.format.colorize({ all: myapp_config.logger.colorize_logs })
             ,winston.format.simple()
           )
-          ,level: logger_Config.console_details_level
+          ,level: myapp_config.logger.console_details_level
         }),
         new winston.transports.File({
           format: winston.format.combine(
             winston.format.timestamp(),
             winston.format.simple())
-            ,filename: logger_Config.log_file
-            ,level: logger_Config.file_details_level
+            ,filename: myapp_config.logger.log_file
+            ,level: myapp_config.logger.file_details_level
           })
         ],
       })
@@ -78,6 +77,6 @@ async function bootstrap() {
       credentials: true,
   });
 
-  await app.listen(3001);
+  await app.listen(myapp_config.host.port);
 }
 bootstrap();
