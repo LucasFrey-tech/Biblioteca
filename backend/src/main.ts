@@ -1,8 +1,10 @@
 import * as winston from 'winston';
 import * as express from 'express';
+import * as winston from 'winston';
 import { existsSync, mkdirSync } from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 /**
@@ -69,12 +71,23 @@ async function bootstrap() {
       })
     });
     
-    app.use(myapp_config.static_resources.books_images.prefix, express.static(myapp_config.static_resources.books_images.path));
+  app.use(myapp_config.static_resources.books_images.prefix, express.static(myapp_config.static_resources.books_images.path));
     
-    app.enableCors({
-      origin: myapp_config.front_url, 
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      credentials: true,
+  const config = new DocumentBuilder()
+    .setTitle('API Biblioteca ALEjandria')
+    .setDescription('Esta API se encarga de manejar la informacion de la base de datos de ALEjandria.')
+    .setVersion('1.0.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
+  
+  app.enableCors({
+    origin: myapp_config.front_url, 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
 
   await app.listen(myapp_config.host.port);

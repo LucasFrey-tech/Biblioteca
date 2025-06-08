@@ -124,3 +124,7 @@
 .cuerpo {
   background-color: #2c2c2b;
 }
+
+:root {
+  --espacio-usuario-carrito: 1rem; /* Podés ajustar este valor a gusto */
+}

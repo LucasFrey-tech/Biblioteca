@@ -20,6 +20,11 @@ import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BaseApi } from '@/API/baseApi';
 
+////////////////////////////////////////////////////////////
+import { jwtDecode } from 'jwt-decode';
+import { useUser } from '../context/UserContext';
+////////////////////////////////////////////////////////////
+
 // Validación
 const userSchema = z.object({
   email: z.string({
@@ -47,6 +52,7 @@ export default function LogIn() {
     }
   });
 
+  const { refreshUser } = useUser();
     // ENVIAR FORM
 const onSubmit = form.handleSubmit(async (values: UserType) => {
   //localStorage.removeItem('token');
@@ -70,7 +76,17 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
         });
         return;
       }
-
+      if(res.status === 403){
+        console.log(res.status);
+        Swal.fire({
+        icon: 'error',
+        title: 'Login fallido',
+        text: 'Usuario bloqueado',
+      });
+      return;
+    }
+      console.log(res.status);
+      
       Swal.fire({
         icon: 'error',
         title: 'Login fallido',
@@ -78,13 +94,22 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
       });
       return;
     }
-
+  
     const data = res;
     console.log('Datos:', data);
     
+  
+    
+    
     if (data.success) {
       localStorage.setItem('token', data.data.access_token);
+      ////////////////////////////////////////////////////////////
+      type JwtPayload = { sub: string; [key: string]: unknown };
+      const decoded: JwtPayload = jwtDecode<JwtPayload>(data.data.access_token);
+      localStorage.setItem('userId', decoded.sub);
+      ////////////////////////////////////////////////////////////
       
+      refreshUser();
       Swal.fire({
         title: 'Iniciando sesión!',
         text: 'Redirigiendo a la página de inicio...',
@@ -106,7 +131,7 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
       });
       console.error('Error en la respuesta:', data);
     }
-
+   
   } catch (error) {
     if (error instanceof Error) {
       console.error('Error de red:', error.message);

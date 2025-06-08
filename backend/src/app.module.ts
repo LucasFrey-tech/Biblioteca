@@ -33,6 +33,7 @@ const myapp_config = require('../private/app.config.json');
       password: myapp_config.database_connection.password,
       database: myapp_config.database_connection.database,
       entities: [User, Book, Author, Review, Genre, BookGenre],
+
       synchronize: false, 
     }),
     ConfigModule.forRoot({
@@ -46,7 +47,7 @@ const myapp_config = require('../private/app.config.json');
     BookReviewsModule,
     GenresModule,
     BookGenresModule,
-    // ShoppingCartModule,
+    ShoppingCartModule,
   ],
 })
 export class AppModule {}

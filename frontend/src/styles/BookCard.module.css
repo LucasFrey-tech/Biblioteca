@@ -1,9 +1,7 @@
 .card {
     border: 1px solid #c0bebe;
     padding: 15px;
-    /* 0.9375rem */
     border-radius: 8px;
-    /* 0.5rem */
     text-align: center;
     background-color: #e9e8e8;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -12,6 +10,7 @@
     justify-content: space-between;
     min-height: 450px;
     cursor: pointer;
+   
 }
 
 .cover {
@@ -28,6 +27,7 @@
     font-size: clamp(1rem, 4vw, 1.2rem);
     margin: 0;
     text-transform: uppercase;
+    font-weight: bold;
     color: #373d45;
     line-height: 1.2;
     display: -webkit-box;
@@ -42,24 +42,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 60px; /* Altura mínima para el título */
+    min-height: 60px; 
 }
 
 .author {
     font-size: 0.9rem;
-    /* 14.4px / 0.9rem */
     color: #0070f3;
-    margin: 5px 0;
-    /* 0.3125rem */
+    margin: 0.2vw;
 }
 
 .price {
-    /* font-size: 1rem; */
-    /* 16px / 1rem */
-    font: 24px Montserrat, sans-seif;
-    /* font-weight: bold; */
+    font-family: Proxima Nova, -apple-system, Roboto, Arial, sans-serif;
+    font-size: 1.1rem;
     margin: 5px 0;
-    /* 0.3125rem */
     color: #222222;
 }
 
@@ -90,5 +85,4 @@
 
 .cartIcon {
     font-size: 1rem;
-    /* 16px / 1rem */
 }
