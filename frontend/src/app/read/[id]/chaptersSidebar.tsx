@@ -12,8 +12,9 @@ export function ChaptersSideBar(chapters: string[] ):React.JSX.Element {
       </div>
       <div className={`${Styles.sidebarContent} ${open ? Styles.open : ""}`}>
         {chapters.map((chapter, index) => (
-          <div key={index} className={Styles.chapterHeader}>
-            <a href={`#chapter-${index + 1}`}>{chapter}</a>
+          <div key={index} className={Styles.chapter}>
+            <a className={Styles.chapterHeader} href={`#chapter-${index + 1}`}>{chapter}</a>
+            <hr/>
           </div>
         ))}
       </div>

@@ -1,11 +1,22 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    min-height: 10rem;
+    justify-content: space-between;
+}
+
 .sidebar {
     position: fixed;
-    top: 50%;
+    /* top: 50%; */
     right: 0;
     display: flex;
     align-items: center;
-    --sidebar-width: 10rem;
+    --sidebar-width: 15rem;
     z-index: 1000;
+    height: auto;
+    top: 25%;
+    bottom: 25%;
+    align-self:flex-start;
 }
 
 .sidebarToggle {
@@ -23,6 +34,8 @@
 }
 
 .sidebarContent {
+    max-height: 100%;
+    min-height: 50%;
     width: var(--sidebar-width);
     background-color: white;
     padding: 1rem;
@@ -38,4 +51,8 @@
 }
 .sidebar.open .sidebarContent {
     transform: translateX(0);
+}
+
+.chapter {
+    margin: 10px 0px;
 }
