@@ -124,7 +124,6 @@ export default function ShoppingCartPage() {
 
     return (
         <div className={styles.container}>
-
             <div className={styles.mainContent}>
                 <div className={styles.productsColumn}>
                     <div className={styles.cartSection}>
