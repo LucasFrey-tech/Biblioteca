@@ -19,7 +19,7 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
             throw new Error(`Error al obtener el carrito: ${res.statusText}`);
         }
 
-        const data = await res.json(); // tora errro si no hay datos cargados.
+        const data = await res.json(); // tira errro si no hay datos cargados.
         if (!data || !Array.isArray(data) || data.length === 0) return null;
 
         return data as ShoppingCartBook[];
