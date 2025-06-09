@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 
 import { AddAuthorDialog } from './AddAuthorDialog';
 import { AddGenreDialog } from './agregarCategoria'; // o como lo tengas nombrado
+import DragAndDrop from './dropImage';
 
 interface Author {
   id: number;
@@ -127,6 +128,11 @@ export default function AddBookDialog() {
     });
   };
 
+   const handleFile = (file: File) => {
+    console.log('Archivo recibido:', file);
+    // Subir el archivo al backend 
+  };
+
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
     setGenres(prev => [...prev, genre]);
@@ -173,7 +179,16 @@ export default function AddBookDialog() {
             <Input value={form.isbn} onChange={e => handleChange('isbn', e.target.value)} />
 
             <Label>Imagen</Label>
-            <Input value={form.image} onChange={e => handleChange('image', e.target.value)} />
+            <DragAndDrop onFileDrop={file => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const result = e.target?.result;
+                if (typeof result === 'string') {
+                  handleChange('image', result);
+                }
+              };
+              reader.readAsDataURL(file);
+            }} />
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />
