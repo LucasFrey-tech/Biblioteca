@@ -1,41 +1,36 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+'use client'
+
+import React, { useEffect, useState, useRef } from "react";
 import styles from '../../styles/shoppingCart.module.css';
 
+import { useParams } from "next/navigation";
+import { BaseApi } from "@/API/baseApi";
+import { ShoppingCartBook } from "@/API/types/shopping_cart";
 
-import { useParams } from 'next/navigation';
+const groupCartItems = (items: ShoppingCartBook[]) => {
+    const grouped: { [key: string]: ShoppingCartBook } = {};
 
-interface BookI {
-    id: number;
-    title: string;
-    author: string;
-    image: string;
-    price: number;
-    virtual: boolean;
-    amount: number;
-}
+    items.forEach(item => {
+        const key = `${item.id}-${item.virtual}`;
+        if (grouped[key]) {
+            grouped[key].amount += item.amount;
+        } else {
+            grouped[key] = { ...item };
+        }
+    });
+    return Object.values(grouped);
+};
 
 
 export default function ShoppingCartPage() {
     const params = useParams();
-    const [booksCartShopping, setBooksCartShopping] = useState<BookI[]>([]);
+    const apiRef = useRef(new BaseApi());
+    const [booksCartShopping, setBooksCartShopping] = useState<ShoppingCartBook[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
 
-    // let userId = 0;
-
     useEffect(() => {
-
-        // userId = Number(localStorage.getItem('userId'));
-        // console.log(userId);
-
-        // if (userId === null) {
-        //     setError('ID del usuario no proporcionado o inválido.');
-        //     setLoading(false);
-        //     return;
-        // }
-
         const id = localStorage.getItem('userId');
         if (id) {
             setUserId(Number(id));
@@ -43,27 +38,17 @@ export default function ShoppingCartPage() {
             setError('ID del usuario no proporcionado o inválido.');
             setLoading(false);
         }
+    }, []);
 
+    useEffect(() => {
         if (userId === null) return;
-        
+
         const fetchData = async () => {
             try {
-                const resCart = await fetch(`http://localhost:3001/shopping-cart/${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!resCart.ok) {
-                    throw new Error('No se pudo cargar el carrito');
+                const cartData = await apiRef.current.shoppingCart.findByUser(userId);
+                if (cartData) {
+                    setBooksCartShopping(groupCartItems(cartData));
                 }
-
-                const cartData: BookI[] = await resCart.json();
-
-                setBooksCartShopping(cartData);
-
-
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
                 setError('Error al cargar el carrito');
@@ -71,56 +56,55 @@ export default function ShoppingCartPage() {
                 setLoading(false);
             }
         };
-        console.log("2", userId);
 
         fetchData();
     }, [userId]);
 
-
     const updateCartItem = async (idBook: number, newAmount: number) => {
         try {
-            const existingItem = booksCartShopping.find(item => item.id === idBook);
+            if (!userId) throw new Error('Usuario no identificado');
 
-            if (existingItem) {
-                const updatedItem = { ...existingItem, amount: newAmount };
+            if (newAmount <= 0) {
+                // Si la nueva cantidad es 0 o menos, eliminar el ítem
+                await apiRef.current.shoppingCart.removeItem(userId, idBook);
+                setBooksCartShopping(prevItems =>
+                    prevItems.filter(item => item.id !== idBook)
+                );
+            } else {
+                // Si la cantidad es válida, actualizar
+                await apiRef.current.shoppingCart.update(idBook, { amount: newAmount });
 
-                await fetch(`http://localhost:3001/shopping-cart/${userId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(updatedItem),
-                });
-
-                setBooksCartShopping(booksCartShopping.map(item =>
-                    item.id === idBook ? updatedItem : item
-                ));
+                setBooksCartShopping(prev =>
+                    prev.map(item =>
+                        item.id === idBook ? { ...item, amount: newAmount } : item
+                    )
+                );
             }
         } catch (error) {
-            console.error('Error updating cart item:', error);
+            console.error('Error actualizando ítem del carrito:', error);
         }
     };
 
-    const removeFromCart = async (id: number) => {
+    const removeFromCart = async (bookId: number) => {
         try {
-            await fetch(`http://localhost:3001/shopping-cart/${id}`, {
-                method: 'DELETE',
-            });
+            if (!userId) throw new Error('Usuario no identificado');
 
-            setBooksCartShopping(booksCartShopping.filter(item => item.id !== id));
+            await apiRef.current.shoppingCart.removeItem(userId, bookId);
+
+            setBooksCartShopping(prevItems =>
+                prevItems.filter(item => item.id !== bookId)
+            );
         } catch (error) {
-            console.error('Error removing item from cart:', error);
+            console.error('Error eliminando ítem del carrito:', error);
         }
     };
 
     const calculateTotal = () => {
         return booksCartShopping.reduce((total, item) => {
-            const book = booksCartShopping.find(b => b.id === item.id);
-            return total + (book ? book.price * item.amount : 0);
+            return total + item.price * item.amount;
         }, 0);
     };
 
-    if (loading) return <div className={styles.loading}>Loading...</div>;
 
     return (
         <div className={styles.container}>
@@ -130,56 +114,71 @@ export default function ShoppingCartPage() {
                         <h2 className={styles.sectionTitle}>Productos</h2>
 
                         {booksCartShopping.length === 0 ? (
-                            <p className={styles.emptyCart}>Carrito de compras vacio</p>
+                            <p className={styles.emptyCart}>Carrito de compras vacío</p>
                         ) : (
                             <div className={styles.itemsContainer}>
-                                {booksCartShopping.map(item => {
-                                    const book = booksCartShopping.find(b => b.id === item.id);
-                                    if (!book) return null;
-
-                                    return (
-                                        <div key={item.id} className={styles.cartItem}>
-                                            <div className={styles.itemImage}>
-                                                <img src={book.image || '/placeholder.png'} alt={book.title} />
+                                {booksCartShopping.map(item => (
+                                    <div key={`${item.id}-${item.virtual}`} className={styles.cartItem}>
+                                        <div className={styles.itemImage}>
+                                            <img
+                                                src={item.image || '/placeholder.png'}
+                                                alt={item.title}
+                                                className={item.virtual ? styles.ebookImage : ''}
+                                            />
+                                            {item.virtual && (
+                                                <span className={styles.ebookBadge}>eBook</span>
+                                            )}
+                                        </div>
+                                        <div className={styles.itemDetails}>
+                                            <h3>{item.title}</h3>
+                                            <p>by {item.author}</p>
+                                            <div className={styles.formatInfo}>
+                                                Formato: {item.virtual ? 'Digital (eBook)' : 'Físico'}
                                             </div>
-                                            <div className={styles.itemDetails}>
-                                                <h3>{book.title}</h3>
-                                                <p>by {book.author}</p>
-                                                <div className={styles.price}>${book.price.toLocaleString()}</div>
+                                            <div className={styles.price}>${item.price.toLocaleString()}</div>
 
-                                                <div className={styles.quantityControl}>
-                                                    <button
-                                                        onClick={() => updateCartItem(item.id, Math.max(1, item.amount - 1))}
-                                                        className={styles.quantityButton}
-                                                    >
-                                                        -
-                                                    </button>
-                                                    <span className={styles.quantity}>{item.amount}</span>
-                                                    <button
-                                                        onClick={() => updateCartItem(item.id, item.amount + 1)}
-                                                        className={styles.quantityButton}
-                                                    >
-                                                        +
-                                                    </button>
-                                                </div>
+                                            <div className={styles.quantityControl}>
+                                                <button
+                                                    onClick={() => {
+                                                        if (item.amount > 1) {
+                                                            updateCartItem(item.id, Math.max(1, item.amount - 1))
+                                                        } else {
+                                                            removeFromCart(item.id);
+                                                        }
+                                                    }}
 
-                                                <div className={styles.itemActions}>
-                                                    <button
-                                                        onClick={() => removeFromCart(item.id)}
-                                                        className={styles.removeButton}
-                                                    >
-                                                        Eliminar
+                                                    className={styles.quantityButton}
+                                                >
+                                                    -
+                                                </button>
+                                                <span className={styles.quantity}>{item.amount}</span>
+                                                <button
+                                                    onClick={() => updateCartItem(item.id, item.amount + 1)}
+                                                    className={styles.quantityButton}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <div className={styles.itemActions}>
+                                                <button
+                                                    onClick={() => removeFromCart(item.id)}
+                                                    className={styles.removeButton}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                                {!item.virtual && (
+                                                    <button className={styles.compareButton}>
+                                                        Comparar ahora
                                                     </button>
-                                                    <button className={styles.compareButton}>Comparar ahora</button>
-                                                </div>
+                                                )}
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         )}
                     </div>
-
                 </div>
 
                 <div className={styles.summaryColumn}>
@@ -187,16 +186,22 @@ export default function ShoppingCartPage() {
                         <h2 className={styles.sectionTitle}>Resumen de compra</h2>
                         <div className={styles.summaryDetails}>
                             <div className={styles.summaryRow}>
-                                <span>Productos ({booksCartShopping.length})</span>
+                                <span>Productos ({booksCartShopping.reduce((acc, item) => acc + item.amount, 0)})</span>
                                 <span>${calculateTotal().toLocaleString()}</span>
                             </div>
                             <div className={styles.summaryRow}>
                                 <span>Envío</span>
-                                <span className={styles.freeShipping}>Gratis</span>
+                                <span className={styles.freeShipping}>
+                                    {booksCartShopping.some(item => !item.virtual) ? 'Gratis' : 'No aplica'}
+                                </span>
                             </div>
                             <div className={styles.summaryRow}>
                                 <span>Impuestos</span>
-                                <span>$0</span>
+                                <span>
+                                    ${booksCartShopping.some(item => item.virtual)
+                                        ? (calculateTotal() * 0.21).toLocaleString()
+                                        : '0'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -204,12 +209,24 @@ export default function ShoppingCartPage() {
                     <div className={styles.totalSection}>
                         <div className={styles.totalRow}>
                             <span className={styles.totalTitle}>Total</span>
-                            <span className={styles.totalAmount}>${calculateTotal().toLocaleString()}</span>
+                            <span className={styles.totalAmount}>
+                                ${calculateTotal().toLocaleString()}
+                            </span>
                         </div>
-                        <button className={styles.checkoutButton}>Continuar compra</button>
+                        <button
+                            className={styles.checkoutButton}
+                            disabled={booksCartShopping.length === 0}
+                        >
+                            Continuar compra
+                        </button>
+                        {booksCartShopping.some(item => item.virtual) && (
+                            <p className={styles.digitalNote}>
+                                Los libros digitales estarán disponibles inmediatamente después del pago
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};

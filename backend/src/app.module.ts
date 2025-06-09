@@ -20,6 +20,7 @@ import { BookReviewsModule } from './modules/books/reviews/book_reviews.module';
 import { GenresModule } from './modules/genres/genre.module';
 import { BookGenresModule } from './modules/book_genre/book_genres.module';
 import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
+import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.module';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -32,14 +33,14 @@ const myapp_config = require('../private/app.config.json');
       username: myapp_config.database_connection.username,
       password: myapp_config.database_connection.password,
       database: myapp_config.database_connection.database,
-      entities: [User, Book, Author, Review, Genre, BookGenre],
+      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook],
 
       synchronize: false, 
     }),
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
+    // TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
     AuthModule,
     UsersModule,
     AuthorModule,
@@ -48,6 +49,7 @@ const myapp_config = require('../private/app.config.json');
     GenresModule,
     BookGenresModule,
     ShoppingCartModule,
+    CatalogueBooksModule,
   ],
 })
 export class AppModule {}

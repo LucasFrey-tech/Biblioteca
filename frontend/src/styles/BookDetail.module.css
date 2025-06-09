@@ -101,6 +101,11 @@
     margin: 0 0.2rem;
 }
 
+.format.active {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
 .stock {
     font-size: 0.95rem;
 }

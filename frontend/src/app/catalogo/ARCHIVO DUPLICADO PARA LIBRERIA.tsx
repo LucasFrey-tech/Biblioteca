@@ -5,19 +5,27 @@ import { FaSearch } from 'react-icons/fa';
 
 import { BaseApi } from '@/API/baseApi';
 import { BookCatalogo } from '@/API/types/bookCatalogo';
-import { Author } from '@/API/types/author';
-import { Genre } from '@/API/types/genre';
 
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 
+type Author = {
+    id: number;
+    name: string;
+};
+
+type Genre = {
+    id: number;
+    name: string;
+};
+
 
 export default function BookPage() {
     const [books, setBooks] = useState<BookCatalogo[]>([]);
-    const [authors, setAuthors] = useState<Author[]>([]);
-    const [genres, setGenres] = useState<Genre[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [authors, setAuthors] = useState<Author[]>([]);
+    const [genres, setGenres] = useState<Genre[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
     const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
     const [showMoreGenres, setShowMoreGenres] = useState(false);
@@ -26,30 +34,44 @@ export default function BookPage() {
     const apiRef = useRef<BaseApi | null>(null);
 
     useEffect(() => {
+
         const fetchData = async () => {
+
             const token = localStorage.getItem('token');
             if (token) {
                 apiRef.current = new BaseApi(token);
             }
 
             try {
-                const resBooks = await apiRef.current?.catalogo.getAll();
-                const resAuthors = await apiRef.current?.authors.getAll();
-                const resGenres = await apiRef.current?.genre.getAll();
 
-                if (!resBooks || !Array.isArray(resBooks)) {
-                    throw new Error('Libros inválidos');
+                const resBooks = await apiRef.current?.catalogo.getAll();
+
+                if (!resBooks) {
+                    throw new Error(`HTTP error! status: ${resBooks}`);
                 }
 
-                setBooks(resBooks.sort((a, b) => a.id - b.id));
-                setAuthors(resAuthors || []);
-                setGenres(resGenres || []);
+
+
+                const dataBooks = resBooks.sort((a, b) => a.id - b.id);
+                setBooks(dataBooks);
+
+                const uniqueAuthors = Array.from(
+                    new Map(
+                        dataBooks.map(book => [book.author_id, { id: book.author_id, name: book.author }])
+                    ).values()
+                );
+
+                setAuthors(uniqueAuthors);
+
+                const uniqueGenres = Array.from(
+                    new Set(dataBooks.flatMap(book => book.genre))
+                ).map((genreName, index) => ({ id: index + 1, name: genreName }));
+                setGenres(uniqueGenres)
 
             } catch (error) {
                 console.error('Error al obtener datos:', error);
                 setBooks([]);
             }
-
         };
         fetchData();
     }, []);
@@ -70,23 +92,15 @@ export default function BookPage() {
         );
     };
 
-    const filteredBooks = books.filter((book) => {
-        const lowerTitle = book.title.toLowerCase();
-        const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
-
-        const matchesGenres =
-            selectedGenres.length === 0 ||
-            book.genre.some((genreName) => {
-                const genre = genres.find((g) => g.name === genreName);
-                return genre && selectedGenres.includes(genre.id);
-            });
-
-        const matchesAuthors =
-            selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
-
-        return matchesSearch && matchesGenres && matchesAuthors;
-    });
-
+    const filteredBooks = books.filter((book) =>
+        book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        (selectedGenres.length === 0 ||
+            book.genre.some((g) => selectedGenres.includes(
+                genres.find((gen) => gen.name === g)?.id || -1
+            ))
+        ) &&
+        (selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id))
+    );
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         setSearchQuery(searchTerm);

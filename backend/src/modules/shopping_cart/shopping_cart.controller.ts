@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, NotFoundException, } from '@nestjs/common';
 import { ShoppingCartService } from './shopping_cart.service';
 import { ShoppingCartBook } from 'src/entidades/shopping_cart_book.entity';
 import { BookCartDTO } from './book_cart.dto'
@@ -13,7 +13,7 @@ export class ShoppingCartController {
   @Get(':idUser')
   @ApiOperation({ summary: 'Buscar Changuito por Usuario' })
   @ApiParam({ name: 'idUser', type: Number })
-  @ApiResponse({ status: 200, description: 'Changuito Encontrado'})
+  @ApiResponse({ status: 200, description: 'Changuito Encontrado' })
   async findByUser(@Param('idUser', ParseIntPipe) idUser: number): Promise<BookCartDTO[] | null> {
     return await this.shoppingCartService.findByUser(idUser);
   }
@@ -28,7 +28,7 @@ export class ShoppingCartController {
 
   @Put(':idUser')
   @ApiOperation({ summary: 'Actualizar Changuito' })
-  @ApiParam( { name: 'idUser', type: Number })
+  @ApiParam({ name: 'idUser', type: Number })
   @ApiBody({ type: ShoppingCartBook })
   @ApiResponse({ status: 200, description: 'Changuito Actualizado', type: ShoppingCartBook })
   update(
@@ -44,5 +44,17 @@ export class ShoppingCartController {
   @ApiResponse({ status: 200, description: 'Changuito Eliminado' })
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.shoppingCartService.delete(id);
+  }
+
+  @Delete(':userId/:bookId')
+  async removeItem(
+    @Param('userId') userId: string,
+    @Param('bookId') bookId: string
+  ) {
+    const success = await this.shoppingCartService.removeItem(+userId, +bookId);
+    if (!success) {
+      throw new NotFoundException('Item no encontrado en el carrito');
+    }
+    return { message: 'Item eliminado del carrito correctamente' };
   }
 }
