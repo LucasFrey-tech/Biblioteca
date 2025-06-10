@@ -108,5 +108,6 @@ create table purchases(
 	id_user integer not null,
 	id_book integer not null,
 	amount integer not null check(amount >= 0),
-	virtual bool default(false)
+	virtual bool default(false),
+	purchase_date timestamp default(CURRENT_TIMESTAMP)
 );
