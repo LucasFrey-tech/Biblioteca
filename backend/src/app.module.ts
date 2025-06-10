@@ -23,6 +23,7 @@ import { BookGenresModule } from './modules/book_genre/book_genres.module';
 import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
 import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.module';
 import { PurchasesModule } from './modules/purchase/purchase.module';
+import { LibraryBooksModule } from './modules/books/library/library_books.module';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -52,7 +53,8 @@ const myapp_config = require('../private/app.config.json');
     BookGenresModule,
     ShoppingCartModule,
     CatalogueBooksModule,
-    PurchasesModule
+    PurchasesModule,
+    LibraryBooksModule,
   ],
 })
 export class AppModule {}

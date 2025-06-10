@@ -7,6 +7,7 @@ import { Users } from "./class/user";
 import { Reviews } from "./class/review";
 import { ShoppingCart } from "./class/shopping_cart";
 import { Purchases } from "./class/purchase";
+import { Libreria } from "./class/libreria";
 
 export class BaseApi {
     public readonly log: Login;
@@ -18,6 +19,7 @@ export class BaseApi {
     public readonly review: Reviews;
     public readonly shoppingCart: ShoppingCart;
     public readonly purchase: Purchases; 
+    public readonly libreria: Libreria;
 
     constructor(private token?:string){
         this.log = new Login();
@@ -29,5 +31,6 @@ export class BaseApi {
         this.review = new Reviews(token);
         this.shoppingCart = new ShoppingCart(token);
         this.purchase = new Purchases(token);
+        this.libreria = new  Libreria(token);
     }
 }
