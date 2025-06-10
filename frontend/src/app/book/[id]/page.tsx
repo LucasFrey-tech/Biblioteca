@@ -101,17 +101,13 @@ export default function BookDetail() {
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
-    const imagePath = book.image
-        ? `/libros/${book.image}.png`
-        : '/libros/placeholder.png';
-
     return (
         <div className={styles.container}>
             <div className={styles.leftColumn}>
                 <h1 className={styles.title}>{book.title}</h1>
                 <div className={styles.coverContainer}>
                     <Image
-                        src={imagePath}
+                        src={book.image}
                         alt={book.title}
                         className={styles.cover}
                         width={300}
