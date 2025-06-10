@@ -1,6 +1,6 @@
 . Carrito
 . Novedades
-. Panel Admin => Falta libros
+. Panel Admin => Falta cargar la imagen
 . Libreria
 . Lectura de Libros
 . Historial compras usuario

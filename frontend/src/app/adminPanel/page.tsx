@@ -476,7 +476,7 @@ export default function PanelAdmin() {
                           <p><strong>Año:</strong> {book.anio}</p>
                           <p><strong>Descripción:</strong> {book.description}</p>
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
-                          <Button onClick={() => startEdit(book)}>✏️ Editar</Button>
+                          <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
                       )}
                     </div>
