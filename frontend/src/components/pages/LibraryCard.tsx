@@ -41,7 +41,6 @@ export default function LibraryCard({ book }: { book: Book }) {
             </div>
             <p className={styles.author}>{authorName}</p>
             <button className={styles.buyButton} onClick={handleBuyClick}>
-                <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>Leer</span>
             </button>
         </div>

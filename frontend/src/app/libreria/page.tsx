@@ -22,10 +22,27 @@ export default function BookPage() {
     const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
-
-    const apiRef = useRef<BaseApi | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<number | null>(2);
 
     useEffect(() => {
+        const id = localStorage.getItem('userId');
+        if (id) {
+            setUserId(Number(id));
+        } else {
+            setError('ID del usuario no proporcionado o inválido.');
+            setLoading(false)
+        }
+    }, []);
+    
+    const apiRef = useRef<BaseApi | null>(null);
+
+
+    useEffect(() => {
+
+        if (userId === null) return;
+
         const fetchData = async () => {
             const token = localStorage.getItem('token');
             if (token) {
@@ -33,15 +50,19 @@ export default function BookPage() {
             }
 
             try {
-                const resBooks = await apiRef.current?.libreria.getAll();
+                const resBooks = await apiRef.current?.libreria.findAllByUser(userId);
                 const resAuthors = await apiRef.current?.authors.getAll();
                 const resGenres = await apiRef.current?.genre.getAll();
 
                 if (!resBooks) {
                     throw new Error(`HTTP error! status: ${resBooks}`);
                 }
+                console.log("AHHHHHHHHH1 ", userId);
 
                 setBooks(resBooks.sort((a, b) => a.id - b.id));
+
+                console.log("AHHHHHHHHH ", resBooks);
+
                 setAuthors(resAuthors || []);
                 setGenres(resGenres || []);
 
@@ -88,6 +109,8 @@ export default function BookPage() {
         e.preventDefault();
         setSearchQuery(searchTerm);
     };
+
+    if (loading) return <p>Cargando carrito...</p>;
 
     return (
         <>

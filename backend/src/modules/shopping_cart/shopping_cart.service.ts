@@ -27,9 +27,6 @@ export class ShoppingCartService {
         const cartItems = await this.cartBookShopingRepository.find({ where: { idUser } });
         if (!cartItems.length) return null;
 
-        const user = await this.userRepository.findOne({ where: { id: idUser } });
-        if (!user) return null;
-
         const results = await Promise.all(
             cartItems.map(async (cart) => {
                 const book = await this.booksRepository.findOne({ where: { id: cart.idBook } });

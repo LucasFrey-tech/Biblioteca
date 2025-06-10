@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import styles from '../../styles/shoppingCart.module.css';
+import Image from 'next/image';
 
 import { useParams } from "next/navigation";
 import { BaseApi } from "@/API/baseApi";
@@ -154,10 +155,14 @@ export default function ShoppingCartPage() {
                                 {booksCartShopping.map(item => (
                                     <div key={`${item.id}-${item.virtual}`} className={styles.cartItem}>
                                         <div className={styles.itemImage}>
-                                            <img
-                                                src={item.image || '/placeholder.png'}
+                                            <Image
+                                                src={item.image}
                                                 alt={item.title}
                                                 className={item.virtual ? styles.ebookImage : ''}
+                                                width = {100}
+                                                height = {150}
+                                                placeholder="blur"
+                                                blurDataURL="/libros/placeholder.png"
                                             />
                                             {item.virtual && (
                                                 <span className={styles.ebookBadge}>eBook</span>
