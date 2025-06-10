@@ -6,6 +6,7 @@ import { Login } from "./class/login";
 import { Users } from "./class/user";
 import { Reviews } from "./class/review";
 import { ShoppingCart } from "./class/shopping_cart";
+import { PaymentAPI } from "./class/payment";
 
 
 
@@ -19,6 +20,7 @@ export class BaseApi {
     public readonly authors:Authors;
     public readonly review:Reviews;
     public readonly shoppingCart: ShoppingCart;
+    public readonly payment: PaymentAPI;
 
     constructor(private token?:string){
         this.log = new Login();
@@ -29,5 +31,6 @@ export class BaseApi {
         this.authors = new Authors();
         this.review = new Reviews(token);
         this.shoppingCart = new ShoppingCart(token);
+        this.payment = new PaymentAPI(token);
     }
 }

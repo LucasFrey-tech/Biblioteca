@@ -21,6 +21,7 @@ import { GenresModule } from './modules/genres/genre.module';
 import { BookGenresModule } from './modules/book_genre/book_genres.module';
 import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
 import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -50,6 +51,7 @@ const myapp_config = require('../private/app.config.json');
     BookGenresModule,
     ShoppingCartModule,
     CatalogueBooksModule,
+    PaymentModule,
   ],
 })
 export class AppModule {}
