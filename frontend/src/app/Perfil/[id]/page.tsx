@@ -97,9 +97,11 @@ export default function profilePage() {
 
     return (
         <div className={styles.container}>
-            <section className={styles.banner} ref={bannerRef}></section>
             <div className={styles.background}>
-                <main className={styles.info}>
+                <div>
+                    <h2>Información del Perfil</h2>
+                </div>
+                <div className={styles.info}>
                     <div className={styles.name}>{user.username}</div>
                     <div className={styles.userInfo}>
                         {editMode[user.id] ? (
@@ -137,7 +139,13 @@ export default function profilePage() {
                             </div>
                         )}
                     </div>
-                </main>
+                </div>
+                <div className={styles.history}>
+                    <div>
+                        <h2>Historial de Compras</h2>
+                    </div>
+                    <div className={styles.info}></div>
+                </div>
             </div>
         </div>
     )

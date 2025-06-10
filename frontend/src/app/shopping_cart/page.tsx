@@ -6,6 +6,7 @@ import styles from '../../styles/shoppingCart.module.css';
 import { useParams } from "next/navigation";
 import { BaseApi } from "@/API/baseApi";
 import { ShoppingCartBook } from "@/API/types/shopping_cart";
+import { PurchaseItem } from "@/API/types/purchase";
 
 const groupCartItems = (items: ShoppingCartBook[]) => {
     const grouped: { [key: string]: ShoppingCartBook } = {};
@@ -29,6 +30,7 @@ export default function ShoppingCartPage() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
+    const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
 
     useEffect(() => {
         const id = localStorage.getItem('userId');
@@ -104,6 +106,39 @@ export default function ShoppingCartPage() {
         }, 0);
     };
 
+    const handlePurchase = async () => {
+        if (!userId) {
+            setPurchaseMessage('Error: Usuario no identificado');
+            return;
+        }
+
+        try {
+            const cartData = await apiRef.current.shoppingCart.findByUser(userId);
+            if (!cartData || cartData.length === 0) {
+                setPurchaseMessage('Error: El carrito está vacío');
+                return;
+            }
+
+            const itemsToPurchase: PurchaseItem[] = cartData.map(item => ({
+                cartItemId: item.id,
+                amount: item.amount,
+                virtual: item.virtual,
+            }));
+
+            await apiRef.current.purchase.processPurchase(userId, itemsToPurchase);
+
+            setBooksCartShopping([]);
+            setPurchaseMessage('Compra realizada con éxito');
+        } catch (error: unknown) {
+            console.error('Error procesando la compra:', error);
+            // Extraemos el mensaje si error es un objeto con message, o usamos un mensaje genérico
+            const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+            setPurchaseMessage(`Error al procesar la compra: ${errorMessage}`);
+        }
+    }
+
+    if (loading) return <p>Cargando carrito...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div className={styles.container}>
@@ -215,6 +250,7 @@ export default function ShoppingCartPage() {
                         <button
                             className={styles.checkoutButton}
                             disabled={booksCartShopping.length === 0}
+                            onClick={handlePurchase}
                         >
                             Continuar compra
                         </button>
