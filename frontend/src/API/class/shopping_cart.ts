@@ -76,4 +76,17 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
     getOne(id: number): Promise<ShoppingCartBook> {
         throw new Error('Method not implemented.');
     }
+
+    async processPurchase(idUser: number): Promise<void> {
+        const res = await fetch(`${this.baseUrl}/purchases/${idUser}`,{
+            method: 'POST',
+            headers: this.getHeaders(),
+        });
+
+        if(!res.ok) {
+            const errorData = await res.json();
+            throw new Error(`Error al procesar la compra: ${errorData.message || res.statusText}`);
+        }
+    }
+ 
 }
