@@ -102,3 +102,11 @@ create table shopping_cart_book(
 	amount integer not null check(amount >= 0),
 	virtual bool default(false)
 );
+
+create table purchases(
+	id serial primary key,
+	id_user integer not null,
+	id_book integer not null,
+	amount integer not null check(amount >= 0),
+	virtual bool default(false)
+);
