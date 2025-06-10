@@ -46,6 +46,7 @@ export default function ShoppingCartPage() {
         const fetchData = async () => {
             try {
                 const cartData = await apiRef.current.shoppingCart.findByUser(userId);
+                console.log('Datos crudos del carrito:', cartData); // <-- Añade esto
                 if (cartData) {
                     setBooksCartShopping(groupCartItems(cartData));
                 }
@@ -60,23 +61,23 @@ export default function ShoppingCartPage() {
         fetchData();
     }, [userId]);
 
-    const updateCartItem = async (idBook: number, newAmount: number) => {
+    const updateCartItem = async (idBookCart: number, newAmount: number) => {
         try {
             if (!userId) throw new Error('Usuario no identificado');
 
             if (newAmount <= 0) {
                 // Si la nueva cantidad es 0 o menos, eliminar el ítem
-                await apiRef.current.shoppingCart.removeItem(userId, idBook);
+                await apiRef.current.shoppingCart.delete(idBookCart);
                 setBooksCartShopping(prevItems =>
-                    prevItems.filter(item => item.id !== idBook)
+                    prevItems.filter(item => item.id !== idBookCart)
                 );
             } else {
                 // Si la cantidad es válida, actualizar
-                await apiRef.current.shoppingCart.update(idBook, { amount: newAmount });
+                await apiRef.current.shoppingCart.update(idBookCart, { amount: newAmount });
 
                 setBooksCartShopping(prev =>
                     prev.map(item =>
-                        item.id === idBook ? { ...item, amount: newAmount } : item
+                        item.id === idBookCart ? { ...item, amount: newAmount } : item
                     )
                 );
             }
@@ -85,14 +86,12 @@ export default function ShoppingCartPage() {
         }
     };
 
-    const removeFromCart = async (bookId: number) => {
+    const removeFromCart = async (idBookCart: number) => {
         try {
-            if (!userId) throw new Error('Usuario no identificado');
-
-            await apiRef.current.shoppingCart.removeItem(userId, bookId);
+            await apiRef.current.shoppingCart.delete(idBookCart);
 
             setBooksCartShopping(prevItems =>
-                prevItems.filter(item => item.id !== bookId)
+                prevItems.filter(item => item.id !== idBookCart)
             );
         } catch (error) {
             console.error('Error eliminando ítem del carrito:', error);

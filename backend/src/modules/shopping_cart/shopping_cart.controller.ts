@@ -26,16 +26,16 @@ export class ShoppingCartController {
     return this.shoppingCartService.create(book);
   }
 
-  @Put(':idUser')
+  @Put(':idBookCart')
   @ApiOperation({ summary: 'Actualizar Changuito' })
-  @ApiParam({ name: 'idUser', type: Number })
+  @ApiParam({ name: 'idBookCart', type: Number })
   @ApiBody({ type: ShoppingCartBook })
   @ApiResponse({ status: 200, description: 'Changuito Actualizado', type: ShoppingCartBook })
   update(
-    @Param('idUser', ParseIntPipe) idUser: number,
+    @Param('idBookCart', ParseIntPipe) idBookCart: number,
     @Body() updateData: Partial<ShoppingCartBook>,
   ) {
-    return this.shoppingCartService.update(idUser, updateData);
+    return this.shoppingCartService.update(idBookCart, updateData);
   }
 
   @Delete(':id')
@@ -44,17 +44,5 @@ export class ShoppingCartController {
   @ApiResponse({ status: 200, description: 'Changuito Eliminado' })
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.shoppingCartService.delete(id);
-  }
-
-  @Delete(':userId/:bookId')
-  async removeItem(
-    @Param('userId') userId: string,
-    @Param('bookId') bookId: string
-  ) {
-    const success = await this.shoppingCartService.removeItem(+userId, +bookId);
-    if (!success) {
-      throw new NotFoundException('Item no encontrado en el carrito');
-    }
-    return { message: 'Item eliminado del carrito correctamente' };
   }
 }

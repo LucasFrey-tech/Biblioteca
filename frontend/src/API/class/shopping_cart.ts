@@ -19,7 +19,10 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
             throw new Error(`Error al obtener el carrito: ${res.statusText}`);
         }
 
-        const data = await res.json(); // tira errro si no hay datos cargados.
+        const text = await res.text();
+        if (!text) return null;
+
+        const data = JSON.parse(text);
         if (!data || !Array.isArray(data) || data.length === 0) return null;
 
         return data as ShoppingCartBook[];
@@ -65,21 +68,6 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
             const errorData = await res.json();
             throw new Error(`Error al eliminar ítem del carrito: ${errorData.message || res.statusText}`);
         }
-    }
-
-    async removeItem(userId: number, bookId: number): Promise<boolean> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${userId}/${bookId}`, {
-            method: 'DELETE',
-            headers: this.getHeaders(),
-        });
-
-        if (!res.ok) {
-            if (res.status === 404) return false;
-            const errorData = await res.json();
-            throw new Error(`Error al eliminar ítem del carrito: ${errorData.message || res.statusText}`);
-        }
-
-        return true;
     }
 
     getAll(): Promise<ShoppingCartBook[]> {

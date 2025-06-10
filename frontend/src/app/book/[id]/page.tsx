@@ -19,7 +19,7 @@ export default function BookDetail() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<'physical' | 'ebook'>('physical');
-    const [virtual, setVirtual] = useState(false);
+    // const [virtual, setVirtual] = useState(false);
 
     const [user, setUser] = useState<User>();
     const [amount, setAmount] = useState<number>(1);
@@ -89,7 +89,6 @@ export default function BookDetail() {
                 amount: amount,
                 virtual: selectedFormat === 'ebook'
             };
-            console.log('Payload enviado:', payload);
             await refAPI.current.shoppingCart.create(payload);
             alert('Libro agregado al carrito ✅');
         } catch (error: any) {
@@ -155,19 +154,13 @@ export default function BookDetail() {
                 <div className={styles.formatButtons}>
                     <button
                         className={`${styles.format} ${selectedFormat === 'physical' ? styles.active : ''}`}
-                        onClick={() => {
-                            setSelectedFormat('physical');
-                            setVirtual(false);
-                        }}
+                        onClick={() => setSelectedFormat('physical')}
                     >
                         Físico
                     </button>
                     <button
                         className={`${styles.format} ${selectedFormat === 'ebook' ? styles.active : ''}`}
-                        onClick={() => {
-                            setSelectedFormat('ebook');
-                            setVirtual(true);
-                        }}
+                        onClick={() => setSelectedFormat('ebook')}
                     >
                         eBook
                     </button>

@@ -38,12 +38,12 @@ export class ShoppingCartService {
                 const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
 
                 return new BookCartDTO(
-                    book.id,
+                    cart.id,
                     book.title,
                     author ? author.name : '',
                     book.image,
                     book.price,
-                    false,
+                    cart.virtual,
                     cart.amount,
                 );
             })
@@ -56,31 +56,12 @@ export class ShoppingCartService {
         return this.cartBookShopingRepository.save(book);
     }
 
-    async update(idUser: number, updateData: Partial<ShoppingCartBook>) {
-        await this.cartBookShopingRepository.update(idUser, updateData);
-        return this.findByUser(idUser);
+    async update(idBookCart: number, updateData: Partial<ShoppingCartBook>) {
+        await this.cartBookShopingRepository.update(idBookCart, updateData);
+        return this.cartBookShopingRepository.find({where : {id: idBookCart}});
     }
 
     delete(id: number) {
         return this.cartBookShopingRepository.delete(id);
-    }
-
-    async removeItem(userId:number, bookId:number): Promise<boolean> {
-        try{
-            const cartItem = await this.cartBookShopingRepository.findOne({
-                where: {
-                    idUser: userId,
-                    idBook: bookId
-                }
-            });
-            if (!cartItem){
-                return false;
-            }
-            await this.cartBookShopingRepository.delete(cartItem.id);
-            return true;
-        } catch (error) {
-            console.error('Error al eliminar item del carrito:', error);
-            throw new Error('No se pudo eliminar el item del carrito');
-        }
     }
 }
