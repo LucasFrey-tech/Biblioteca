@@ -55,7 +55,7 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
             throw new Error(`Error al actualizar el ítem del carrito: ${errorData.message || res.statusText}`);
         }
 
-        return res.json(); //tira error siempre :v
+        return res.json();
     }
 
     async delete(id: number): Promise<void> {
