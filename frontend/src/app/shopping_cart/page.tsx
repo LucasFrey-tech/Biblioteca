@@ -159,8 +159,8 @@ export default function ShoppingCartPage() {
                                                 src={item.image}
                                                 alt={item.title}
                                                 className={item.virtual ? styles.ebookImage : ''}
-                                                width = {100}
-                                                height = {150}
+                                                width={100}
+                                                height={150}
                                                 placeholder="blur"
                                                 blurDataURL="/libros/placeholder.png"
                                             />
@@ -176,28 +176,35 @@ export default function ShoppingCartPage() {
                                             </div>
                                             <div className={styles.price}>${item.price.toLocaleString()}</div>
 
-                                            <div className={styles.quantityControl}>
-                                                <button
-                                                    onClick={() => {
-                                                        if (item.amount > 1) {
-                                                            updateCartItem(item.id, Math.max(1, item.amount - 1))
-                                                        } else {
-                                                            removeFromCart(item.id);
-                                                        }
-                                                    }}
-
-                                                    className={styles.quantityButton}
-                                                >
-                                                    -
-                                                </button>
-                                                <span className={styles.quantity}>{item.amount}</span>
-                                                <button
-                                                    onClick={() => updateCartItem(item.id, item.amount + 1)}
-                                                    className={styles.quantityButton}
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
+                                            {/* Mostrar stock y controles solo para libros físicos */}
+                                            {!item.virtual && (
+                                                <>
+                                                    <div className={styles.stockInfo}>
+                                                        Stock disponible: {item.amount}
+                                                    </div>
+                                                    <div className={styles.quantityControl}>
+                                                        <button
+                                                            onClick={() => {
+                                                                if (item.amount > 1) {
+                                                                    updateCartItem(item.id, Math.max(1, item.amount - 1))
+                                                                } else {
+                                                                    removeFromCart(item.id);
+                                                                }
+                                                            }}
+                                                            className={styles.quantityButton}
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <span className={styles.quantity}>{item.amount}</span>
+                                                        <button
+                                                            onClick={() => updateCartItem(item.id, item.amount + 1)}
+                                                            className={styles.quantityButton}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                </>
+                                            )}
 
                                             <div className={styles.itemActions}>
                                                 <button
