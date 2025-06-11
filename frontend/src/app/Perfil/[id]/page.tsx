@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import styles from '../../../styles/profile.module.css'
 
 import { User } from '@/API/types/user';
+import { Purchase } from '@/API/types/purchase';
+
 import { BaseApi } from '@/API/baseApi';
 
 export default function profilePage() {
@@ -13,7 +15,9 @@ export default function profilePage() {
     const [user, setUser] = useState<User>();
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
+    const [purchases, setPurchases] = useState<Purchase[] | null>(null);
     
+
     const apiRef = useRef<BaseApi | null>(null);
 
     useEffect(() => {
@@ -92,8 +96,31 @@ export default function profilePage() {
     }, [id]); 
 
 
+    useEffect(() => {
+        if (!user?.id) return;
+
+        const fetchPurchaseHistory = async () => {
+            try {
+                const purchaseData = await apiRef.current?.purchase.getPurchaseHistory(user?.id);
+                if(!purchaseData) return;
+                setPurchases(purchaseData);
+            }catch(error){
+                console.error('Error listado de compras: ', error.message);
+            }
+        };
+
+        fetchPurchaseHistory();
+    }, [user]);
 
     if (!user) return;
+
+    const formatDate = (fecha: Date): string => {
+        if (!fecha) return '';
+        const anio = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        return `${dia}/${mes}/${anio}`;
+    };
 
     return (
         <div className={styles.container}>
@@ -144,7 +171,38 @@ export default function profilePage() {
                     <div>
                         <h2>Historial de Compras</h2>
                     </div>
-                    <div className={styles.info}></div>
+                    <div className={styles.info}>
+                        <table className={styles.purchases}>
+                            <thead>
+                                <tr className={styles.header}>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Cantidad</th>
+                                    <th>Formato</th>
+                                    <th>Precio</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {purchases && purchases.length > 0 ? (
+                                    purchases.map((purchases) => (
+                                        <tr className={styles.cells} key={purchases.id}>
+                                            <td className={styles.details}>{purchases.title}</td>
+                                            <td className={styles.details}>{purchases.author}</td>
+                                            <td className={styles.details}>{purchases.amount}</td>
+                                            <td className={styles.details}>{purchases.virtual ? 'Digital' : 'Fisico'}</td>
+                                            <td className={styles.details}>{purchases.price.toLocaleString('es-AR')}</td>
+                                            <td className={styles.details}>{formatDate(purchases.purchaseDate)}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className={styles.noPurchases}>No hay compras realizadas</td>
+                                    </tr> 
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
