@@ -102,5 +102,15 @@ create table shopping_cart_book(
 	id serial primary key,
 	id_user integer not null,
 	id_book integer not null,
-	amount integer not null check(amount >= 0)
+	amount integer not null check(amount >= 0),
+	virtual bool default(false)
+);
+
+create table purchases(
+	id serial primary key,
+	id_user integer not null,
+	id_book integer not null,
+	amount integer not null check(amount >= 0),
+	virtual bool default(false),
+	purchase_date timestamp default(CURRENT_TIMESTAMP)
 );

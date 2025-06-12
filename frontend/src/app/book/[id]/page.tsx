@@ -1,50 +1,29 @@
 'use client';
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import StarRating from "@/components/ui/StarRating";
 import Image from "next/image";
 
+import { BaseApi } from "@/API/baseApi";
+import { User } from "@/API/types/user";
+import { Book } from "@/API/types/book";
+import { Review } from "@/API/types/review";
+
 import styles from '../../../styles/BookDetail.module.css';
-
-type Author = {
-    id: number;
-    name: string;
-};
-
-type Book = {
-    id: number;
-    title: string;
-    author: string;
-    author_id: number;
-    description: string;
-    genre: string[];
-    anio: number;
-    isbn: string;
-    image: string;
-    stock: number;
-    subscriber_exclusive: boolean;
-    price: number;
-}
-
-type Review = {
-    id: number;
-    id_user: number;
-    username: string;
-    comment: string;
-    rating: number;
-    reviewDate: string;
-};
 
 export default function BookDetail() {
     const params = useParams();
     const [book, setBook] = useState<Book>();
     const [review, setReview] = useState<Review[]>([]);
-
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [selectedFormat, setSelectedFormat] = useState<'physical' | 'ebook'>('physical');
 
+    const [user, setUser] = useState<User>();
+    const [amount, setAmount] = useState<number>(1);
+
+    const refAPI = useRef<BaseApi | null>(null);
 
     useEffect(() => {
         if (!params || !params.id) {
@@ -61,28 +40,34 @@ export default function BookDetail() {
             return;
         }
 
-
         const fetchData = async () => {
             try {
-                const resBook = await fetch(`http://localhost:3001/books/${bookId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const dataBook = await resBook.json();
+                const token = localStorage.getItem('token');
+                const userId = localStorage.getItem('userId');
 
-                setBook(dataBook);
+                if (!token || !userId) {
+                    console.warn('No hay token o userId en localStorage');
+                } else {
+                    // Inicializar API
+                    const api = new BaseApi(token);
+                    refAPI.current = api;
 
-                if (!resBook.ok) throw new Error('Libro no encontrado');
+                    // Obtener usuario
+                    const userData = await api.users.getOne(Number(userId));
+                    setUser(userData);
 
-                const resReviews = await fetch(`http://localhost:3001/reviews/book/${bookId}`);
-                const reviewsData = await resReviews.json();
+                    // Obtener libro
+                    const bookData = await api.books.getOne(bookId);
+                    setBook(bookData);
 
-                setReview(reviewsData);
+                    // Obtener reviews de un libro especifico
+                    const reviewsData = await api.review.getByBookId(bookId);
+                    setReview(reviewsData);
+                }
 
             } catch (error) {
                 console.error('Error al cargar los datos', error);
+                setError('Error al cargar los datos del libro.');
             } finally {
                 setLoading(false);
             }
@@ -91,75 +76,121 @@ export default function BookDetail() {
         fetchData();
     }, [params]);
 
+    const handleAddToCart = async () => {
+        if (!book || !user || !refAPI.current) {
+            alert('Libro, usuario o API no disponible ❌');
+            return;
+        }
+        try {
+            const payload = {
+                idUser: user.id,
+                idBook: book.id,
+                amount: amount,
+                virtual: selectedFormat === 'ebook'
+            };
+            await refAPI.current.shoppingCart.create(payload);
+            alert('Libro agregado al carrito ✅');
+        } catch (error: any) {
+            console.error('Error agregando al carrito:', error.message);
+            alert(`Error al agregar al carrito: ${error.message} ❌`);
+        }
+    };
+
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
-    const imagePath = book.image
-        ? `/libros/${book.image}.png`
-        : '/libros/placeholder.png';
-
-    // console.log('Genres:', book.genre);
-    // console.log('Type of genres:', typeof book.genre);
-    // console.log('Is Array:', Array.isArray(book.genre));
-
     return (
         <div className={styles.container}>
-            <div className={styles.leftColumn}>
-                <h1 className={styles.title}>{book.title}</h1>
-                <div className={styles.coverContainer}>
-                    <Image
-                        src={imagePath}
-                        alt={book.title}
-                        className={styles.cover}
-                        width={300}
-                        height={450}
-                        placeholder="blur"
-                        blurDataURL="/libros/placeholder.png"
-                    />
+            <div className={styles.columns}>
+                {/* Columna izquierda */}
+                <div className={styles.leftColumn}>
+                    <div className={styles.coverContainer}>
+                        <Image
+                            src={book.image}
+                            alt={book.title}
+                            className={styles.cover}
+                            width={300}
+                            height={450}
+                            placeholder="blur"
+                            blurDataURL="/libros/placeholder.png"
+                        />
+                    </div>
                 </div>
-                <div className={styles.synopsis}>
-                    <h2>Sinopsis:</h2>
-                    <p>{book.description}</p>
+
+                {/* Columna del medio */}
+                <div className={styles.middleColumn}>
+                    <div className={styles.meta}>
+                        <p><strong>Autor:</strong> {book.author}</p>
+                        <p><strong>Año:</strong> {book.anio}</p>
+                        <p><strong>Categorías:</strong></p>
+                        <ul>
+                            {book.genre.map((cat, idx) => (
+                                <li key={idx}>{cat}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Columna derecha */}
+                <div className={styles.rightColumn}>
+                    <h1 className={styles.title}>{book.title}</h1>
+                    <div className={styles.priceBox}>
+                        <p className={styles.price}>
+                            {new Intl.NumberFormat('es-AR', {
+                                style: 'currency',
+                                currency: 'ARS'
+                            }).format(book.price)}
+                        </p>
+                        <button className={styles.buyButton}>Comprar Ahora</button>
+                        <button className={styles.cartButton} onClick={handleAddToCart}>
+                            Agregar al Carrito
+                        </button>
+                    </div>
+
+                    <div className={styles.formatButtons}>
+                        <button
+                            className={`${styles.format} ${selectedFormat === 'physical' ? styles.active : ''}`}
+                            onClick={() => setSelectedFormat('physical')}
+                        >
+                            Físico
+                        </button>
+                        <button
+                            className={`${styles.format} ${selectedFormat === 'ebook' ? styles.active : ''}`}
+                            onClick={() => setSelectedFormat('ebook')}
+                        >
+                            eBook
+                        </button>
+                    </div>
+
+                    {selectedFormat === 'physical' && (
+                        <div className={styles.stockBox}>
+                            <p><strong>Stock Disponible</strong></p>
+                            <p>Cantidad: {book.stock} Unidades</p>
+                            <div className={styles.amountSelector}>
+                                <label htmlFor="amount">Cantidad: </label>
+                                <input
+                                    id="amount"
+                                    type="number"
+                                    min={1}
+                                    max={book.stock}
+                                    value={amount}
+                                    onChange={(e) => setAmount(Number(e.target.value))}
+                                    className={styles.amountInput}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className={`${styles.middleColumn}`}>
-                <div className={styles.meta}>
-                    <p><strong>Autor:</strong> {book.author}</p>
-                    <p><strong>Año:</strong> {book.anio}</p>
-                    <p><strong>Categorías:</strong></p>
-                    <ul>
-                        {book.genre.map((cat, idx) => (
-                            <li key={idx}>{cat}</li>
-                        ))}
-                    </ul>
-                </div>
+            {/* Sinopsis debajo del contenido principal */}
+            <div className={styles.sinopsis}>
+                <h2>Sinopsis:</h2>
+                <p>{book.description}</p>
             </div>
 
-            <div className={styles.rightColumn}>
-                <div className={styles.priceBox}>
-                    <p className={styles.price}>
-                        {new Intl.NumberFormat('es-AR', {
-                            style: 'currency',
-                            currency: 'ARS'
-                        }).format(book.price)}
-                    </p>
-                    <button className={styles.buyButton}>Comprar Ahora</button>
-                    <button className={styles.cartButton}>Agregar al Carrito</button>
-                </div>
-
-                <div className={styles.formatButtons}>
-                    <button className={styles.format}>Físico</button>
-                    <button className={styles.format}>eBook</button>
-                </div>
-
-                <div className={styles.stock}>
-                    <p><strong>Stock Disponible</strong></p>
-                    <p>Cantidad: {book.stock} Unidades</p>
-                </div>
-            </div>
-
+            {/* Reviews */}
             <div className={styles.reviews}>
                 <h2>Reviews:</h2>
                 {review.length === 0 ? (

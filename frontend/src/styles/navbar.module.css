@@ -10,7 +10,6 @@
     padding: 0 1vw;
     box-sizing: border-box;
     position: relative;
-
 }
 
 .TituloPagina {
@@ -78,40 +77,48 @@
     color: black;
 }
 
+/* NUEVO: Wrapper para nombreUsuario + carrito */
+.menuDesplegableConCarrito {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-usuario-carrito);
+    position: relative;
+}
+
 .menuDesplegable {
     position: relative;
     display: inline-block;
 }
 
 .nombreUsuario {
-  background: none;
-  border: none;
-  color: black;
-  cursor: pointer;
-  font-weight: bold;
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .dropDownMenu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  color: black;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  z-index: 100;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
 }
 
 .dropDownMenu a,
 .dropDownMenu button {
-  margin: 4px 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
+    margin: 4px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
 }
 
 .Usuario p {
@@ -120,7 +127,7 @@
     margin: 0;
 }
 
-/* Boton */
+/* Botones generales */
 
 .buttonGroup {
     display: flex;
@@ -145,6 +152,8 @@
     color: black;
 }
 
+/* Botón hamburguesa */
+
 .menuButton {
     display: none;
     background: none;
@@ -160,6 +169,7 @@
 }
 
 /* Sidebar */
+
 .sidebar {
     position: fixed;
     top: 0;
@@ -171,7 +181,7 @@
     z-index: 1000;
     transition: right 0.3s ease;
     padding-top: 20px;
-    font-family: var(--font-SF-Fedora), sans-serif; /* Misma fuente que el header */
+    font-family: var(--font-SF-Fedora), sans-serif;
 }
 
 .sidebar.active {
@@ -194,7 +204,7 @@
     text-decoration: none;
     color: black;
     display: block;
-    font-size: 1rem; /* Tamaño consistente */
+    font-size: 1rem;
 }
 
 .sidebarList .boton {
@@ -209,7 +219,7 @@
     width: auto;
     display: inline-block;
     margin: 0.5rem auto;
-    font-family: var(--font-SF-Fedora), sans-serif; /* Misma fuente */
+    font-family: var(--font-SF-Fedora), sans-serif;
 }
 
 .sidebarList .boton:hover {
@@ -232,13 +242,77 @@
     display: block;
 }
 
+.cartButton {
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.cartButton:hover {
+    transform: scale(1.1);
+}
+
+.cartIconContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.cartBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.cartButtonSidebar .cartIconContainer {
+    margin: 0 auto;
+}
+
+.cartButtonSidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    padding: 0.6rem;
+    transition: background-color 0.2s ease;
+    margin: 0 auto; /* Esto centrará el elemento */
+    width: fit-content; /* Asegura que solo ocupe el espacio necesario */
+}
+
+.sidebarList li {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    display: flex; /* Añade esto */
+    justify-content: center; /* Añade esto */
+}
+
+.cartButtonSidebar:hover {
+    background-color: #f0f0f0;
+    border-radius: 6px;
+}
+
 /* Responsive celular */
+
 @media (max-width: 768px) {
     .menuButton {
         display: block;
     }
 
-    .Navegacion, .Usuario {
+    .Navegacion,
+    .Usuario {
         display: none;
     }
 

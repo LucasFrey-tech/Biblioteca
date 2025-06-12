@@ -7,6 +7,14 @@
 
 .bookDetail {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.mainInfo {
+    display: flex;
+    flex: 1;
     gap: 2rem;
 }
 
@@ -34,11 +42,14 @@
     border-radius: 4px;
 }
 
-.synopsis {
+.sinopsis {
     margin-top: 2rem;
+    background-color: #e0e7f8; /* Fondo más oscuro */
+    padding: 1rem;
+    border-radius: 10px;
 }
 
-.synopsis h2 {
+.sinopsis h2 {
     margin-bottom: 0.5rem;
 }
 
@@ -101,8 +112,21 @@
     margin: 0 0.2rem;
 }
 
-.stock {
+.format.active {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
+
+.stockBox {
+    background-color: #f1f5fc; /* Fondo suave para stock y cantidad */
+    padding: 0.8rem;
+    border-radius: 8px;
     font-size: 0.95rem;
+}
+
+.amountSelector {
+    margin-top: 0.5rem;
 }
 
 .reviews {
@@ -151,4 +175,54 @@
 
 .meta p {
     margin: 0.3rem 0;
+}
+
+.columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+.leftColumn {
+    flex: 0 0 auto;
+    width: 300px; /* Ancho fijo para la imagen */
+}
+
+.middleColumn {
+    flex: 1;
+    max-width: 400px; /* Limita el ancho de la columna central */
+    margin-top: 0; /* Elimina el margen superior que tenía antes */
+}
+
+.rightColumn {
+    flex: 0 0 320px; /* Ancho fijo para la columna derecha */
+    position: sticky;
+    top: 20px; /* Para que se mantenga visible al hacer scroll */
+}
+
+/* Asegura que la imagen mantenga su proporción */
+.coverContainer {
+    width: 300px;
+    height: 450px;
+}
+
+/* Responsive: para pantallas más pequeñas */
+@media (max-width: 1024px) {
+    .columns {
+        flex-direction: column;
+    }
+    
+    .leftColumn, .middleColumn, .rightColumn {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .rightColumn {
+        position: static;
+    }
+    
+    .coverContainer {
+        margin: 0 auto;
+    }
 }

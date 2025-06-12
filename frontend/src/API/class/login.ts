@@ -28,7 +28,9 @@ export class Login extends Crud<LoginRequestBody>{
         throw new Error('Method delete not supported for Auth');
     }
 
-    async login(credentials: LoginRequestBody): Promise<{ success: true, data: AuthResponse } | { success: false, error: string }> {
+    async login(credentials: LoginRequestBody): Promise<{ success: true, data: AuthResponse} | {
+      status: number; success: false, error: string 
+}> {
         try{
             console.log(`${this.baseUrl}/${this.endPoint}/login`);
             console.log("HOLA", credentials);
@@ -38,13 +40,19 @@ export class Login extends Crud<LoginRequestBody>{
                 body: JSON.stringify(credentials),
             });
             const body = await res.json();
-    
+
             if (!res.ok) {
-                return { success: false, error: body.message || "Error al iniciar sesión" };
+                if(res.status === 403) {
+
+                return {status:403, success: false, error:"Usuario bloqueado" };
+                }
+                return {status:body.status, success: false, error:"Error al iniciar sesión" };
             }
             return { success: true, data: body};
         }catch (error){
+
             return {
+                status:500,
                 success: false,
                 error: error instanceof Error ? error.message : "Error desconocido"
             };

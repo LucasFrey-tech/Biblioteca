@@ -20,7 +20,19 @@ type Book = {
   id: number;
   title: string;
   author_id: number;
-  author_name: string;
+  description: string;
+  anio: number;
+  isbn: string;
+  image: string;
+  stock: number;
+  subscriber_exclusive: boolean;
+  price: number;
+}
+type BookDTO = {
+  id: number;
+  title: string;
+  author_id: number;
+  author: string;
   description: string;
   anio: number;
   isbn: string;
@@ -35,19 +47,19 @@ export default function PanelAdmin() {
   const [userOpenIds, setUserOpenIds] = useState<number[]>([]);
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<BookDTO[]>([]);
   const [search, setSearch] = useState('');
 
   // Estado para manejar la edición de libros
   const [booksEditState, setBooksEditState] = useState<{
     [key: number]: {
       editMode: boolean;
-      formData: Book;
+      formData: BookDTO;
     }
   }>({});
 
   // Función para iniciar la edición de un libro
-  const startEdit = (book: Book) => {
+  const startEdit = (book: BookDTO) => {
     setBooksEditState(prev => ({
       ...prev,
       [book.id]: {
@@ -84,12 +96,23 @@ export default function PanelAdmin() {
   const saveChanges = async (bookId: number) => {
     const bookState = booksEditState[bookId];
     if (!bookState) return;
-
+    const bookData: Book = {
+      id: bookState.formData.id,
+      title: bookState.formData.title,
+      author_id: bookState.formData.author_id,
+      description: bookState.formData.description,
+      anio: bookState.formData.anio,
+      isbn: bookState.formData.isbn,
+      image: bookState.formData.image,
+      stock: bookState.formData.stock,
+      subscriber_exclusive: bookState.formData.subscriber_exclusive,
+      price: bookState.formData.price
+    }
     try {
       const res = await fetch(`http://localhost:3001/books/${bookId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookState.formData),
+        body: JSON.stringify(bookData),
       });
       if (!res.ok) throw new Error("Error al guardar cambios");
 
@@ -156,7 +179,7 @@ export default function PanelAdmin() {
     );
   };
 
-  const updateUser = async (id: number, updates: Partial<User>, successMsg: string) => {
+  const updateUser = async (id: number, updates: Partial<User>) => {
     try {
       const res = await fetch(`http://localhost:3001/users/${id}`, {
         method: 'PATCH',
@@ -168,7 +191,6 @@ export default function PanelAdmin() {
 
       if (!res.ok) throw new Error('Error en la actualización');
       await fetchUsers();
-      Swal.fire('Éxito', successMsg, 'success');
     } catch (error) {
       console.error(error);
       Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
@@ -239,7 +261,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                updateUser(user.id, { admin: true }, 'Usuario ahora es administrador');
+                                updateUser(user.id, { admin: true });
+                                 Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Este usuario ahora es administrador",
+                                showConfirmButton: false,
+                                timer: 2000
+                              });
                               }
                             })
                           }
@@ -256,7 +285,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                updateUser(user.id, { admin: false }, 'Se quitó el rol de administrador');
+                                updateUser(user.id, { admin: false });
+                                Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Se quito el rol administrador a este usuario",
+                                showConfirmButton: false,
+                                timer: 2000
+                              });
                               }
                             })
                           }
@@ -280,7 +316,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                updateUser(user.id, { disabled: true }, 'Usuario bloqueado');
+                                updateUser(user.id, { disabled: true });
+                                 Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Usuario Bloqueado",
+                                showConfirmButton: false,
+                                timer: 1500
+                              });
                               }
                             })
                           }
@@ -297,7 +340,14 @@ export default function PanelAdmin() {
                               cancelButtonText: "Cancelar"
                             }).then((res) => {
                               if (res.isConfirmed) {
-                                updateUser(user.id, { disabled: false }, 'Usuario desbloqueado');
+                                updateUser(user.id, { disabled: false });
+                                Swal.fire({
+                                position: "top-end",
+                                icon: "success",
+                                title: "Usuario desbloqueado",
+                                showConfirmButton: false,
+                                timer: 1500
+                              });
                               }
                             })
                           }
@@ -324,7 +374,7 @@ export default function PanelAdmin() {
               <AddBookDialog />
             </div>
 
-            {filteredBooks.map((book: Book) => {
+            {filteredBooks.map((book: BookDTO) => {
               const editState = booksEditState[book.id] || {
                 editMode: false,
                 formData: book
@@ -356,7 +406,7 @@ export default function PanelAdmin() {
                             Autor:
                             <Input
                               name="author_name"
-                              value={editState.formData.author_name}
+                              value={editState.formData.author}
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </label>
@@ -421,12 +471,12 @@ export default function PanelAdmin() {
                         </>
                       ) : (
                         <>
-                          <p><strong>Autor:</strong> {book.author_name}</p>
+                          <p><strong>Autor:</strong> {book.author}</p>
                           <p><strong>Precio:</strong> ${book.price}</p>
                           <p><strong>Año:</strong> {book.anio}</p>
                           <p><strong>Descripción:</strong> {book.description}</p>
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
-                          <Button onClick={() => startEdit(book)}>✏️ Editar</Button>
+                          <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
                       )}
                     </div>

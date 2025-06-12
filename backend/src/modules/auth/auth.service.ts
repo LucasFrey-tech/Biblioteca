@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { UsersService } from '../users/user.service';
 import { LoginRequestBody, RegisterRequestBody } from './auth.interface';
 
@@ -53,6 +53,10 @@ export class AuthService {
   // Validamos el usuario y la contraseña
   console.log(requestBody)
   const user = await this.validateUser(requestBody.email, requestBody.password);
+
+  if (user.disabled) {
+  throw new ForbiddenException('Usuario bloqueado. Contacta al administrador.');
+}
 
   // Creamos el payload del JWT (puedes agregar más info si querés)
   const payload = { email: user.email, sub: user.id, username: user.username}; //agregamos el username al payload para usarlo en el login

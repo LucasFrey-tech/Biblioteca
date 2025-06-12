@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import styles from '../../../styles/profile.module.css'
 
 import { User } from '@/API/types/user';
+import { Purchase } from '@/API/types/purchase';
+
 import { BaseApi } from '@/API/baseApi';
 
 export default function profilePage() {
@@ -13,9 +15,21 @@ export default function profilePage() {
     const [user, setUser] = useState<User>();
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
-
-    const api = useMemo(() => new BaseApi(localStorage.getItem('token') || undefined), []);
+    const [purchases, setPurchases] = useState<Purchase[] | null>(null);
     
+
+    const apiRef = useRef<BaseApi | null>(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if(token){
+            apiRef.current = new BaseApi(token);
+        }else{
+            console.error("Falla validacion token");
+            return;
+        }
+    }, []);
+
     const editActivate = (u: User) => {
         setEditMode(prev => ({...prev, [u.id]: true }));
         setEditedProduct(prev => ({
@@ -31,9 +45,13 @@ export default function profilePage() {
     };
 
     const saveChanges = async (id: number) => {
+        if (!apiRef.current) {
+            console.error("API no inicializada");
+            return;
+        }
         const datos = editedProduct[id];
         try {
-            const response = await api.users.update(id, datos);
+            const response = await apiRef.current.users.update(id, datos);
 
             const result = response;
 
@@ -51,22 +69,18 @@ export default function profilePage() {
 
     }
 
-
     useEffect(() => {
         const getProfile = async () => {
             if (!id){
                 console.error('No se proporcionó un Id de usuario');
                 return;
             }
+            if(!apiRef.current) {
+                console.error('API aún no inicializada');
+                return;
+            }
             try{
-                const token = localStorage.getItem('token');
-
-                if (!token) {
-                    console.error('Faltan datos de autenticación');
-                    return;
-                }
-                
-                const response = await api.users.getOne(Number(id));
+                const response = await apiRef.current.users.getOne(Number(id));
 
                 if (!response) {
                     throw new Error('Error al obtener el perfil del usuario');
@@ -79,16 +93,42 @@ export default function profilePage() {
             }
         }
         getProfile();
-    }, [id, api]); 
+    }, [id]); 
 
+
+    useEffect(() => {
+        if (!user?.id) return;
+
+        const fetchPurchaseHistory = async () => {
+            try {
+                const purchaseData = await apiRef.current?.purchase.getPurchaseHistory(user?.id);
+                if(!purchaseData) return;
+                setPurchases(purchaseData);
+            }catch(error){
+                console.error('Error listado de compras: ', error.message);
+            }
+        };
+
+        fetchPurchaseHistory();
+    }, [user]);
 
     if (!user) return;
 
+    const formatDate = (fecha: Date): string => {
+        if (!fecha) return '';
+        const anio = fecha.getFullYear();
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        return `${dia}/${mes}/${anio}`;
+    };
+
     return (
         <div className={styles.container}>
-            <section className={styles.banner} ref={bannerRef}></section>
             <div className={styles.background}>
-                <main className={styles.info}>
+                <div>
+                    <h2>Información del Perfil</h2>
+                </div>
+                <div className={styles.info}>
                     <div className={styles.name}>{user.username}</div>
                     <div className={styles.userInfo}>
                         {editMode[user.id] ? (
@@ -126,7 +166,44 @@ export default function profilePage() {
                             </div>
                         )}
                     </div>
-                </main>
+                </div>
+                <div className={styles.history}>
+                    <div>
+                        <h2>Historial de Compras</h2>
+                    </div>
+                    <div className={styles.info}>
+                        <table className={styles.purchases}>
+                            <thead>
+                                <tr className={styles.header}>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Cantidad</th>
+                                    <th>Formato</th>
+                                    <th>Precio</th>
+                                    <th>Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {purchases && purchases.length > 0 ? (
+                                    purchases.map((purchases) => (
+                                        <tr className={styles.cells} key={purchases.id}>
+                                            <td className={styles.details}>{purchases.title}</td>
+                                            <td className={styles.details}>{purchases.author}</td>
+                                            <td className={styles.details}>{purchases.amount}</td>
+                                            <td className={styles.details}>{purchases.virtual ? 'Digital' : 'Fisico'}</td>
+                                            <td className={styles.details}>{purchases.price.toLocaleString('es-AR')}</td>
+                                            <td className={styles.details}>{formatDate(purchases.purchaseDate)}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={7} className={styles.noPurchases}>No hay compras realizadas</td>
+                                    </tr> 
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     )

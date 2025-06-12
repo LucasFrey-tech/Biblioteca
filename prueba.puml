@@ -1,0 +1,148 @@
+@startuml
+skin rose
+' skinparam classAttributeIconSize 0
+
+'======================
+' Entidades
+'======================
+
+class BookEntity {
+  + id: number
+  + title: string
+  + authorId: number
+}
+
+class AuthorEntity {
+  + id: number
+  + name: string
+}
+
+class GenreEntity {
+  + id: number
+  + name: string
+}
+
+class UserEntity {
+  + id: number
+  + username: string
+  + email: string
+}
+
+
+'======================
+' DTOs
+'======================
+
+class CreateBookDto {
+  + title: string
+  + authorId: number
+}
+
+class UpdateBookDto {
+  + title?: string
+  + authorId?: number
+}
+
+class CreateAuthorDto {
+  + name: string
+}
+
+class CreateGenreDto {
+  + name: string
+}
+
+class CreateUserDto {
+  + username: string
+  + email: string
+}
+
+
+'======================
+' Services
+'======================
+
+class BookService {
+  + create(dto: CreateBookDto)
+  + findAll()
+  + findOne(id: number)
+  + update(id: number, dto: UpdateBookDto)
+  + remove(id: number)
+}
+
+class AuthorService {
+  + create(dto: CreateAuthorDto)
+  + findAll()
+}
+
+class GenreService {
+  + create(dto: CreateGenreDto)
+  + findAll()
+}
+
+class UserService {
+  + create(dto: CreateUserDto)
+  + findAll()
+}
+
+
+'======================
+' Controllers
+'======================
+
+class BookController {
+  + POST /books
+  + GET /books
+  + GET /books/:id
+  + PUT /books/:id
+  + DELETE /books/:id
+}
+
+class AuthorController {
+  + POST /authors
+  + GET /authors
+}
+
+class GenreController {
+  + POST /genres
+  + GET /genres
+}
+
+class UserController {
+  + POST /users
+  + GET /users
+}
+
+
+class AppModule {
+  + imports: BookModule, AuthorModule, GenreModule, UserModule
+}
+
+AppModule --> BookModule
+AppModule --> AuthorModule
+AppModule --> GenreModule
+AppModule --> UserModule
+
+'======================
+' Relaciones
+'======================
+
+BookController --> BookService
+BookService --> BookEntity
+BookService --> CreateBookDto
+BookService --> UpdateBookDto
+
+AuthorController --> AuthorService
+AuthorService --> AuthorEntity
+AuthorService --> CreateAuthorDto
+
+GenreController --> GenreService
+GenreService --> GenreEntity
+GenreService --> CreateGenreDto
+
+UserController --> UserService
+UserService --> UserEntity
+UserService --> CreateUserDto
+
+BookEntity --> AuthorEntity : authorId
+
+@enduml

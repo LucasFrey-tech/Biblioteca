@@ -3,6 +3,8 @@
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
     padding: 20px;
+    height: 75%;
+
 }
 
 .mainGrid {
@@ -11,14 +13,13 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
     justify-content: center;
-    
 }
 
 .wrapper {
     display: flex;
     padding: 20px;
     gap: 20px;
-    background-color: #2c2c2b;
+    background-color: #ddebfe;
 }
 
 .sidebar {
@@ -35,12 +36,15 @@
     display: flex;
     justify-content: center;
     margin: 20px 0;
-    background-color: #2c2c2b;
+    background-color: #ddebfe;
 }
 
+.container {
+    background-color: red;
+}
 .searchBarContainer {
     background-color: #f4f4f4;
-    padding: 10px;
+    padding: 0.7vw;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -71,7 +75,7 @@
 }
 
 .searchSubmitBtn:hover {
-    background-color: #2D2B2E;
+    background-color: #ddebfe
 }
 
 .searchEmptyBtn:hover {

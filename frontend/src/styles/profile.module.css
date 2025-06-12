@@ -1,3 +1,9 @@
+.container{
+  min-height: 70vh; 
+  width: 100%;        
+  background-color: #1e2836;
+}
+
 .name {
     font-family: var(--font-SF-Fedora), sans-serif;
     font-size: 25px;
@@ -8,7 +14,16 @@
 
 .background {
     background-color: #1e2836;
-    padding-top: 20px;
+    padding-top: 2vw;
+}
+
+.background h2 {
+    font-family: var(--font-SF-Fedora), sans-serif;
+    font-size: 25px;
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+    text-align: center;
 }
 
 .info {
@@ -18,7 +33,8 @@
     border-color: white;
     height: 50%;
     border-radius: 10px;
-    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 30px;
     justify-self: center;
     background-color: #272f3c;
 }
@@ -167,4 +183,28 @@
     background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
     background-clip: text;
     color: transparent;
+}
+
+.purchases {
+    border: solid 2px white;
+    margin: 15px;
+    width: 93%;
+    justify-self: center;
+    text-align: center;
+}
+
+.header {
+    color: white;
+}
+
+.details {
+    color: black;
+    padding: 20px;
+    border: 1px solid rgb(62, 62, 62); 
+    background-color: rgb(150, 149, 149); 
+    font-family: var(--font-SF-Fedora), sans-serif;
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    background-clip: text;
+    color: transparent;
+    text-align: center;
 }

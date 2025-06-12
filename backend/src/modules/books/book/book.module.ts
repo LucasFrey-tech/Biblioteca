@@ -6,10 +6,27 @@ import { Book } from '../../../entidades/book.entity';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 import { BookGenre } from 'src/entidades/book_genres.entity';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { SettingsService } from 'src/settings.service';
+
+const myapp_config = require('../../../../private/app.config.json');
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Book, Genre, Author, BookGenre])],
+  imports: [
+    TypeOrmModule.forFeature([Book, Genre, Author, BookGenre])
+    ,MulterModule.register({
+      storage: diskStorage({
+        destination: myapp_config.static_resources.books_images.path,
+          filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      })
+    }),  
+  ],
   controllers: [BooksController],
-  providers: [BooksService],
+  providers: [BooksService, SettingsService],
+  exports: [BooksService],
 })
 export class BooksModule {}
+

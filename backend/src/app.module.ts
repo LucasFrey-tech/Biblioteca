@@ -9,7 +9,7 @@ import { Review } from './entidades/review.entity';
 import { Genre } from './entidades/genre.entity';
 import { BookGenre } from './entidades/book_genres.entity';
 import { ShoppingCartBook } from './entidades/shopping_cart_book.entity';
-
+import { Purchase } from './entidades/purchase.entity';
 
 // Modulos
 import { AuthModule } from './modules/auth/auth.module';
@@ -21,43 +21,30 @@ import { BookReviewsModule } from './modules/books/reviews/book_reviews.module';
 import { GenresModule } from './modules/genres/genre.module';
 import { BookGenresModule } from './modules/book_genre/book_genres.module';
 import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
+import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.module';
+import { PurchasesModule } from './modules/purchase/purchase.module';
+import { LibraryBooksModule } from './modules/books/library/library_books.module';
+import { UserVirtualBooks } from './entidades/user_virtual_books.entity';
 
-//Controllers
-import { BooksController } from './modules/books/book/book.controller';
-import { AuthorController } from './modules/authors/author.controller';
-import { BookReviewsController } from './modules/books/reviews/book_reviews.controller';
-import { GenresController } from './modules/genres/genre.controller';
-import { BookGenresController } from './modules/book_genre/book_genres.controller';
-
-
-//Service
-import { BooksService } from './modules/books/book/book.service';
-import { AuthorService } from './modules/authors/author.service';
-import { BookReviewsService } from './modules/books/reviews/book_reviews.service';
-import { GenresService } from './modules/genres/genre.service';
-import { BookGenresService } from './modules/book_genre/book_genres.service';
-import { ShoppingCartController } from './modules/shopping_cart/shopping_cart.controller';
-import { ShoppingCartService } from './modules/shopping_cart/shopping_cart.service';
-
-
-const database_config = require('../private/database.config.json');
+const myapp_config = require('../private/app.config.json');
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: database_config.host,
-      port: database_config.port,
-      username: database_config.username,
-      password: database_config.password,
-      database: database_config.database,
-      entities: [User, Book, Author, Review, Genre, BookGenre],
+      host: myapp_config.database_connection.host,
+      port: myapp_config.database_connection.port,
+      username: myapp_config.database_connection.username,
+      password: myapp_config.database_connection.password,
+      database: myapp_config.database_connection.database,
+      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook, Purchase, UserVirtualBooks],
+
       synchronize: false, 
     }),
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
+    // TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
     AuthModule,
     UsersModule,
     AuthorModule,
@@ -65,9 +52,10 @@ const database_config = require('../private/database.config.json');
     BookReviewsModule,
     GenresModule,
     BookGenresModule,
-    // ShoppingCartModule,
+    ShoppingCartModule,
+    CatalogueBooksModule,
+    PurchasesModule,
+    LibraryBooksModule,
   ],
-  controllers: [BooksController, AuthorController, BookReviewsController, GenresController, BookGenresController, ShoppingCartController],
-  providers: [BooksService, AuthorService, BookReviewsService, GenresService, BookGenresService, ShoppingCartService],
 })
 export class AppModule {}

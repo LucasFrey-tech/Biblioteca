@@ -1,16 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('shopping_cart_book')
 export class ShoppingCartBook {
+    @ApiProperty({ example: 1, description: 'ID Único del Carrito' })
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({name: 'id_user', type: 'integer' })
+    @ApiProperty({ example: 1, description: 'ID Único del Usuario' })
+    @Column({ name: 'id_user', type: 'integer' })
     idUser: number;
 
-    @Column({name: 'id_book', type: 'integer' })
+    @ApiProperty({ example: 1, description: 'ID Único del Libro' })
+    @Column({ name: 'id_book', type: 'integer' })
     idBook: number;
 
-    @Column('amount')
+    @ApiProperty({ example: 20000, description: 'Valor Total del Carrito' })
+    @Column({ name: 'amount', type: 'integer' })
     amount: number;
+
+    @ApiProperty({ description: 'Tipo de libro' })
+    @Column({ default: false })
+    virtual!: boolean;
 }

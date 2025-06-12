@@ -21,6 +21,7 @@ export default function Navbar() {
     const [menuDropDown, setDropDown] = useState<boolean>();
     const { user, setUser } = useUser();
     const router = useRouter();
+    const [cartItems, setCartItems] = useState<any[]>([]); // Estado para los items del carrito
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const closeSidebar = () => setIsSidebarOpen(false);
@@ -33,14 +34,12 @@ export default function Navbar() {
         router.push('/login');
     };
 
-    ////////////////////////////////////////
     const handleProfileClick = () => {
         if (user?.sub) {
             router.push(`/Perfil/${user.sub}`);
             setDropDown(false);
         }
     };
-    ///////////////////////////////////////
 
     useEffect(() => {
         const getUser = async () => {
@@ -61,6 +60,22 @@ export default function Navbar() {
         getUser();
     }, []);
 
+    // Efecto para cargar los items del carrito desde localStorage
+    useEffect(() => {
+        const loadCartItems = () => {
+            const cart = localStorage.getItem('cart');
+            if (cart) {
+                setCartItems(JSON.parse(cart));
+            }
+        };
+
+        loadCartItems();
+        
+        // Escuchar cambios en el localStorage
+        window.addEventListener('storage', loadCartItems);
+        return () => window.removeEventListener('storage', loadCartItems);
+    }, []);
+
     return (
         <>
             <header className={styles.Header}>
@@ -73,36 +88,38 @@ export default function Navbar() {
 
                 <nav className={styles.Navegacion}>
                     <ul className={styles.navList}>
-                        <li>
-                            <Link href="/inicio">Novedades</Link>
-                        </li>
-                        <li>
-                            <Link href="/catalogo">Catalogo</Link>
-                        </li>
-                        <li>
-                            <Link href="/libreria">Libreria</Link>
-                        </li>
-                        <li>
-                            <Link href="/about">Sobre Nosotros</Link>
-                        </li>
+                        <li><Link href="/inicio">Novedades</Link></li>
+                        <li><Link href="/catalogo">Catalogo</Link></li>
+                        <li><Link href="/libreria">Libreria</Link></li>
+                        <li><Link href="/about">Sobre Nosotros</Link></li>
                     </ul>
                 </nav>
 
                 <div className={styles.Usuario}>
-                    {/*Muestra Usuario al iniciar sesion*/}
                     {user ? (
-                        <div className={styles.menuDesplegable}>
+                        <div className={styles.menuDesplegableConCarrito}>
                             <button className={styles.nombreUsuario} onClick={toggleMenu}>{user.username}</button>
                             {menuDropDown && (
                                 <div className={styles.dropDownMenu}>
-                                    {user && (
-                                        <button onClick={handleProfileClick}>
-                                            Mi Perfil
-                                        </button>
-                                    )}
+                                    <button onClick={handleProfileClick}>Mi Perfil</button>
                                     <button onClick={closeSession}>Cerrar Sesion</button>
                                 </div>
                             )}
+                            <Link href="/shopping_cart" className={styles.cartButton}>
+                                <div className={styles.cartIconContainer}>
+                                    <Image
+                                        src="/logos/cart.png"
+                                        alt="Carrito"
+                                        width={28}
+                                        height={28}
+                                    />
+                                    {cartItems.length > 0 && (
+                                        <span className={styles.cartBadge}>
+                                            {cartItems.length}
+                                        </span>
+                                    )}
+                                </div>
+                            </Link>
                         </div>
                     ) : (
                         <a className={styles.boton} href="http://localhost:3000/login">Acceder</a>
@@ -118,7 +135,7 @@ export default function Navbar() {
                     />
                 </button>
             </header>
-
+            
             <div
                 className={`${styles.sidebarBackdrop} ${isSidebarOpen ? styles.active : ''}`}
                 onClick={closeSidebar}
@@ -126,27 +143,40 @@ export default function Navbar() {
 
             <div className={`${styles.sidebar} ${isSidebarOpen ? styles.active : ''}`}>
                 <ul className={styles.sidebarList}>
-                    <li>
-                        <Link href="/inicio" onClick={closeSidebar}>Novedades</Link>
-                    </li>
-                    <li>
-                        <Link href="/catalogo" onClick={closeSidebar}>Catalogo</Link>
-                    </li>
-                    <li>
-                        <Link href="/libreria" onClick={closeSidebar}>Libreria</Link>
-                    </li>
-                    <li>
-                        <Link href="/about" onClick={closeSidebar}>Sobre Nosotros</Link>
-                    </li>
-                    <li>
-                        <Link
-                            href="http://localhost:3000/login"
-                            onClick={closeSidebar}
-                            className={styles.boton}
-                        >
-                            Acceder
-                        </Link>
-                    </li>
+                    <li><Link href="/inicio" onClick={closeSidebar}>Novedades</Link></li>
+                    <li><Link href="/catalogo" onClick={closeSidebar}>Catalogo</Link></li>
+                    <li><Link href="/libreria" onClick={closeSidebar}>Libreria</Link></li>
+                    <li><Link href="/about" onClick={closeSidebar}>Sobre Nosotros</Link></li>
+
+                    {user ? (
+                        <>
+                            <li>
+                                <Link href="/shopping_cart" onClick={closeSidebar} className={styles.cartButtonSidebar}>
+                                    <div className={styles.cartIconContainer}>
+                                        <Image
+                                            src="/logos/cart.png"
+                                            alt="Carrito"
+                                            width={28}
+                                            height={28}
+                                        />
+                                        {cartItems.length > 0 && (
+                                            <span className={styles.cartBadge}>
+                                                {cartItems.length}
+                                            </span>
+                                        )}
+                                    </div>
+                                </Link>
+                            </li>
+                            <li><button onClick={handleProfileClick}>Mi Perfil</button></li>
+                            <li><button onClick={closeSession}>Cerrar Sesión</button></li>
+                        </>
+                    ) : (
+                        <li>
+                            <Link href="http://localhost:3000/login" onClick={closeSidebar} className={styles.boton}>
+                                Acceder
+                            </Link>
+                        </li>
+                    )}
                 </ul>
             </div>
         </>
