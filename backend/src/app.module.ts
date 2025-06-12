@@ -9,6 +9,7 @@ import { Review } from './entidades/review.entity';
 import { Genre } from './entidades/genre.entity';
 import { BookGenre } from './entidades/book_genres.entity';
 import { ShoppingCartBook } from './entidades/shopping_cart_book.entity';
+import { Purchase } from './entidades/purchase.entity';
 
 // Modulos
 import { AuthModule } from './modules/auth/auth.module';
@@ -20,6 +21,10 @@ import { BookReviewsModule } from './modules/books/reviews/book_reviews.module';
 import { GenresModule } from './modules/genres/genre.module';
 import { BookGenresModule } from './modules/book_genre/book_genres.module';
 import { ShoppingCartModule } from './modules/shopping_cart/shopping_cart.module';
+import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.module';
+import { PurchasesModule } from './modules/purchase/purchase.module';
+import { LibraryBooksModule } from './modules/books/library/library_books.module';
+import { UserVirtualBooks } from './entidades/user_virtual_books.entity';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -32,14 +37,14 @@ const myapp_config = require('../private/app.config.json');
       username: myapp_config.database_connection.username,
       password: myapp_config.database_connection.password,
       database: myapp_config.database_connection.database,
-      entities: [User, Book, Author, Review, Genre, BookGenre],
+      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook, Purchase, UserVirtualBooks],
 
       synchronize: false, 
     }),
     ConfigModule.forRoot({
       isGlobal: true, 
     }),
-    TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
+    // TypeOrmModule.forFeature([User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook]),
     AuthModule,
     UsersModule,
     AuthorModule,
@@ -48,6 +53,9 @@ const myapp_config = require('../private/app.config.json');
     GenresModule,
     BookGenresModule,
     ShoppingCartModule,
+    CatalogueBooksModule,
+    PurchasesModule,
+    LibraryBooksModule,
   ],
 })
 export class AppModule {}

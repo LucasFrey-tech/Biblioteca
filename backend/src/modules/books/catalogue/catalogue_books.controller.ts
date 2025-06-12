@@ -20,6 +20,6 @@ export class CatalogueBooksController {
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Libro Encontrado', type: CatalogueBookDTO })
     findOne(@Param('id') id: number): Promise<CatalogueBookDTO | null>  {
-    return this.booksService.findOne(id);
+        return this.booksService.findOne(id);
     }
 }

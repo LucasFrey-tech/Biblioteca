@@ -1,120 +1,57 @@
 'use client';
 
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState, FormEvent, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
-import { Book } from '../../../../backend/src/entidades/book.entity';
+import { BaseApi } from '@/API/baseApi';
+import { BookCatalogo } from '@/API/types/bookCatalogo';
+import { Author } from '@/API/types/author';
+import { Genre } from '@/API/types/genre';
 
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 
-type Author = {
-    id: number;
-    name: string;
-};
-
-type Genre = {
-    id: number;
-    name: string;
-};
-
-type BookGenre = {
-    id: number;
-    idBook: number;
-    idGenre: number;
-};
 
 export default function BookPage() {
-    const [books, setBooks] = useState<Book[]>([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchQuery, setSearchQuery] = useState('');
+    const [books, setBooks] = useState<BookCatalogo[]>([]);
     const [authors, setAuthors] = useState<Author[]>([]);
     const [genres, setGenres] = useState<Genre[]>([]);
-    const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
     const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
 
+    const apiRef = useRef<BaseApi | null>(null);
+
     useEffect(() => {
         const fetchData = async () => {
+            apiRef.current = new BaseApi(); //ahora funciona sin token
+
+            const token = localStorage.getItem('token');
+            if (token) {
+                apiRef.current = new BaseApi(token);
+            }
+
             try {
-                const resBooks = await fetch('http://localhost:3001/books', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const resBooks = await apiRef.current?.catalogo.getAll();
+                const resAuthors = await apiRef.current?.authors.getAll();
+                const resGenres = await apiRef.current?.genre.getAll();
 
-                const resAuthors = await fetch('http://localhost:3001/authors', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                const resGenres = await fetch('http://localhost:3001/genres', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                const resBookGenres = await fetch('http://localhost:3001/book_genres', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!resBooks.ok) {
-                    throw new Error(`HTTP error! status: ${resBooks.status}`);
-                }
-                if (!resAuthors.ok) {
-                    throw new Error(`HTTP error! status: ${resAuthors.status}`);
-                }
-                if (!resGenres.ok) {
-                    throw new Error(`HTTP error! status: ${resGenres.status}`);
-                }
-                if (!resBookGenres.ok) {
-                    throw new Error(`HTTP error! status: ${resBookGenres.status}`);
+                if (!resBooks || !Array.isArray(resBooks)) {
+                    throw new Error('Libros inválidos');
                 }
 
-                const dataBooks = await resBooks.json();
-                const dataAuthors = await resAuthors.json();
-                const dataGenres = await resGenres.json();
-                const dataBookGenres = await resBookGenres.json();
-
-                if (!Array.isArray(dataBooks)) {
-                    throw new Error('La respuesta de la API de libros no es un arreglo');
-                }
-                if (!Array.isArray(dataAuthors)) {
-                    throw new Error('La respuesta de la API de autores no es un arreglo');
-                }
-                if (!Array.isArray(dataGenres)) {
-                    throw new Error('La respuesta de la API de géneros no es un arreglo');
-                }
-                if (!Array.isArray(dataBookGenres)) {
-                    throw new Error('La respuesta de la API de book_genres no es un arreglo');
-                }
-
-                console.log('Libros recibidos:', dataBooks);
-                console.log('Géneros recibidos:', dataGenres);
-                console.log('Asociaciones libro-género recibidas:', dataBookGenres);
-                console.log('Autores recibidos:', dataAuthors);
-
-                setBooks(dataBooks.sort((a, b) => a.id - b.id));
-                setAuthors(dataAuthors);
-                setGenres(dataGenres);
-                setBookGenres(dataBookGenres);
+                setBooks(resBooks.sort((a, b) => a.id - b.id));
+                setAuthors(resAuthors || []);
+                setGenres(resGenres || []);
 
             } catch (error) {
                 console.error('Error al obtener datos:', error);
                 setBooks([]);
-                setAuthors([]);
-                setGenres([]);
-                setBookGenres([]);
             }
+
         };
         fetchData();
     }, []);
@@ -135,18 +72,25 @@ export default function BookPage() {
         );
     };
 
-    const filteredBooks = Array.isArray(books)
-        ? books.filter((book) =>
-            book.title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-            (selectedGenres.length === 0 ||
-                bookGenres.some((bg) => bg.idBook === book.id && selectedGenres.includes(bg.idGenre))) &&
-            (selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id))
-        )
-        : [];
+    const filteredBooks = books.filter((book) => {
+        const lowerTitle = book.title.toLowerCase();
+        const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
+
+        const matchesGenres =
+            selectedGenres.length === 0 ||
+            book.genre.some((genreName) => {
+                const genre = genres.find((g) => g.name === genreName);
+                return genre && selectedGenres.includes(genre.id);
+            });
+
+        const matchesAuthors =
+            selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
+
+        return matchesSearch && matchesGenres && matchesAuthors;
+    });
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        console.log('Búsqueda enviada:', searchTerm);
         setSearchQuery(searchTerm);
     };
 
@@ -251,17 +195,17 @@ export default function BookPage() {
                                     title: book.title,
                                     image: book.image,
                                     price: book.price,
-                                    author: authors.find((a) => a.id === book.author_id)?.name
+                                    author: book.author
                                 }}
-                                />
-                            ))
-                        ) : (
-                            <p>No se encontraron libros.</p>
-                        )}
+                            />
+                        ))
+                    ) : (
+                        <p>No se encontraron libros.</p>
+                    )}
                 </div>
             </div>
-           
+
         </>
-                        
+
     );
 }

@@ -1,4 +1,3 @@
-import * as winston from 'winston';
 import * as express from 'express';
 import { existsSync, mkdirSync } from 'fs';
 import { NestFactory } from '@nestjs/core';

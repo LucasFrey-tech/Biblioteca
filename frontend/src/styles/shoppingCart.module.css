@@ -130,6 +130,52 @@
   font-size: 14px;
 }
 
+.ebookImage {
+    opacity: 0.8;
+    border: 2px solid #4a90e2;
+}
+
+.ebookBadge {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #4a90e2;
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.formatInfo {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0;
+}
+
+.digitalNote {
+    font-size: 0.8rem;
+    color: #4a90e2;
+    margin-top: 10px;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Estilo para items físicos */
+.physicalItem {
+    border-left: 4px solid #ff9500;
+}
+
+/* Deshabilitar botón de comparar para eBooks */
+.compareButton[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.itemImage {
+    position: relative;
+}
+
 .removeButton {
   background-color: #f8f8f8;
   color: #666;

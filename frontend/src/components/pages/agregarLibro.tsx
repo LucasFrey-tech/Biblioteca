@@ -19,6 +19,9 @@ import Swal from 'sweetalert2';
 
 import { AddAuthorDialog } from './AddAuthorDialog';
 import { AddGenreDialog } from './agregarCategoria'; // o como lo tengas nombrado
+import DragAndDrop from './dropImage';
+import { BaseApi } from '@/API/baseApi';
+
 
 interface Author {
   id: number;
@@ -34,12 +37,14 @@ export default function AddBookDialog() {
 
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const API = new BaseApi(localStorage.getItem('token') || '');
+
   const [form, setForm] = useState({
     title: '',
     description: '',
     anio: '',
     isbn: '',
-    image: '',
+    image: null as File | null,  
     stock: '',
     subscriber_exclusive: 'false',
     price: '',
@@ -59,26 +64,49 @@ export default function AddBookDialog() {
       .then(data => setGenres(data));
   }, []);
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string , value: string) => {
+    setForm({ ...form, [field]: value });
+  };
+  const handleImage = (field: string, value: File) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleSubmit = async () => {
-    const response = await fetch('http://localhost:3001/books', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...form,
-        author: Number(form.authorId),
-        subscriber_exclusive: form.subscriber_exclusive === 'true',
-        anio: Number(form.anio),
-        stock: Number(form.stock),
-        price: Number(form.price),
-        genres: form.genres.split(',').map(g => g.trim()).filter(g => g !== ''),
-      }),
-    });
+    // const response = await fetch('http://localhost:3001/books', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({
+    //     ...form,
+    //     author: Number(form.authorId),
+    //     subscriber_exclusive: form.subscriber_exclusive === 'true',
+    //     anio: Number(form.anio),
+    //     stock: Number(form.stock),
+    //     price: Number(form.price),
+    //     genres: form.genres.split(',').map(g => g.trim()).filter(g => g !== ''),
+    //   }),
+    const genres = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
+    console.log(form)
+    const newBook = {
+      id: 0,
+      author: '',
+      title: form.title,
+      description: form.description,
+      anio: Number(form.anio),
+      isbn: form.isbn,
+      image: form.image ?? undefined, 
+      stock: Number(form.stock),
+      subscriber_exclusive: form.subscriber_exclusive === 'true',
+      price: Number(form.price),
+      author_id: Number(form.authorId),
+      genre: genres,
+      virtual: true,
+    };
 
-    if (response.ok) {
+    // const response = API.books.create(newBook);
+     API.books.createBookFile(newBook);
+      
+    
+    if (true) {
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -92,7 +120,7 @@ export default function AddBookDialog() {
         description: '',
         anio: '',
         isbn: '',
-        image: '',
+        image: null,
         stock: '',
         subscriber_exclusive: 'false',
         price: '',
@@ -126,6 +154,11 @@ export default function AddBookDialog() {
       showConfirmButton: false,
     });
   };
+
+  //  const handleFile = (file: File) => {
+  //   console.log('Archivo recibido:', file);
+  //   // Subir el archivo al backend 
+  // };
 
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
@@ -173,7 +206,9 @@ export default function AddBookDialog() {
             <Input value={form.isbn} onChange={e => handleChange('isbn', e.target.value)} />
 
             <Label>Imagen</Label>
-            <Input value={form.image} onChange={e => handleChange('image', e.target.value)} />
+            <DragAndDrop onFileDrop={file => {
+                handleImage('image', file);  
+            }} />
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />

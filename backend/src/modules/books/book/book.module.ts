@@ -25,7 +25,8 @@ const myapp_config = require('../../../../private/app.config.json');
     }),  
   ],
   controllers: [BooksController],
-  providers: [BooksService,SettingsService],
+  providers: [BooksService, SettingsService],
+  exports: [BooksService],
 })
 export class BooksModule {}
 

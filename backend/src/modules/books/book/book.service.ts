@@ -51,7 +51,11 @@ export class BooksService {
 
   async findOne(id: number): Promise<BookDTO | null> {
     const book = await this.booksRepository.findOne({ where: { id } });
+    // console.log("hola 1 ",book)
+    
     if (!book) return null;
+
+    // console.log("hola 3 ",book)
 
     const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
 

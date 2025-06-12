@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, NotFoundException, } from '@nestjs/common';
 import { ShoppingCartService } from './shopping_cart.service';
 import { ShoppingCartBook } from 'src/entidades/shopping_cart_book.entity';
 import { BookCartDTO } from './book_cart.dto'
@@ -13,7 +13,7 @@ export class ShoppingCartController {
   @Get(':idUser')
   @ApiOperation({ summary: 'Buscar Changuito por Usuario' })
   @ApiParam({ name: 'idUser', type: Number })
-  @ApiResponse({ status: 200, description: 'Changuito Encontrado'})
+  @ApiResponse({ status: 200, description: 'Changuito Encontrado' })
   async findByUser(@Param('idUser', ParseIntPipe) idUser: number): Promise<BookCartDTO[] | null> {
     return await this.shoppingCartService.findByUser(idUser);
   }
@@ -26,16 +26,16 @@ export class ShoppingCartController {
     return this.shoppingCartService.create(book);
   }
 
-  @Put(':idUser')
+  @Put(':idBookCart')
   @ApiOperation({ summary: 'Actualizar Changuito' })
-  @ApiParam( { name: 'idUser', type: Number })
+  @ApiParam({ name: 'idBookCart', type: Number })
   @ApiBody({ type: ShoppingCartBook })
   @ApiResponse({ status: 200, description: 'Changuito Actualizado', type: ShoppingCartBook })
   update(
-    @Param('idUser', ParseIntPipe) idUser: number,
+    @Param('idBookCart', ParseIntPipe) idBookCart: number,
     @Body() updateData: Partial<ShoppingCartBook>,
   ) {
-    return this.shoppingCartService.update(idUser, updateData);
+    return this.shoppingCartService.update(idBookCart, updateData);
   }
 
   @Delete(':id')

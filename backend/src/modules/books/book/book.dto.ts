@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import mime from 'mime';
 import * as path from 'path';
 import { Book } from 'src/entidades/book.entity';
-import { Genre } from 'src/entidades/genre.entity';
 
 export class BookDTO {
   constructor(

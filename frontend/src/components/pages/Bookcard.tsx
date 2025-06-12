@@ -16,10 +16,6 @@ type Book = {
 export default function BookCard({ book }: { book: Book }) {
     const authorName = book.author ?? 'Desconocido';
 
-    const imagePath = book.image
-        ? `/libros/${book.image}.png`
-        : '/libros/placeholder.png';
-
     const router = useRouter();
 
     const handleCardClick = () => {
@@ -33,7 +29,7 @@ export default function BookCard({ book }: { book: Book }) {
     return (
         <div className={styles.card} onClick={handleCardClick}>
             <Image
-                src={imagePath}
+                src={book.image}
                 alt={book.title}
                 className={styles.cover}
                 width={200}

@@ -27,23 +27,20 @@ export class ShoppingCartService {
         const cartItems = await this.cartBookShopingRepository.find({ where: { idUser } });
         if (!cartItems.length) return null;
 
-        const user = await this.userRepository.findOne({ where: { id: idUser } });
-        if (!user) return null;
-
-        const results = await Promise.all (
+        const results = await Promise.all(
             cartItems.map(async (cart) => {
                 const book = await this.booksRepository.findOne({ where: { id: cart.idBook } });
                 if (!book) return null;
 
                 const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
-         
+
                 return new BookCartDTO(
-                    book.id,
+                    cart.id,
                     book.title,
                     author ? author.name : '',
                     book.image,
                     book.price,
-                    false,
+                    cart.virtual,
                     cart.amount,
                 );
             })
@@ -56,9 +53,9 @@ export class ShoppingCartService {
         return this.cartBookShopingRepository.save(book);
     }
 
-    async update(idUser: number, updateData: Partial<ShoppingCartBook>) {
-        await this.cartBookShopingRepository.update(idUser, updateData);
-        return this.findByUser(idUser);
+    async update(idBookCart: number, updateData: Partial<ShoppingCartBook>) {
+        await this.cartBookShopingRepository.update(idBookCart, updateData);
+        return this.cartBookShopingRepository.find({where : {id: idBookCart}});
     }
 
     delete(id: number) {

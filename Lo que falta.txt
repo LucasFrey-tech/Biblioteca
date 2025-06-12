@@ -1,18 +1,12 @@
-. Carrito
 . Novedades
-. Panel Admin => Falta libros
-. Libreria
 . Lectura de Libros
-. Historial compras usuario
-
 
 .documentacion proyecto (typedoc) y api (no me acuerdo :D)
 .tests
 
 
 Si hay tiempo:
-. Favoritos
-. Ratings => En caso borrar
+
 . Imagen de usuario
 . admin => historial ventas
 
