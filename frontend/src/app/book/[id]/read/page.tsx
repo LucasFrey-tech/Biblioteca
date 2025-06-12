@@ -1,68 +1,85 @@
 'use client'
 
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
-
-
-type BookContent = {
-    id: number;
-    idBook: number;
-    content: string;
-}
-
+import { useEffect, useRef, useState } from "react";
+import { ChaptersSideBar } from "./chaptersSidebar";
+import { BookContentDTO } from "@/API/types/bookContent.dto";
+import ReturnButton from "@/components/ui/ReturnButton/buttonReturn";
+import Styles from "./styles.module.css";
+import { BaseApi } from "@/API/baseApi";
 
 export default function ReadBook(){
     const params = useParams();
-    const [bookContent, setBookContent] = useState<BookContent>();
-
-
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [bookContent, setBookContent] = useState<BookContentDTO>({
+        id: 1,
+        idBook: 1,
+        content: ""
+    });
+    
+    const apiRef = useRef<BaseApi | null>(null);
     
     useEffect(() => {
-            if (!params || !params.id) {
-                setError('ID del libro no proporcionado.');
-                setLoading(false);
-                return;
-            }
-    
-            const bookId = Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id);
-    
-            if (isNaN(bookId)) {
-                setError('ID del libro inválido.');
-                setLoading(false);
-                return;
-            }
-    
-    
-            const fetchData = async () => {
-                try {
-                    const resBook = await fetch(`http://localhost:3001/books/${bookId}`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                    const dataBook = await resBook.json();
-    
-                    setBookContent(dataBook);
-                } catch (error) {
-                    console.error('Error al cargar los datos', error);
-                } finally {
-                    setLoading(false);
+        if (!params || !params.id) {
+            setError('ID del libro no proporcionado.');
+            setLoading(false);
+            return;
+        }
+
+        const bookId = Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id);
+
+        if (isNaN(bookId)) {
+            setError('ID del libro inválido.');
+            setLoading(false);
+            return;
+        }
+
+
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    apiRef.current = new BaseApi(token);
                 }
-            };
-    
-            fetchData();
-        }, [params]);
+                
+                const dataBook = await apiRef.current?.bookContent.getOne(bookId);
+
+                setBookContent(dataBook?dataBook:bookContent);
+            } catch (error) {
+                console.error('Error al cargar los datos', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [params]);
+
+    function getChaptersFromContent(content: String){
+        if (!content) return [];
+        const matches = [...content.matchAll(/<h1[^>]*>(.*?)<\/h1>/gi)];
+        return matches.map(match => match[1].trim());
+    }
 
     return(
-        <>
-            {
-                loading?<></>:
-                <p>{bookContent?.content}</p>
+        <div>
+            {loading?
+                <div>loading...</div>:
+                error?
+                    <div>{error}</div>:
+                    <div className={Styles.container}>
+                        {ReturnButton("http://localhost:3000/libreria","Regresar a Libreria")}
+                        {
+                            loading?<></>:
+                            <div>
+                                {ChaptersSideBar(getChaptersFromContent(bookContent.content))}
+                                {bookContent?.content}
+                            </div>
+                        }
+                        {ReturnButton("http://localhost:3000/libreria","Regresar a Libreria")}
+                    </div>
             }
-        </>
+        </div>
     )
 }
