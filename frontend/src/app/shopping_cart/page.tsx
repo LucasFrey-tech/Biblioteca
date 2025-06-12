@@ -179,9 +179,7 @@ export default function ShoppingCartPage() {
                                             {/* Mostrar stock y controles solo para libros físicos */}
                                             {!item.virtual && (
                                                 <>
-                                                    <div className={styles.stockInfo}>
-                                                        Stock disponible: {item.amount}
-                                                    </div>
+
                                                     <div className={styles.quantityControl}>
                                                         <button
                                                             onClick={() => {
