@@ -1,6 +1,7 @@
 export class BookCartDTO {
   constructor(
     id: number,
+    idBook:number,
     title: string,
     author: string,
     image: string,
@@ -9,6 +10,7 @@ export class BookCartDTO {
     amount: number,
   ) {
     this.id = id;
+    this.idBook = idBook;
     this.title = title;
     this.author = author;
     this.image = image;
@@ -17,6 +19,7 @@ export class BookCartDTO {
     this.amount = amount;
   }
   id: number;
+  idBook: number;
   title: string;
   author: string;
   image: string;

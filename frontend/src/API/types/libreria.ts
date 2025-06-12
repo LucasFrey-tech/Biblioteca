@@ -8,4 +8,6 @@ export interface BookLibreria {
   anio: number;
   image: string;
   subscriber_exclusive: boolean;
+  idUser?: number;  // Añadido
+  idBook?: number;  // Añadido
 };
