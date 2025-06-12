@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { BaseApi } from '@/API/baseApi';
 import { User } from '@/API/types/user';
+import Swal from 'sweetalert2';
 
 type Book = {
     id: number;
@@ -54,10 +55,22 @@ export default function BookCard({ book }: { book: Book }) {
                 virtual: false
             };
             await refAPI.current.shoppingCart.create(payload);
-            alert('Libro agregado al carrito ✅');
-        } catch (error: any) {
-            console.error('Error agregando al carrito:', error.message);
-            alert(`Error al agregar al carrito: ${error.message} ❌`);
+            Swal.fire({
+            title: "Libro agregado al carrito!",
+            text: `${book.title} ha sido agregado a tu carrito.`,
+            icon: "success",
+            timer: 2500, 
+            showConfirmButton: false
+            });
+        } catch (error) {
+            console.error('Error agregando al carrito:', error);
+            Swal.fire({
+            title: "No se pudo agregar al carrito!",
+            text: `Error al agregar ${book.title} al carrito.`,
+            icon: "error",
+            timer: 2500, 
+            showConfirmButton: false
+            });
         }
     };
 

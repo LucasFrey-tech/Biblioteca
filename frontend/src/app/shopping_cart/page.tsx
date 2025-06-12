@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { BaseApi } from "@/API/baseApi";
 import { ShoppingCartBook } from "@/API/types/shopping_cart";
 import { PurchaseItem } from "@/API/types/purchase";
+import Swal from "sweetalert2";
 
 const groupCartItems = (items: ShoppingCartBook[]) => {
     const grouped: { [key: string]: ShoppingCartBook } = {};
@@ -49,7 +50,7 @@ export default function ShoppingCartPage() {
         const fetchData = async () => {
             try {
                 const cartData = await apiRef.current.shoppingCart.findByUser(userId);
-                console.log('Datos crudos del carrito:', cartData); // <-- Añade esto
+                console.log('Datos crudos del carrito:', cartData); 
                 if (cartData) {
                     setBooksCartShopping(groupCartItems(cartData));
                 }
@@ -129,7 +130,13 @@ export default function ShoppingCartPage() {
             await apiRef.current.purchase.processPurchase(userId, itemsToPurchase);
 
             setBooksCartShopping([]);
-            setPurchaseMessage('Compra realizada con éxito');
+            Swal.fire({
+             title: "Éxito",
+             text: "Compra exitosa! Los libros digitales estarán disponibles en tu libreria.",
+             icon: "success",
+             timer: 3500, 
+             showConfirmButton: false
+            });
         } catch (error: unknown) {
             console.error('Error procesando la compra:', error);
             // Extraemos el mensaje si error es un objeto con message, o usamos un mensaje genérico

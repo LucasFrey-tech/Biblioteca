@@ -11,6 +11,7 @@ import { Book } from "@/API/types/book";
 import { Review } from "@/API/types/review";
 
 import styles from '../../../styles/BookDetail.module.css';
+import Swal from "sweetalert2";
 
 export default function BookDetail() {
     const params = useParams();
@@ -89,10 +90,23 @@ export default function BookDetail() {
                 virtual: selectedFormat === 'ebook'
             };
             await refAPI.current.shoppingCart.create(payload);
-            alert('Libro agregado al carrito ✅');
-        } catch (error: any) {
-            console.error('Error agregando al carrito:', error.message);
-            alert(`Error al agregar al carrito: ${error.message} ❌`);
+            Swal.fire({
+             title: "Éxito",
+             text: "Libro agregado al carrito correctamente",
+             icon: "success",
+             timer: 2000, 
+             showConfirmButton: false
+});
+            
+        } catch (error) {
+            console.error('Error agregando al carrito:', error);
+            Swal.fire({
+            title: "Error",
+            text: "No se pudo agregar el libro al carrito",
+            icon: "error",
+            timer: 2000, 
+            showConfirmButton: false
+            });
         }
     };
 
