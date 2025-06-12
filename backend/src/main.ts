@@ -1,5 +1,6 @@
 import * as winston from 'winston';
 import * as express from 'express';
+import * as winston from 'winston';
 import { existsSync, mkdirSync } from 'fs';
 import { NestFactory } from '@nestjs/core';
 import { WinstonModule } from 'nest-winston';
