@@ -25,6 +25,8 @@ import { CatalogueBooksModule } from './modules/books/catalogue/catalogue_books.
 import { PurchasesModule } from './modules/purchase/purchase.module';
 import { LibraryBooksModule } from './modules/books/library/library_books.module';
 import { UserVirtualBooks } from './entidades/user_virtual_books.entity';
+import { BookContentModule } from './modules/books/content/book_content.module';
+import { VirtualBookContent } from './entidades/virtual_book_content.entity';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -37,7 +39,7 @@ const myapp_config = require('../private/app.config.json');
       username: myapp_config.database_connection.username,
       password: myapp_config.database_connection.password,
       database: myapp_config.database_connection.database,
-      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook, Purchase, UserVirtualBooks],
+      entities: [User, Book, Author, Review, Genre, BookGenre, ShoppingCartBook, Purchase, UserVirtualBooks,VirtualBookContent],
 
       synchronize: false, 
     }),
@@ -56,6 +58,7 @@ const myapp_config = require('../private/app.config.json');
     CatalogueBooksModule,
     PurchasesModule,
     LibraryBooksModule,
+    BookContentModule
   ],
 })
 export class AppModule {}
