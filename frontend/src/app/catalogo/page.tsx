@@ -27,6 +27,8 @@ export default function BookPage() {
 
     useEffect(() => {
         const fetchData = async () => {
+            apiRef.current = new BaseApi(); //ahora funciona sin token
+
             const token = localStorage.getItem('token');
             if (token) {
                 apiRef.current = new BaseApi(token);
