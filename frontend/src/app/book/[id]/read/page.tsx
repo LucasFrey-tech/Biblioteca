@@ -18,7 +18,7 @@ export default function ReadBook(){
         content: ""
     });
     
-    // const apiRef = useRef<BaseApi | null>(null);
+    const apiRef = useRef<BaseApi | null>(null);
     
     useEffect(() => {
         if (!params || !params.id) {
@@ -38,23 +38,23 @@ export default function ReadBook(){
 
         const fetchData = async () => {
             try {
-                // const token = localStorage.getItem('token');
-                // if (token) {
-                //     // apiRef.current = new BaseApi(token);
-                // }
+                const token = localStorage.getItem('token');
+                if (token) {
+                    apiRef.current = new BaseApi(token);
+                }
                 
-                // // const dataBook = await apiRef.current?.bookContent.getOne(bookId);
+                const dataBook = await apiRef.current?.bookContent.getOne(bookId);
 
-                // setBookContent(dataBook?dataBook:bookContent);
+                setBookContent(dataBook?dataBook:bookContent);
 
-                const resBook = await fetch(`http://localhost:3001/book/content/${1}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const data = await resBook.json();
-                setBookContent(data);
+                // const resBook = await fetch(`http://localhost:3001/book/content/${1}`, {
+                //     method: 'GET',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                // });
+                // const data = await resBook.json();
+                // setBookContent(data);
             } catch (error) {
                 console.error('Error al cargar los datos', error);
             } finally {
@@ -83,7 +83,9 @@ export default function ReadBook(){
                             loading?<></>:
                             <div>
                                 {ChaptersSideBar(getChaptersFromContent(bookContent.content))}
-                                <div dangerouslySetInnerHTML={{__html: bookContent?.content}}/>
+                                <div className={Styles.content}>
+                                    <div dangerouslySetInnerHTML={{__html: bookContent?.content}}/>
+                                </div>
                             </div>
                         }
                         {ReturnButton("http://localhost:3000/libreria","Regresar a Libreria")}

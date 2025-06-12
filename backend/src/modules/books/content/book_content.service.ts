@@ -20,7 +20,17 @@ export class BookContentService {
     }
   }
 
+  create(bookContent: Partial<BookContentDTO>): Promise<BookContentDTO> {
+      const newGenre = this.bookContentRepository.create(bookContent);
+      return this.bookContentRepository.save(newGenre);
+  }
+
   update(id:number, bookContent: BookContentDTO){
     this.bookContentRepository.update(id,bookContent)
   }
+
+  delete(id: number) {
+    return this.bookContentRepository.delete(id);
+  }
+
 }

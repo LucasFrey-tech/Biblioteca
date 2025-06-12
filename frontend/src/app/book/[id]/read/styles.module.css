@@ -56,3 +56,17 @@
 .chapter {
     margin: 10px 0px;
 }
+
+.content{
+    background-color: white;
+    border-radius: 1rem;
+    margin: 1%;
+    padding: 1%;
+}
+
+.content h1{
+    font-size: 3rem;
+    width: 100%;
+    font-weight: bolder;
+    margin-left: 10px;
+}

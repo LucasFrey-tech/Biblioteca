@@ -2,12 +2,18 @@ import { Crud } from "../service";
 import { BookContentDTO } from "../types/bookContent.dto";
 
 export class BookContent extends Crud<BookContentDTO>{
+    private endPoint: string;
+    constructor(token?: string) {
+        super(token);
+        this.endPoint = '/book/content';
+    }
+
     async getAll(): Promise<BookContentDTO[]> {
         throw new Error("Method not implemented.");
     }
     
     async getOne(id: number): Promise<BookContentDTO> {
-        const resBook = await fetch(`http://localhost:3001/books/book/content/${id}`, {
+        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -16,14 +22,30 @@ export class BookContent extends Crud<BookContentDTO>{
         return resBook.json();
     }
     
-    create(data: Partial<BookContentDTO>): Promise<BookContentDTO> {
-        throw new Error("Method not implemented.");
+    async create(data: Partial<BookContentDTO>): Promise<BookContentDTO> {
+        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return resBook.json();
     }
-    update(id: number, data: Partial<BookContentDTO>): Promise<BookContentDTO> {
-        throw new Error("Method not implemented.");
+    async update(id: number, data: Partial<BookContentDTO>): Promise<BookContentDTO> {
+        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return resBook.json();
     }
-    delete(id: number): Promise<void> {
-        throw new Error("Method not implemented.");
+    async delete(id: number): Promise<void> {
+        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return resBook.json();
     }
 
 }
