@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import Image from 'next/image';
 import styles from '../../styles/dragAndDrop.module.css';
 
 interface Props {
@@ -12,6 +13,7 @@ const DragAndDrop: React.FC<Props> = ({ onFileDrop }) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) {
+      console.log('Archivo recibido:', file);
       setPreviewFile(file); // guardar para mostrar
       onFileDrop(file);     // avisar al padre
     }
@@ -35,13 +37,14 @@ const DragAndDrop: React.FC<Props> = ({ onFileDrop }) => {
       {previewFile && (
         <div className={styles.preview}>
           <p><strong>{previewFile.name}</strong></p>
-          {previewFile.type.startsWith('image/') && (
-            <img
+            <Image
               src={URL.createObjectURL(previewFile)}
               alt="preview"
               className={styles.previewImage}
+              width={200}
+              height={200}
+              unoptimized
             />
-          )}
         </div>
       )}
     </div>

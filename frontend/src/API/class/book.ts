@@ -1,5 +1,6 @@
 import { Crud } from '../service';
 import { Book } from '../types/book';
+import { BookFile } from '../types/bookFile';
 
 export class Books extends Crud<Book> {
     private endPoint: string;
@@ -29,6 +30,37 @@ export class Books extends Crud<Book> {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(data),
+        });
+        return res.json();
+    }
+    async createBookFile(data: Partial<BookFile>): Promise<Book>{
+        const formData = new FormData();
+        formData.append("title", data.title + '');
+        formData.append("author", data.author + '');
+        formData.append("author_id", data.author_id + '');
+        formData.append("description", data.description + '');
+        console.log('Creating book file with data:', data);
+        data.genre?.forEach((genre: string) => {
+            formData.append("genre", genre);});
+        formData.append("anio", data.anio + '');
+        formData.append("isbn", data.isbn + '');
+        if (data.image && typeof data.image === 'object') {
+            formData.append("image", data.image);
+        } else if (data.image) {
+            formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        }
+        formData.append("stock", data.stock + '');
+        formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
+        formData.append("price", data.price + '');
+        formData.append("virtual", data.virtual + '');
+        for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+        }
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'POST',
+            // headers: {'Content-Type': 'multipart/form'},
+            body: formData,
         });
         return res.json();
     }

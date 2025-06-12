@@ -30,6 +30,7 @@ export class BooksController {
   @ApiResponse({ status: 201, description: 'Libro Creado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
   create(@Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File) {
+    console.log('Archivo recibido:', bookDTO);
     bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     return this.booksService.create(bookDTO);
   }
