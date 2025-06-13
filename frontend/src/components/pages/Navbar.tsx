@@ -12,7 +12,7 @@ import { User } from "@/API/types/user";
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [menuDropDown, setDropDown] = useState<boolean>();
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
 
     const refAPI = useRef<BaseApi | null>(null);
@@ -23,6 +23,7 @@ export default function Navbar() {
 
     const closeSession = () => {
         localStorage.removeItem('token');
+        setUser(null);
         setDropDown(false);
         router.push('/login');
     };
@@ -39,10 +40,9 @@ export default function Navbar() {
             try {
                 const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
-                // const admin = localStorage.getItem('admin');
 
                 if (!token || !userId) {
-                    console.warn('No hay token o userId en localStorage');
+                    setUser(null);
                     return;
                 }
                 const api = new BaseApi(token);
@@ -51,15 +51,22 @@ export default function Navbar() {
                 const userData = await api.users.getOne(Number(userId));
                 setUser(userData);
 
-
-                console.log(userData);
-
             } catch (error) {
                 console.error('Hubo un error:', error);
+                setUser(null);
             }
         };
 
         getUser();
+
+        const handleStorageChange = () => {
+            getUser();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
 
     return (
@@ -165,4 +172,3 @@ export default function Navbar() {
         </>
     );
 }
-{/* <a href="http://localhost:3000/login" onClick={closeSidebar} className={styles.boton}>Acceder</a> */ }
