@@ -1,21 +1,18 @@
 'use client';
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 
-import { BaseApi } from "@/API/baseApi";
-import { User } from "@/API/types/user";
+import { useUser } from "@/app/context/UserContext";
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [menuDropDown, setDropDown] = useState<boolean>();
-    const [user, setUser] = useState<User | null>(null);
-    const router = useRouter();
+    const [menuDropDown, setDropDown] = useState(false);
 
-    const refAPI = useRef<BaseApi | null>(null);
+    const { user, setUser } = useUser();
+    const router = useRouter();
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const closeSidebar = () => setIsSidebarOpen(false);
@@ -23,6 +20,7 @@ export default function Navbar() {
 
     const closeSession = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         setUser(null);
         setDropDown(false);
         router.push('/login');
@@ -34,40 +32,6 @@ export default function Navbar() {
             setDropDown(false);
         }
     };
-
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                const userId = localStorage.getItem('userId');
-
-                if (!token || !userId) {
-                    setUser(null);
-                    return;
-                }
-                const api = new BaseApi(token);
-                refAPI.current = api;
-
-                const userData = await api.users.getOne(Number(userId));
-                setUser(userData);
-
-            } catch (error) {
-                console.error('Hubo un error:', error);
-                setUser(null);
-            }
-        };
-
-        getUser();
-
-        const handleStorageChange = () => {
-            getUser();
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
 
     return (
         <>
@@ -98,7 +62,7 @@ export default function Navbar() {
                                     {user.admin && (
                                         <button onClick={() => router.push('/adminPanel')}>Panel de Admin</button>
                                     )}
-                                    <button onClick={closeSession}>Cerrar Sesion</button>
+                                    <button onClick={closeSession}>Cerrar Sesión</button>
                                 </div>
                             )}
                             <Link href="/shopping_cart" className={styles.cartButton}>
@@ -139,7 +103,6 @@ export default function Navbar() {
                     <li><Link href="/libreria" onClick={closeSidebar}>Libreria</Link></li>
                     <li><Link href="/about" onClick={closeSidebar}>Sobre Nosotros</Link></li>
 
-
                     {user ? (
                         <>
                             <li>
@@ -156,7 +119,7 @@ export default function Navbar() {
                             </li>
                             <li><button onClick={handleProfileClick}>Mi Perfil</button></li>
                             {user.admin && (
-                                <li><button onClick={() => router.push('/adminPanel')}>Panel de Admin</button></li>
+                                <li><button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button></li>
                             )}
                             <li><button onClick={closeSession}>Cerrar Sesión</button></li>
                         </>
