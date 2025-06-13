@@ -69,7 +69,7 @@ export default function BookCard({ book }: { book: Book }) {
                 alt={book.title}
                 className={styles.cover}
                 width={200}
-                height={300}
+                height={150}
                 placeholder="blur"
                 blurDataURL="/libros/placeholder.png"
             />

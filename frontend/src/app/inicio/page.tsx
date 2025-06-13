@@ -1,11 +1,19 @@
 'use client'
 
-import Image from 'next/image';
-import styles from '../../styles/inicio.module.css';
+import Styles from './styles.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { Card, CardContent } from '@/components/ui/card';
+import BookCard from '@/components/pages/Bookcard';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,8 +41,8 @@ export default function HomePage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Configuración inicial - Etapa 1
-      gsap.set(bannerTextRef.current, { opacity: 0, y: 50 });
-      gsap.set([sliderRef.current, catalogoRef.current], { opacity: 0, y: 100 });
+      // gsap.set(bannerTextRef.current, { opacity: 0, y: 50 });
+      // gsap.set([sliderRef.current, catalogoRef.current], { opacity: 0, y: 100 });
 
       // Animación del banner completo
       const bannerAnimation = gsap.timeline({
@@ -94,45 +102,66 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      {/* Banner central */}
-      <section className={styles.banner} ref={bannerRef}>
-        <div className={styles.bannerImageWrapper}>
-          <Image
-            src="/images/banner1.webp"
-            alt="banner"
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
+    <div className={Styles.pageContainer}>
+      <div className={Styles.novedadesCarousel}>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true
+          }}
+          className="max-w"
+          >
+          <CarouselContent>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <CarouselItem key={index} className="md:basis-1/1 lg:basis-1/1">
+                <div className={Styles.novedadesBookCard}>
+                  <img src={"https://hips.hearstapps.com/hmg-prod/images/gettyimages-180680638-676f621f720bc.jpg?crop=1.00xw:0.752xh;0,0.118xh&resize=1200:*"}/>
+                  <div className={Styles.details}>
+                    <div className={Styles.detailsTop}/>
+                    <div className={Styles.detailsMid}>
+                      <h2>PERROS: La ultima frontera?</h2>
+                    </div>
+                    <div className={Styles.detailsBot}>
+                      <p>Un analisis instrospectivo sobre la dieta canina, y las consecuencia sobre la relaciones gatunas.</p>
+                    </div>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious/> 
+          <CarouselNext /> 
+        </Carousel>
+      </div>
+      <div className={Styles.newbooksContainer}>
+        <div className={Styles.titelContainer}>
+          <h1 className={Styles.title}>Nuevos Lanzamientos:</h1>
         </div>
-        <div className={styles.bannerText} ref={bannerTextRef}>
-          {/* <h2>Mi Biblioteca</h2> */}
-          {/* <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui fugiat, facilis corporis laboriosam exercitationem quod, ducimus, numquam illo molestiae dicta et aspernatur quisquam! Deleniti ex earum numquam ratione, voluptate alias.</p> */}
-          <h2>Bienvenido a la Biblioteca Virtual</h2>
-          <p>Explora nuestra coleccion de libros y sumergete en el mundo de la lectura</p>
+        <div className={Styles.cardsContainer}>
+          <div className={Styles.bookCardContainer}>
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+          </div>
         </div>
-      </section>
-
-      {/* Slider */}
-      <section className={styles.slider} ref={sliderRef}>
-        {sliderBooks.map((book) => (
-          <div key={book.id} className={styles.slide} onClick={() => router.push(`/catalogo/${book.id}`)}>
-            <Image src={book.image} alt={`Libro ${book.id}`} width={200} height={300} />
+      </div>
+      <div className={Styles.recomendationsContainer}>
+        <div className={Styles.titelContainer}>
+          <h1 className={Styles.title}>Recomendaciones:</h1>
+        </div>
+        <div className={Styles.cardsContainer}>
+          <div className={Styles.bookCardContainer}>
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
           </div>
-        ))}
-      </section>
-
-      {/* Catálogo */}
-      <section className={styles.catalogo} ref={catalogoRef}>
-        {catalogoBooks.map((book) => (
-          <div key={book.id} className={styles.bookCard}>
-            <Image src={book.image} alt={book.title} width={150} height={200} />
-            <h3>{book.title}</h3>
-            <p>${book.price}</p>
+        </div>
+          <div className={Styles.bookCardContainer}>
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
+            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
           </div>
-        ))}
-      </section>
+      </div>
     </div>
   );
 }

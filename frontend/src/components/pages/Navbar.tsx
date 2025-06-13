@@ -46,8 +46,8 @@ export default function Navbar() {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    console.error('No hay token en localStorage');
                     return;
+                    console.error('No hay token en localStorage');
                 }
 
                 const decoded = jwtDecode<User>(token);

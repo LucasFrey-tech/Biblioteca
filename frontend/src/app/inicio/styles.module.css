@@ -1,0 +1,94 @@
+
+.pageContainer{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 2%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.novedadesCarousel{
+    width: 90%;
+}
+
+.novedadesBookCard{
+    position: relative;
+    width: 100%;
+    height: 350px; /* o el alto que necesites */
+  overflow: hidden;
+}
+
+.novedadesBookCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.details{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 10%;
+    /* Ajusta el alto según lo que quieras que cubra */
+    z-index: 2;
+    /* Otros estilos para el overlay */
+    background: rgba(0,0,0,0.3); /* ejemplo de overlay */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    }
+
+.detailsMid{
+    font-weight: bolder;
+    font-size: 2rem;
+    width: 55%;
+}
+
+.detailsBot{
+    font-weight:bold;
+    font-size: 1rem;
+    width: 45%;
+}
+
+.newbooksContainer{
+    width: 100%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+.recomendationsContainer{
+    width: 100%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.titelContainer{
+    width: 100%;
+    margin: 1%;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.cardsContainer{
+    padding-left: 5%;
+    padding-right: 5%;
+    display: flex;
+    justify-content: space-evenly;
+    height: auto;
+    padding-top: 5%;
+    padding-bottom: 10%;
+}
+
+.bookCardContainer{
+    height: 20rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+}
