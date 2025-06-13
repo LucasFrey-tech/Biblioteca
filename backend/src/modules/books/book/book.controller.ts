@@ -42,6 +42,7 @@ export class BooksController {
   @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
   update(@Param('id') id: number, @Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File | string) {
+    console.log('Archivo recibido para actualizar:', bookDTO.image);
     if (typeof file != 'string') {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }
