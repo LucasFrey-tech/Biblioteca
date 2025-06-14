@@ -13,7 +13,7 @@ export class Review{
 
     @ApiProperty({example: 1, description: 'ID Único del Libro'})
     @Column({name: 'id_book', type: 'integer' })
-    idBook: number;
+    id_book: number;
 
     @ApiProperty({example: 5, description: 'Puntaje del 1 al 5'})
     @Column({type: 'smallint'})

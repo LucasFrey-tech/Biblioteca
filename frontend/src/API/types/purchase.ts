@@ -1,5 +1,7 @@
 export interface Purchase {
   id: number;
+  id_user: number;
+  id_book: number;
   title: string;
   author: string;
   image: string;

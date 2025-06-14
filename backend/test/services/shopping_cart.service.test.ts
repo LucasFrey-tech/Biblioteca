@@ -2,19 +2,19 @@ import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import {mockShoppingCart1, mockShoppingCarts} from '../mocks/shopping_cart_book.mock';
-import { ShoppingCart } from '../../src/entidades/shopping_cart_book.entity';
+import { ShoppingCartBook } from '../../src/entidades/shopping_cart_book.entity';
 import { ShoppingCartService } from '../../src/modules/shopping_cart/shopping_cart.service';
 
 describe('ShoppingCartService', () => {
   let service: ShoppingCartService;
-  let repo: jest.Mocked<Repository<ShoppingCart>>;
+  let repo: jest.Mocked<Repository<ShoppingCartBook>>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShoppingCartService,
         {
-          provide: getRepositoryToken(ShoppingCart),
+          provide: getRepositoryToken(ShoppingCartBook),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
@@ -26,7 +26,7 @@ describe('ShoppingCartService', () => {
     }).compile();
 
     service = module.get<ShoppingCartService>(ShoppingCartService);
-    repo = module.get(getRepositoryToken(ShoppingCart));
+    repo = module.get(getRepositoryToken(ShoppingCartBook));
   });
 
   it('should be defined', () => {
@@ -55,7 +55,7 @@ describe('ShoppingCartService', () => {
   describe('update', () => {
     it('should update and return the cart book', async () => {
       repo.update.mockResolvedValue({ affected: 1, raw: {} } as any);
-      jest.spyOn(service, 'findByUser').mockResolvedValue(mockShoppingCart1);
+      jest.spyOn(service, 'findByUser').mockResolvedValue(mockShoppingCart1 as any);
       const result = await service.update(1, { amount: 2 });
       expect(repo.update).toHaveBeenCalledWith(1, { amount: 2 });
       expect(result).toEqual(mockShoppingCart1);

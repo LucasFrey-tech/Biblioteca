@@ -5,6 +5,7 @@ import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from '../../src/entidades/review.entity';
 import { mockReview1, mockReviews } from '../mocks/review.mock';
 import { BookReviewsService } from '../../src/modules/books/reviews/book_reviews.service';
+import { User } from "src/entidades/user.entity";
 
 describe('BookReviewsService', () => {
   let service: BookReviewsService;
@@ -57,10 +58,10 @@ describe('BookReviewsService', () => {
     });
   });
 
-  describe('findByBookId', () => {
+  describe('findReviewsByBookId', () => {
     it('should return reviews by book id', async () => {
       repo.find.mockResolvedValue(mockReviews);
-      const result = await service.findByBookId(2);
+      const result = await service.findReviewsByBookId(2);
       expect(repo.find).toHaveBeenCalledWith({ where: { idBook: 2 } });
       expect(result).toEqual(mockReviews);
     });

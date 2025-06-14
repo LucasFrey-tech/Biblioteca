@@ -1,0 +1,20 @@
+@startuml prueba 2
+
+class AppModule {
+    + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+}
+
+AppModule --> AuthModule
+AppModule --> UsersModule
+AppModule --> AuthorModule
+AppModule --> BooksModule
+AppModule --> BookReviewsModule
+AppModule --> GenresModule
+AppModule --> BookGenresModule
+AppModule --> ShoppingCartModule
+AppModule --> CatalogueBooksModule
+AppModule --> PurchasesModule
+AppModule --> LibraryBooksModule
+AppModule --> BookContentModule
+
+@enduml
