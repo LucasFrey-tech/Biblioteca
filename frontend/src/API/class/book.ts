@@ -2,6 +2,9 @@
 import { Crud } from '../service';
 import { Book } from '../types/book';
 import { BookFile, BookFileUpdate } from '../types/bookFile';
+import { BookGenres } from '@/API/class/book_genre';
+// import BookGenres from '@/API/class/book_genre'
+
 
 export class Books extends Crud<Book> {
     private endPoint: string;
@@ -34,6 +37,7 @@ export class Books extends Crud<Book> {
         });
         return res.json();
     }
+
     async createBookFile(data: Partial<BookFile>): Promise<Book>{
         const formData = new FormData();
         formData.append("title", data.title + '');
@@ -65,15 +69,17 @@ export class Books extends Crud<Book> {
         });
 
         const book = await res.json();
-        const endPoint2 = 'book_genres';
+        const var22 = new BookGenres();
+        
         data.genre?.forEach(async (genre: string) => {
             console.log('Creating book genre:', genre);
             // SACAR EL ENDPOINT HARDODEADO 
-            await fetch(`${this.baseUrl}/${endPoint2}`, {
-            method: 'POST',
-            // headers: {'Content-Type': 'multipart/form'},
-            body: JSON.stringify({name: genre, id_book: book.id}),
-        });
+            // await fetch(`${this.baseUrl}/${endPoint2}`, {
+            // method: 'POST',
+            // // headers: {'Content-Type': 'multipart/form'},
+            // body: JSON.stringify({name: genre, id_book: book.id}),
+        // });
+            var22.create({name: genre, id_book: book.id});
         });
 
         return book;

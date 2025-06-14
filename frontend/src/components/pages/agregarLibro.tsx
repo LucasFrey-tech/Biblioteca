@@ -22,6 +22,7 @@ import { AddGenreDialog } from './agregarCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
+import { BookGenres } from '@/API/class/book_genre';
 
 
 interface Author {
