@@ -9,6 +9,7 @@ import { BookGenre } from 'src/entidades/book_genres.entity';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { SettingsService } from 'src/settings.service';
+import { BookGenresService } from 'src/modules/book_genre/book_genres.service';
 
 const myapp_config = require('../../../../private/app.config.json');
 
@@ -22,7 +23,7 @@ const myapp_config = require('../../../../private/app.config.json');
           cb(null, file.originalname);
         },
       })
-    }),  
+    }),
   ],
   controllers: [BooksController],
   providers: [BooksService, SettingsService],

@@ -1,3 +1,4 @@
+
 import { Crud } from '../service';
 import { Book } from '../types/book';
 import { BookFile, BookFileUpdate } from '../types/bookFile';
@@ -39,7 +40,6 @@ export class Books extends Crud<Book> {
         formData.append("author", data.author + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
-        console.log('Creating book file with data:', data);
         data.genre?.forEach((genre: string) => {
             formData.append("genre", genre);});
         formData.append("anio", data.anio + '');
@@ -53,16 +53,30 @@ export class Books extends Crud<Book> {
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
         formData.append("virtual", data.virtual + '');
+
+        console.log('Generos:', data.genre);
         for (const pair of formData.entries()) {
         console.log(pair[0], pair[1]);
         }
-
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             // headers: {'Content-Type': 'multipart/form'},
             body: formData,
         });
-        return res.json();
+
+        const book = await res.json();
+        const endPoint2 = 'book_genres';
+        data.genre?.forEach(async (genre: string) => {
+            console.log('Creating book genre:', genre);
+            // SACAR EL ENDPOINT HARDODEADO 
+            await fetch(`${this.baseUrl}/${endPoint2}`, {
+            method: 'POST',
+            // headers: {'Content-Type': 'multipart/form'},
+            body: JSON.stringify({name: genre, id_book: book.id}),
+        });
+        });
+
+        return book;
     }
 
     async update(id: number, data: Partial<Book>): Promise<Book> {
@@ -75,22 +89,17 @@ export class Books extends Crud<Book> {
         return res.json();
     }
     async updateBookFile(id: number, data: Partial<BookFileUpdate>): Promise<Book> {
-        console.log('Updating book file with data:', data.image);
         const formData = new FormData();
         formData.append("title", data.title + '');
         formData.append("author", data.author + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
         console.log('Creating book file with data:', data);
-        data.genre?.forEach((genre: string) => {
-        formData.append("genre", genre);});
+        formData.append("genre", JSON.stringify(data.genre));
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
-            
-            if (data.image && typeof data.image === "string") {
-                formData.append("image", data.image);
-            } else if (data.image) {
-                formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        if (data.image instanceof File) {
+            formData.append("image", data.image);
             }
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');

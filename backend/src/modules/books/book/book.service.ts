@@ -38,9 +38,9 @@ export class BooksService {
       const author = authors.find((element) => element.id === idAuthor);
 
 
-      const filteredBookGenres = booksGenres.filter((bg) => { return bg.idBook == book.id });
+      const filteredBookGenres = booksGenres.filter((bg) => { return bg.id_book == book.id });
 
-      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.idBook == g.id));
+      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.id_book == g.id));
 
       const bookGenres = filteredGenres.map((fbg) => fbg.name);
       return BookDTO.Book2BookDTO(book, author ? author.name : "", bookGenres); 
@@ -60,10 +60,10 @@ export class BooksService {
     const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
 
     const bookGenresRelations = await this.bookGenreRepository.find({
-      where: { idBook: book.id },
+      where: { id_book: book.id },
     });
 
-    const genreIds = bookGenresRelations.map((rel) => rel.idGenre);
+    const genreIds = bookGenresRelations.map((rel) => rel.id_genre);
 
     let genres: string[] = [];
     if (genreIds.length > 0) {

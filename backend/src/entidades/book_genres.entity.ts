@@ -10,10 +10,10 @@ export class BookGenre {
 
     @ApiProperty({example: 1, description: 'ID Único de Libro'})
     @Column({name: 'id_book', type: 'integer' })
-    idBook: number;
+    id_book: number;
 
     @ApiProperty({example: 1, description: 'ID Único de Genero'})
     @Column({name: 'id_genre', type: 'integer' })
-    idGenre: number;
+    id_genre: number;
 
 }

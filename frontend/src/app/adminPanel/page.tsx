@@ -147,6 +147,18 @@ export default function PanelAdmin() {
       console.error('Error al obtener libros', error);
     }
   };
+  // Fetch Generos
+  const fetchGenres = async () => {
+    try {
+      const res = await fetch('http://localhost:3001/genres');
+
+      const data = await res.json();
+      setBooks(data);
+      console.log(data);
+    } catch (error) {
+      console.error('Error al obtener los generos', error);
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -155,6 +167,7 @@ export default function PanelAdmin() {
           }
     fetchUsers();
     fetchBooks();
+    fetchGenres();
   }, []);
 
   const toggleUserOpen = (id: number) => {
@@ -211,8 +224,8 @@ export default function PanelAdmin() {
   );
 
   const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(search.toLowerCase())
-  );
+  book.title?.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <div className={styles.pageContainer}>
@@ -496,7 +509,7 @@ export default function PanelAdmin() {
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
                           </Label>
-                              
+          
                           
                           <div className={styles.editButtons}>
                             <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
@@ -505,11 +518,16 @@ export default function PanelAdmin() {
                         </>
                       ) : (
                         <>
-                          <p><strong>Autor:</strong> {book.author}</p>
-                          <p><strong>Precio:</strong> ${book.price}</p>
+                          <p><strong>Descripción:</strong> {book.description}</p>        
                           <p><strong>Año:</strong> {book.anio}</p>
-                          <p><strong>Descripción:</strong> {book.description}</p>
+                          <p><strong>ISBN:</strong>{book.isbn}</p>
+                          <p><strong>Stock:</strong>{book.stock}</p>
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                          <p><strong>Precio:</strong> ${book.price}</p>
+                          <p><strong>Autor:</strong> {book.author}</p>
+                          <p><strong>Géneros:</strong> {book.genre} </p>
+                          
+
                           <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
                       )}
