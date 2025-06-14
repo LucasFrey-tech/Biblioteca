@@ -1,6 +1,8 @@
 export class PurchaseDTO {
   constructor(
     id: number,
+    id_user: number,
+    id_book: number,
     title: string,
     author: string,
     image: string,
@@ -10,6 +12,8 @@ export class PurchaseDTO {
     purchaseDate: Date,
   ) {
     this.id = id;
+    this.id_user = id_user,
+    this.id_book = id_book,
     this.title = title;
     this.author = author;
     this.image = image;
@@ -19,6 +23,8 @@ export class PurchaseDTO {
     this.purchaseDate = purchaseDate;
   }
   id: number;
+  id_user: number;
+  id_book: number;
   title: string;
   author: string;
   image: string;

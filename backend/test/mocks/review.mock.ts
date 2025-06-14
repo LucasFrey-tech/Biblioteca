@@ -2,8 +2,8 @@ import { Review } from "src/entidades/review.entity";
 
 export const mockReview1: Review = {
     id: 1,
-    idUser: 1,
-    idBook: 1,
+    id_user: 1,
+    id_book: 1,
     rating: 3,
     comment: "mastodonte",
     reviewDate: new Date("2020-05-02"),
@@ -11,8 +11,8 @@ export const mockReview1: Review = {
 
 export const mockReview2:Review = {
     id: 2,
-    idUser: 2,
-    idBook: 3,
+    id_user: 2,
+    id_book: 3,
     rating: 1,
     comment: "malardo",
     reviewDate: new Date("2020-05-02"),
@@ -20,8 +20,8 @@ export const mockReview2:Review = {
 
 export const mockReview3:Review = {
     id: 3,
-    idUser: 3,
-    idBook: 2,
+    id_user: 3,
+    id_book: 2,
     rating: 5,
     comment: "GOOOOOOD!",
     reviewDate: new Date("2020-05-02"),

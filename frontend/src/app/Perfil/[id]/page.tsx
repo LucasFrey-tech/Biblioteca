@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+import AddBookReview from '@/components/pages/agregarReview';
 import styles from '../../../styles/profile.module.css'
 
 import { User } from '@/API/types/user';
@@ -105,7 +106,7 @@ export default function profilePage() {
                 if(!purchaseData) return;
                 setPurchases(purchaseData);
             }catch(error){
-                console.error('Error listado de compras: ', error.message);
+                console.error('Error listado de compras: ', error);
             }
         };
 
@@ -181,6 +182,7 @@ export default function profilePage() {
                                     <th>Formato</th>
                                     <th>Precio</th>
                                     <th>Fecha</th>
+                                    <th>Review</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -193,6 +195,7 @@ export default function profilePage() {
                                             <td className={styles.details}>{purchases.virtual ? 'Digital' : 'Fisico'}</td>
                                             <td className={styles.details}>{purchases.price.toLocaleString('es-AR')}</td>
                                             <td className={styles.details}>{formatDate(purchases.purchaseDate)}</td>
+                                            <td className={styles.details}><AddBookReview id_user={purchases.id_user} id_book={purchases.id_book} /></td>
                                         </tr>
                                     ))
                                 ) : (

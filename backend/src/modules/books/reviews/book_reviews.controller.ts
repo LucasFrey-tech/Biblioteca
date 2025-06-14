@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'
 import { BookReviewsService } from './book_reviews.service';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { Review } from 'src/entidades/review.entity';
+import { ReviewI } from './dto/review.dto';
 
 @ApiTags('Críticas')
 @Controller('reviews')
@@ -30,6 +31,16 @@ export class BookReviewsController {
     @ApiResponse({ status: 200, description: 'Lista de Críticas por ID de Libro' })
     findReviewsByBookId(@Param('bookId') bookId: string) {
         return this.reviewService.findReviewsByBookId(+bookId);
+    }
+
+    @Post()
+    create(@Body() reviewData: ReviewI){
+        return this.reviewService.create(reviewData);
+    }
+
+    @Put(':id')
+    update(@Param('id') id:number, @Body() reviewData: ReviewI){
+        return this.reviewService.update(id, reviewData);
     }
 
     @Delete(':id')
