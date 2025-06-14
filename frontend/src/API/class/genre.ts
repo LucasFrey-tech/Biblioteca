@@ -25,13 +25,13 @@ export class Genres extends Crud<Genre> {
         return res.json();
     }
 
-    getOne(id: number): Promise<Genre> {
+    getOne(_id: number): Promise<Genre> {
         throw new Error("Method not implemented.");
     }
-    update(id: number, data: Partial<Genre>): Promise<Genre> {
+    update(_id: number, _data: Partial<Genre>): Promise<Genre> {
         throw new Error("Method not implemented.");
     }
-    delete(id: number): Promise<void> {
+    delete(_id: number): Promise<void> {
         throw new Error("Method not implemented.");
     }
 

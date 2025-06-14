@@ -57,13 +57,13 @@ export class Libreria extends Crud<BookLibreria> {
     getAll(): Promise<BookLibreria[]> {
         throw new Error("Method not implemented.");
     }
-    getOne(id: number): Promise<BookLibreria> {
+    getOne(_id: number): Promise<BookLibreria> {
         throw new Error("Method not implemented.");
     }
-    update(id: number, data: Partial<BookLibreria>): Promise<BookLibreria> {
+    update(_id: number, _data: Partial<BookLibreria>): Promise<BookLibreria> {
         throw new Error("Method not implemented.");
     }
-    delete(id: number): Promise<void> {
+    delete(_id: number): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

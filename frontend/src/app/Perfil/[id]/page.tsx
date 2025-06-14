@@ -9,9 +9,8 @@ import { Purchase } from '@/API/types/purchase';
 
 import { BaseApi } from '@/API/baseApi';
 
-export default function profilePage() {
+export default function ProfilePage() {
     const { id } = useParams();
-    const bannerRef = useRef<HTMLDivElement>(null);
     const [user, setUser] = useState<User>();
     const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
     const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & {pass?: string}}>({});
@@ -105,7 +104,7 @@ export default function profilePage() {
                 if(!purchaseData) return;
                 setPurchases(purchaseData);
             }catch(error){
-                console.error('Error listado de compras: ', error.message);
+                console.error('Error listado de compras: ', error);
             }
         };
 

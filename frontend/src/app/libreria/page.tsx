@@ -23,7 +23,7 @@ export default function Libreira() {
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    //const [_error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(2);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function Libreira() {
         if (id) {
             setUserId(Number(id));
         } else {
-            setError('ID del usuario no proporcionado o inválido.');
+            console.error('ID del usuario no proporcionado o inválido.');
             setLoading(false)
         }
     }, []);
@@ -73,7 +73,7 @@ export default function Libreira() {
 
         };
         fetchData();
-    }, []);
+    }, [userId]);
 
     const handleGenreToggle = (genreId: number) => {
         setSelectedGenres((prev) =>
