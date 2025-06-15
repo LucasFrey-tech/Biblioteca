@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import StarRating from "@/components/ui/StarRating";
 import Image from "next/image";
@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 
 export default function BookDetail() {
     const params = useParams();
+    const router = useRouter();
     const [book, setBook] = useState<Book>();
     const [review, setReview] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
@@ -24,7 +25,8 @@ export default function BookDetail() {
     const [user, setUser] = useState<User>();
     const [amount, setAmount] = useState<number>(1);
 
-    const refAPI = useRef<BaseApi | null>(null);
+    const apiRef = useRef<BaseApi | null>(null);
+
 
     useEffect(() => {
         if (!params || !params.id) {
@@ -46,42 +48,45 @@ export default function BookDetail() {
                 const token = localStorage.getItem('token');
                 const userId = localStorage.getItem('userId');
 
-                if (!token || !userId) {
-                    console.warn('No hay token o userId en localStorage');
-                } else {
-                    // Inicializar API
-                    const api = new BaseApi(token);
-                    refAPI.current = api;
+                const bookData = await (token ? new BaseApi(token) : new BaseApi()).books.getOne(bookId);
+                setBook(bookData);
 
-                    // Obtener usuario
+                if (token && userId) {
+                    const api = new BaseApi(token);
+                    apiRef.current = api;
+
                     const userData = await api.users.getOne(Number(userId));
                     setUser(userData);
 
-                    // Obtener libro
-                    const bookData = await api.books.getOne(bookId);
-                    setBook(bookData);
-
-                    // Obtener reviews de un libro especifico
+                    const reviewsData = await api.review.getByBookId(bookId);
+                    setReview(reviewsData);
+                } else {
+                    const api = new BaseApi();
                     const reviewsData = await api.review.getByBookId(bookId);
                     setReview(reviewsData);
                 }
-
             } catch (error) {
                 console.error('Error al cargar los datos', error);
-                setError('Error al cargar los datos del libro.');
+                setError('Error al cargar los datos.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchData();
     }, [params]);
 
     const handleAddToCart = async () => {
-        if (!book || !user || !refAPI.current) {
-            alert('Libro, usuario o API no disponible ❌');
+
+        if (!user) {
+            router.push('/login');
             return;
         }
+
+        if (!book || !apiRef.current) {
+            alert('Libro o API no disponible ❌');
+            return;
+        }
+
         try {
             const payload = {
                 idUser: user.id,
@@ -89,23 +94,69 @@ export default function BookDetail() {
                 amount: amount,
                 virtual: selectedFormat === 'ebook'
             };
-            await refAPI.current.shoppingCart.create(payload);
+
+            await apiRef.current.shoppingCart.create(payload);
+
             Swal.fire({
-             title: "Éxito",
-             text: "Libro agregado al carrito correctamente",
-             icon: "success",
-             timer: 2000, 
-             showConfirmButton: false
-});
-            
+                title: "Éxito",
+                text: "Libro agregado al carrito correctamente",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false
+            });
+
         } catch (error) {
             console.error('Error agregando al carrito:', error);
             Swal.fire({
-            title: "Error",
-            text: "No se pudo agregar el libro al carrito",
-            icon: "error",
-            timer: 2000, 
-            showConfirmButton: false
+                title: "Error",
+                text: "No se pudo agregar el libro al carrito",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    };
+
+    const handleBuyNow = async () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+
+        if (!book || !apiRef.current) {
+            alert('Libro o API no disponible ❌');
+            return;
+        }
+
+        try {
+            const payload = {
+                idUser: user.id,
+                idBook: book.id,
+                amount: 1,
+                virtual: false
+            };
+
+            await apiRef.current.shoppingCart.create(payload);
+
+
+            Swal.fire({
+                title: "Libro agregado al carrito",
+                text: "Serás redirigido al carrito.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                router.push('/shopping_cart');
+            });
+
+        } catch (error) {
+            console.error('Error agregando al carrito:', error);
+            Swal.fire({
+                title: "Error",
+                text: "No se pudo agregar el libro al carrito.",
+                icon: "error",
+                timer: 2000,
+                showConfirmButton: false
             });
         }
     };
@@ -156,7 +207,9 @@ export default function BookDetail() {
                                 currency: 'ARS'
                             }).format(book.price)}
                         </p>
-                        <button className={styles.buyButton}>Comprar Ahora</button>
+                        <button className={styles.buyButton} onClick={handleBuyNow}>
+                            Comprar Ahora
+                        </button>
                         <button className={styles.cartButton} onClick={handleAddToCart}>
                             Agregar al Carrito
                         </button>

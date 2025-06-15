@@ -42,11 +42,23 @@ export default function BookCard({ book }: { book: Book }) {
         router.push(`/book/${book.id}`);
     };
 
-    const handleBuyClick = async () => {
+    const handleBuyClick = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+
+        if (!token || !userId) {
+            
+            router.push('/login');
+            return;
+        }
+
         if (!book || !user || !refAPI.current) {
             alert('Libro, usuario o API no disponible ❌');
             return;
         }
+
         try {
             const payload = {
                 idUser: user.id,
@@ -56,20 +68,20 @@ export default function BookCard({ book }: { book: Book }) {
             };
             await refAPI.current.shoppingCart.create(payload);
             Swal.fire({
-            title: "Libro agregado al carrito!",
-            text: `${book.title} ha sido agregado a tu carrito.`,
-            icon: "success",
-            timer: 2500, 
-            showConfirmButton: false
+                title: "Libro agregado al carrito!",
+                text: `${book.title} ha sido agregado a tu carrito.`,
+                icon: "success",
+                timer: 2500,
+                showConfirmButton: false
             });
         } catch (error) {
             console.error('Error agregando al carrito:', error);
             Swal.fire({
-            title: "No se pudo agregar al carrito!",
-            text: `Error al agregar ${book.title} al carrito.`,
-            icon: "error",
-            timer: 2500, 
-            showConfirmButton: false
+                title: "No se pudo agregar al carrito!",
+                text: `Error al agregar ${book.title} al carrito.`,
+                icon: "error",
+                timer: 2500,
+                showConfirmButton: false
             });
         }
     };
