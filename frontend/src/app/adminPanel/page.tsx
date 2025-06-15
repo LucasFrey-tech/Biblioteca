@@ -21,7 +21,7 @@ export default function PanelAdmin() {
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
-  const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
+  // const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
   // const [genres, setGenres] = useState<BookGenre[]>([]);
   const [search, setSearch] = useState('');
   const apiRef = useRef<BaseApi | null>(null);
@@ -143,12 +143,13 @@ export default function PanelAdmin() {
       console.error('Error al obtener libros', error);
     }
   };
+  
   // Fetch Generos
   const fetchGenres = async () => {
     try {
-      const resBookGenres = await apiRef.current?.bookGenre.getAll();
+      const resBookGenres = await apiRef.current?.bookGenre.findAll();
       if (!resBookGenres) throw new Error('No se pudieron obtener los géneros');
-       setBookGenres(resBookGenres);
+      //  setBookGenres(resBookGenres);
       console.log(resBookGenres);
     } catch (error) {
       console.error('Error al obtener los generos', error);
@@ -514,18 +515,8 @@ export default function PanelAdmin() {
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
                           <p><strong>Precio:</strong> ${book.price}</p>
                           <p><strong>Autor:</strong> {book.author}</p>
-                          <p><strong>Géneros:</strong> 
-                            {book.genre && book.genre.length > 0 ? (
-                              book.genre.map((genre, i) => (
-                                <span key={genre.id_book}>
-                                  {genre.name}
-                                  {i < book.genres.length - 1 ? ', ' : ''}
-                                </span>
-                              ))
-                            ) : "No hay géneros"}
-                          </p>
-                                                    
-
+                          <p><strong>Géneros:</strong> {book.genre?.join(', ') || 'Ninguno'}</p>
+                      
                           <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
                       )}

@@ -40,7 +40,7 @@ export class BooksService {
 
       const filteredBookGenres = booksGenres.filter((bg) => { return bg.id_book == book.id });
 
-      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.id_book == g.id));
+      const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.id_genre === g.id));
 
       const bookGenres = filteredGenres.map((fbg) => fbg.name);
       return BookDTO.Book2BookDTO(book, author ? author.name : "", bookGenres); 

@@ -1,4 +1,3 @@
-
 import { Crud } from '../service';
 import { Book } from '../types/book';
 import { BookFile, BookFileUpdate } from '../types/bookFile';
@@ -69,7 +68,7 @@ export class Books extends Crud<Book> {
         });
 
         const book = await res.json();
-        const var22 = new BookGenres();
+        const var2 = new BookGenres();
         
         data.genre?.forEach(async (genre: string) => {
             console.log('Creating book genre:', genre);
@@ -79,7 +78,7 @@ export class Books extends Crud<Book> {
             // // headers: {'Content-Type': 'multipart/form'},
             // body: JSON.stringify({name: genre, id_book: book.id}),
         // });
-            var22.create({name: genre, id_book: book.id});
+            var2.create({name: genre, id_book: book.id});
         });
 
         return book;
