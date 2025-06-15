@@ -6,4 +6,5 @@ export interface User {
     firstname: string;
     lastname: string;
     tel?: number;
+    disabled: boolean;
 }

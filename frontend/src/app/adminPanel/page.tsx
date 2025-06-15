@@ -7,20 +7,13 @@ import styles from '../../styles/panelAdmin.module.css';
 import Swal from 'sweetalert2';
 import { Button } from "@/components/ui/button";
 import AddBookDialog from "@/components/pages/agregarLibro";
-import { BaseApi } from "@/API/baseApi";  
-import { Label } from "@radix-ui/react-label";
-// import { Book } from "@/API/types/book";
-import {BookFileUpdate } from "@/API/types/bookFile";
 import DragAndDrop from "@/components/pages/dropImage";
 
-type User = {
-  id: number;
-  firstname: string;
-  lastname: string;
-  username: string;
-  admin: boolean;
-  disabled: boolean;
-};
+import { BaseApi } from "@/API/baseApi";  
+import { Label } from "@radix-ui/react-label";
+import {BookFileUpdate } from "@/API/types/bookFile";
+import { User } from "@/API/types/user";
+import { BookGenre } from "@/API/types/book_genre";
 
 export default function PanelAdmin() {
   const [activeTab, setActiveTab] = useState<'users' | 'books'>('users');
@@ -28,6 +21,8 @@ export default function PanelAdmin() {
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
+  const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
+  // const [genres, setGenres] = useState<BookGenre[]>([]);
   const [search, setSearch] = useState('');
   const apiRef = useRef<BaseApi | null>(null);
   
@@ -103,6 +98,8 @@ export default function PanelAdmin() {
       // Actualizo localmente el estado de libros
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
 
+      // setGenres(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
+
       // Salgo del modo edición
       setBooksEditState(prev => ({
         ...prev,
@@ -127,9 +124,9 @@ export default function PanelAdmin() {
   // Fetch usuarios
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:3001/users');
-      const data = await res.json();
-      setUsers(data);
+      const resUser = await apiRef.current?.users.getAll();
+      if (!resUser) throw new Error('No se pudieron obtener los usuarios');
+      setUsers(resUser);
     } catch (error) {
       console.error('Error al obtener usuarios', error);
     }
@@ -138,11 +135,10 @@ export default function PanelAdmin() {
   // Fetch libros
   const fetchBooks = async () => {
     try {
-      const res = await fetch('http://localhost:3001/books');
-
-      const data = await res.json();
-      setBooks(data);
-      console.log(data);
+      const resBooks = await apiRef.current?.books.getAll();
+      if (!resBooks) throw new Error('No se pudieron obtener los libros');
+      setBooks(resBooks);
+      console.log(resBooks);
     } catch (error) {
       console.error('Error al obtener libros', error);
     }
@@ -150,11 +146,10 @@ export default function PanelAdmin() {
   // Fetch Generos
   const fetchGenres = async () => {
     try {
-      const res = await fetch('http://localhost:3001/genres');
-
-      const data = await res.json();
-      setBooks(data);
-      console.log(data);
+      const resBookGenres = await apiRef.current?.bookGenre.getAll();
+      if (!resBookGenres) throw new Error('No se pudieron obtener los géneros');
+       setBookGenres(resBookGenres);
+      console.log(resBookGenres);
     } catch (error) {
       console.error('Error al obtener los generos', error);
     }
@@ -200,18 +195,11 @@ export default function PanelAdmin() {
     });
   };
 
-
   const updateUser = async (id: number, updates: Partial<User>) => {
     try {
-      const res = await fetch(`http://localhost:3001/users/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
+      const res = await apiRef.current?.users.update(id, updates);
 
-      if (!res.ok) throw new Error('Error en la actualización');
+      if (!res) throw new Error('Error en la actualización');
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -397,6 +385,7 @@ export default function PanelAdmin() {
             </div>
 
             {filteredBooks.map((book: BookFileUpdate) => {
+              console.log('Book:', book);
               const editState = booksEditState[book.id] || {
                 editMode: false,
                 formData: book
@@ -525,8 +514,17 @@ export default function PanelAdmin() {
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
                           <p><strong>Precio:</strong> ${book.price}</p>
                           <p><strong>Autor:</strong> {book.author}</p>
-                          <p><strong>Géneros:</strong> {book.genre} </p>
-                          
+                          <p><strong>Géneros:</strong> 
+                            {book.genre && book.genre.length > 0 ? (
+                              book.genre.map((genre, i) => (
+                                <span key={genre.id_book}>
+                                  {genre.name}
+                                  {i < book.genres.length - 1 ? ', ' : ''}
+                                </span>
+                              ))
+                            ) : "No hay géneros"}
+                          </p>
+                                                    
 
                           <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
