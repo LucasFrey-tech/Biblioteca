@@ -1,85 +1,115 @@
 Table users {
-  id_user int [pk, increment]
-  name varchar
+  id_user INTEGER [pk, increment]
+  username varchar
+  firstname varchar
+  lastname varchar
   email varchar
   password varchar
-  role varchar
-  registration_date datetime
-  status varchar
+  tel varchar
+  admin bool
+  disabled bool
+  registration_date timestamp
 }
 
 Table books {
-  id_book int [pk, increment]
+  id_book INTEGER [pk, increment]
   title varchar
-  author varchar
-  genre varchar
+  author_id integer
   description text
-  type varchar
+  anio integer
+  isbn varchar
+  image text
+  stock integer
+  subscriber_exclusive bool
   price float
-  stock int
-  virtual_url varchar
-  exclusive boolean
 }
 
-Table orders {
-  id_order int [pk, increment]
-  id_user int [ref: > users.id_user]
-  order_date datetime
-  status varchar
-  total float
+Table genres {
+  id_genres INTEGER [pk, increment]
+  name varchar
 }
 
-Table order_books {
-  id_order int [ref: > orders.id_order]
-  id_book int [ref: > books.id_book]
-  quantity int
-  Primary Key (id_order, id_book)
+Table book_genres {
+	id_book_genres INTEGER [pk, increment]
+	id_genre integer
+	id_book integer
 }
 
+Table authors {
+  id_authors INTEGER [pk, increment]
+  name varchar
+}
 
-Table shopping_cart {
-  id_cart SERIAL [pk]
-  id_user INTEGER [ref: > users.id_user]
-  id_book int [ref: > books.id_book]
-  creation_date TIMESTAMP
+Table user_virtual_books {
+  id_user_virtual_books INTEGER [pk, increment]
+  id_user integer
+  id_book integer
+}
+
+Table virtual_book_content {
+  id_virtual_book_content INTEGER [pk, increment]
+	id_book integer
+	content text
 }
 
 Table reviews {
-  id_review SERIAL [pk]
-  id_user INTEGER [ref: > users.id_user]
-  id_book INTEGER [ref: > books.id_book]
-  rating INTEGER
-  comment TEXT
-  review_date TIMESTAMP
+  id_reviews INTEGER [pk, increment]
+  id_user integer
+  id_book integer
+  rating smallint
+  comment varchar
+  review_date timestamp
 }
 
-Table reservations {
-  id_reservation SERIAL [pk]
-  id_user INTEGER [ref: > users.id_user]
-  id_book INTEGER [ref: > books.id_book]
-  reservation_date TIMESTAMP
-  status VARCHAR
+Table user_subscription {
+  id_user_subscription INTEGER [pk, increment]
+  id_user integer
+  start_date timestamp
+  end_date timestamp
+  ongoing bool
 }
 
-Table subscriptions {
-  id_subscription int [pk, increment]
-  name varchar
-  description text
-  discount_percentage float
-  exclusive_access boolean
+Table shopping_cart_book {
+  id_shopping_cart_book INTEGER [pk, increment]
+  id_user integer
+  id_book integer
+  amount integer
+  price integer
+  virtual bool
 }
 
-Table user_subscriptions {
-  id_user int [ref: > users.id_user]
-  id_subscription int [ref: > subscriptions.id_subscription]
-  start_date datetime
-  end_date datetime
-  status varchar
-  Primary Key (id_user, id_subscription)
+Table purchases {
+  id_purchases INTEGER [pk, increment]
+  id_user integer
+  id_book integer
+  amount integer
+  price integer
+  virtual bool
+  purchase_date timestamp
 }
 
-Table subscription_books {
-  id_book int [ref: > books.id_book]
-  id_subscription int [ref: > subscriptions.id_subscription]
-  Primary Key (id_book, id_subscription)
-}
+Ref: "users"."id_user" < "user_subscription"."id_user"
+
+Ref: "users"."id_user" < "shopping_cart_book"."id_user"
+
+Ref: "users"."id_user" < "purchases"."id_user"
+
+Ref: "users"."id_user" < "reviews"."id_user"
+
+Ref: "users"."id_user" < "user_virtual_books"."id_user"
+
+Ref: "books"."id_book" < "purchases"."id_book"
+
+Ref: "books"."id_book" < "user_virtual_books"."id_book"
+
+Ref: "books"."id_book" < "reviews"."id_book"
+
+Ref: "books"."id_book" < "book_genres"."id_book"
+
+Ref: "books"."id_book" < "shopping_cart_book"."id_book"
+
+Ref: "books"."id_book" < "virtual_book_content"."id_book"
+
+Ref: "genres"."id_genres" < "book_genres"."id_genre"
+
+Ref: "authors"."id_authors" < "books"."author_id"

@@ -13,7 +13,6 @@ create table users (
 	tel varchar(20) default(''),
 	admin bool default(false),
 	disabled bool default(false),
-	image text default(''),
 	registration_date timestamp default(CURRENT_TIMESTAMP)
 );
 
@@ -64,13 +63,6 @@ create table user_virtual_books(
 	id_book integer not null
 );
 
--- CREAR TABLA USER_FAVORITE_VIRTUAL_BOOKS
-create table user_favorite_virtual_books(
-	id serial primary key,
-	id_user integer not null,
-	id_book integer not null
-);
-
 -- CREAR TABLA REVIEWS
 create table reviews (
 	id serial primary key,
@@ -81,7 +73,7 @@ create table reviews (
 	review_date timestamp default(CURRENT_TIMESTAMP)
 );
 
--- CREAR TABLA USER_SUBSCRIPTION
+-- CREAR TABLA USER_SUBSCRIPTION -- no se
 create table user_subscription(
 	id serial primary key,
 	id_user integer not null,
@@ -90,7 +82,7 @@ create table user_subscription(
 	ongoing boolean default(false)
 );
 
--- CREAR TABLA SUBSCRIPTION_BOOK_DISCOUNT
+-- CREAR TABLA SUBSCRIPTION_BOOK_DISCOUNT -- no se
 create table subscription_book_discount(
 	id serial primary key,
 	id_book integer not null,
@@ -106,6 +98,7 @@ create table shopping_cart_book(
 	virtual bool default(false)
 );
 
+-- CREAR TABLA Purchases
 create table purchases(
 	id serial primary key,
 	id_user integer not null,
