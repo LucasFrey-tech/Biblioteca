@@ -7,6 +7,8 @@ import { BookContentDTO } from "@/API/types/bookContent.dto";
 import ReturnButton from "@/components/ui/ReturnButton/buttonReturn";
 import Styles from "./styles.module.css";
 import { BaseApi } from "@/API/baseApi";
+import router from "next/router";
+import { jwtDecode } from "jwt-decode";
 
 export default function ReadBook(){
     const params = useParams();
@@ -20,7 +22,9 @@ export default function ReadBook(){
     
     const apiRef = useRef<BaseApi | null>(null);
     
-    useEffect(() => {
+    useEffect(() => {  
+        
+        // Verificar que el id del libro este en los parametros.
         if (!params || !params.id) {
             setError('ID del libro no proporcionado.');
             setLoading(false);
@@ -39,22 +43,26 @@ export default function ReadBook(){
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                if (token) {
-                    apiRef.current = new BaseApi(token);
+
+                // Verificar que el usuario este logueado.
+                if (!token) {
+                    router.push('/login');
+                    return;
+                }
+
+                const decodedToken = jwtDecode<{ sub: number}>(token); 
+
+                // Verificar que el usuario tenga el libro.
+                const resBooks = await apiRef.current?.libreria.findAllByUser(decodedToken.sub);
+                if (!resBooks || !resBooks.some(book => book.id === bookId)) {
+                    setError('No tienes acceso a este libro.');
+                    setLoading(false);
+                    return;
                 }
                 
                 const dataBook = await apiRef.current?.bookContent.getOne(bookId);
 
                 setBookContent(prevBookContent => dataBook ? dataBook : prevBookContent);
-
-                // const resBook = await fetch(`http://localhost:3001/book/content/${1}`, {
-                //     method: 'GET',
-                //     headers: {
-                //         'Content-Type': 'application/json',
-                //     },
-                // });
-                // const data = await resBook.json();
-                // setBookContent(data);
             } catch (error) {
                 console.error('Error al cargar los datos', error);
             } finally {

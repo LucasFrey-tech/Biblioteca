@@ -21,7 +21,8 @@ export default function LibraryCard({ book }: { book: Book }) {
         router.push(`/book/${book.id}`);
     };
 
-    const handleBuyClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleReadClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        router.push(`/book/${book.id}/read`);
         e.stopPropagation();
     };
 
@@ -40,7 +41,7 @@ export default function LibraryCard({ book }: { book: Book }) {
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
             <p className={styles.author}>{authorName}</p>
-            <button className={styles.buyButton} onClick={handleBuyClick}>
+            <button className={styles.buyButton} onClick={handleReadClick}>
                 <span className={styles.buyText}>Leer</span>
             </button>
         </div>

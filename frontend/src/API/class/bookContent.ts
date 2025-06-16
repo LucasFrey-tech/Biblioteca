@@ -5,7 +5,7 @@ export class BookContent extends Crud<BookContentDTO>{
     private endPoint: string;
     constructor(token?: string) {
         super(token);
-        this.endPoint = '/book/content';
+        this.endPoint = 'book/content';
     }
 
     async getAll(): Promise<BookContentDTO[]> {
