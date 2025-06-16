@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import mime from 'mime';
 import * as path from 'path';
 import { Book } from 'src/entidades/book.entity';
+import {Transform} from 'class-transformer';
 
 export class BookDTO {
   constructor(
@@ -28,6 +29,7 @@ export class BookDTO {
   isbn: string;
   image: string;
   stock: number;
+  @Transform(({ value }) => Boolean(value)) // Convierte cualquier valor a booleano
   subscriber_exclusive: boolean;
   price: number;
 
