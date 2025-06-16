@@ -45,7 +45,7 @@ export default function ReadBook(){
                 
                 const dataBook = await apiRef.current?.bookContent.getOne(bookId);
 
-                setBookContent(dataBook?dataBook:bookContent);
+                setBookContent(prevBookContent => dataBook ? dataBook : prevBookContent);
 
                 // const resBook = await fetch(`http://localhost:3001/book/content/${1}`, {
                 //     method: 'GET',
@@ -65,7 +65,7 @@ export default function ReadBook(){
         fetchData();
     }, [params]);
 
-    function getChaptersFromContent(content: String){
+    function getChaptersFromContent(content: string){
         if (!content) return [];
         const matches = [...content.matchAll(/<h1[^>]*>(.*?)<\/h1>/gi)];
         return matches.map(match => match[1].trim());

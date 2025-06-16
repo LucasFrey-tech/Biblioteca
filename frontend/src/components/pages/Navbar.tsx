@@ -3,25 +3,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 
 import { useUser } from "@/app/context/UserContext";
 
-interface User {
-    sub: number;
-    email: string;
-    username: string;
-    iat: number;
-    exp: number;
-}
-
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [menuDropDown, setDropDown] = useState<boolean>();
+    const [menuDropDown, setDropDown] = useState(false);
+
     const { user, setUser } = useUser();
     const router = useRouter();
-    const [cartItems, setCartItems] = useState<any[]>([]); // Estado para los items del carrito
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
     const closeSidebar = () => setIsSidebarOpen(false);
@@ -29,52 +20,18 @@ export default function Navbar() {
 
     const closeSession = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         setUser(null);
         setDropDown(false);
         router.push('/login');
     };
 
     const handleProfileClick = () => {
-        if (user?.sub) {
-            router.push(`/Perfil/${user.sub}`);
+        if (user?.id) {
+            router.push(`/Perfil/${user.id}`);
             setDropDown(false);
         }
     };
-
-    useEffect(() => {
-        const getUser = async () => {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    console.error('No hay token en localStorage');
-                    return;
-                }
-
-                const decoded = jwtDecode<User>(token);
-                setUser(decoded);
-            } catch (error) {
-                console.error('Hubo un error:', error);
-            }
-        };
-
-        getUser();
-    }, []);
-
-    // Efecto para cargar los items del carrito desde localStorage
-    useEffect(() => {
-        const loadCartItems = () => {
-            const cart = localStorage.getItem('cart');
-            if (cart) {
-                setCartItems(JSON.parse(cart));
-            }
-        };
-
-        loadCartItems();
-        
-        // Escuchar cambios en el localStorage
-        window.addEventListener('storage', loadCartItems);
-        return () => window.removeEventListener('storage', loadCartItems);
-    }, []);
 
     return (
         <>
@@ -102,7 +59,10 @@ export default function Navbar() {
                             {menuDropDown && (
                                 <div className={styles.dropDownMenu}>
                                     <button onClick={handleProfileClick}>Mi Perfil</button>
-                                    <button onClick={closeSession}>Cerrar Sesion</button>
+                                    {user.admin && (
+                                        <button onClick={() => router.push('/adminPanel')}>Panel de Admin</button>
+                                    )}
+                                    <button onClick={closeSession}>Cerrar Sesión</button>
                                 </div>
                             )}
                             <Link href="/shopping_cart" className={styles.cartButton}>
@@ -113,11 +73,6 @@ export default function Navbar() {
                                         width={28}
                                         height={28}
                                     />
-                                    {cartItems.length > 0 && (
-                                        <span className={styles.cartBadge}>
-                                            {cartItems.length}
-                                        </span>
-                                    )}
                                 </div>
                             </Link>
                         </div>
@@ -135,7 +90,7 @@ export default function Navbar() {
                     />
                 </button>
             </header>
-            
+
             <div
                 className={`${styles.sidebarBackdrop} ${isSidebarOpen ? styles.active : ''}`}
                 onClick={closeSidebar}
@@ -159,15 +114,13 @@ export default function Navbar() {
                                             width={28}
                                             height={28}
                                         />
-                                        {cartItems.length > 0 && (
-                                            <span className={styles.cartBadge}>
-                                                {cartItems.length}
-                                            </span>
-                                        )}
                                     </div>
                                 </Link>
                             </li>
                             <li><button onClick={handleProfileClick}>Mi Perfil</button></li>
+                            {user.admin && (
+                                <li><button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button></li>
+                            )}
                             <li><button onClick={closeSession}>Cerrar Sesión</button></li>
                         </>
                     ) : (
@@ -182,5 +135,3 @@ export default function Navbar() {
         </>
     );
 }
-
-{/* <a href="http://localhost:3000/login" onClick={closeSidebar} className={styles.boton}>Acceder</a> */ }

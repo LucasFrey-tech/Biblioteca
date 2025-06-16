@@ -1,14 +1,15 @@
 import { Crud } from "../service";
-import { Genre } from "../types/genre";
+import { BookGenre } from "../types/book_genre";
 
-export class Genres extends Crud<Genre> {
+export class BookGenres extends Crud<BookGenre> {
     private endPoint: string;
+
     constructor(token?: string) {
         super(token);
-        this.endPoint = 'genres';
+        this.endPoint = 'book_genres';
     }
 
-    async getAll(): Promise<Genre[]> {
+    async findAll(): Promise<BookGenre[]> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'GET',
             headers: this.getHeaders(),
@@ -16,19 +17,22 @@ export class Genres extends Crud<Genre> {
         return res.json();
     }
 
-    async create(data: Partial<Genre>): Promise<Genre>{
+     async create(data: Partial<BookGenre>): Promise<BookGenre> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(data),
-        });
+        })
         return res.json();
     }
 
-    getOne(_id: number): Promise<Genre> {
+    getAll(): Promise<BookGenre[]> {
         throw new Error("Method not implemented.");
     }
-    update(_id: number, _data: Partial<Genre>): Promise<Genre> {
+    getOne(_id: number): Promise<BookGenre> {
+        throw new Error("Method not implemented.");
+    }
+    update(_id: number, data: Partial<BookGenre>): Promise<BookGenre> {
         throw new Error("Method not implemented.");
     }
     delete(_id: number): Promise<void> {

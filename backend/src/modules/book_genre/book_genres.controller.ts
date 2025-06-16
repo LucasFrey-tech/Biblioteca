@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { BookGenresService } from './book_genres.service';
 import { BookGenre } from 'src/entidades/book_genres.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
@@ -13,5 +13,16 @@ export class BookGenresController {
   @ApiResponse({ status: 200, description: 'Lista Generos de Libros', type: [BookGenre] })
   async findAll(): Promise<BookGenre[]> {
     return this.bookGenresService.findAll();
+  }
+
+  @Post()
+  async create(@Body() data: Partial<BookGenreDto>): Promise<BookGenre> {
+    console.log("datAAAAAAAAAAAAAAAAAAAAA", data);
+    return this.bookGenresService.create(data);
+  }
+
+  @Delete(':id')
+  async delete(@Body('id') id: number): Promise<void> {
+    await this.bookGenresService.delete(id);
   }
 }

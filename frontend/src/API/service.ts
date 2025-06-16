@@ -7,13 +7,13 @@ export abstract class Crud<T>{
 
     abstract getAll(): Promise<T[]>;
 
-    abstract getOne(id: number): Promise<T>;
+    abstract getOne(_id: number): Promise<T>;
 
-    abstract create(data: Partial<T>): Promise<T>;
+    abstract create(_data: Partial<T>): Promise<T>;
 
-    abstract update(id: number, data: Partial<T>): Promise<T>;
+    abstract update(_id: number, data: Partial<T>): Promise<T>;
 
-    abstract delete(id: number): Promise<void>;
+    abstract delete(_id: number): Promise<void>;
 
     protected getHeaders(): Record<string, string> {
         const headers: Record<string, string> = {

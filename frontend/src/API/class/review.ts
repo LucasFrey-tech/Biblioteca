@@ -38,6 +38,7 @@ export class Reviews extends Crud<Review> {
     }
 
     async create(data: Partial<Review>): Promise<Review> {
+        console.log(data);
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             headers: this.getHeaders(),

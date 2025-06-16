@@ -1,27 +1,13 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Review } from "../../../entidades/review.entity";
 import { User } from "src/entidades/user.entity";
-
-
-class ReviewI {
-    constructor(
-        id: number,
-        username: string,
-        comment: string,
-        rating: number,
-        reviewDate: string,
-    ) { this.id = id, this.username = username, this.comment = comment, this.rating = rating, this.reviewDate = reviewDate }
-    id: number;
-    username: string;
-    comment: string;
-    rating: number;
-    reviewDate: string;
-};
+import { Review } from "src/entidades/review.entity";
+import { ReviewI } from "./dto/review.dto";
 
 @Injectable()
 export class BookReviewsService {
+
     constructor(
         @InjectRepository(Review)
         private reviewRepository: Repository<Review>,
@@ -29,6 +15,36 @@ export class BookReviewsService {
         @InjectRepository(User)
         private userRepository: Repository<User>,
     ) { }
+
+    async create(reviewData: Partial<ReviewI>): Promise<ReviewI> {
+        // Validar que exista el usuario
+        const user = await this.userRepository.findOne({ 
+            where: { id: reviewData.id_user } 
+        });
+        
+        if (!user) {
+            throw new NotFoundException(`User with ID ${reviewData.id_user} not found`);
+        }
+
+        // Crear la nueva review
+        const newReview = this.reviewRepository.create({
+            ...reviewData,
+            reviewDate: new Date(),
+        });
+
+        const savedReview = await this.reviewRepository.save(newReview);
+
+        // Retornar el DTO con los datos formateados
+        return new ReviewI(
+            savedReview.id,
+            savedReview.id_user,
+            savedReview.id_book,
+            user.username,
+            savedReview.comment,
+            savedReview.rating,
+            savedReview.reviewDate.toLocaleString('es-AR'),
+        );
+    }
 
     findAll(): Promise<Review[]> {
         return this.reviewRepository.find({});
@@ -48,24 +64,30 @@ export class BookReviewsService {
 
     async findReviewsByBookId(bookId: number): Promise<ReviewI[]> {
         const reviews = await this.reviewRepository.find({
-            where: { idBook: bookId }
+            where: { id_book: bookId }
         });
 
         const users = await this.userRepository.find({});
 
         const result = reviews.map((r) => {
-            const idUsuario = r.id_user;
-            const user = users.find((element) => element.id === idUsuario);
+            const user = users.find((u) => u.id === r.id_user);
             return new ReviewI(
                 r.id,
+                r.id_user,
+                r.id_book,
                 user ? user.username : "",
                 r.comment,
                 r.rating,
-                r.reviewDate.toLocaleTimeString('es-AR'),
+                r.reviewDate.toLocaleString('es-AR'),
             );
         });
 
         return result;
+    }
+
+    async update(id: number, reviewData: ReviewI) {
+        await this.reviewRepository.update(id, reviewData);
+        return this.reviewRepository.findOne({ where: {id : id}});
     }
 
     async remove(id: number): Promise<void> {

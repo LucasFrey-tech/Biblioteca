@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { BaseApi } from "@/API/baseApi";
 import { ShoppingCartBook } from "@/API/types/shopping_cart";
 import { PurchaseItem } from "@/API/types/purchase";
+import Swal from "sweetalert2";
 
 const groupCartItems = (items: ShoppingCartBook[]) => {
     const grouped: { [key: string]: ShoppingCartBook } = {};
@@ -49,7 +50,7 @@ export default function ShoppingCartPage() {
         const fetchData = async () => {
             try {
                 const cartData = await apiRef.current.shoppingCart.findByUser(userId);
-                console.log('Datos crudos del carrito:', cartData); // <-- Añade esto
+                console.log('Datos crudos del carrito:', cartData);
                 if (cartData) {
                     setBooksCartShopping(groupCartItems(cartData));
                 }
@@ -126,13 +127,43 @@ export default function ShoppingCartPage() {
                 virtual: item.virtual,
             }));
 
+            // Procesar la compra
             await apiRef.current.purchase.processPurchase(userId, itemsToPurchase);
 
+            // Agregar libros virtuales a la libreria
+            const virtualBooks = cartData.filter(item => item.virtual);
+            if (virtualBooks.length > 0) {
+                try {
+                    // Usamos Promise.all para agregar todos los libros virtuales a la libreria
+                    await Promise.all(
+                        virtualBooks.map(async (book) => {
+                            // Para cada libro, agregamos tantas copias como la cantidad comprada
+                            for (let i = 0; i < book.amount; i++) {
+                                await apiRef.current.libreria.create({
+                                    idUser: userId,
+                                    idBook: book.idBook,
+                                });
+                            }
+                        })
+                    );
+                } catch (libraryError) {
+                    console.error('Error agregando libros a la libreria:', libraryError);
+                    // No detenemos el flujo aunque falle la adición a la libreria
+                }
+            }
+
+            // Limpiar el carrito
             setBooksCartShopping([]);
-            setPurchaseMessage('Compra realizada con éxito');
+
+            Swal.fire({
+                title: "Éxito",
+                text: "Compra exitosa! Los libros digitales estarán disponibles en tu librería.",
+                icon: "success",
+                timer: 3500,
+                showConfirmButton: false
+            });
         } catch (error: unknown) {
             console.error('Error procesando la compra:', error);
-            // Extraemos el mensaje si error es un objeto con message, o usamos un mensaje genérico
             const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
             setPurchaseMessage(`Error al procesar la compra: ${errorMessage}`);
         }
@@ -211,11 +242,6 @@ export default function ShoppingCartPage() {
                                                 >
                                                     Eliminar
                                                 </button>
-                                                {!item.virtual && (
-                                                    <button className={styles.compareButton}>
-                                                        Comparar ahora
-                                                    </button>
-                                                )}
                                             </div>
                                         </div>
                                     </div>

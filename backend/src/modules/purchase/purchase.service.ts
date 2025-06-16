@@ -85,6 +85,8 @@ export class PurchasesService {
 
         return new PurchaseDTO(
           purchase.id,
+          purchase.idUser,
+          purchase.idBook,
           book.title,
           author ? author.name : '',
           book.image,

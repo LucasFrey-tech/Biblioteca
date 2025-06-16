@@ -12,16 +12,16 @@ export class Purchases extends Crud<Purchase> {
     getAll(): Promise<Purchase[]> {
       throw new Error('Method not implemented.');
     }
-    getOne(id: number): Promise<Purchase> {
+    getOne(_id: number): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
-    create(data: Partial<Purchase>): Promise<Purchase> {
+    create(_data: Partial<Purchase>): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
-    update(id: number, data: Partial<Purchase>): Promise<Purchase> {
+    update(_id: number, _data: Partial<Purchase>): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
-    delete(id: number): Promise<void> {
+    delete(_id: number): Promise<void> {
         throw new Error('Method not implemented.');
     }
 

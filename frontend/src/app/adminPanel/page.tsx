@@ -1,65 +1,44 @@
 'use client';
+
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import styles from '../../styles/panelAdmin.module.css';
 import Swal from 'sweetalert2';
 import { Button } from "@/components/ui/button";
 import AddBookDialog from "@/components/pages/agregarLibro";
+import DragAndDrop from "@/components/pages/dropImage";
 
-type User = {
-  id: number;
-  firstname: string;
-  lastname: string;
-  username: string;
-  admin: boolean;
-  disabled: boolean;
-};
-
-type Book = {
-  id: number;
-  title: string;
-  author_id: number;
-  description: string;
-  anio: number;
-  isbn: string;
-  image: string;
-  stock: number;
-  subscriber_exclusive: boolean;
-  price: number;
-}
-type BookDTO = {
-  id: number;
-  title: string;
-  author_id: number;
-  author: string;
-  description: string;
-  anio: number;
-  isbn: string;
-  image: string;
-  stock: number;
-  subscriber_exclusive: boolean;
-  price: number;
-}
+import { BaseApi } from "@/API/baseApi";  
+import { Label } from "@radix-ui/react-label";
+import {BookFileUpdate } from "@/API/types/bookFile";
+import { User } from "@/API/types/user";
+import { BookGenre } from "@/API/types/book_genre";
 
 export default function PanelAdmin() {
   const [activeTab, setActiveTab] = useState<'users' | 'books'>('users');
   const [userOpenIds, setUserOpenIds] = useState<number[]>([]);
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [books, setBooks] = useState<BookDTO[]>([]);
+  const [books, setBooks] = useState<BookFileUpdate[]>([]);
+  // const [bookGenres, setBookGenres] = useState<BookGenre[]>([]);
+  // const [genres, setGenres] = useState<BookGenre[]>([]);
   const [search, setSearch] = useState('');
+  const apiRef = useRef<BaseApi | null>(null);
+  
+   apiRef.current = new BaseApi(); //ahora funciona sin token
 
+    
   // Estado para manejar la edición de libros
   const [booksEditState, setBooksEditState] = useState<{
     [key: number]: {
       editMode: boolean;
-      formData: BookDTO;
+      formData: BookFileUpdate;
     }
   }>({});
 
   // Función para iniciar la edición de un libro
-  const startEdit = (book: BookDTO) => {
+  const startEdit = (book: BookFileUpdate) => {
     setBooksEditState(prev => ({
       ...prev,
       [book.id]: {
@@ -95,29 +74,31 @@ export default function PanelAdmin() {
   // Guarda los cambios haciendo fetch PUT y actualizando el estado
   const saveChanges = async (bookId: number) => {
     const bookState = booksEditState[bookId];
+    console.log('Saving changes for book:', bookState.formData.image);
     if (!bookState) return;
-    const bookData: Book = {
+    const bookData: BookFileUpdate = {
       id: bookState.formData.id,
       title: bookState.formData.title,
       author_id: bookState.formData.author_id,
       description: bookState.formData.description,
       anio: bookState.formData.anio,
+      genre: bookState.formData.genre,
+      author: bookState.formData.author,
       isbn: bookState.formData.isbn,
-      image: bookState.formData.image,
+      image: bookState.formData.image? bookState.formData.image : books.find(b => b.id === bookId)?.image || '',
       stock: bookState.formData.stock,
       subscriber_exclusive: bookState.formData.subscriber_exclusive,
       price: bookState.formData.price
     }
     try {
-      const res = await fetch(`http://localhost:3001/books/${bookId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookData),
-      });
-      if (!res.ok) throw new Error("Error al guardar cambios");
+      console.log('Saving book data:', bookData);
+      apiRef.current?.books.updateBookFile(bookId, bookData);
+      
 
       // Actualizo localmente el estado de libros
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
+
+      // setGenres(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
 
       // Salgo del modo edición
       setBooksEditState(prev => ({
@@ -143,9 +124,9 @@ export default function PanelAdmin() {
   // Fetch usuarios
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:3001/users');
-      const data = await res.json();
-      setUsers(data);
+      const resUser = await apiRef.current?.users.getAll();
+      if (!resUser) throw new Error('No se pudieron obtener los usuarios');
+      setUsers(resUser);
     } catch (error) {
       console.error('Error al obtener usuarios', error);
     }
@@ -154,17 +135,35 @@ export default function PanelAdmin() {
   // Fetch libros
   const fetchBooks = async () => {
     try {
-      const res = await fetch('http://localhost:3001/books');
-      const data = await res.json();
-      setBooks(data);
+      const resBooks = await apiRef.current?.books.getAll();
+      if (!resBooks) throw new Error('No se pudieron obtener los libros');
+      setBooks(resBooks);
+      console.log(resBooks);
     } catch (error) {
       console.error('Error al obtener libros', error);
     }
   };
+  
+  // Fetch Generos
+  const fetchGenres = async () => {
+    try {
+      const resBookGenres = await apiRef.current?.bookGenre.findAll();
+      if (!resBookGenres) throw new Error('No se pudieron obtener los géneros');
+      //  setBookGenres(resBookGenres);
+      console.log(resBookGenres);
+    } catch (error) {
+      console.error('Error al obtener los generos', error);
+    }
+  };
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+       if (token) {
+            apiRef.current = new BaseApi(token);
+          }
     fetchUsers();
     fetchBooks();
+    fetchGenres();
   }, []);
 
   const toggleUserOpen = (id: number) => {
@@ -179,17 +178,29 @@ export default function PanelAdmin() {
     );
   };
 
+    const handleImage = (bookId: number,field: string, value: File) => {
+      console.log('Handling image for book:', bookId, 'Field:', field, 'Value:', value);
+        setBooksEditState(prev => {
+      const bookState = prev[bookId];
+      if (!bookState) return prev;
+      return {
+        ...prev,
+        [bookId]: {
+          ...bookState,
+          formData: {
+            ...bookState.formData,
+            [field]: value
+          }
+        }
+      };
+    });
+  };
+
   const updateUser = async (id: number, updates: Partial<User>) => {
     try {
-      const res = await fetch(`http://localhost:3001/users/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
+      const res = await apiRef.current?.users.update(id, updates);
 
-      if (!res.ok) throw new Error('Error en la actualización');
+      if (!res) throw new Error('Error en la actualización');
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -202,8 +213,8 @@ export default function PanelAdmin() {
   );
 
   const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(search.toLowerCase())
-  );
+  book.title?.toLowerCase().includes(search.toLowerCase())
+);
 
   return (
     <div className={styles.pageContainer}>
@@ -374,7 +385,8 @@ export default function PanelAdmin() {
               <AddBookDialog />
             </div>
 
-            {filteredBooks.map((book: BookDTO) => {
+            {filteredBooks.map((book: BookFileUpdate) => {
+              console.log('Book:', book);
               const editState = booksEditState[book.id] || {
                 editMode: false,
                 formData: book
@@ -394,32 +406,24 @@ export default function PanelAdmin() {
                     <div className={styles.bookDetails}>
                       {editState.editMode ? (
                         <>
-                          <label>
+                          <Label>
                             Título: 
                             <Input
                               name="title"
                               value={editState.formData.title}
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
-                          </label>
-                          <label>
-                            Autor:
-                            <Input
-                              name="author_name"
-                              value={editState.formData.author}
+                          </Label>
+                          <Label>
+                            Descripción:
+                            <textarea
+                              name="description"
+                              value={editState.formData.description}
                               onChange={(e) => handleBookChange(book.id, e)}
+                              rows={3}
                             />
-                          </label>
-                          <label>
-                            Precio:
-                            <Input
-                              type="number"
-                              name="price"
-                              value={editState.formData.price}
-                              onChange={(e) => handleBookChange(book.id, e)}
-                            />
-                          </label>
-                          <label>
+                          </Label>
+                          <Label>
                             Año:
                             <Input
                               type="number"
@@ -427,8 +431,30 @@ export default function PanelAdmin() {
                               value={editState.formData.anio}
                               onChange={(e) => handleBookChange(book.id, e)}
                             />
-                          </label>
-                          <label>
+                          </Label>
+                          <Label>
+                            ISBN:
+                            <Input
+                              name="isbn"
+                              value={editState.formData.isbn}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </Label>
+                        <Label>Imagen</Label>
+                            <DragAndDrop onFileDrop={file => {
+                                        handleImage(book.id,'image', file);  
+                                    }} 
+                              />     
+                          <Label>
+                            Stock:
+                            <Input
+                              type="number"
+                              name="stock"
+                              value={editState.formData.stock}
+                              onChange={(e) => handleBookChange(book.id, e)}      
+                              />
+                              </Label>
+                            <Label>
                             Exclusivo suscriptores:
                             <select
                               name="subscriber_exclusive"
@@ -454,16 +480,27 @@ export default function PanelAdmin() {
                               <option value="true">Sí</option>
                               <option value="false">No</option>
                             </select>
-                          </label>
-                          <label>
-                            Descripción:
-                            <textarea
-                              name="description"
-                              value={editState.formData.description}
+                          </Label>   
+                              
+                          <Label>
+                            Precio:
+                            <Input
+                              type="number"
+                              name="price"
+                              value={editState.formData.price}
                               onChange={(e) => handleBookChange(book.id, e)}
-                              rows={3}
                             />
-                          </label>
+                          </Label>       
+                          <Label>
+                            Autor:
+                            <Input
+                              name="author_name"
+                              value={editState.formData.author}
+                              onChange={(e) => handleBookChange(book.id, e)}
+                            />
+                          </Label>
+          
+                          
                           <div className={styles.editButtons}>
                             <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
                             <Button className={styles.botonEditar}  onClick={() => cancelEdit(book.id)}>Cancelar</Button>
@@ -471,11 +508,15 @@ export default function PanelAdmin() {
                         </>
                       ) : (
                         <>
-                          <p><strong>Autor:</strong> {book.author}</p>
-                          <p><strong>Precio:</strong> ${book.price}</p>
+                          <p><strong>Descripción:</strong> {book.description}</p>        
                           <p><strong>Año:</strong> {book.anio}</p>
-                          <p><strong>Descripción:</strong> {book.description}</p>
+                          <p><strong>ISBN:</strong>{book.isbn}</p>
+                          <p><strong>Stock:</strong>{book.stock}</p>
                           <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                          <p><strong>Precio:</strong> ${book.price}</p>
+                          <p><strong>Autor:</strong> {book.author}</p>
+                          <p><strong>Géneros:</strong> {book.genre?.join(', ') || 'Ninguno'}</p>
+                      
                           <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
                         </>
                       )}

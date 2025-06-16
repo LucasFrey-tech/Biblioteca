@@ -25,11 +25,11 @@ export class Authors extends Crud<Author> {
         return res.json();
     }
 
-    getOne(id: number): Promise<Author> {
+    getOne(_id: number): Promise<Author> {
         throw new Error("Method not implemented.");
     }
 
-    update(id: number, data: Partial<Author>): Promise<Author> {
+    update(_id: number, _data: Partial<Author>): Promise<Author> {
         throw new Error("Method not implemented.");
     }
 

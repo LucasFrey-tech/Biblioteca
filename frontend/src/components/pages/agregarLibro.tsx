@@ -18,9 +18,11 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import Swal from 'sweetalert2';
 
 import { AddAuthorDialog } from './AddAuthorDialog';
-import { AddGenreDialog } from './agregarCategoria'; // o como lo tengas nombrado
+import { AddGenreDialog } from './agregarCategoria'; 
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
+import { BookFile } from '@/API/types/bookFile';
+// import { BookGenres } from '@/API/class/book_genre';
 
 
 interface Author {
@@ -72,21 +74,9 @@ export default function AddBookDialog() {
   };
 
   const handleSubmit = async () => {
-    // const response = await fetch('http://localhost:3001/books', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     ...form,
-    //     author: Number(form.authorId),
-    //     subscriber_exclusive: form.subscriber_exclusive === 'true',
-    //     anio: Number(form.anio),
-    //     stock: Number(form.stock),
-    //     price: Number(form.price),
-    //     genres: form.genres.split(',').map(g => g.trim()).filter(g => g !== ''),
-    //   }),
     const genres = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
     console.log(form)
-    const newBook = {
+    const newBook: Partial<BookFile>= {
       id: 0,
       author: '',
       title: form.title,
@@ -99,9 +89,8 @@ export default function AddBookDialog() {
       price: Number(form.price),
       author_id: Number(form.authorId),
       genre: genres,
-      virtual: true,
     };
-
+    console.log('Form data:', newBook);
     // const response = API.books.create(newBook);
      API.books.createBookFile(newBook);
       
@@ -154,12 +143,6 @@ export default function AddBookDialog() {
       showConfirmButton: false,
     });
   };
-
-  //  const handleFile = (file: File) => {
-  //   console.log('Archivo recibido:', file);
-  //   // Subir el archivo al backend 
-  // };
-
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
     setGenres(prev => [...prev, genre]);
@@ -272,7 +255,9 @@ export default function AddBookDialog() {
                   />
                   <span>{genre.name}</span>
                 </label>
+                
               ))}
+              
             </div>
             <Button
               size="sm"
@@ -282,8 +267,9 @@ export default function AddBookDialog() {
             >
               + Agregar categoría
             </Button>
+            
           </div>
-
+              
           <AlertDialogFooter className="flex justify-end gap-2 mt-4">
             <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">
               Guardar
@@ -307,7 +293,9 @@ export default function AddBookDialog() {
         <AlertDialogContent>
           <AddGenreDialog onAdd={handleNewGenre} onClose={() => setOpenAddGenre(false)} />
         </AlertDialogContent>
+        
       </AlertDialog>
+      
     </>
   );
 }

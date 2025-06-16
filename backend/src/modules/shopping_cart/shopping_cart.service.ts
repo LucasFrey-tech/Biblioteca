@@ -36,6 +36,7 @@ export class ShoppingCartService {
 
                 return new BookCartDTO(
                     cart.id,
+                    book.id,
                     book.title,
                     author ? author.name : '',
                     book.image,

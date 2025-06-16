@@ -1,6 +1,4 @@
-@startuml
-skin rose
-' skinparam classAttributeIconSize 0
+@startuml prueba
 
 '======================
 ' Entidades
@@ -112,6 +110,8 @@ class UserController {
   + GET /users
 }
 
+'======================
+' Parte con AppModule corto (faltan agregar mas imports y relaciones.).
 
 class AppModule {
   + imports: BookModule, AuthorModule, GenreModule, UserModule
@@ -121,6 +121,32 @@ AppModule --> BookModule
 AppModule --> AuthorModule
 AppModule --> GenreModule
 AppModule --> UserModule
+'======================
+
+
+'======================
+' Parte con AppModule completo.
+' Como podemos apreciar el diagrama (y cuando probamos generar el png tambien) el diagrama queda dificil de leeer.
+/'
+class AppModule {
+    + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+}
+
+AppModule --> AuthModule
+AppModule --> UsersModule
+AppModule --> AuthorModule
+AppModule --> BooksModule
+AppModule --> BookReviewsModule
+AppModule --> GenresModule
+AppModule --> BookGenresModule
+AppModule --> ShoppingCartModule
+AppModule --> CatalogueBooksModule
+AppModule --> PurchasesModule
+AppModule --> LibraryBooksModule
+AppModule --> BookContentModule
+'/
+'======================
+
 
 '======================
 ' Relaciones

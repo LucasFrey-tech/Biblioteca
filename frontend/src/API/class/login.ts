@@ -12,19 +12,19 @@ export class Login extends Crud<LoginRequestBody>{
         throw new Error('Method getAll not supported for Auth');
     }
 
-    async getOne(id: number): Promise<never> {
+    async getOne(_id: number): Promise<never> {
         throw new Error('Method getOne not supported for Auth');
     }
 
-    async create(data: Partial<LoginRequestBody>): Promise<LoginRequestBody> {
+    async create(_data: Partial<LoginRequestBody>): Promise<LoginRequestBody> {
         throw new Error('Method create not supported for Auth');
     }
 
-    async update(id: number, data: Partial<never>): Promise<never> {
+    async update(_id: number, _data: Partial<never>): Promise<never> {
         throw new Error('Method update not supported for Auth');
     }
 
-    async delete(id: number): Promise<void> {
+    async delete(_id: number): Promise<void> {
         throw new Error('Method delete not supported for Auth');
     }
 

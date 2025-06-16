@@ -73,7 +73,7 @@ export class ShoppingCart extends Crud<ShoppingCartBook> {
     getAll(): Promise<ShoppingCartBook[]> {
         throw new Error('Method not implemented.');
     }
-    getOne(id: number): Promise<ShoppingCartBook> {
+    getOne(_id: number): Promise<ShoppingCartBook> {
         throw new Error('Method not implemented.');
     }
 

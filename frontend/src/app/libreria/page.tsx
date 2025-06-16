@@ -12,7 +12,7 @@ import LibraryCard from '@/components/pages/LibraryCard';
 import styles from '../../styles/catalogo.module.css';
 
 
-export default function BookPage() {
+export default function Libreira() {
     const [books, setBooks] = useState<BookLibreria[]>([]);
     const [authors, setAuthors] = useState<Author[]>([]);
     const [genres, setGenres] = useState<Genre[]>([]);
@@ -23,7 +23,7 @@ export default function BookPage() {
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    //const [_error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(2);
 
     useEffect(() => {
@@ -31,7 +31,7 @@ export default function BookPage() {
         if (id) {
             setUserId(Number(id));
         } else {
-            setError('ID del usuario no proporcionado o inválido.');
+            console.error('ID del usuario no proporcionado o inválido.');
             setLoading(false)
         }
     }, []);
@@ -73,7 +73,7 @@ export default function BookPage() {
 
         };
         fetchData();
-    }, []);
+    }, [userId]);
 
     const handleGenreToggle = (genreId: number) => {
         setSelectedGenres((prev) =>
@@ -110,7 +110,7 @@ export default function BookPage() {
         setSearchQuery(searchTerm);
     };
 
-    if (loading) return <p>Cargando carrito...</p>;
+    if (loading) return <p>Cargando libreria...</p>;
 
     return (
         <>

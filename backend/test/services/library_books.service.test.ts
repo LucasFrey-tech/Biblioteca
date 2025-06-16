@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LibraryBooksService } from '../../src/modules/books/library/library_books.service';
 import { BooksService } from '../../src/modules/books/book/book.service';
-import { LibraryBookDTO } from '../../src/modules/books/library/library_book.dto';
+import { LibraryBookDTO } from '../../src/modules/books/library/dto/library_book.dto';
 import {mockBook1,mockBooks} from '../mocks/books.mock'
 
 describe('LibraryBooksService', () => {
@@ -29,10 +29,10 @@ describe('LibraryBooksService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('findAll', () => {
+  describe('findAllByUser', () => {
     it('should return an array of LibraryBookDTO', async () => {
       booksService.findAll.mockResolvedValue(mockBooks);
-      const result = await service.findAll();
+      const result = await service.findAllByUser(1);
       expect(booksService.findAll).toHaveBeenCalled();
       expect(result).toHaveLength(3);
       expect(result[0]).toBeInstanceOf(LibraryBookDTO);
@@ -50,7 +50,7 @@ describe('LibraryBooksService', () => {
   describe('findOne', () => {
     it('should return a LibraryBookDTO if found', async () => {
       booksService.findOne.mockResolvedValue(mockBook1);
-      const result = await service.findOne(1);
+      const result = await service.findAllByUser(1);
       expect(booksService.findOne).toHaveBeenCalledWith(1);
       expect(result).toBeInstanceOf(LibraryBookDTO);
       expect(result).toMatchObject({
@@ -61,7 +61,7 @@ describe('LibraryBooksService', () => {
 
     it('should return null if not found', async () => {
       booksService.findOne.mockResolvedValue(null);
-      const result = await service.findOne(999);
+      const result = await service.findAllByUser(999);
       expect(result).toBeNull();
     });
   });
