@@ -97,10 +97,7 @@ const onSubmit = form.handleSubmit(async (values: UserType) => {
   
     const data = res;
     console.log('Datos:', data);
-    
-  
-    
-    
+    // Verificar si la respuesta contiene el token
     if (data.success) {
       localStorage.setItem('token', data.data.access_token);
       ////////////////////////////////////////////////////////////

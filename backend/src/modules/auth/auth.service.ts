@@ -55,11 +55,11 @@ export class AuthService {
   const user = await this.validateUser(requestBody.email, requestBody.password);
 
   if (user.disabled) {
-  throw new ForbiddenException('Usuario bloqueado. Contacta al administrador.');
-}
+    throw new ForbiddenException('Usuario bloqueado. Contacta al administrador.');
+  }
 
   // Creamos el payload del JWT (puedes agregar más info si querés)
-  const payload = { email: user.email, sub: user.id, username: user.username}; //agregamos el username al payload para usarlo en el login
+  const payload = { email: user.email, sub: user.id, username: user.username, admin: user.admin}; //agregamos el username al payload para usarlo en el login
 
   // Firmamos el token
   const access_token = this.jwtService.sign(payload);
