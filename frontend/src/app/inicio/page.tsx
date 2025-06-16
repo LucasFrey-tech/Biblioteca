@@ -1,19 +1,18 @@
 'use client'
 
-import Styles from './styles.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
-import { Card, CardContent } from '@/components/ui/card';
-import BookCard from '@/components/pages/Bookcard';
+
+import NovedadesCarousel from './novedadesCarousel/novedades_carousel';
+import {BookCardProps} from './bookCard/bookCardColumnInfo/book_card_column_info';
+import Styles from './styles.module.css';
+import BooksDisplayerFlex from './booksDisplayers/booksDisplayerFlex/books_displayer_flex';
+import BooksDisplayerFlexGrid from './booksDisplayers/booksDisplayersFlexGrid/books_displayer_flexgrid';
+import BooksScroller from './booksScroller/books_scroller';
+import GenresBooks from './bookGenresSection/bookGenresSection';
+import AuthorBooks from './authorBooksSection/author_books';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,10 +31,19 @@ export default function HomePage() {
   ];
 
   // Libros catálogo debajo
-  const catalogoBooks = [
-    { id: 1, title: 'Libro 1', price: 19.99, image: '/libros/libro1.webp' },
-    { id: 2, title: 'Libro 2', price: 24.99, image: '/libros/libro2.webp' },
-    { id: 3, title: 'Libro 3', price: 29.99, image: '/libros/libro3.webp' },
+  const LibrosRecientementeAgregados:BookCardProps[] = [
+    {title: 'Libro 1', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 2', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 3', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 4', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+  ];
+  const LibrosRecomendadosAgregados:BookCardProps[] = [
+    {title: 'Libro 1', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 2', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 3', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 4', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 5', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 6', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
   ];
 
   useEffect(() => {
@@ -103,65 +111,11 @@ export default function HomePage() {
 
   return (
     <div className={Styles.pageContainer}>
-      <div className={Styles.novedadesCarousel}>
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true
-          }}
-          className="max-w"
-          >
-          <CarouselContent>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <CarouselItem key={index} className="md:basis-1/1 lg:basis-1/1">
-                <div className={Styles.novedadesBookCard}>
-                  <img src={"https://hips.hearstapps.com/hmg-prod/images/gettyimages-180680638-676f621f720bc.jpg?crop=1.00xw:0.752xh;0,0.118xh&resize=1200:*"}/>
-                  <div className={Styles.details}>
-                    <div className={Styles.detailsTop}/>
-                    <div className={Styles.detailsMid}>
-                      <h2>PERROS: La ultima frontera?</h2>
-                    </div>
-                    <div className={Styles.detailsBot}>
-                      <p>Un analisis instrospectivo sobre la dieta canina, y las consecuencia sobre la relaciones gatunas.</p>
-                    </div>
-                  </div>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious/> 
-          <CarouselNext /> 
-        </Carousel>
-      </div>
-      <div className={Styles.newbooksContainer}>
-        <div className={Styles.titelContainer}>
-          <h1 className={Styles.title}>Nuevos Lanzamientos:</h1>
-        </div>
-        <div className={Styles.cardsContainer}>
-          <div className={Styles.bookCardContainer}>
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-          </div>
-        </div>
-      </div>
-      <div className={Styles.recomendationsContainer}>
-        <div className={Styles.titelContainer}>
-          <h1 className={Styles.title}>Recomendaciones:</h1>
-        </div>
-        <div className={Styles.cardsContainer}>
-          <div className={Styles.bookCardContainer}>
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-          </div>
-        </div>
-          <div className={Styles.bookCardContainer}>
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-            <BookCard book={{id: 1, title: 'Libro 1', author: 'Autor 1', image: '/libros/libro1.webp',price: 3}} />
-          </div>
-      </div>
+      <NovedadesCarousel />
+      <BooksDisplayerFlex title='Recientemente Agregados' books={LibrosRecientementeAgregados}/>
+      <BooksDisplayerFlexGrid title='Recomendados' rows={2} books={LibrosRecomendadosAgregados}/>
+      <GenresBooks />
+      <AuthorBooks />
     </div>
   );
 }

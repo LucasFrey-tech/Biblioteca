@@ -1,0 +1,29 @@
+
+.bookCard{
+    display: flex;
+    flex-direction: column;
+    min-height: 15rem;
+    height: 100%;
+    justify-content: end;
+}
+
+.bookCard img{
+    aspect-ratio: 2 / 3;
+    height: 100%;
+    position:   absolute;
+    z-index: -1;
+}
+
+.bookTitle{
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.bookWriter{
+    width: 100%;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
