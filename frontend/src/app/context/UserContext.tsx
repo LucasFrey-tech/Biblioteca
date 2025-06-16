@@ -1,37 +1,28 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { BaseApi } from '@/API/baseApi';
-import { User } from '@/API/types/user';
+import { jwtDecode } from 'jwt-decode';
 
 interface UserContextType {
-  user: User | null;
-  setUser: (user: User | null) => void;
+  user:{ email: string , sub: number, username: string, admin: boolean } | null;
+  setUser: (user: { email: string , sub: number, username: string, admin: boolean } | null) => void;
   refreshUser: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ email: string , sub: number, username: string, admin: boolean } | null>(null);
 
   const refreshUser = async () => {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-
-    if (!token || !userId) {
+    if (!token) {
       setUser(null);
       return;
     }
+    const decodedToken = jwtDecode<{ email: string , sub: number, username: string, admin: boolean}>(token); 
 
-    try {
-      const api = new BaseApi(token);
-      const userData = await api.users.getOne(Number(userId));
-      setUser(userData);
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      setUser(null);
-    }
+    setUser(decodedToken);
   };
 
   useEffect(() => {

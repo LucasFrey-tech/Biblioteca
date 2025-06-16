@@ -1,10 +1,9 @@
 'use client';
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
-
 import { useUser } from "@/app/context/UserContext";
 
 export default function Navbar() {
@@ -27,8 +26,8 @@ export default function Navbar() {
     };
 
     const handleProfileClick = () => {
-        if (user?.id) {
-            router.push(`/Perfil/${user.id}`);
+        if (user?.sub) {
+            router.push(`/Perfil/${user.sub}`);
             setDropDown(false);
         }
     };
@@ -77,7 +76,7 @@ export default function Navbar() {
                             </Link>
                         </div>
                     ) : (
-                        <a className={styles.boton} href="http://localhost:3000/login">Acceder</a>
+                        <button className ={styles.boton} onClick={() => router.push('/login')}>Acceder</button>
                     )}
                 </div>
 
@@ -125,9 +124,7 @@ export default function Navbar() {
                         </>
                     ) : (
                         <li>
-                            <Link href="http://localhost:3000/login" onClick={closeSidebar} className={styles.boton}>
-                                Acceder
-                            </Link>
+                            <button className ={styles.boton} onClick={() => { closeSidebar(); router.push('/login'); }} >Acceder</button>                    
                         </li>
                     )}
                 </ul>
