@@ -43,6 +43,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('image'))
   update(@Param('id') id: number, @Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File | string) {
     console.log('Archivo recibido para actualizar:', bookDTO.image);
+    console.log('ArchivoAAAAAAAAAAAAAAAAAAAAAAAA :', bookDTO.subscriber_exclusive);
     if (typeof file != 'string') {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }

@@ -36,8 +36,12 @@ export class Book {
   @Column()
   stock!: number;
 
-  @ApiProperty({description: 'Suscripción'})
-  @Column({ default: false })
+  @ApiProperty({ description: 'Suscripción' })
+  @Column({ 
+    type: 'boolean', 
+    default: false,
+    nullable: false 
+  })
   subscriber_exclusive!: boolean;
 
   @ApiProperty({example: 20000, description: 'Precio del Libro'})

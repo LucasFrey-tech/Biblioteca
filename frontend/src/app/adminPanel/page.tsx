@@ -91,7 +91,7 @@ export default function PanelAdmin() {
       price: bookState.formData.price
     }
     try {
-      console.log('Saving book data:', bookData);
+      console.log('AAAAAAAAAAAAAAAAAAAASaving book data:', bookData);
       apiRef.current?.books.updateBookFile(bookId, bookData);
       
 
@@ -460,7 +460,7 @@ export default function PanelAdmin() {
                               name="subscriber_exclusive"
                               value={editState.formData.subscriber_exclusive ? "true" : "false"}
                               onChange={(e) => {
-                                const value = e.target.value === "true";
+                                const value = Boolean(e.target.value === "true");
                                 setBooksEditState(prev => {
                                   const bookState = prev[book.id];
                                   if (!bookState) return prev;

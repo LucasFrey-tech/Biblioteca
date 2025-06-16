@@ -51,12 +51,8 @@ export class BooksService {
 
   async findOne(id: number): Promise<BookDTO | null> {
     const book = await this.booksRepository.findOne({ where: { id } });
-    // console.log("hola 1 ",book)
     
     if (!book) return null;
-
-    // console.log("hola 3 ",book)
-
     const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
 
     const bookGenresRelations = await this.bookGenreRepository.find({
@@ -80,7 +76,9 @@ export class BooksService {
   }
 
   async update(id: number, bookDTO: BookDTO) {
+    console.log('Valor recibido en update:', bookDTO.subscriber_exclusive);
     const updateData = BookDTO.BookDTO2Book(bookDTO);
+    console.log('Valor después de BookDTO2Book:', updateData.subscriber_exclusive); 
     await this.booksRepository.update(id, updateData);
     return this.findOne(id);
   }
