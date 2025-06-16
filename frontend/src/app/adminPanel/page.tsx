@@ -8,12 +8,13 @@ import Swal from 'sweetalert2';
 import { Button } from "@/components/ui/button";
 import AddBookDialog from "@/components/pages/agregarLibro";
 import DragAndDrop from "@/components/pages/dropImage";
-
 import { BaseApi } from "@/API/baseApi";  
 import { Label } from "@radix-ui/react-label";
 import {BookFileUpdate } from "@/API/types/bookFile";
 import { User } from "@/API/types/user";
-import { BookGenre } from "@/API/types/book_genre";
+import { useRouter } from 'next/navigation'; 
+import { jwtDecode } from "jwt-decode";
+
 
 export default function PanelAdmin() {
   const [activeTab, setActiveTab] = useState<'users' | 'books'>('users');
@@ -25,6 +26,7 @@ export default function PanelAdmin() {
   // const [genres, setGenres] = useState<BookGenre[]>([]);
   const [search, setSearch] = useState('');
   const apiRef = useRef<BaseApi | null>(null);
+  const router = useRouter();
   
    apiRef.current = new BaseApi(); //ahora funciona sin token
 
@@ -156,15 +158,47 @@ export default function PanelAdmin() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-       if (token) {
-            apiRef.current = new BaseApi(token);
-          }
-    fetchUsers();
-    fetchBooks();
-    fetchGenres();
-  }, []);
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  
+  if (!token) {
+    router.push('/login');
+    return;
+  }
+
+  
+  apiRef.current = new BaseApi(token);
+
+  const verifyAdminAndLoadData = async () => {
+    try {
+      const decodedToken = jwtDecode<{sub: number, admin: boolean}>(token); 
+      console.log('Decoded Token:', decodedToken);
+      const userId = decodedToken.sub; 
+      const allUsers = await apiRef.current?.users.getAll();
+      const currentUser = allUsers?.find(user => user.id === userId);
+
+      console.log('Usuario actual:', currentUser);
+      // 4. Verificar si es admin
+      if (decodedToken.admin !== true) {
+        Swal.fire({
+          title: 'Acceso denegado',
+          text: 'Solo los administradores pueden acceder.',
+          icon: 'error',
+        }).then(() => router.push('/inicio'));
+        return; // ¡Detiene la ejecución si no es admin!
+      }
+      await Promise.all([
+        fetchUsers(),
+        fetchBooks(),
+        fetchGenres(),
+      ]);
+    } catch (error) {
+      console.error('Error al verificar admin:', error);
+      router.push('/login'); // Si hay error, redirige al login
+    }
+  };
+  verifyAdminAndLoadData(); // ¡Ejecuta la función!
+}, [router]); // Añade `router` como dependencia
 
   const toggleUserOpen = (id: number) => {
     setUserOpenIds((prev) =>
