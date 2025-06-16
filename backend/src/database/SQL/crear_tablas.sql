@@ -10,7 +10,6 @@ create table users (
 	tel varchar(20) default(''),
 	admin bool default(false),
 	disabled bool default(false),
-	image text default(''),
 	registration_date timestamp default(CURRENT_TIMESTAMP)
 );
 
@@ -56,13 +55,6 @@ create table virtual_book_content(
 
 -- CREAR TABLA USER_VIRTUAL_BOOKS 
 create table user_virtual_books(
-	id serial primary key,
-	id_user integer not null,
-	id_book integer not null
-);
-
--- CREAR TABLA USER_FAVORITE_VIRTUAL_BOOKS XXXXXXXXXXXX
-create table user_favorite_virtual_books(
 	id serial primary key,
 	id_user integer not null,
 	id_book integer not null
