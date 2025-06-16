@@ -5,6 +5,7 @@ import styles from '../../styles/navbar.module.css';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { useUser } from "@/app/context/UserContext";
+import Swal from "sweetalert2";
 
 export default function Navbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -30,6 +31,42 @@ export default function Navbar() {
             router.push(`/Perfil/${user.sub}`);
             setDropDown(false);
         }
+    };
+
+    const handleSubscription = async () => {
+    const result = await Swal.fire({
+        title: "<strong>Comprar Subscripcion</strong>",
+        icon: "question",
+        html: `
+            <h1>¡Hola ${user?.username}!</h1>
+            <h1>¡Hola ${user?.username}!</h2>
+            <h1>¡Hola ${user?.username}!</h3>
+        `,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: `
+            <i class="fa fa-thumbs-up"></i> Great!
+        `,
+        confirmButtonAriaLabel: "Thumbs up, great!",
+        cancelButtonText: `
+            <i class="fa fa-thumbs-down"></i>
+        `,
+        cancelButtonAriaLabel: "Thumbs down"
+        });
+
+    if (result.isConfirmed) {
+        // user.sub = ID
+        // fetch a esa tabla id $user.sub
+        // user.subscription = true; 
+        // Mostramos confirmación
+        await Swal.fire({
+        title: '¡Suscripción hecha!',
+        icon: 'success',
+        timer: 1000,
+        showConfirmButton: false,
+        });
+    }
     };
 
     return (
@@ -60,7 +97,9 @@ export default function Navbar() {
                                     <button onClick={handleProfileClick}>Mi Perfil</button>
                                     {user.admin && (
                                         <button onClick={() => router.push('/adminPanel')}>Panel de Admin</button>
-                                    )}
+                                    )}                          
+                                     {/* Falta agregar si el usuario es o no subscriptor/ user.subscription && () */}   
+                                    <button onClick={handleSubscription}> Comprar suscripción</button>     
                                     <button onClick={closeSession}>Cerrar Sesión</button>
                                 </div>
                             )}
@@ -116,11 +155,23 @@ export default function Navbar() {
                                     </div>
                                 </Link>
                             </li>
-                            <li><button onClick={handleProfileClick}>Mi Perfil</button></li>
+
+                            <li>
+                                <button onClick={handleProfileClick}>Mi Perfil</button>
+                            </li>
                             {user.admin && (
-                                <li><button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button></li>
-                            )}
-                            <li><button onClick={closeSession}>Cerrar Sesión</button></li>
+                                <li>
+                                    <button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button>
+                                </li>
+                            )}      
+                                {/* Falta agregar si el usuario es o no subscriptor/ user.subscription && () */}
+                                <li>
+                                    <button onClick={handleSubscription}> Comprar suscripción</button>
+                                </li>
+                            
+                                <li>
+                                    <button onClick={closeSession}>Cerrar Sesión</button>
+                                </li>
                         </>
                     ) : (
                         <li>

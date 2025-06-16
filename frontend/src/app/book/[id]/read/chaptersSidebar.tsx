@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Styles from "./styles.module.css";
 import { TiChevronLeft } from "react-icons/ti";
 
-export function ChaptersSideBar(chapters: string[] ):React.JSX.Element {
+export function ChaptersSideBar({ chapters }: { chapters: string[] }): React.JSX.Element {
   const [open, setOpen] = useState(false);
 
   return (
