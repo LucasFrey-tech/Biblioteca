@@ -17,4 +17,10 @@ AppModule --> PurchasesModule
 AppModule --> LibraryBooksModule
 AppModule --> BookContentModule
 
+
+
+UsersModule -- UserController
+UsersModule -- UserService
+UsersModule -- UserEntity
+
 @enduml

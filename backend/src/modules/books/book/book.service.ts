@@ -43,7 +43,7 @@ export class BooksService {
       const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.id_genre === g.id));
 
       const bookGenres = filteredGenres.map((fbg) => fbg.name);
-      return BookDTO.Book2BookDTO(book, author ? author.name : "", bookGenres); 
+      return BookDTO.BookEntity2BookDTO(book, author ? author.name : "", bookGenres); 
     });
 
     return result;
@@ -67,17 +67,17 @@ export class BooksService {
       genres = genreEntities.map((g) => g.name);
     }
 
-    return BookDTO.Book2BookDTO(book, author ? author.name : "", genres);
+    return BookDTO.BookEntity2BookDTO(book, author ? author.name : "", genres);
   }
 
   create(bookDTO: BookDTO) {
-    const book = BookDTO.BookDTO2Book(bookDTO);    
+    const book = BookDTO.BookDTO2BookEntity(bookDTO);    
     return this.booksRepository.save(book);
   }
 
   async update(id: number, bookDTO: BookDTO) {
     console.log('Valor recibido en update:', bookDTO.subscriber_exclusive);
-    const updateData = BookDTO.BookDTO2Book(bookDTO);
+    const updateData = BookDTO.BookDTO2BookEntity(bookDTO);
     console.log('Valor después de BookDTO2Book:', updateData.subscriber_exclusive); 
     await this.booksRepository.update(id, updateData);
     return this.findOne(id);

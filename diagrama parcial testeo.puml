@@ -31,14 +31,9 @@ class UserEntity {
 ' DTOs
 '======================
 
-class CreateBookDto {
-  + title: string
-  + authorId: number
-}
-
-class UpdateBookDto {
-  + title?: string
-  + authorId?: number
+class BookDto {
+  + BookDTO2BookEntity(props): Book
+  + BookEntity2BookDTO(props): BookDTO
 }
 
 class CreateAuthorDto {
@@ -60,11 +55,11 @@ class CreateUserDto {
 '======================
 
 class BookService {
-  + create(dto: CreateBookDto)
-  + findAll()
-  + findOne(id: number)
-  + update(id: number, dto: UpdateBookDto)
-  + remove(id: number)
+  + findOne(id: number): Promise<BookDTO | null>
+  + create(bookDTO: BookDTO)
+  + update(id: number, bookDTO: BookDTO)
+  + delete(id: number)
+  + bookImageUrl = (imageName:string):string
 }
 
 class AuthorService {
@@ -113,38 +108,38 @@ class UserController {
 '======================
 ' Parte con AppModule corto (faltan agregar mas imports y relaciones.).
 
-class AppModule {
-  + imports: BookModule, AuthorModule, GenreModule, UserModule
-}
+' class AppModule {
+'   + imports: BookModule, AuthorModule, GenreModule, UserModule
+' }
 
-AppModule --> BookModule
-AppModule --> AuthorModule
-AppModule --> GenreModule
-AppModule --> UserModule
-'======================
+' AppModule --> BookModule
+' AppModule --> AuthorModule
+' AppModule --> GenreModule
+' AppModule --> UserModule
+' '======================
 
 
 '======================
 ' Parte con AppModule completo.
 ' Como podemos apreciar el diagrama (y cuando probamos generar el png tambien) el diagrama queda dificil de leeer.
-/'
-class AppModule {
-    + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
-}
 
-AppModule --> AuthModule
-AppModule --> UsersModule
-AppModule --> AuthorModule
-AppModule --> BooksModule
-AppModule --> BookReviewsModule
-AppModule --> GenresModule
-AppModule --> BookGenresModule
-AppModule --> ShoppingCartModule
-AppModule --> CatalogueBooksModule
-AppModule --> PurchasesModule
-AppModule --> LibraryBooksModule
-AppModule --> BookContentModule
-'/
+' class AppModule {
+'     + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+' }
+
+' AppModule --> AuthModule
+' AppModule --> UsersModule
+' AppModule --> AuthorModule
+' AppModule --> BooksModule
+' AppModule --> BookReviewsModule
+' AppModule --> GenresModule
+' AppModule --> BookGenresModule
+' AppModule --> ShoppingCartModule
+' AppModule --> CatalogueBooksModule
+' AppModule --> PurchasesModule
+' AppModule --> LibraryBooksModule
+' AppModule --> BookContentModule
+
 '======================
 
 
@@ -154,7 +149,7 @@ AppModule --> BookContentModule
 
 BookController --> BookService
 BookService --> BookEntity
-BookService --> CreateBookDto
+BookService --> BookDto
 BookService --> UpdateBookDto
 
 AuthorController --> AuthorService
@@ -169,6 +164,13 @@ UserController --> UserService
 UserService --> UserEntity
 UserService --> CreateUserDto
 
-BookEntity --> AuthorEntity : authorId
+AuthController --> AuthService
+AuthService --> AuthEntity
+AuthService --> CreateAuthDto
+
+
+BookService --> GenreService : genreId
+BookService --> AuthorService : authorId
+
 
 @enduml

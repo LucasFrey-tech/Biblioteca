@@ -33,7 +33,7 @@ export class BookDTO {
   subscriber_exclusive: boolean;
   price: number;
 
-  static BookDTO2Book(bookDTO: BookDTO): Book {
+  static BookDTO2BookEntity(bookDTO: BookDTO): Book {
     return {
       id: bookDTO.id,
       title: bookDTO.title,
@@ -48,7 +48,7 @@ export class BookDTO {
     };
   }
 
-  static Book2BookDTO(book: Book,author:string, genres:string[]): BookDTO {
+  static BookEntity2BookDTO(book: Book,author:string, genres:string[]): BookDTO {
     return {
       id: book.id,
       title: book.title,
@@ -63,22 +63,5 @@ export class BookDTO {
       subscriber_exclusive: book.subscriber_exclusive, 
       price: book.price,
     };
-  }
-
-  static getImageFileFromPath(filePath:string):Express.Multer.File {
-    const stats = fs.statSync(filePath);
-    let imageFile = {
-          fieldname: 'image',
-          originalname: path.basename(filePath),
-          encoding: '7bit',
-          mimetype: mime.lookup(filePath) || 'application/octet-stream', 
-          size: stats.size,
-          destination: path.dirname(filePath),
-          filename: path.basename(filePath),
-          path: filePath,
-          buffer: fs.readFileSync(filePath),
-          stream: fs.createReadStream(filePath),
-        } as Express.Multer.File;
-    return imageFile;
   }
 };
