@@ -12,7 +12,7 @@ import { jwtDecode } from "jwt-decode";
 
 export default function ReadBook(){
     const params = useParams();
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [bookContent, setBookContent] = useState<BookContentDTO>({
         id: 1,
@@ -23,37 +23,39 @@ export default function ReadBook(){
     const apiRef = useRef<BaseApi | null>(null);
     
     useEffect(() => {  
-        
         // Verificar que el id del libro este en los parametros.
         if (!params || !params.id) {
             setError('ID del libro no proporcionado.');
             setLoading(false);
             return;
         }
-
+        
         const bookId = Array.isArray(params.id) ? parseInt(params.id[0]) : parseInt(params.id);
-
+        
         if (isNaN(bookId)) {
             setError('ID del libro inválido.');
             setLoading(false);
             return;
         }
-
-
+        
+        
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('token');
-
                 // Verificar que el usuario este logueado.
                 if (!token) {
                     router.push('/login');
                     return;
                 }
-
+                apiRef.current = new BaseApi(token);
                 const decodedToken = jwtDecode<{ sub: number}>(token); 
 
                 // Verificar que el usuario tenga el libro.
+                console.log("API: AAAAAA" ,apiRef.current)
                 const resBooks = await apiRef.current?.libreria.findAllByUser(decodedToken.sub);
+                console.log("Libros del usuario:", decodedToken.sub);
+                console.log(resBooks);
+                console.log("ID del libro:", bookId);
                 if (!resBooks || !resBooks.some(book => book.id === bookId)) {
                     setError('No tienes acceso a este libro.');
                     setLoading(false);
@@ -90,7 +92,7 @@ export default function ReadBook(){
                         {
                             loading?<></>:
                             <div>
-                                {ChaptersSideBar(getChaptersFromContent(bookContent.content))}
+                            <ChaptersSideBar chapters={getChaptersFromContent(bookContent.content)} />
                                 <div className={Styles.content}>
                                     <div dangerouslySetInnerHTML={{__html: bookContent?.content}}/>
                                 </div>
