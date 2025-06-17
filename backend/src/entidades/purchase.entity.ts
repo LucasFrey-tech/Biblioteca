@@ -15,9 +15,13 @@ export class Purchase {
     @Column({ name: 'id_book', type: 'integer' })
     idBook: number;
 
-    @ApiProperty({ example: 20000, description: 'Valor Total de la Compra' })
+    @ApiProperty({ example: 20000, description: 'Cantidad de libros' })
     @Column({ name: 'amount', type: 'integer' })
     amount: number;
+
+    @ApiProperty({ example: 'El Principito', description: 'Valor de la compra' })
+    @Column({ name: 'price', type: 'integer' })
+    price: number
 
     @ApiProperty({ description: 'Tipo de libro' })
     @Column({ default: false })

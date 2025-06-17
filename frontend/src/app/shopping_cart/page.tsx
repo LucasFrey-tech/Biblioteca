@@ -148,7 +148,6 @@ export default function ShoppingCartPage() {
                     );
                 } catch (libraryError) {
                     console.error('Error agregando libros a la libreria:', libraryError);
-                    // No detenemos el flujo aunque falle la adición a la libreria
                 }
             }
 

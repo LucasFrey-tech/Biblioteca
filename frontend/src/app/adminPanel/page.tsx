@@ -166,18 +166,23 @@ useEffect(() => {
     return;
   }
 
-  
   apiRef.current = new BaseApi(token);
 
   const verifyAdminAndLoadData = async () => {
     try {
       const decodedToken = jwtDecode<{sub: number, admin: boolean}>(token); 
-      console.log('Decoded Token:', decodedToken);
       const userId = decodedToken.sub; 
       const allUsers = await apiRef.current?.users.getAll();
       const currentUser = allUsers?.find(user => user.id === userId);
 
-      console.log('Usuario actual:', currentUser);
+      if (!currentUser) {
+        Swal.fire({
+          title: 'Usuario no encontrado',
+          text: 'Por favor, inicia sesión nuevamente.',
+          icon: 'error',
+        }).then(() => router.push('/login'));
+        return; 
+      }
       // 4. Verificar si es admin
       if (decodedToken.admin !== true) {
         Swal.fire({

@@ -55,6 +55,7 @@ export class PurchasesService {
         idUser,
         idBook: cartItem.idBook,
         amount: item.amount,
+        price: book.price * item.amount,
         virtual: item.virtual,
         purchaseDate: new Date(),
       });
