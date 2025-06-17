@@ -1,12 +1,12 @@
 . Novedades
 . Lectura de Libros
-
-.documentacion proyecto (typedoc) y api (no me acuerdo :D)
+. Subscripcion
+. Cambiar los fetch de addAuthor y de categoria
+.documentacion proyecto (typedoc) y api 
+.Agregar libro linea 98- Cambiar el true hardcodeado
 .tests
-
 
 Si hay tiempo:
 
-. Imagen de usuario
 . admin => historial ventas
 
