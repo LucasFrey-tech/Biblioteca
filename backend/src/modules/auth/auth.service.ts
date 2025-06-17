@@ -1,46 +1,54 @@
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Injectable, UnauthorizedException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { UsersService } from '../users/user.service';
 import { LoginRequestBody, RegisterRequestBody } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ){ 
+    this.logger.log('AuthService inicializado');
+  }
 
   // REGISTRO
   async register(requestBody: RegisterRequestBody) {
-
+    
     // Verificar si ya existe el usuario por email
     const existingUserEmail = await this.usersService.findByEmail(requestBody.email);
     // Verificar si ya existe el usuario por nombre de usuario
     const existingUserName = await this.usersService.findByUser(requestBody.username);
-
+    
+    console.log('existingUserEmail:', existingUserEmail);
+    console.log('existingUserName:', existingUserName);
+    
     if (existingUserEmail && existingUserName) {
       throw new BadRequestException('El correo y el usuario ya existen!');
     }
-
+    
     if (existingUserEmail) {
       throw new BadRequestException('El correo ya está registrado');
     }
     if (existingUserName) {
       throw new BadRequestException('Este nombre de usuario ya existe');
     }
-
+    
     // Hashear la contraseña
     const hashedPassword = await bcrypt.hash(requestBody.password, 10);
-
+    
     // Crear usuario con contraseña hasheada
     const user = await this.usersService.create({
       ...requestBody,
       password: hashedPassword,
     });
-
+    
     // No devolver la contraseña
     const { password, ...result } = user;
+    
+    this.logger.log('Usuario Creado');
     return result;
   }
 
@@ -48,6 +56,7 @@ export class AuthService {
 
   async login(requestBody: LoginRequestBody) {
     // Validamos el usuario y la contraseña
+    console.log(requestBody)
     const user = await this.validateUser(requestBody.email, requestBody.password);
 
     if (user.disabled) {
@@ -61,6 +70,7 @@ export class AuthService {
     const access_token = this.jwtService.sign(payload);
 
     // Devolvemos el token
+    this.logger.log('Usuario logueado');
     return { access_token };
   }
 
