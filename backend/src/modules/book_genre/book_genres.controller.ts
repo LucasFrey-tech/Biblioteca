@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { BookGenresService } from './book_genres.service';
 import { BookGenre } from 'src/entidades/book_genres.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { BookGenreDto } from './book_genre.dto';
 
 @ApiTags('Generos de Libros')
 @Controller('book_genres')

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BookGenre } from 'src/entidades/book_genres.entity';
 import { Genre } from 'src/entidades/genre.entity';
+import { BookGenreDto } from './book_genre.dto';
 
 @Injectable()
 export class BookGenresService {

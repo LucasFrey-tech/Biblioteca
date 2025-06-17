@@ -1,6 +1,3 @@
-import * as fs from 'fs';
-import mime from 'mime';
-import * as path from 'path';
 import { Book } from 'src/entidades/book.entity';
 import {Transform} from 'class-transformer';
 

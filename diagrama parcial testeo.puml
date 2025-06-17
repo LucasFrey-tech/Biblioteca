@@ -4,15 +4,28 @@
 ' Entidades
 '======================
 
+class AuthorEntity {
+  + id: number
+  + name: string
+}
+
+class BookGenresEntity {
+  + id: number
+  + id_book: number
+  + id_genre: number
+}
+
 class BookEntity {
   + id: number
   + title: string
   + authorId: number
-}
-
-class AuthorEntity {
-  + id: number
-  + name: string
+  + description: string
+  + anio: number
+  + isbn: string
+  + image: string
+  + stock: number
+  + subscriber_exclusive: boolean
+  + price: number
 }
 
 class GenreEntity {
@@ -31,13 +44,44 @@ class UserEntity {
 ' DTOs
 '======================
 
-class BookDto {
-  + BookDTO2BookEntity(props): Book
-  + BookEntity2BookDTO(props): BookDTO
+package AuthDto {
+  class LoginRequestBody {
+    + email: string;
+    + password: string;
+  }
+
+  class RegisterRequestBody {
+    + username: string;
+    + fistname: string;
+    + lastname: string;
+    + email: string;
+    + image: string;
+    + password: string;
+  }
 }
 
 class CreateAuthorDto {
-  + name: string
+  + name: string;
+}
+
+class BookGenresDto {
+  + id_book: number;
+  + name: string;
+}
+
+class BookDto {
+  + id: number;
+  + title: string;
+  + author: string;
+  + author_id: number;
+  + description: string;
+  + genre: string[];
+  + anio: number;
+  + isbn: string;
+  + image: string;
+  + stock: number;
+  + BookDTO2BookEntity(props): Book
+  + BookEntity2BookDTO(props): BookDTO
 }
 
 class CreateGenreDto {
@@ -54,17 +98,32 @@ class CreateUserDto {
 ' Services
 '======================
 
+class AuthService {
+  + register(requestBody: RegisterRequestBody)
+  + login(requestBody: LoginRequestBody)
+  + validateUser(email: string, pass: string): Promise<any>
+}
+
+class AuthorService {
+  + create(createAuthorDto: CreateAuthorDto): Promise<Author>
+  + findAll(): Promise<Author[]>
+  + findOne(id: number): Promise<Author>
+  + remove(id: number): Promise<void>
+}
+
+class BookGenresService {
+  + findAll(): Promise<BookGenre[]>
+  + create(data: Partial<BookGenreDto>): Promise<BookGenre>
+  + delete(id: number)
+}
+
 class BookService {
+  + findAll(): Promise<BookDTO[]>
   + findOne(id: number): Promise<BookDTO | null>
   + create(bookDTO: BookDTO)
   + update(id: number, bookDTO: BookDTO)
   + delete(id: number)
-  + bookImageUrl = (imageName:string):string
-}
-
-class AuthorService {
-  + create(dto: CreateAuthorDto)
-  + findAll()
+  + bookImageUrl = (imageName:string):string=>
 }
 
 class GenreService {
@@ -82,18 +141,32 @@ class UserService {
 ' Controllers
 '======================
 
+class AuthController {
+  + POST /login
+  + POST /register
+}
+
+class AuthorController {
+  + GET /authors
+  + GET /authors/:id
+  + POST /authors
+  + DELETE /authors/:id
+}
+
+class BookGenresController {
+  + GET /book_genres
+  + POST /book_genres
+  + DELETE /book_genres/:id
+}
+
 class BookController {
-  + POST /books
   + GET /books
   + GET /books/:id
+  + POST /books
   + PUT /books/:id
   + DELETE /books/:id
 }
 
-class AuthorController {
-  + POST /authors
-  + GET /authors
-}
 
 class GenreController {
   + POST /genres
@@ -106,10 +179,16 @@ class UserController {
 }
 
 '======================
+' EXTRAS
+'======================
+
+
+'======================
 ' Parte con AppModule corto (faltan agregar mas imports y relaciones.).
 
 ' class AppModule {
-'   + imports: BookModule, AuthorModule, GenreModule, UserModule
+  '   + imports: BookModule, AuthorModule, GenreModule, UserModule
+  '
 ' }
 
 ' AppModule --> BookModule
@@ -124,7 +203,8 @@ class UserController {
 ' Como podemos apreciar el diagrama (y cuando probamos generar el png tambien) el diagrama queda dificil de leeer.
 
 ' class AppModule {
-'     + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+  '     + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+  '
 ' }
 
 ' AppModule --> AuthModule
@@ -147,14 +227,25 @@ class UserController {
 ' Relaciones
 '======================
 
-BookController --> BookService
-BookService --> BookEntity
-BookService --> BookDto
-BookService --> UpdateBookDto
+AuthController --> AuthService
+AuthService --> AuthDto
+' AuthService --> LoginRequestBody
+' AuthService --> RegisterRequestBody
 
 AuthorController --> AuthorService
 AuthorService --> AuthorEntity
 AuthorService --> CreateAuthorDto
+
+BookGenresController --> BookGenresService
+BookGenresService --> BookGenresEntity
+BookGenresService --> GenreEntity
+BookGenresService --> BookGenresDto
+
+
+BookController --> BookService
+BookService --> BookEntity
+BookService --> BookDto
+BookService --> UpdateBookDto
 
 GenreController --> GenreService
 GenreService --> GenreEntity
@@ -163,10 +254,6 @@ GenreService --> CreateGenreDto
 UserController --> UserService
 UserService --> UserEntity
 UserService --> CreateUserDto
-
-AuthController --> AuthService
-AuthService --> AuthEntity
-AuthService --> CreateAuthDto
 
 
 BookService --> GenreService : genreId

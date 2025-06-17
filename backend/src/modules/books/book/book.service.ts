@@ -43,7 +43,7 @@ export class BooksService {
       const filteredGenres = genres.filter((g) => filteredBookGenres.some((fbg) => fbg.id_genre === g.id));
 
       const bookGenres = filteredGenres.map((fbg) => fbg.name);
-      return BookDTO.BookEntity2BookDTO(book, author ? author.name : "", bookGenres); 
+      return BookDTO.Book2BookDTO(book, author ? author.name : "", bookGenres); 
     });
 
     return result;
@@ -67,7 +67,7 @@ export class BooksService {
       genres = genreEntities.map((g) => g.name);
     }
 
-    return BookDTO.BookEntity2BookDTO(book, author ? author.name : "", genres);
+    return BookDTO.Book2BookDTO(book, author ? author.name : "", genres);
   }
 
   create(bookDTO: BookDTO) {

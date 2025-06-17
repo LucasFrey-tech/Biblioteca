@@ -1,7 +1,6 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { LoginRequestBody, RegisterRequestBody } from './auth.interface';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Autorización')
@@ -12,11 +11,11 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @ApiOperation({ summary: 'Iniciar Sesión' })
-  @ApiParam({ name: 'login', type: LoginDto })
-  @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: 200, description: 'Login Exitoso', type: LoginDto })
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  @ApiParam({ name: 'login', type: LoginRequestBody })
+  @ApiBody({ type: LoginRequestBody })
+  @ApiResponse({ status: 200, description: 'Login Exitoso', type: LoginRequestBody })
+  async login(@Body() LoginRequestBody: LoginRequestBody) {
+    return this.authService.login(LoginRequestBody);
   }
 
   @Post('register')
