@@ -1,9 +1,9 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { BooksService } from '../book/book.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class LibraryBooksService {

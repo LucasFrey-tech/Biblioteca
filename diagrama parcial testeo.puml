@@ -28,6 +28,12 @@ class BookEntity {
   + price: number
 }
 
+class UserVirtualBooks {
+  + id: number
+  + idUser: number
+  + idBook: number
+}
+
 class ReviewEntity {
   + id: number
   + id_user: number
@@ -411,26 +417,67 @@ AuthorService --> CreateAuthorDTO
 
 BookGenresController --> BookGenresService
 BookGenresService --> BookGenresEntity
-BookGenresService --> GenreEntity
 BookGenresService --> BookGenresDTO
-
+BookGenresService --> GenreEntity
 
 BookController --> BookService
 BookService --> BookEntity
-BookService --> BookDto
-BookService --> UpdateBookDto
+BookService --> AuthorEntity
+BookService --> GenreEntity
+BookService --> BookGenreEntity
+BookService --> BookDTO
 
-GenreController --> GenreService
-GenreService --> GenreEntity
-GenreService --> CreateGenreDto
+CatalogueBookController --> CatalogueBookService
+CatalogueBookService --> CatalogueBookDTO
 
-UserController --> UserService
-UserService --> UserEntity
-UserService --> CreateUserDto
+BookContentController --> BookContentService
+BookContentService --> VirtualBookContent
+BookContentService --> BookContentDTO
 
+LibraryBooksController --> LibraryBooksService
+LibraryBooksService --> UserVirtualBooks
+LibraryBooksService --> LibraryBookDTO
+
+BookReviewsController --> BookReviewsService
+BookReviewsService --> UserEntity
+BookReviewsService --> ReviewEntity
+BookReviewsService --> ReviewI
+
+GenresController --> GenresService
+GenresService --> GenreEntity
+
+PurchasesController --> PurchasesService
+PurchasesService --> PurchaseEntity
+PurchasesService --> ShoppingCartBookEntity
+PurchasesService --> BookEntity
+PurchasesService --> UserEntity
+PurchasesService --> AuthorEntity
+PurchasesService --> PurchaseDTO
+
+ShoppingCartController --> ShoppingCartService
+ShoppingCartService --> ShoppingCartBookEntity
+ShoppingCartService --> AuthorEntity
+ShoppingCartService --> BookEntity
+ShoppingCartService --> UserEntity
+ShoppingCartService --> BookCartDTO
+
+UsersController --> UsersService
+UsersService --> UserEntity
+
+
+
+'EXTRAS
+AuthService --> UserService : usersService
 
 BookService --> GenreService : genreId
 BookService --> AuthorService : authorId
+BookService --> SettingsService :: bookImageUrl
+
+CatalogueBookService --> BookService : booksService
+
+LibraryBooksService --> BooksService :: findAllByUser
+
+
 
 
 @enduml
