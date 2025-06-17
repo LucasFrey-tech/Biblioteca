@@ -34,12 +34,10 @@ export class PurchasesService {
       throw new Error('El carrito está vacío');
     }
 
-    ///
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) {
       throw new Error('Usuario no encontrado');
     }
-    ///
     
     const purchases: Partial<Purchase>[] = [];
     for(const item of cartItems) {
@@ -62,7 +60,6 @@ export class PurchasesService {
       });
       
     }
-
 
     await this.purchaseRepository.save(purchases);
     await this.cartRepository.delete({ idUser });

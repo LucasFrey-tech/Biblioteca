@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, Post, Body } from "@nestjs/common";
+import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { Author } from "src/entidades/author.entity";
 import { CreateAuthorDto } from "src/modules/authors/crear-autor.dto";
@@ -18,10 +18,10 @@ export class AuthorController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener Autor por ID' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Autor Encontrado', type: Author})
-    findOne(@Param('id') id: string) {
-        return this.authorService.findOne(+id);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.authorService.findOne(id);
     }
 
     @Post()
@@ -34,9 +34,9 @@ export class AuthorController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar Autor' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Autor Eliminado' })
-    remove(@Param('id') id: string) {
-        return this.authorService.remove(+id);
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.authorService.remove(id);
     }
 }

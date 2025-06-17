@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { BookContentService } from './book_content.service';
 import { BookContentDTO } from './book_content.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
@@ -11,7 +11,7 @@ export class BookContentController {
     @ApiOperation({ summary: 'Obtener contenido de Libro Virtual por ID' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Contenido de Libro Virtual Encontrado', type: BookContentDTO })
-    async get(@Param('id') id: number):Promise<BookContentDTO|null> {
+    async get(@Param('id', ParseIntPipe) id: number):Promise<BookContentDTO|null> {
         return await this.bookContentService.get(id);
     }
 
@@ -28,7 +28,7 @@ export class BookContentController {
     @ApiParam({ name: 'id', type: Number })
     @ApiBody({ type: BookContentDTO })
     @ApiResponse({ status: 200, description: 'Contenido de un libro virtual editado', type: BookContentDTO })
-    update(@Param('id') id: number, @Body() bookContent: BookContentDTO) {
+    update(@Param('id', ParseIntPipe) id: number, @Body() bookContent: BookContentDTO) {
         return this.bookContentService.update(id, bookContent);
     }
 
@@ -36,7 +36,7 @@ export class BookContentController {
     @ApiOperation({ summary: 'Eliminar contenido de un libro virtual.' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Contenido de un libro virtual eliminado' })
-    delete(@Param('id') id: number) {
+    delete(@Param('id', ParseIntPipe) id: number) {
         return this.bookContentService.delete(id);
     }
 }

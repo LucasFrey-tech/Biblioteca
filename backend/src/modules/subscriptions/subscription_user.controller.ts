@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Delete } from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, Delete, ParseIntPipe } from "@nestjs/common";
 import { UserSubscription } from "src/entidades/subscription_user.entity";
 import { UserSubscriptionService } from "./subscription_user.service";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
@@ -25,7 +25,7 @@ export class UserSubscriptionController {
   @ApiOperation({ summary: 'Obetener Suscripción del Usuario'})
   @ApiParam({ name: 'userId', type: Number})
   @ApiResponse({ status: 200, description: 'Suscripción Encontrada', type: UserSubscription})
-  async getUserSubscriptions(@Param('userId') userId: number): Promise<UserSubscription[]> {
+  async getUserSubscriptions(@Param('userId', ParseIntPipe) userId: number): Promise<UserSubscription[]> {
     return this.userSubscriptionService.getUserSubscriptions(userId);
   }
 
@@ -33,7 +33,7 @@ export class UserSubscriptionController {
   @ApiOperation({ summary: 'Eliminar Suscripción'})
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Suscripción Eliminada'})
-  async cancelSubscription(@Param('id') id: number): Promise<void> {
+  async cancelSubscription(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.userSubscriptionService.cancelSubscription(id);
   }
 }

@@ -32,7 +32,6 @@ export class BooksService {
     const genres = await this.genreRepository.find();
     const booksGenres = await this.bookGenreRepository.find();
     
-    console.log(books);
     const result = books.map((book) => {
       const idAuthor = book.author_id;
       const author = authors.find((element) => element.id === idAuthor);
@@ -76,9 +75,7 @@ export class BooksService {
   }
 
   async update(id: number, bookDTO: BookDTO) {
-    console.log('Valor recibido en update:', bookDTO.subscriber_exclusive);
     const updateData = BookDTO.BookDTO2BookEntity(bookDTO);
-    console.log('Valor después de BookDTO2Book:', updateData.subscriber_exclusive); 
     await this.booksRepository.update(id, updateData);
     return this.findOne(id);
   }

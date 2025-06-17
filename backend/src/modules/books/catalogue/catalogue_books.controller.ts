@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { CatalogueBooksService } from './catalogue_books.service';
 import { CatalogueBookDTO } from './catalogue_book.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
@@ -19,7 +19,7 @@ export class CatalogueBooksController {
     @ApiOperation({ summary: 'Obtener Libro de Catalogo por ID' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Libro Encontrado', type: CatalogueBookDTO })
-    findOne(@Param('id') id: number): Promise<CatalogueBookDTO | null>  {
+    findOne(@Param('id', ParseIntPipe) id: number): Promise<CatalogueBookDTO | null>  {
         return this.booksService.findOne(id);
     }
 }

@@ -10,7 +10,7 @@ import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 import { BookGenre } from 'src/entidades/book_genres.entity';
 
-const myapp_config = require('../../../../private/app.config.json');
+import myapp_config from '../../../../private/app.config.json';
 
 @Module({
   imports: [

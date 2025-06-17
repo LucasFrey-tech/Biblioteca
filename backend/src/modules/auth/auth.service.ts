@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { UsersService } from '../users/user.service';
-import { LoginRequestBody, RegisterRequestBody } from './auth.interface';
+import { LoginRequestBody, RegisterRequestBody } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,9 +18,6 @@ export class AuthService {
     const existingUserEmail = await this.usersService.findByEmail(requestBody.email);
     // Verificar si ya existe el usuario por nombre de usuario
     const existingUserName = await this.usersService.findByUser(requestBody.username);
-
-    console.log('existingUserEmail:', existingUserEmail);
-    console.log('existingUserName:', existingUserName);
 
     if (existingUserEmail && existingUserName) {
       throw new BadRequestException('El correo y el usuario ya existen!');
@@ -51,7 +48,6 @@ export class AuthService {
 
   async login(requestBody: LoginRequestBody) {
     // Validamos el usuario y la contraseña
-    console.log(requestBody)
     const user = await this.validateUser(requestBody.email, requestBody.password);
 
     if (user.disabled) {

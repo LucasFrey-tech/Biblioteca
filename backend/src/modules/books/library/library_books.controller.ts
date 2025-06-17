@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { LibraryBooksService } from './library_books.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
 import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
@@ -13,7 +13,7 @@ export class LibraryBooksController {
     @Get(':idUser')
     @ApiOperation({ summary: 'Listar Todos los Libros de Biblioteca' })
     @ApiResponse({ status: 200, description: 'Lista de Libros de Biblioteca', type: [LibraryBookDTO] })
-    findAllByUser(@Param('idUser') idUser: number): Promise<LibraryBookDTO[]> {
+    findAllByUser(@Param('idUser', ParseIntPipe) idUser: number): Promise<LibraryBookDTO[]> {
         return this.libraryBooksService.findAllByUser(idUser);
     }
 

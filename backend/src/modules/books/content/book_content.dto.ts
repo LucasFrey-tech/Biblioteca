@@ -1,8 +1,17 @@
+import { IsInt, IsString } from "class-validator";
+
 export class BookContentDTO{
-    constructor(idBook:number,content:string){
+    @IsInt()
+    idBook:number;
+
+    @IsString()
+    content:string;
+
+    constructor(
+        idBook:number,
+        content:string
+    ) {
         this.idBook = idBook;
         this.content = content;
     }
-    idBook:number;
-    content:string;   
 }

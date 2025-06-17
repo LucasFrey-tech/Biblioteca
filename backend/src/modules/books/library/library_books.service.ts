@@ -17,14 +17,10 @@ export class LibraryBooksService {
     async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
         const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser } });
 
-        console.log('Registros encontrados:', userVirtualBooks);
-
         const result = await Promise.all(
             userVirtualBooks.map(async (vb) => {
                 const book = await this.booksService.findOne(vb.idBook);
 
-                console.log(`Libro ${vb.idBook}:`, book);
-                
                 if (!book) return null;
                 return new LibraryBookDTO(book.id, book.title, book.author_id, book.description, book.isbn, book.image);
             })

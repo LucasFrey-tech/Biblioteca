@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { BookGenresService } from './book_genres.service';
 import { BookGenre } from 'src/entidades/book_genres.entity';
 import { BookGenreDto } from './book_genre.dto';
@@ -18,12 +18,11 @@ export class BookGenresController {
 
   @Post()
   async create(@Body() data: Partial<BookGenreDto>): Promise<BookGenre> {
-    console.log("datAAAAAAAAAAAAAAAAAAAAA", data);
     return this.bookGenresService.create(data);
   }
 
   @Delete(':id')
-  async delete(@Body('id') id: number): Promise<void> {
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.bookGenresService.delete(id);
   }
 }

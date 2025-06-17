@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, Patch, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from '../users/user.service';
 import { User } from '../../entidades/user.entity';
 import { UpdateUserDto } from './userDto/update-user.dto';
@@ -21,7 +21,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Obtener un Usuario por ID' })
   @ApiResponse({ status: 200, description: 'Usuario Encontrado', type: User })
   @ApiParam({ name: 'id', type: Number })
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.findOne(id);
   }
 
@@ -40,7 +40,7 @@ export class UsersController {
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Usuario Editado', type: User })
   @ApiBody({ type: User })
-  update(@Param('id') id: number, @Body() user: Partial<User>) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() user: Partial<User>) {
     return this.usersService.update(id, user);
   }
 
@@ -49,7 +49,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Eliminar un Usuario' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Usuario Eliminado' })
-  delete(@Param('id') id: number) {
+  delete(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.delete(id);
   }
 
@@ -68,7 +68,7 @@ export class UsersController {
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'Usuario Actualizado', type: User})
-  updateUser(@Param('id') id: number, @Body() dto: UpdateUserDto) {
+  updateUser(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
   

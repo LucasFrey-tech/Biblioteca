@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { BookReviewsService } from './book_reviews.service';
 import { Review } from 'src/entidades/review.entity';
 import { ReviewI } from './dto/review.dto';
@@ -18,19 +18,19 @@ export class BookReviewsController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener una Crítica por ID' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Crítica Encontrada', type: Review })
-    findOne(@Param('id') id: string) {
-        return this.reviewService.findOne(+id);
+    findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.reviewService.findOne(id);
     }
 
 
     @Get('book/:bookId')
     @ApiOperation({ summary: 'Listar Críticas por ID de Libro' })
-    @ApiParam({ name: 'bookId', type: String })
+    @ApiParam({ name: 'bookId', type: Number })
     @ApiResponse({ status: 200, description: 'Lista de Críticas por ID de Libro' })
-    findReviewsByBookId(@Param('bookId') bookId: string) {
-        return this.reviewService.findReviewsByBookId(+bookId);
+    findReviewsByBookId(@Param('bookId', ParseIntPipe) bookId: number) {
+        return this.reviewService.findReviewsByBookId(bookId);
     }
 
     @Post()
@@ -39,15 +39,15 @@ export class BookReviewsController {
     }
 
     @Put(':id')
-    update(@Param('id') id:number, @Body() reviewData: ReviewI){
+    update(@Param('id', ParseIntPipe) id:number, @Body() reviewData: ReviewI){
         return this.reviewService.update(id, reviewData);
     }
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar Crítica por ID de Crítica' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Crítica Eliminada' })
-    remove(@Param('id') id: string) {
-        return this.reviewService.remove(+id);
+    remove(@Param('id', ParseIntPipe) id: number) {
+        return this.reviewService.remove(id);
     }
 }

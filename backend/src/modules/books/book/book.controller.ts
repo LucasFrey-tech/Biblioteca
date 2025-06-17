@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, Uploa
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BooksService } from './book.service';
 import { BookDTO } from './book.dto';
+import { ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Libros')
@@ -20,7 +21,7 @@ export class BooksController {
   @ApiOperation({ summary: 'Obtener Libro por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Libro Encontrado', type: BookDTO })
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.findOne(id);
   }
 
@@ -30,7 +31,6 @@ export class BooksController {
   @ApiResponse({ status: 201, description: 'Libro Creado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
   create(@Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File) {
-    console.log('Archivo recibido:', bookDTO);
     bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     return this.booksService.create(bookDTO);
   }
@@ -41,9 +41,7 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  update(@Param('id') id: number, @Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File | string) {
-    console.log('Archivo recibido para actualizar:', bookDTO.image);
-    console.log('ArchivoAAAAAAAAAAAAAAAAAAAAAAAA :', bookDTO.subscriber_exclusive);
+  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File | string) {
     if (typeof file != 'string') {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }
@@ -54,7 +52,7 @@ export class BooksController {
   @ApiOperation({ summary: 'Eliminar Libro' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Libro Eliminado' })
-  delete(@Param('id') id: number) {
+  delete(@Param('id', ParseIntPipe) id: number) {
     return this.booksService.delete(id);
   }
 }
