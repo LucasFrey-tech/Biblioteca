@@ -28,6 +28,12 @@ class BookEntity {
   + price: number
 }
 
+class VirtualBookContent {
+  + id: number
+  + idBook: number
+  + content: string
+}
+
 class UserVirtualBooks {
   + id: number
   + idUser: number
@@ -78,6 +84,14 @@ class UserEntity {
   + registrationDate: Date
 }
 
+
+/'
+SettingsService
+
+
+VirtualBookContent
+'/
+
 '======================
 ' DTOs
 '======================
@@ -122,7 +136,7 @@ class BookDTO {
   + BookEntity2BookDTO(props): BookDTO
 }
 
-class CatalogueDTO {
+class CatalogueBookDTO {
   + id: number;
   + title: string;
   + author: string;
@@ -424,7 +438,7 @@ BookController --> BookService
 BookService --> BookEntity
 BookService --> AuthorEntity
 BookService --> GenreEntity
-BookService --> BookGenreEntity
+BookService --> BookGenresEntity
 BookService --> BookDTO
 
 CatalogueBookController --> CatalogueBookService
@@ -439,6 +453,7 @@ LibraryBooksService --> UserVirtualBooks
 LibraryBooksService --> LibraryBookDTO
 
 BookReviewsController --> BookReviewsService
+LibraryBooksController --> CreateUserVirtualBookDto
 BookReviewsService --> UserEntity
 BookReviewsService --> ReviewEntity
 BookReviewsService --> ReviewI
@@ -461,21 +476,23 @@ ShoppingCartService --> BookEntity
 ShoppingCartService --> UserEntity
 ShoppingCartService --> BookCartDTO
 
+
 UsersController --> UsersService
+UsersController --> UpdateUserDto
 UsersService --> UserEntity
 
 
 
 'EXTRAS
-AuthService --> UserService : usersService
+AuthService --> UsersService : usersService
 
-BookService --> GenreService : genreId
+BookService --> GenresService : genreId
 BookService --> AuthorService : authorId
-BookService --> SettingsService :: bookImageUrl
+BookService --> SettingsService : bookImageUrl
 
 CatalogueBookService --> BookService : booksService
 
-LibraryBooksService --> BooksService :: findAllByUser
+LibraryBooksService --> BookService :: findAllByUser
 
 
 

@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { SettingsService } from 'src/settings.service';
 import { BooksService } from './book.service';
 import { BooksController } from './book.controller';
 import { Book } from '../../../entidades/book.entity';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 import { BookGenre } from 'src/entidades/book_genres.entity';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { SettingsService } from 'src/settings.service';
-import { BookGenresService } from 'src/modules/book_genre/book_genres.service';
 
 const myapp_config = require('../../../../private/app.config.json');
 
