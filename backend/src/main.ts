@@ -37,7 +37,7 @@ import { AppModule } from './app.module';
  * Inicia el servidor en el puerto 3001.
  */
 
-import myapp_config from '../private/app.config.json';
+const myapp_config = require('../private/app.config.json');
 
 async function bootstrap() {
 
