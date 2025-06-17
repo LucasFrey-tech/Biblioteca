@@ -12,6 +12,7 @@ class PurchaseItemDTO {
 class ProcessPurchaseDTO {
   idUser: number;
   items: PurchaseItemDTO[];
+  price: number;
 }
 
 @ApiTags('Purchases')

@@ -10,12 +10,10 @@ export class Libreria extends Crud<BookLibreria> {
     }
 
     async findAllByUser(userId: number): Promise<BookLibreria[]> {
-        console.log("Buscando libros para el usuario222:2323323223", userId);
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${userId}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
-        console.log("Respuesta de la API222:2223232323232", res);
         return res.json();
     }
 

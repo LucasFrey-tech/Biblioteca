@@ -32,8 +32,6 @@ export class Login extends Crud<LoginRequestBody>{
       status: number; success: false, error: string 
 }> {
         try{
-            console.log(`${this.baseUrl}/${this.endPoint}/login`);
-            console.log("HOLA", credentials);
             const res = await fetch(`${this.baseUrl}/${this.endPoint}/login`, {
                 method: 'POST',
                 headers: this.getHeaders(),

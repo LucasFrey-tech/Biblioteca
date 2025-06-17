@@ -57,10 +57,9 @@ export class Books extends Crud<Book> {
         formData.append("price", data.price + '');
         formData.append("virtual", data.virtual + '');
 
-        console.log('Generos:', data.genre);
-        for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-        }
+        // for (const pair of formData.entries()) {
+        // console.log(pair[0], pair[1]);
+        // }
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             // headers: {'Content-Type': 'multipart/form'},
@@ -71,13 +70,6 @@ export class Books extends Crud<Book> {
         const var2 = new BookGenres();
         
         data.genre?.forEach(async (genre: string) => {
-            console.log('Creating book genre:', genre);
-            // SACAR EL ENDPOINT HARDODEADO 
-            // await fetch(`${this.baseUrl}/${endPoint2}`, {
-            // method: 'POST',
-            // // headers: {'Content-Type': 'multipart/form'},
-            // body: JSON.stringify({name: genre, id_book: book.id}),
-        // });
             var2.create({name: genre, id_book: book.id});
         });
 
@@ -99,7 +91,6 @@ export class Books extends Crud<Book> {
         formData.append("author", data.author + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
-        console.log('Creating book file with data:', data);
         formData.append("genre", JSON.stringify(data.genre));
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
@@ -109,9 +100,9 @@ export class Books extends Crud<Book> {
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
-        for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-        }
+        // for (const pair of formData.entries()) {
+        // console.log(pair[0], pair[1]);
+        // }
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`,{
             method: 'PUT',
             // headers: this.getHeaders(),
