@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BooksService } from '../book/book.service';
@@ -7,6 +7,7 @@ import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
 
 @Injectable()
 export class LibraryBooksService {
+    private readonly logger = new Logger(LibraryBooksService.name);
     constructor(
         private readonly booksService: BooksService,
 
@@ -21,11 +22,17 @@ export class LibraryBooksService {
             userVirtualBooks.map(async (vb) => {
                 const book = await this.booksService.findOne(vb.idBook);
 
-                if (!book) return null;
+                if (!book){
+                    this.logger.log('Lista de Libros de Libreria del Usuario no Encontrado');
+                    return null;
+                } 
+
+                this.logger.log('Lista de Libros de Libreria del Usuario Obtenida');
                 return new LibraryBookDTO(book.id, book.title, book.author_id, book.description, book.isbn, book.image);
             })
         )
 
+        this.logger.log('Elementos null Removidos');
         return result.filter((item): item is LibraryBookDTO => item !== null);
     }
 
@@ -39,11 +46,13 @@ export class LibraryBooksService {
         });
 
         if (existingRecord) {
+            this.logger.log('Libro ya Obtenido por el Usuario');
             throw new Error('El usuario ya tiene este libro en su biblioteca');
         }
 
         // Crear el nuevo registro
         const newRecord = this.userVirtualBooks.create(userVirtualBook);
+        this.logger.log('Libro de Libreria Creado');
         return await this.userVirtualBooks.save(newRecord);
     }
 }
