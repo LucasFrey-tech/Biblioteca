@@ -111,3 +111,14 @@ create table purchases(
 	virtual bool default(false),
 	purchase_date timestamp default(CURRENT_TIMESTAMP)
 );
+
+create table carousel(
+	id serial primary key,
+	image string not null,
+	book_id integer not null
+);
+
+create table book_recommendations(
+	id serial primary key,
+	book_id integer not null,
+);
