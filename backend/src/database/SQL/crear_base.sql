@@ -82,13 +82,6 @@ create table user_subscription(
 	ongoing boolean default(false)
 );
 
--- CREAR TABLA SUBSCRIPTION_BOOK_DISCOUNT -- no se
-create table subscription_book_discount(
-	id serial primary key,
-	id_book integer not null,
-	discount float not null default(0) check(discount >= 0)
-);
-
 -- CREAR TABLA SHOPPING_CART_BOOK
 create table shopping_cart_book(
 	id serial primary key,
