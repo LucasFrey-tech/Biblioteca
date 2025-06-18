@@ -1,6 +1,7 @@
 import { Book } from 'src/entidades/book.entity';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength } from 'class-validator';
+import { Author } from 'src/entidades/author.entity';
 
 export class BookDTO {
   @IsInt()
@@ -83,8 +84,11 @@ export class BookDTO {
       stock: bookDTO.stock,
       subscriber_exclusive: bookDTO.subscriber_exclusive,
       price: bookDTO.price,
-    };
-  }
+      author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author,
+      genres: bookDTO.genre.map((g) => ({ id: 0, name: g })), 
+    }
+  };
+  
 
   static BookEntity2BookDTO(book: Book, author: string, genres: string[]): BookDTO {
     return new BookDTO(

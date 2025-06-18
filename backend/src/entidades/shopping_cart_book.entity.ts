@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
+import { User } from './user.entity';
+import { Book } from './book.entity';
 
 @Entity('shopping_cart_book')
 export class ShoppingCartBook {
@@ -22,4 +24,12 @@ export class ShoppingCartBook {
     @ApiProperty({ description: 'Tipo de libro' })
     @Column({ default: false })
     virtual!: boolean;
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: "id_user", referencedColumnName: "id" })
+    user: User;
+
+    @ManyToOne(() => Book)
+    @JoinColumn({ name: "id_book", referencedColumnName: "id" })
+    book: Book;
 }

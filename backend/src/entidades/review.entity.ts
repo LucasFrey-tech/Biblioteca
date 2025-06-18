@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, PrimaryGeneratedColumn, Column} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn, ManyToOne} from 'typeorm';
+import { User } from './user.entity';
 
 @Entity('reviews')
 export class Review{
@@ -26,4 +27,8 @@ export class Review{
     @ApiProperty({example: '05-06-2025', description: 'Fecha de la Publicacion de la Crítica'})
     @Column({name: 'review_date', type: 'timestamp' })
     reviewDate: Date
+
+    @ManyToOne(() => User)
+    @JoinColumn({ name: "id_user", referencedColumnName: "id" })
+    user: User;
 }
