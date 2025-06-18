@@ -99,3 +99,16 @@ create table purchases(
 	virtual bool default(false),
 	purchase_date timestamp default(CURRENT_TIMESTAMP)
 );
+
+-- CREAR TABLA carousel
+create table carousel(
+	id serial primary key,
+	image string not null,
+	book_id INTEGER NOT NULL REFERENCES books(id)
+);
+
+-- CREAR TABLA book_recommendations
+create table book_recommendations(
+	id serial primary key,
+	book_id INTEGER NOT NULL REFERENCES books(id)
+);
