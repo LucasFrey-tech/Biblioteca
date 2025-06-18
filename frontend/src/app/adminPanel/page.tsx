@@ -4,6 +4,9 @@ import { useState } from "react";
 import styles from '../../styles/panelAdmin.module.css';
 import UsersPanel from "./usersPanel";
 import BooksPanel from "./booksPanel";
+import SubscriptionPanel from "./subcriptionPanel";
+import NovedadesPanel from "./novedadesPanel";
+import VentasPanel from "./ventasPanel";
 
 
 export default function PanelAdmin() {
@@ -51,6 +54,18 @@ export default function PanelAdmin() {
 
         {activeTab === "books" && (
           <BooksPanel/>
+        )}
+
+        {activeTab === "subscription" && (
+          <SubscriptionPanel/>
+        )}
+
+        {activeTab === "novedades" && (
+          <NovedadesPanel/>
+        )}
+
+        {activeTab === "ventas" && (
+          <VentasPanel/>
         )}
       </div>
     </div>

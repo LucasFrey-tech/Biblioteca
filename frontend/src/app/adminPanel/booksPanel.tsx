@@ -34,7 +34,6 @@ type BookDTO = {
 }
 
 export default function BooksPanel(): React.JSX.Element {
-    const [activeTab, setActiveTab] = useState<'users' | 'books'>('users');
       const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
       const [books, setBooks] = useState<BookDTO[]>([]);
       const [search, setSearch] = useState('');

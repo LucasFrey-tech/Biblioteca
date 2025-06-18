@@ -1,8 +1,8 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { UserSubscription } from "../../entidades/subscription_user.entity";
-import { User } from "../../entidades/user.entity";
+import { UserSubscription } from "../../../entidades/subscription_user.entity";
+import { User } from "../../../entidades/user.entity";
 
 @Injectable()
 export class UserSubscriptionService {
