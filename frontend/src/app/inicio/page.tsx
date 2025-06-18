@@ -1,11 +1,18 @@
 'use client'
 
-import Image from 'next/image';
-import styles from '../../styles/inicio.module.css';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+import NovedadesCarousel from './novedadesCarousel/novedades_carousel';
+import {BookCardProps} from './bookCard/bookCardColumnInfo/book_card_column_info';
+import Styles from './styles.module.css';
+import BooksDisplayerFlex from './booksDisplayers/booksDisplayerFlex/books_displayer_flex';
+import BooksDisplayerFlexGrid from './booksDisplayers/booksDisplayersFlexGrid/books_displayer_flexgrid';
+import BooksScroller from './booksScroller/books_scroller';
+import GenresBooks from './bookGenresSection/bookGenresSection';
+import AuthorBooks from './authorBooksSection/author_books';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -24,17 +31,26 @@ export default function HomePage() {
   ];
 
   // Libros catálogo debajo
-  const catalogoBooks = [
-    { id: 1, title: 'Libro 1', price: 19.99, image: '/libros/libro1.webp' },
-    { id: 2, title: 'Libro 2', price: 24.99, image: '/libros/libro2.webp' },
-    { id: 3, title: 'Libro 3', price: 29.99, image: '/libros/libro3.webp' },
+  const LibrosRecientementeAgregados:BookCardProps[] = [
+    {title: 'Libro 1', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 2', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 3', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 4', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+  ];
+  const LibrosRecomendadosAgregados:BookCardProps[] = [
+    {title: 'Libro 1', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 2', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 3', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 4', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 5', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
+    {title: 'Libro 6', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
   ];
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       // Configuración inicial - Etapa 1
-      gsap.set(bannerTextRef.current, { opacity: 0, y: 50 });
-      gsap.set([sliderRef.current, catalogoRef.current], { opacity: 0, y: 100 });
+      // gsap.set(bannerTextRef.current, { opacity: 0, y: 50 });
+      // gsap.set([sliderRef.current, catalogoRef.current], { opacity: 0, y: 100 });
 
       // Animación del banner completo
       const bannerAnimation = gsap.timeline({
@@ -94,45 +110,12 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      {/* Banner central */}
-      <section className={styles.banner} ref={bannerRef}>
-        <div className={styles.bannerImageWrapper}>
-          <Image
-            src="/images/banner1.webp"
-            alt="banner"
-            layout="fill"
-            objectFit="cover"
-            priority
-          />
-        </div>
-        <div className={styles.bannerText} ref={bannerTextRef}>
-          {/* <h2>Mi Biblioteca</h2> */}
-          {/* <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Qui fugiat, facilis corporis laboriosam exercitationem quod, ducimus, numquam illo molestiae dicta et aspernatur quisquam! Deleniti ex earum numquam ratione, voluptate alias.</p> */}
-          <h2>Bienvenido a la Biblioteca Virtual</h2>
-          <p>Explora nuestra coleccion de libros y sumergete en el mundo de la lectura</p>
-        </div>
-      </section>
-
-      {/* Slider */}
-      <section className={styles.slider} ref={sliderRef}>
-        {sliderBooks.map((book) => (
-          <div key={book.id} className={styles.slide} onClick={() => router.push(`/catalogo/${book.id}`)}>
-            <Image src={book.image} alt={`Libro ${book.id}`} width={200} height={300} />
-          </div>
-        ))}
-      </section>
-
-      {/* Catálogo */}
-      <section className={styles.catalogo} ref={catalogoRef}>
-        {catalogoBooks.map((book) => (
-          <div key={book.id} className={styles.bookCard}>
-            <Image src={book.image} alt={book.title} width={150} height={200} />
-            <h3>{book.title}</h3>
-            <p>${book.price}</p>
-          </div>
-        ))}
-      </section>
+    <div className={Styles.pageContainer}>
+      <NovedadesCarousel />
+      <BooksDisplayerFlex title='Recientemente Agregados' books={LibrosRecientementeAgregados}/>
+      <BooksDisplayerFlexGrid title='Recomendados' rows={2} books={LibrosRecomendadosAgregados}/>
+      <GenresBooks />
+      <AuthorBooks />
     </div>
   );
 }

@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Book } from 'src/entidades/book.entity';
+import { RecomendationsController } from './recomendations.controller';
+import { RecomendationsService } from './recomendations.service';
+import { BookRecommendation } from 'src/entidades/book_recommendations.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([BookRecommendation, Book])],
+  controllers: [RecomendationsController],
+  providers: [RecomendationsService],
+  exports: [RecomendationsService],
+})
+export class RecomendationsModule {}

@@ -1,0 +1,38 @@
+.container{
+    align-self:flex-start;
+    width: 100%;
+    margin: 2rem;
+}
+
+.title{
+    font-size: larger;
+    font-weight: bold;
+    width: fit-content;
+}
+
+.title hr{
+    border: none;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 120%;
+    height: 5px;
+    background-color: #ADD0FF;
+;
+}
+
+
+.contentContainer{
+    margin: 5% 10%;
+}
+.content{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.column{
+    display: flex;
+    flex-direction: column;
+}

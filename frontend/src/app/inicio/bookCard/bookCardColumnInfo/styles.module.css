@@ -1,0 +1,26 @@
+
+.bookCard{
+    
+}
+
+.bookCard img{
+    width: 100%;
+    height: auto;
+    aspect-ratio: 2 / 3;
+    object-fit: contain;
+    max-width: 250px;
+    max-height: 300px;
+    margin: 0 auto 10px;
+}
+
+.bookTitle{
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.bookWriter{
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}

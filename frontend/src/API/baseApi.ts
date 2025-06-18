@@ -10,6 +10,7 @@ import { Purchases } from "./class/purchase";
 import { Libreria } from "./class/libreria";
 import { BookContent } from "./class/bookContent";
 import { BookGenres } from "./class/book_genre";
+import { Subscription } from "./class/subscription";
 
 export class BaseApi {
     public readonly log: Login;
@@ -24,6 +25,7 @@ export class BaseApi {
     public readonly libreria: Libreria;
     public readonly bookContent: BookContent;
     public readonly bookGenre: BookGenres;
+    public readonly subscription: Subscription;
 
     constructor(private token?:string){
         this.log = new Login();
@@ -38,5 +40,6 @@ export class BaseApi {
         this.libreria = new  Libreria(token);
         this.bookContent = new  BookContent(token);
         this.bookGenre = new BookGenres();
+        this.subscription = new  Subscription(token);
     }
 }
