@@ -1,8 +1,9 @@
 . Novedades
-. Lectura de Libros
 . Subscripcion
 . Cambiar los fetch de addAuthor y de categoria
-.documentacion proyecto (typedoc) y api 
+
+.documentacion proyecto (typedoc)
+
 .Agregar libro linea 98- Cambiar el true hardcodeado
 .tests
 

@@ -93,15 +93,10 @@ export default function PanelAdmin() {
       price: bookState.formData.price
     }
     try {
-      console.log('AAAAAAAAAAAAAAAAAAAASaving book data:', bookData);
       apiRef.current?.books.updateBookFile(bookId, bookData);
-      
-
       // Actualizo localmente el estado de libros
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
-
       // setGenres(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
-
       // Salgo del modo edición
       setBooksEditState(prev => ({
         ...prev,

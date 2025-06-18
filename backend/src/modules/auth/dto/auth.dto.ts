@@ -30,9 +30,6 @@ export class RegisterRequestBody {
   email: string;
 
   @IsString()
-  image: string;
-
-  @IsString()
   @MinLength(6)
   password: string;
 
@@ -41,14 +38,12 @@ export class RegisterRequestBody {
     firstname: string,
     lastname: string,
     email: string,
-    image: string,
     password: string
   ) {
     this.username = username;
     this.firstname = firstname;
     this.lastname = lastname;
     this.email = email;
-    this.image = image;
     this.password = password;
   }
 }

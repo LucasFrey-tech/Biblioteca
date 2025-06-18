@@ -38,10 +38,6 @@ export class User {
   @Column({ default: false })
   disabled: boolean;
 
-  @ApiProperty({description: 'Imagen del Perfil del Usuario'})
-  @Column({ default: '' })
-  image: string;
-
   @ApiProperty({example: '05-06-2025', description: 'Fecha de Registro del Usuario'})
   @CreateDateColumn({ name: 'registration_date' })
   registrationDate: Date;
