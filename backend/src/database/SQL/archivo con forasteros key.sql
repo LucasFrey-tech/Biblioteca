@@ -103,7 +103,7 @@ create table purchases(
 -- CREAR TABLA carousel
 create table carousel(
 	id serial primary key,
-	image string not null,
+	image text default(''),
 	book_id INTEGER NOT NULL REFERENCES books(id)
 );
 
