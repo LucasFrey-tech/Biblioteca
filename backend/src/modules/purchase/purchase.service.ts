@@ -75,36 +75,22 @@ export class PurchasesService {
   }
 
   async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
-    const purchases = await this.purchaseRepository.find({ where: { idUser } });
+    const purchases = await this.purchaseRepository.find({ where: { idUser }, relations: ['book', 'user'] });
     if (!purchases.length){
       this.logger.log('Historial Vacio');
       return null;
     } 
 
-    const user = await this.userRepository.findOne({ where: { id: idUser } });
-    if (!user){
-      this.logger.log('Usuario No Encontrado');
-      throw new Error('Usuario no encontrado');
-    }
-
     const results = await Promise.all(
       purchases.map(async (purchase) => {
-        const book = await this.booksRepository.findOne({ where: { id: purchase.idBook } });
-        if (!book){
-          this.logger.log('Libro No Encontrado');
-          return null;
-        } 
-
-        const author = await this.authorRepository.findOne({ where: { id: book.author_id } });
-
         return new PurchaseDTO(
           purchase.id,
           purchase.idUser,
           purchase.idBook,
-          book.title,
-          author ? author.name : '',
-          book.image,
-          book.price,
+          purchase.book.title,
+          purchase.book.author ? purchase.book.author.name : '',
+          purchase.book.image,
+          purchase.book.price,
           purchase.virtual,
           purchase.amount,
           purchase.purchaseDate,

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BooksService } from '../book/book.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
 import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
 
@@ -9,26 +8,18 @@ import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
 export class LibraryBooksService {
     private readonly logger = new Logger(LibraryBooksService.name);
     constructor(
-        private readonly booksService: BooksService,
-
         @InjectRepository(UserVirtualBooks)
         private userVirtualBooks: Repository<UserVirtualBooks>,
     ) { }
 
     async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
-        const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser } });
+        const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser }, relations: ['book'] });
 
         const result = await Promise.all(
             userVirtualBooks.map(async (vb) => {
-                const book = await this.booksService.findOne(vb.idBook);
-
-                if (!book){
-                    this.logger.log('Lista de Libros de Libreria del Usuario no Encontrado');
-                    return null;
-                } 
 
                 this.logger.log('Lista de Libros de Libreria del Usuario Obtenida');
-                return new LibraryBookDTO(book.id, book.title, book.author_id, book.description, book.isbn, book.image);
+                return new LibraryBookDTO(vb.book.id, vb.book.title, vb.book.author_id, vb.book.description, vb.book.isbn, vb.book.image);
             })
         )
 

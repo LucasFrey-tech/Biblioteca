@@ -1,7 +1,6 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { User } from "src/entidades/user.entity";
 import { Review } from "src/entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 
@@ -11,21 +10,9 @@ export class BookReviewsService {
     constructor(
         @InjectRepository(Review)
         private reviewRepository: Repository<Review>,
-
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
     ) { }
 
     async create(reviewData: Partial<ReviewI>): Promise<ReviewI> {
-        // Validar que exista el usuario
-        const user = await this.userRepository.findOne({ 
-            where: { id: reviewData.id_user } 
-        });
-        
-        if (!user) {
-            this.logger.log('Usuario No Encontrado');
-            throw new NotFoundException(`User with ID ${reviewData.id_user} not found`);
-        }
 
         // Crear la nueva review
         const newReview = this.reviewRepository.create({
@@ -41,7 +28,7 @@ export class BookReviewsService {
             savedReview.id,
             savedReview.id_user,
             savedReview.id_book,
-            user.username,
+            reviewData.username?reviewData.username:"",
             savedReview.comment,
             savedReview.rating,
             savedReview.reviewDate.toLocaleString('es-AR'),
@@ -50,12 +37,13 @@ export class BookReviewsService {
 
     findAll(): Promise<Review[]> {
         this.logger.log('Lista de Criticas Obtenida');
-        return this.reviewRepository.find({});
+        return this.reviewRepository.find({relations: ['user']});
     }
 
     async findOne(id: number): Promise<Review> {
         const review = await this.reviewRepository.findOne({
-            where: { id }
+            where: { id },
+            relations: ['user']
         });
 
         if (!review) {
@@ -69,19 +57,17 @@ export class BookReviewsService {
 
     async findReviewsByBookId(bookId: number): Promise<ReviewI[]> {
         const reviews = await this.reviewRepository.find({
-            where: { id_book: bookId }
+            where: { id_book: bookId },
+            relations: ['user']
         });
 
-        const users = await this.userRepository.find({});
-
         const result = reviews.map((r) => {
-            const user = users.find((u) => u.id === r.id_user);
             this.logger.log('');
             return new ReviewI(
                 r.id,
                 r.id_user,
                 r.id_book,
-                user ? user.username : "",
+                r.user ? r.user.username : "",
                 r.comment,
                 r.rating,
                 r.reviewDate.toLocaleString('es-AR'),

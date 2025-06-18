@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+
 @Entity('users')
 export class User {
   @ApiProperty({example: 1, description: 'ID único del Usuario'})
@@ -37,10 +38,6 @@ export class User {
   @ApiProperty({description: 'Valor que Determina si el Usuario esta Bloqueado'})
   @Column({ default: false })
   disabled: boolean;
-
-  @ApiProperty({description: 'Imagen del Perfil del Usuario'})
-  @Column({ default: '' })
-  image: string;
 
   @ApiProperty({example: '05-06-2025', description: 'Fecha de Registro del Usuario'})
   @CreateDateColumn({ name: 'registration_date' })
