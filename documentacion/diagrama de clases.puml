@@ -170,13 +170,13 @@ class CreateUserVirtualBookDto {
 }
 
 class ReviewI {
-    + id: number
-    + id_user: number
-    + id_book: number
-    + username: string
-    + comment: string
-    + rating: number
-    + reviewDate: string
+  + id: number
+  + id_user: number
+  + id_book: number
+  + username: string
+  + comment: string
+  + rating: number
+  + reviewDate: string
 }
 
 class PurchaseDTO {
@@ -292,6 +292,27 @@ class UsersService {
   + delete(id: number)
 }
 
+class SettingsService {
+  + getHostUrl = (): string
+  + getFrontUrl = (): string
+
+  + getUsersImagesPrefix = (): string
+  + getUsersImagesPath = (): string
+  + getBooksImagesPrefix = (): string
+  + getBooksImagesPath = (): string
+
+  + getDatabaseHost = ():string
+  + getDatabasePost = ():string
+  + getDatabaseUsername = ():string
+  + getDatabasePasswords = ():string
+  + getDatabaseName = ():string
+
+  + getLoggerConsoleDetailsLevel = ():string
+  + getLoggerFileDetailsLevel = ():string
+  + getLoggerLogFile = ():string
+  + getLoggerColorizeLog = ():string
+}
+
 '======================
 ' Controllers
 '======================
@@ -379,41 +400,23 @@ class UsersController {
 '======================
 ' Parte con AppModule corto (faltan agregar mas imports y relaciones.).
 
-' class AppModule {
-  '   + imports: BookModule, AuthorModule, GenreModule, UserModule
-  '
-' }
+class AppModule {
+  + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
+}
 
-' AppModule --> BookModule
-' AppModule --> AuthorModule
-' AppModule --> GenreModule
-' AppModule --> UserModule
+AppModule --> AuthModule
+AppModule --> UsersModule
+AppModule --> AuthorModule
+AppModule --> BooksModule
+AppModule --> BookReviewsModule
+AppModule --> BookGenresModule
+AppModule --> GenresModule
+AppModule --> ShoppingCartModule
+AppModule --> CatalogueBooksModule
+AppModule --> PurchasesModule
+AppModule --> LibraryBooksModule
+AppModule --> BookContentModule
 ' '======================
-
-
-'======================
-' Parte con AppModule completo.
-' Como podemos apreciar el diagrama (y cuando probamos generar el png tambien) el diagrama queda dificil de leeer.
-
-' class AppModule {
-  '     + imports: AuthModule, UsersModule, AuthorModule, BooksModule, BookReviewsModule, GenresModule, BookGenresModule, ShoppingCartModule, CatalogueBooksModule, PurchasesModule, LibraryBooksModule, BookContentModule
-  '
-' }
-
-' AppModule --> AuthModule
-' AppModule --> UsersModule
-' AppModule --> AuthorModule
-' AppModule --> BooksModule
-' AppModule --> BookReviewsModule
-' AppModule --> GenresModule
-' AppModule --> BookGenresModule
-' AppModule --> ShoppingCartModule
-' AppModule --> CatalogueBooksModule
-' AppModule --> PurchasesModule
-' AppModule --> LibraryBooksModule
-' AppModule --> BookContentModule
-
-'======================
 
 
 '======================
@@ -426,6 +429,8 @@ AuthService --> AuthDTO
 ' AuthService --> RegisterRequestBody
 
 AuthorController --> AuthorService
+AuthorController --> AuthorEntity
+AuthorController --> CreateAuthorDTO
 AuthorService --> AuthorEntity
 AuthorService --> CreateAuthorDTO
 

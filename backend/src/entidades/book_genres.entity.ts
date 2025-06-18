@@ -15,5 +15,4 @@ export class BookGenre {
     @ApiProperty({example: 1, description: 'ID Único de Genero'})
     @Column({name: 'id_genre', type: 'integer' })
     id_genre: number;
-
 }

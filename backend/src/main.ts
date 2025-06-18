@@ -72,13 +72,13 @@ async function bootstrap() {
   });
 
 
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: false,              // Elimina propiedades que no están en el DTO
-  //     forbidNonWhitelisted: false,  // Lanza error si hay propiedades desconocidas
-  //     transform: true,             // Transforma tipos (ej: convierte string a number)
-  //   }),
-  // );
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: false,              // Elimina propiedades que no están en el DTO
+      forbidNonWhitelisted: true,  // Lanza error si hay propiedades desconocidas
+      transform: true,             // Transforma tipos (ej: convierte string a number)
+    }),
+  );
 
   app.use(myapp_config.static_resources.books_images.prefix, express.static(myapp_config.static_resources.books_images.path));
 

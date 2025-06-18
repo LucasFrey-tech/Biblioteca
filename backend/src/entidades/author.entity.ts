@@ -10,5 +10,4 @@ export class Author {
   @ApiProperty({ example: 'Roberto Kafka'})
   @Column({ length: 100 })
   name: string;
-
 }
