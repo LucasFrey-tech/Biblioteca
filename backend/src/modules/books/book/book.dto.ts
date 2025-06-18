@@ -84,20 +84,19 @@ export class BookDTO {
       stock: bookDTO.stock,
       subscriber_exclusive: bookDTO.subscriber_exclusive,
       price: bookDTO.price,
-      author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author,
-      genres: bookDTO.genre.map((g) => ({ id: 0, name: g })), 
+      author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author
     }
   };
   
 
-  static BookEntity2BookDTO(book: Book, author: string, genres: string[]): BookDTO {
+  static BookEntity2BookDTO(book: Book): BookDTO {
     return new BookDTO(
       book.id,
       book.title,
-      author,
+      book.author ? book.author.name : "",
       book.author_id,
       book.description,
-      genres,
+      book.genres?book.genres.map((g) => g.name): [],
       book.anio,
       book.isbn,
       book.image,

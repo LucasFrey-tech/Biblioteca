@@ -19,7 +19,7 @@ export class BooksService {
     const books = await this.booksRepository.find({ relations: ['genres','author'] });
     
     const result = books.map((book) => {
-      return BookDTO.BookEntity2BookDTO(book, book.author ? book.author.name : "", book.genres.map((g) => g.name));
+      return BookDTO.BookEntity2BookDTO(book);
     });
 
     this.logger.log('Lista de libros Recibidos');
@@ -32,7 +32,7 @@ export class BooksService {
     if (!book) return null;
 
     this.logger.log('Libro Recibido');
-    return BookDTO.BookEntity2BookDTO(book, book.author ? book.author.name : "", book.genres.map((g) => g.name));
+    return BookDTO.BookEntity2BookDTO(book);
   }
 
   create(bookDTO: BookDTO) {

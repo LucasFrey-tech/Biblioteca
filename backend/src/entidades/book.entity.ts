@@ -65,5 +65,5 @@ export class Book {
       referencedColumnName: "id"
     }
   })
-  genres: Genre[];
+  genres?: Genre[];
 }
