@@ -22,7 +22,6 @@ import { AddGenreDialog } from './agregarCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
-import { number } from 'zod';
 // import { BookGenres } from '@/API/class/book_genre';
 
 
@@ -52,7 +51,7 @@ export default function AddBookDialog() {
     subscriber_exclusive: 'false',
     price: '',
     authorId: '',
-    genres: '', // String con géneros separados por coma
+    genres: '', 
   });
 
   useEffect(() => {
@@ -92,7 +91,7 @@ export default function AddBookDialog() {
     // const response = API.books.create(newBook);
      API.books.createBookFile(newBook,formGenresNumber);
       
-    
+    // CAMBIAR ESTOOOOOOOOOOOOOOOOO
     if (true) {
       Swal.fire({
         icon: 'success',

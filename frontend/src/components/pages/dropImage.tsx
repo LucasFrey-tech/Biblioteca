@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import Image from 'next/image';
 import styles from '../../styles/dragAndDrop.module.css';
+import Swal from 'sweetalert2';
 
 interface Props {
   onFileDrop: (file: File) => void;

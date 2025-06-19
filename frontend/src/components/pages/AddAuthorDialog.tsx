@@ -30,6 +30,13 @@ export function AddAuthorDialog({ onAdd, onClose }: Props) {
         const newAuthor: Author = await res.json();
         onAdd(newAuthor);
         setName('');
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Autor agregado correctamente',
+          timer: 2000,
+          showConfirmButton: false,
+        });
         onClose();
       } else {
         Swal.fire({
