@@ -7,9 +7,11 @@ import { BookGenres } from '@/API/class/book_genre';
 
 export class Books extends Crud<Book> {
     private endPoint: string;
+    private bookGenresAPI: BookGenres;
     constructor(token?: string) {
         super(token);
         this.endPoint = 'books';
+        this.bookGenresAPI = new BookGenres(token);
     }
 
     async getAll(): Promise<Book[]> {
@@ -37,14 +39,11 @@ export class Books extends Crud<Book> {
         return res.json();
     }
 
-    async createBookFile(data: Partial<BookFile>): Promise<Book>{
+    async createBookFile(data: Partial<BookFile>, bookGenres: number[]): Promise<Book>{
         const formData = new FormData();
         formData.append("title", data.title + '');
-        formData.append("author", data.author + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
-        data.genre?.forEach((genre: string) => {
-            formData.append("genre", genre);});
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
         if (data.image && typeof data.image === 'object') {
@@ -55,11 +54,7 @@ export class Books extends Crud<Book> {
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
-        formData.append("virtual", data.virtual + '');
 
-        // for (const pair of formData.entries()) {
-        // console.log(pair[0], pair[1]);
-        // }
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             // headers: {'Content-Type': 'multipart/form'},
@@ -67,10 +62,11 @@ export class Books extends Crud<Book> {
         });
 
         const book = await res.json();
-        const var2 = new BookGenres();
-        
-        data.genre?.forEach(async (genre: string) => {
-            var2.create({name: genre, id_book: book.id});
+        console.log('Book created', book);
+        bookGenres.forEach(async (genreId) => {
+            const data = {id_book: book.id, id_genre: genreId}
+            console.log('Creating book genre association', data);
+            this.bookGenresAPI.create(data);
         });
 
         return book;

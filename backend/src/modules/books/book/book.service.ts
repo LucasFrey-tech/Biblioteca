@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from 'src/settings.service';
+import { CreateBookDTO } from './createBook.dto';
 
 @Injectable()
 export class BooksService {
@@ -35,10 +36,11 @@ export class BooksService {
     return BookDTO.BookEntity2BookDTO(book);
   }
 
-  create(bookDTO: BookDTO) {
-    const book = BookDTO.BookDTO2BookEntity(bookDTO);
+  async create(bookDTO: CreateBookDTO) {
     this.logger.log('Libro Creado');    
-    return this.booksRepository.save(book);
+    const book = this.booksRepository.create(bookDTO);
+    const bookEntity = await this.booksRepository.save(book);
+    return bookEntity;
   }
 
   async update(id: number, bookDTO: BookDTO) {

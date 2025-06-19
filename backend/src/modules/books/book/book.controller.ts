@@ -4,6 +4,7 @@ import { BooksService } from './book.service';
 import { BookDTO } from './book.dto';
 import { ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { CreateBookDTO } from './createBook.dto';
 
 @ApiTags('Libros')
 @Controller('books')
@@ -27,12 +28,15 @@ export class BooksController {
 
   @Post()
   @ApiOperation({ summary: 'Crear Libro' })
-  @ApiBody({ type: BookDTO })
-  @ApiResponse({ status: 201, description: 'Libro Creado', type: BookDTO })
+  @ApiBody({ type: CreateBookDTO })
+  @ApiResponse({ status: 201, description: 'Libro Creado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  create(@Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File) {
-    bookDTO.image = this.booksService.bookImageUrl(file.originalname);
-    return this.booksService.create(bookDTO);
+  async create(@Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
+    console.log(bookDTO);
+    if(file) {
+      bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    }
+    return await this.booksService.create(bookDTO);
   }
 
   @Put(':id')

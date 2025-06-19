@@ -17,7 +17,7 @@ export class BookGenres extends Crud<BookGenre> {
         return res.json();
     }
 
-     async create(data: Partial<BookGenre>): Promise<BookGenre> {
+    async create(data: Partial<BookGenre>): Promise<BookGenre> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             headers: this.getHeaders(),

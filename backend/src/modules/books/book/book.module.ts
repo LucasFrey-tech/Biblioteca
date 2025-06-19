@@ -8,13 +8,12 @@ import { BooksController } from './book.controller';
 import { Book } from '../../../entidades/book.entity';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
-import { BookGenre } from 'src/entidades/book_genres.entity';
 
 const myapp_config = require('../../../../private/app.config.json');
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Book, Genre, Author, BookGenre])
+    TypeOrmModule.forFeature([Book, Genre, Author])
     ,MulterModule.register({
       storage: diskStorage({
         destination: myapp_config.static_resources.books_images.path,

@@ -8,7 +8,7 @@ import { Genre } from './genre.entity';
 export class BookGenre {
     @ApiProperty({ example: 1, description: 'ID Único de Libro y Genero' })
     @PrimaryGeneratedColumn()
-    id: number;
+    id!: number;
 
     @ApiProperty({ example: 1, description: 'ID Único de Libro' })
     @Column({ name: 'id_book', type: 'integer' })
@@ -18,11 +18,11 @@ export class BookGenre {
     @Column({ name: 'id_genre', type: 'integer' })
     id_genre: number;
 
-    @ManyToOne(() => Book)
-    @JoinColumn({ name: "id_book", referencedColumnName: "id" })
-    book: Book;
+    // @ManyToOne(() => Book)
+    // @JoinColumn({ name: "id_book", referencedColumnName: "id" })
+    // book: Book;
 
-    @ManyToOne(() => Genre)
-    @JoinColumn({ name: "id_genre", referencedColumnName: "id" })
-    genre: Genre;
+    // @ManyToOne(() => Genre)
+    // @JoinColumn({ name: "id_genre", referencedColumnName: "id" })
+    // genre: Genre;
 }

@@ -16,8 +16,11 @@ export class BookGenresService {
     this.logger.log('Listado de Generos de Libro Obtenido');
     return this.bookGenreRepository.find({relations: ['book','genre']});
   }
-  async create(data: Partial<BookGenreDto>): Promise<BookGenre> {
-    const newGenre = this.bookGenreRepository.create({id_genre: data.id_genre,id_book: data.id_book});
+  
+  create(data: Partial<BookGenreDto>) {
+    console.log(data);
+    const newGenre = this.bookGenreRepository.create(data);
+    console.log(newGenre);
     this.logger.log('Genero de Libro Creado');
     return this.bookGenreRepository.save(newGenre);
   }

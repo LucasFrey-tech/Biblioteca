@@ -1,21 +1,19 @@
-import { IsNumber, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsInt } from "class-validator";
 
 export class BookGenreDto {
-    @IsNumber()
-    id_genre: number;
-    @IsNumber()
+    @Type(() => Number)
+    @IsInt()
     id_book: number;
-    
-    @IsString()
-    name: string;
+    @Type(() => Number)
+    @IsInt()
+    id_genre: number;
     
     constructor(
-        id_genre: number,
         id_book: number,
-        name: string,
+        id_genre: number,
     ) {
-        this.id_genre = id_genre,
         this.id_book = id_book,
-        this.name = name
+        this.id_genre = id_genre
     }
 }

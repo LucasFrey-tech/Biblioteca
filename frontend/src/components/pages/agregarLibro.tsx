@@ -22,6 +22,7 @@ import { AddGenreDialog } from './agregarCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
+import { number } from 'zod';
 // import { BookGenres } from '@/API/class/book_genre';
 
 
@@ -74,11 +75,9 @@ export default function AddBookDialog() {
   };
 
   const handleSubmit = async () => {
-    const genres = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
-    console.log(form)
+    const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
+    const formGenresNumber = formGenresString.map(g => Number(g))
     const newBook: Partial<BookFile>= {
-      id: 0,
-      author: '',
       title: form.title,
       description: form.description,
       anio: Number(form.anio),
@@ -88,11 +87,10 @@ export default function AddBookDialog() {
       subscriber_exclusive: form.subscriber_exclusive === 'true',
       price: Number(form.price),
       author_id: Number(form.authorId),
-      genre: genres,
     };
     console.log('Form data:', newBook);
     // const response = API.books.create(newBook);
-     API.books.createBookFile(newBook);
+     API.books.createBookFile(newBook,formGenresNumber);
       
     
     if (true) {
@@ -238,16 +236,16 @@ export default function AddBookDialog() {
                 <label key={genre.id} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={form.genres.split(',').includes(genre.name)}
+                    checked={form.genres.split(',').includes(genre.id.toString())}
                     onChange={(e) => {
                       const selectedGenres = form.genres ? form.genres.split(',') : [];
                       const isChecked = e.target.checked;
 
                       let updatedGenres = [];
                       if (isChecked) {
-                        updatedGenres = [...selectedGenres, genre.name];
+                        updatedGenres = [...selectedGenres, genre.id.toString()];
                       } else {
-                        updatedGenres = selectedGenres.filter(g => g !== genre.name);
+                        updatedGenres = selectedGenres.filter(g => g !== genre.id.toString());
                       }
 
                       handleChange('genres', updatedGenres.join(','));

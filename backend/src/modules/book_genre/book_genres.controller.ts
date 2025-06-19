@@ -17,7 +17,8 @@ export class BookGenresController {
   }
 
   @Post()
-  async create(@Body() data: Partial<BookGenreDto>): Promise<BookGenre> {
+  create(@Body() data: Partial<BookGenreDto>): Promise<BookGenre> {
+    console.log(data);
     return this.bookGenresService.create(data);
   }
 

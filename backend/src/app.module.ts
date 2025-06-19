@@ -58,7 +58,7 @@ const myapp_config = require('../private/app.config.json');
     CatalogueBooksModule,
     PurchasesModule,
     LibraryBooksModule,
-    BookContentModule
+    BookContentModule,
   ],
 })
 export class AppModule {}
