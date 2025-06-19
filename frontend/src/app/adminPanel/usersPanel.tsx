@@ -7,17 +7,22 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { BaseApi } from "@/API/baseApi";
 import { User } from "@/API/types/user";
 
-
 export default function UsersPanel(): React.JSX.Element {
   const [userOpenIds, setUserOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
+  const [apiRef, setApiRef] = useState<BaseApi | null>(null);
 
-  const apiRef = new BaseApi(localStorage.getItem('token') || '');
-
+  // Initialize apiRef on client side
+  useEffect(() => {
+    const token = localStorage.getItem('token') || '';
+    setApiRef(new BaseApi(token));
+  }, []);
 
   // Fetch usuarios
   const fetchUsers = async () => {
+    if (!apiRef) return;
+    
     try {
       const userData = await apiRef.users.getAll();
       setUsers(userData);
@@ -26,11 +31,11 @@ export default function UsersPanel(): React.JSX.Element {
     }
   };
 
-
-
   useEffect(() => {
-    fetchUsers();
-  }, []);
+    if (apiRef) {
+      fetchUsers();
+    }
+  }, [apiRef]);
 
   const toggleUserOpen = (id: number) => {
     setUserOpenIds((prev) =>
@@ -38,11 +43,11 @@ export default function UsersPanel(): React.JSX.Element {
     );
   };
 
-
   const updateUser = async (id: number, updates: Partial<User>) => {
+    if (!apiRef) return;
+    
     try {
-      apiRef.users.update(id, updates);
-
+      await apiRef.users.update(id, updates);
       await fetchUsers();
     } catch (error) {
       console.error(error);
@@ -54,9 +59,7 @@ export default function UsersPanel(): React.JSX.Element {
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
-
-
-
+  
   return (
     <>
       <Input
