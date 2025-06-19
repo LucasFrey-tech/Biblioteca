@@ -106,9 +106,9 @@ export default function BooksPanel(): React.JSX.Element {
       price: bookState.formData.price
     }
     try {
-      const bookData = await apiRef.current.books.updateBookFile(bookId, bookState.formData);
+      const bookData = await apiRef.current.books.updateBookFile(bookId, bookState.formData,[]);
       // Actualizo localmente el estado de libros
-      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookState.formData : b));
+      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? bookData : b));
 
       // Salgo del modo edición
       setBooksEditState(prev => ({

@@ -24,6 +24,10 @@ export class BookGenresService {
     this.logger.log('Genero de Libro Creado');
     return this.bookGenreRepository.save(newGenre);
   }
+  async deleteAllFromBook(idBook: number) {
+    this.logger.log('Genero de Libro Eliminado');
+    return this.bookGenreRepository.delete({id_book: idBook});
+  }
   async delete(id: number) {
     this.logger.log('Genero de Libro Eliminado');
     return this.bookGenreRepository.delete(id);

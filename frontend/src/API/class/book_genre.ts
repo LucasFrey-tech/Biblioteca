@@ -38,5 +38,8 @@ export class BookGenres extends Crud<BookGenre> {
     delete(_id: number): Promise<void> {
         throw new Error("Method not implemented.");
     }
+    async deleteAll(idBook:number): Promise<void> {
+        await fetch(`${this.baseUrl}/${this.endPoint}/book/${idBook}`, {method: 'DELETE', headers: this.getHeaders(),});
+    }
 
 }

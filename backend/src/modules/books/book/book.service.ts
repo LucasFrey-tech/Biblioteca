@@ -43,9 +43,8 @@ export class BooksService {
     return bookEntity;
   }
 
-  async update(id: number, bookDTO: BookDTO) {
-    const updateData = BookDTO.BookDTO2BookEntity(bookDTO);
-    await this.booksRepository.update(id, updateData);
+  async update(id: number, bookDTO: CreateBookDTO) {
+    await this.booksRepository.update(id, bookDTO);
     this.logger.log('Libro Actualizado');
     return this.findOne(id);
   }

@@ -81,13 +81,12 @@ export class Books extends Crud<Book> {
         });
         return res.json();
     }
-    async updateBookFile(id: number, data: Partial<BookFileUpdate>): Promise<Book> {
+
+    async updateBookFile(id: number, data: Partial<BookFile>, bookGenres: number[]): Promise<Book> {
         const formData = new FormData();
         formData.append("title", data.title + '');
-        formData.append("author", data.author + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
-        formData.append("genre", JSON.stringify(data.genre));
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
         if (data.image instanceof File) {
@@ -104,11 +103,25 @@ export class Books extends Crud<Book> {
             // headers: this.getHeaders(),
             body: formData,
         });
-        return res.json();
+        const book = await res.json();
+
+        console.log('Book created', book);
+        
+        // Delete existing book genres
+        this.bookGenresAPI.deleteAll(book.id);
+        
+        // Create new book genres
+        bookGenres.forEach(async (genreId) => {
+            const data = {id_book: book.id, id_genre: genreId}
+            console.log('Creating book genre association', data);
+            this.bookGenresAPI.create(data);
+        });
+        
+        console.log('Book genres updated', bookGenres);
+        return book;
     }
 
     async delete(id: number): Promise<void> {
         await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {method: 'DELETE', headers: this.getHeaders(),});
-        
     }
 }
