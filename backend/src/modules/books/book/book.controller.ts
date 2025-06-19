@@ -45,7 +45,7 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: BookDTO, @UploadedFile() file: Express.Multer.File | string) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File | string) {
     if (typeof file != 'string') {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }

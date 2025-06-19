@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -18,21 +18,13 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@
 import Swal from 'sweetalert2';
 
 import { AddAuthorDialog } from './AddAuthorDialog';
-import { AddGenreDialog } from './agregarCategoria'; 
+import { AddGenreDialog } from './agregarCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
-// import { BookGenres } from '@/API/class/book_genre';
+import { Genre } from '@/API/types/genre';
+import { Author } from '@/API/types/author';
 
-
-interface Author {
-  id: number;
-  name: string;
-}
-interface Genre {
-  id: number;
-  name: string;
-}
 
 export default function AddBookDialog() {
   const [open, setOpen] = useState(false);
@@ -46,7 +38,7 @@ export default function AddBookDialog() {
     description: '',
     anio: '',
     isbn: '',
-    image: null as File | null,  
+    image: null as File | null,
     stock: '',
     subscriber_exclusive: 'false',
     price: '',
@@ -55,18 +47,23 @@ export default function AddBookDialog() {
   });
 
   useEffect(() => {
-    fetch('http://localhost:3001/authors')
-      .then(res => res.json())
-      .then(data => setAuthors(data));
+    const fetchData = async () => {
+      try {
+        const authorsData = await API.authors.getAll();
+        setAuthors(authorsData);
+
+        const genresData = await API.genre.getAll();
+        setGenres(genresData);
+
+      } catch (error) {
+        console.error('Error al cargar los datos', error);
+      }
+    };
+    fetchData();
   }, []);
 
-  useEffect(() => {
-    fetch('http://localhost:3001/genres')
-      .then(res => res.json())
-      .then(data => setGenres(data));
-  }, []);
 
-  const handleChange = (field: string , value: string) => {
+  const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
   };
   const handleImage = (field: string, value: File) => {
@@ -76,22 +73,22 @@ export default function AddBookDialog() {
   const handleSubmit = async () => {
     const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
     const formGenresNumber = formGenresString.map(g => Number(g))
-    const newBook: Partial<BookFile>= {
+    const newBook: Partial<BookFile> = {
       title: form.title,
       description: form.description,
       anio: Number(form.anio),
       isbn: form.isbn,
-      image: form.image ?? undefined, 
+      image: form.image ?? undefined,
       stock: Number(form.stock),
       subscriber_exclusive: form.subscriber_exclusive === 'true',
       price: Number(form.price),
       author_id: Number(form.authorId),
     };
     console.log('Form data:', newBook);
-    // const response = API.books.create(newBook);
-     API.books.createBookFile(newBook,formGenresNumber);
-      
-    // CAMBIAR ESTOOOOOOOOOOOOOOOOO
+
+    API.books.createBookFile(newBook, formGenresNumber);
+
+
     if (true) {
       Swal.fire({
         icon: 'success',
@@ -187,7 +184,7 @@ export default function AddBookDialog() {
 
             <Label>Imagen</Label>
             <DragAndDrop onFileDrop={file => {
-                handleImage('image', file);  
+              handleImage('image', file);
             }} />
 
             <Label>Stock</Label>
@@ -252,9 +249,9 @@ export default function AddBookDialog() {
                   />
                   <span>{genre.name}</span>
                 </label>
-                
+
               ))}
-              
+
             </div>
             <Button
               size="sm"
@@ -264,9 +261,9 @@ export default function AddBookDialog() {
             >
               + Agregar categoría
             </Button>
-            
+
           </div>
-              
+
           <AlertDialogFooter className="flex justify-end gap-2 mt-4">
             <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">
               Guardar
@@ -290,9 +287,9 @@ export default function AddBookDialog() {
         <AlertDialogContent>
           <AddGenreDialog onAdd={handleNewGenre} onClose={() => setOpenAddGenre(false)} />
         </AlertDialogContent>
-        
+
       </AlertDialog>
-      
+
     </>
   );
 }

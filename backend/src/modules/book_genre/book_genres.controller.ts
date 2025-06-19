@@ -22,6 +22,11 @@ export class BookGenresController {
     return this.bookGenresService.create(data);
   }
 
+  @Delete('book/:id')
+  async deleteAll(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.bookGenresService.deleteAllFromBook(id);
+  }
+  
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.bookGenresService.delete(id);
