@@ -4,7 +4,7 @@ export interface BookFile {
     description: string;
     anio: number;
     isbn: string;
-    image: File;
+    image: File | string;
     stock: number;
     subscriber_exclusive: boolean;
     price: number;
@@ -19,9 +19,8 @@ export interface BookFileUpdate {
     genre: string[];
     anio: number;
     isbn: string;
-    image: File | string; // Puede ser un File o una URL
+    image: File | string;
     stock: number;
     subscriber_exclusive: boolean;
     price: number;
-
 }
