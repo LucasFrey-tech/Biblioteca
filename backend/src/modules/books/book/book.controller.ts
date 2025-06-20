@@ -52,9 +52,14 @@ export class BooksController {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
 
-    if (typeof file) {
+    // if (typeof file !== 'string') {
+    //   bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    // }
+
+    if (file && file.originalname) {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }
+
     return this.booksService.update(id, bookDTO);
   }
 

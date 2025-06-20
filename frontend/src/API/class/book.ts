@@ -87,10 +87,16 @@ export class Books extends Crud<Book> {
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
 
-        if (data.image && typeof data.image === 'string') {
-            formData.append("image", data.image);
-        } else if (data.image) {
-            formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        // if (data.image && typeof data.image === 'string') {
+        //     formData.append("image", data.image);
+        // } else if (data.image) {
+        //     formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        // }
+
+        if (data.image instanceof File) {
+            formData.append("image", data.image)
+        } else if (typeof data.image === 'string') {
+            formData.append("existingImage", data.image)
         }
 
         formData.append("stock", data.stock + '');

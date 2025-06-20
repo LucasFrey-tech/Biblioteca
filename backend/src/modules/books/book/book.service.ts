@@ -78,7 +78,9 @@ export class BooksService {
     book.description = bookDTO.description;
     book.anio = bookDTO.anio;
     book.isbn = bookDTO.isbn;
-    book.image = bookDTO.image;
+    if(bookDTO.image) {
+      book.image = bookDTO.image;
+    }
     book.stock = bookDTO.stock;
     book.subscriber_exclusive = bookDTO.subscriber_exclusive;
     book.price = bookDTO.price;
