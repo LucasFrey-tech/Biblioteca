@@ -6,7 +6,7 @@ import { RecommendationDTO } from "./recomendations.dto";
 
 @ApiTags('Recomendations')
 @ApiBearerAuth()
-@Controller('recomendations')
+@Controller('news/recomendations')
 export class RecomendationsController {
     constructor(private readonly recomendationsService: RecomendationsService) {}
     

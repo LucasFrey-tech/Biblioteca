@@ -5,7 +5,7 @@ import styles from '../../styles/panelAdmin.module.css';
 import UsersPanel from "./usersPanel";
 import BooksPanel from "./booksPanel";
 import SubscriptionPanel from "./subcriptionPanel";
-import NovedadesPanel from "./novedadesPanel";
+import NovedadesPanel from "./novedades/novedadesPanel";
 import VentasPanel from "./ventasPanel";
 
 

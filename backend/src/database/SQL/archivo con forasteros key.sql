@@ -115,7 +115,7 @@ CREATE TABLE user_subscription (
 );
 
 -- CREAR TABLA subscription_price
-CREATE TABLE subscription_price (
+CREATE TABLE subscription (
   id serial PRIMARY KEY,
   price float NOT NULL
 );

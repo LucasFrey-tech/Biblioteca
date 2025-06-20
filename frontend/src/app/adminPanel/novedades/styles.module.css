@@ -1,0 +1,4 @@
+.bookSelector{
+    display: flex;
+    flex-direction: column;
+}
