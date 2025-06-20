@@ -109,7 +109,7 @@ create table book_recommendations(
 CREATE TABLE user_subscription (
     id serial PRIMARY KEY,
     id_user INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-    id_subscription INTEGER NOT NULL REFERENCES subscription_price(id) ON DELETE CASCADE,
+    id_subscription INTEGER NOT NULL REFERENCES subscription(id) ON DELETE CASCADE,
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     ongoing BOOLEAN DEFAULT(false)

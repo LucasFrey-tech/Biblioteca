@@ -5,38 +5,47 @@ import styles from '../../styles/panelAdmin.module.css';
 import Swal from "sweetalert2";
 import { BaseApi } from "@/API/baseApi";
 
-
-
 export default function SubscriptionPanel(): React.JSX.Element {
-    const [subscriptionPrice, setSubscriptionPrice] = useState(1.1);
+    const [subscriptionPrice, setSubscriptionPrice] = useState("1.1");
 
     const apiRef = useRef<BaseApi | null>(null);
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const target = e.target as HTMLInputElement; // <-- casting para que TS sepa que tiene checked
-        const { name, value, type, checked } = target;
-        setSubscriptionPrice(parseFloat(value));
+        const target = e.target as HTMLInputElement;
+        setSubscriptionPrice(target.value);
     };
 
     const saveChanges = async () => {
-        apiRef.current = new BaseApi(); //ahora funciona sin token
+  try {
+    apiRef.current = new BaseApi();
 
-        const token = localStorage.getItem('token');
-        if (token) {
-            apiRef.current = new BaseApi(token);
-        }
+    const token = localStorage.getItem('token');
+    if (token) {
+      apiRef.current = new BaseApi(token);
+    }
 
-        const res = await apiRef.current?.subscription.update(1,{price:subscriptionPrice});
-        if (res) {
-            setSubscriptionPrice(res.price);
-        } else {
-            Swal.fire("Error", "No se pudo actualizar el precio de la suscripción.", "error");
-        }
-    };
+    const priceNumber = parseFloat(subscriptionPrice);
+    if (isNaN(priceNumber)) {
+      Swal.fire("Error", "Por favor ingresa un número válido para el precio.", "error");
+      return;
+    }
+    const res = await apiRef.current?.subscription.update(1, { price: priceNumber });
+    
+    if (res && Array.isArray(res) && res.length > 0 && res[0].price !== undefined) {
+      setSubscriptionPrice(res[0].price.toString());
+      Swal.fire("Success", "El precio fue actualizado!", "success");
+    } else {
+      Swal.fire("Error", "No se pudo actualizar el precio de la suscripción.", "error");
+    }
+  } catch (error) {
+    Swal.fire("Error", "Error al actualizar la suscripción.", "error");
+    console.error("Error en saveChanges:", error);
+  }
+};
 
     useEffect(() => {
         const fetchData = async () => {
-            apiRef.current = new BaseApi(); //ahora funciona sin token
+            apiRef.current = new BaseApi(); // sin token
 
             const token = localStorage.getItem('token');
             if (token) {
@@ -45,7 +54,7 @@ export default function SubscriptionPanel(): React.JSX.Element {
 
             const res = await apiRef.current?.subscription.getOne();
             if (res) {
-                setSubscriptionPrice(res.price);
+                setSubscriptionPrice(res.price.toString());
             } else {
                 Swal.fire("Error", "No se pudo obtener el precio de la suscripción.", "error");
             }
@@ -53,18 +62,24 @@ export default function SubscriptionPanel(): React.JSX.Element {
         fetchData();
     }, []);
 
-
     return (
-        <div className="subscription-panel">
-            <label>
+        <div className="flex flex-col items-center gap-4 subscription-panel">
+            <h1 className="text-4xl font-bold text-center">Precio suscripción</h1>
+            <label className="text-lg">
                 Precio:
                 <Input
                     name="price"
                     value={subscriptionPrice}
-                    onChange={(e) => handlePriceChange(e)}
+                    onChange={handlePriceChange}
+                    className="ml-2"
+                    type="number"
+                    step="0.01"
+                    min="0"
                 />
             </label>
-            <Button className={styles.botonEditar} onClick={() => saveChanges()}>Guardar</Button>
+            <Button className={styles.botonEditar} onClick={saveChanges}>
+                Guardar
+            </Button>
         </div>
-    )
+    );
 }
