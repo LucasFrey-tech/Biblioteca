@@ -42,11 +42,13 @@ export class Books extends Crud<Book> {
         formData.append("description", data.description + '');
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
-        if (data.image && typeof data.image === 'object') {
+
+        if (data.image && typeof data.image === 'string') {
             formData.append("image", data.image);
         } else if (data.image) {
             formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
         }
+        
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
@@ -85,7 +87,7 @@ export class Books extends Crud<Book> {
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
 
-        if (data.image && typeof data.image === 'object') {
+        if (data.image && typeof data.image === 'string') {
             formData.append("image", data.image);
         } else if (data.image) {
             formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));

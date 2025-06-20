@@ -70,6 +70,10 @@ export default function AddBookDialog() {
     setForm({ ...form, [field]: value });
   };
 
+  useEffect(() => {
+    console.log("📦 Valor de subscriber_exclusive:", form.subscriber_exclusive);
+  }, [form.subscriber_exclusive]);
+
   const handleSubmit = async () => {
     const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
     const formGenresNumber = formGenresString.map(g => Number(g))
@@ -80,7 +84,7 @@ export default function AddBookDialog() {
       isbn: form.isbn,
       image: form.image ?? undefined,
       stock: Number(form.stock),
-      subscriber_exclusive: form.subscriber_exclusive === 'true' || form.subscriber_exclusive === 'false',
+      subscriber_exclusive: form.subscriber_exclusive === 'true',
       price: Number(form.price),
       author_id: Number(form.authorId),
     };
@@ -198,7 +202,7 @@ export default function AddBookDialog() {
               value={form.subscriber_exclusive}
             >
               <SelectTrigger>
-                <SelectValue>{form.subscriber_exclusive ? "true" : "false"}</SelectValue>
+                <SelectValue>{form.subscriber_exclusive === 'true' ? 'Sí' : 'No'}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="true">Sí</SelectItem>
