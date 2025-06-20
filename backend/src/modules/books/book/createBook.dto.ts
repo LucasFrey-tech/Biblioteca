@@ -21,9 +21,9 @@ export class CreateBookDTO {
 
   @Type(() => Number)
   stock: number;
-
-  @Transform(({ value }) => Boolean(value))
+  
   @IsBoolean()
+  @Transform(({ value }) => value === 'true')
   subscriber_exclusive: boolean;
 
   @Type(() => Number)

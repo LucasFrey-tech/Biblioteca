@@ -80,7 +80,7 @@ export default function AddBookDialog() {
       isbn: form.isbn,
       image: form.image ?? undefined,
       stock: Number(form.stock),
-      subscriber_exclusive: form.subscriber_exclusive === 'true',
+      subscriber_exclusive: form.subscriber_exclusive === 'true' || form.subscriber_exclusive === 'false',
       price: Number(form.price),
       author_id: Number(form.authorId),
     };
@@ -138,6 +138,7 @@ export default function AddBookDialog() {
       showConfirmButton: false,
     });
   };
+
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
     setGenres(prev => [...prev, genre]);

@@ -132,6 +132,7 @@ export default function BooksPanel(): React.JSX.Element {
     const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
 
     try {
+      console.log("000000000 ",bookState.formData.subscriber_exclusive);
       const updatedBook = await apiRef.current.books.updateBookFile(bookId, bookState.formData, genreIds);
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
       setBooksEditState(prev => ({
@@ -219,21 +220,28 @@ export default function BooksPanel(): React.JSX.Element {
                     <label>Título:
                       <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
+                    
                     <label>Descripción:
                       <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
                     </label>
+                    
                     <label>Año:
                       <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
+                    
                     <label>ISBN:
                       <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
+                    
                     <label>Stock:
                       <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
+                    
                     <label>Exclusivo suscriptores:
+                    
                       <select name="subscriber_exclusive" value={editState.formData.subscriber_exclusive ? "true" : "false"} onChange={(e) => {
                         const value = e.target.value === "true";
+                        console.log("111111111",value);
                         setBooksEditState(prev => ({
                           ...prev,
                           [book.id]: {
@@ -241,11 +249,14 @@ export default function BooksPanel(): React.JSX.Element {
                             formData: { ...prev[book.id].formData, subscriber_exclusive: value }
                           }
                         }));
+                        console.log("222222222",value);
                       }}>
                         <option value="true">Sí</option>
                         <option value="false">No</option>
                       </select>
+        
                     </label>
+                    
                     <label>Precio:
                       <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
@@ -282,9 +293,9 @@ export default function BooksPanel(): React.JSX.Element {
                     <Label>Categorías</Label>
                     <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
                       {genres.map((genre) => {
-                          console.log("Rendering checkbox for genre.id:", genre.id);
-                          console.log("Current selected genres:", editState.formData.genre);
-                          console.log("Is checked:", editState.formData.genre.includes(genre));
+                          // console.log("Rendering checkbox for genre.id:", genre.id);
+                          // console.log("Current selected genres:", editState.formData.genre);
+                          // console.log("Is checked:", editState.formData.genre.includes(genre));
 
                           return (
                             <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
