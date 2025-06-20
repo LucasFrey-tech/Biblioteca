@@ -71,15 +71,6 @@ create table reviews (
 	review_date timestamp default(CURRENT_TIMESTAMP)
 );
 
--- CREAR TABLA USER_SUBSCRIPTION -- no se
-create table user_subscription(
-	id serial primary key,
-	id_user integer not null references users(id),
-	start_date timestamp not null,
-	end_date timestamp not null,
-	ongoing boolean default(false)
-);
-
 -- CREAR TABLA SHOPPING_CART_BOOK
 create table shopping_cart_book(
 	id serial primary key,
