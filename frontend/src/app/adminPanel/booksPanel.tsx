@@ -19,7 +19,8 @@ import { BookFileUpdate } from '@/API/types/bookFile';
 import { Author } from '@/API/types/author';
 import { Genre } from "@/API/types/genre";
 
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+
 
 export default function BooksPanel(): React.JSX.Element {
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
@@ -49,21 +50,6 @@ export default function BooksPanel(): React.JSX.Element {
     authorId: '',
     genres: '',
   });
-
-  // const startEdit = (book: BookFileUpdate) => {
-  //   console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAA: ', book.genre);
-  //   const genreIds = genres
-  //     .filter((g) => (book.genre as Genre[]).includes(g.id))
-  //     .map((g) => g.id);
-
-  //   setBooksEditState(prev => ({
-  //     ...prev,
-  //     [book.id]: {
-  //       editMode: true,
-  //       formData: { ...book, genre: genreIds}
-  //     }
-  //   }));
-  // };
 
   const startEdit = (book: BookFileUpdate) => {
         setBooksEditState(prev => ({
@@ -238,7 +224,7 @@ export default function BooksPanel(): React.JSX.Element {
                       }}
                       value={String(editState.formData.author_id)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger aria-label="Seleccionar autor">
                         <SelectValue placeholder="Seleccionar autor" />
                       </SelectTrigger>
                       <SelectContent>
