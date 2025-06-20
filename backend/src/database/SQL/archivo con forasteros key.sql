@@ -35,14 +35,15 @@ create table books (
 -- CREAR TABLA GENRES
 create table genres(
 	id serial primary key,
-	name varchar(100)
+	name varchar(100) unique
 );
 
 -- CREAR TABLA BOOK_GENRES
 create table book_genres(
 	id serial primary key,
 	id_genre INTEGER NOT NULL REFERENCES genres(id),
-	id_book INTEGER NOT NULL REFERENCES books(id)
+	id_book INTEGER NOT NULL REFERENCES books(id),
+	UNIQUE(id_book, id_genre)
 );
 
 
@@ -103,7 +104,7 @@ create table purchases(
 -- CREAR TABLA carousel
 create table carousel(
 	id serial primary key,
-	image text default(''),
+	image varchar(100) not null,
 	book_id INTEGER NOT NULL REFERENCES books(id)
 );
 

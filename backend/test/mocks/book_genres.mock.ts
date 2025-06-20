@@ -1,4 +1,4 @@
-import {BookGenre} from 'src/entidades/book_genres.entity';
+/*import {BookGenre} from 'src/entidades/book_genres.entity';
 
 export let mockBookGenre1:BookGenre = {
   id: 1,
@@ -16,4 +16,4 @@ export let mockBookGenre3:BookGenre = {
   id_genre: 1,
 };
 
-export let MocksBooksGenres = [mockBookGenre1, mockBookGenre2, mockBookGenre3];
+export let MocksBooksGenres = [mockBookGenre1, mockBookGenre2, mockBookGenre3];*/

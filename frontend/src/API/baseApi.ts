@@ -9,7 +9,7 @@ import { ShoppingCart } from "./class/shopping_cart";
 import { Purchases } from "./class/purchase";
 import { Libreria } from "./class/libreria";
 import { BookContent } from "./class/bookContent";
-import { BookGenres } from "./class/book_genre";
+//import { BookGenres } from "./class/book_genre";
 import { Subscription } from "./class/subscription";
 
 export class BaseApi {
@@ -24,7 +24,7 @@ export class BaseApi {
     public readonly purchase: Purchases; 
     public readonly libreria: Libreria;
     public readonly bookContent: BookContent;
-    public readonly bookGenre: BookGenres;
+    //public readonly bookGenre: BookGenres;
     public readonly subscription: Subscription;
 
     constructor(private token?:string){
@@ -39,7 +39,7 @@ export class BaseApi {
         this.purchase = new Purchases(token);
         this.libreria = new  Libreria(token);
         this.bookContent = new  BookContent(token);
-        this.bookGenre = new BookGenres();
-        this.subscription = new Subscription(token);
+        //this.bookGenre = new BookGenres();
+        this.subscription = new  Subscription(token);
     }
 }

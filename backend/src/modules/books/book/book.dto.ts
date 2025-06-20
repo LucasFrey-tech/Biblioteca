@@ -1,6 +1,6 @@
 import { Book } from 'src/entidades/book.entity';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength } from 'class-validator';
+import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength, IsOptional } from 'class-validator';
 import { Author } from 'src/entidades/author.entity';
 
 export class BookDTO {
@@ -10,8 +10,9 @@ export class BookDTO {
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsString()
-  author: string;
+  author?: string;
 
   @IsInt()
   author_id: number;
@@ -20,8 +21,8 @@ export class BookDTO {
   description: string;
 
   @IsArray()
-  @IsString({ each: true })
-  genre: string[];
+  @IsInt({ each: true })
+  genre: number[];
 
   @IsInt()
   anio: number;
@@ -50,7 +51,7 @@ export class BookDTO {
     author: string,
     author_id: number,
     description: string,
-    genre: string[],
+    genre: number[],
     anio: number,
     isbn: string,
     image: string,
@@ -84,7 +85,8 @@ export class BookDTO {
       stock: bookDTO.stock,
       subscriber_exclusive: bookDTO.subscriber_exclusive,
       price: bookDTO.price,
-      author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author
+      author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author,
+      genres: bookDTO.genre?.map((id) => ({ id: id } as any))  // id=0 si no tenés el id
     }
   };
   
@@ -96,7 +98,7 @@ export class BookDTO {
       book.author ? book.author.name : "",
       book.author_id,
       book.description,
-      book.genres?book.genres.map((g) => g.name): [],
+      book.genres?book.genres.map((g) => g.id): [],
       book.anio,
       book.isbn,
       book.image,

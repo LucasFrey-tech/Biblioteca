@@ -30,6 +30,10 @@ export class CreateBookDTO {
   @Min(0)
   price: number;
 
+  @Transform(({ value }) => JSON.parse(value))
+  @IsArray()
+  @IsInt({ each: true }) // << no usar @IsString si ahora usás ids
+  genre: number[];
 
   constructor(
     title: string,
@@ -41,6 +45,7 @@ export class CreateBookDTO {
     stock: number,
     subscriber_exclusive: boolean,
     price: number,
+    genre: number[]
   ) {
     this.title = title;
     this.author_id = author_id;
@@ -51,5 +56,6 @@ export class CreateBookDTO {
     this.stock = stock;
     this.subscriber_exclusive = subscriber_exclusive;
     this.price = price;
+    this.genre = genre;
   }
 }
