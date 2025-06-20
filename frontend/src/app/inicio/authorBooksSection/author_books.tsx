@@ -1,14 +1,21 @@
-import { BookCardProps } from "../bookCard/bookCardColumnInfo/book_card_column_info";
-import BooksScroller from "../booksScroller/books_scroller";
+import { Author } from "@/API/types/author";
 import Styles from './styles.module.css';
+import { useEffect, useRef, useState } from "react";
+import { BaseApi } from "@/API/baseApi";
+import AuthorBookScroller from "./authorBookScroller";
 
 export default function AuthorBooks(): React.JSX.Element {
-    const LibrosRecientementeAgregados:BookCardProps[] = [
-        {title: 'Libro 1', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
-        {title: 'Libro 2', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
-        {title: 'Libro 3', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
-        {title: 'Libro 4', writer: "peep", img: 'https://acdn-us.mitiendanube.com/stores/004/088/117/products/730489-86c50d1835ba98f89f17479370966828-1024-1024.jpg' },
-      ];
+    const [author, setAuthor] = useState<Author[]>([]);
+
+    const apiRef = useRef(new BaseApi());
+
+    useEffect(() => {
+        async function getCarouselItems() {
+            const authors = await apiRef.current.authors.getAll();
+            setAuthor(authors);
+        }
+        getCarouselItems()
+    }, []);
 
     return (
         <div className={Styles.genre_books}>
@@ -17,15 +24,14 @@ export default function AuthorBooks(): React.JSX.Element {
                 <hr></hr>
             </div>
             <div className={Styles.content}>
-                <div className={Styles.content_item}>
-                    <BooksScroller title='Libros de Accion' books={LibrosRecientementeAgregados}/>
-                </div>
-                <div className={Styles.content_item}>
-                    <BooksScroller title='Libros de Accion' books={LibrosRecientementeAgregados}/>
-                </div>
-                <div className={Styles.content_item}>
-                    <BooksScroller title='Libros de Accion' books={LibrosRecientementeAgregados}/>
-                </div>
+                {
+                    author.length <= 0 ? <div></div> :
+                        author.map((author, idx) => {
+                            return (
+                                <AuthorBookScroller authorId={author.id} name={author.name} />
+                            );
+                        })
+                }
             </div>
         </div>
     )

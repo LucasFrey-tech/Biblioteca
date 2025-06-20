@@ -17,6 +17,20 @@ export class BooksController {
   async findAll(): Promise<BookDTO[]> {
     return (await this.booksService.findAll());
   }
+  
+  @Get('/with_genre/:id')
+  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
+  getBooksWithGenre(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findAllWithGenre(id);
+  }
+
+  @Get('/with_author/:id')
+  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo autor.' })
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
+  getBooksByAuthor(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findAllByAuthor(id);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Libro por ID' })
