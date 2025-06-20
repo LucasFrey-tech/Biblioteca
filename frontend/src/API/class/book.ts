@@ -1,6 +1,6 @@
 import { Crud } from '../service';
 import { Book } from '../types/book';
-import { BookFile, BookFileUpdate } from '../types/bookFile';
+import { BookFile} from '../types/bookFile';
 // import BookGenres from '@/API/class/book_genre'
 
 
@@ -121,6 +121,15 @@ export class Books extends Crud<Book> {
     }
 
     async delete(id: number): Promise<void> {
-        await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {method: 'DELETE', headers: this.getHeaders(),});
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+        method: 'DELETE',
+        headers: this.getHeaders(),
+    });
+
+    if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: 'Error desconocido' }));
+        throw new Error(error.message || 'Error al eliminar');
     }
+}
+
 }

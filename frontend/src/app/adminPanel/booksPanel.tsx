@@ -61,6 +61,48 @@ export default function BooksPanel(): React.JSX.Element {
     }));
   }
 
+  const eliminarLibro = async (bookId: number) => {
+  if (!bookId) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'No se ha especificado el libro a borrar',
+    });
+    return;
+  }
+
+  const confirmResult = await Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción no se puede deshacer',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, borrar libro',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+  });
+
+  if (confirmResult.isConfirmed) {
+    try {
+      await apiRef.current.books.delete(bookId);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Libro borrado',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+     } catch (error) {
+      console.error('Error al borrar libro:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo borrar el libro',
+      });
+    }
+  }
+};
+
   const handleBookChange = (
     bookId: number,
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -304,7 +346,21 @@ export default function BooksPanel(): React.JSX.Element {
                     <p><strong>Año:</strong> {book.anio}</p>
                     <p><strong>Descripción:</strong> {book.description}</p>
                     <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
-                    <Button onClick={() => startEdit(book)}>Editar✏️ </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => startEdit(book)}
+                        className="flex-1 bg-blue-600 text-white"
+                      >
+                        Editar ✏️
+                      </Button>
+                      <Button
+                        onClick={() => eliminarLibro(book.id)}
+                        className="flex-1 bg-red-600 text-white"
+                        >
+                        Borrar
+                      </Button>
+                    </div>
+
                   </>
                 )}
               </div>
