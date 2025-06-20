@@ -73,12 +73,17 @@ create table reviews (
 );
 
 -- CREAR TABLA USER_SUBSCRIPTION -- no se
-create table user_subscription(
-	id serial primary key,
-	id_user integer not null references users(id),
-	start_date timestamp not null,
-	end_date timestamp not null,
-	ongoing boolean default(false)
+CREATE TABLE user_subscription (
+    id serial PRIMARY KEY,
+    id_user INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    ongoing BOOLEAN DEFAULT(false)
+);
+
+CREATE TABLE subscription_price (
+  id serial PRIMARY KEY,
+  price float NOT NULL
 );
 
 -- CREAR TABLA SHOPPING_CART_BOOK
