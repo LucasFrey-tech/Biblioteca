@@ -1,3 +1,4 @@
 export interface SubscriptionDTO {
-    price: number;
+  id: number;
+  price: number;
 }

@@ -12,8 +12,12 @@ export class SubscriptionService {
         private subscriptionConfigRepository: Repository<Subscription>,
     ) { }
 
-    async get(): Promise<SubscriptionDTO> {
-        return await this.subscriptionConfigRepository.find()[0];
+    async get(): Promise<SubscriptionDTO>  {
+        const subscription = await this.subscriptionConfigRepository.findOne({ where: { id: 1 } });
+        if (!subscription) {
+            throw new Error("Subscription with id 1 not found");
+        }
+        return subscription as SubscriptionDTO;
     }
 
     async update(id: number, config: Partial<SubscriptionDTO>) {
