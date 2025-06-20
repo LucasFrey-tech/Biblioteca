@@ -37,8 +37,8 @@ export class BookDTO {
   @IsInt()
   stock: number;
 
-  @Transform(({ value }) => Boolean(value))
   @IsBoolean()
+  @Transform(({ value }) => value === 'true')
   subscriber_exclusive: boolean;
 
   @IsNumber()

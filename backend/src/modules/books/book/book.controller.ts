@@ -33,7 +33,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('image'))
   async create(@Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
     console.log(bookDTO);
-    if(file) {
+    if (file) {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }
     return await this.booksService.create(bookDTO);
@@ -45,8 +45,14 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File | string) {
-    if (typeof file != 'string') {
+  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
+    
+    console.log("DATOS DEL LIBRO DTO ", bookDTO)
+    if (typeof bookDTO.subscriber_exclusive === 'string') {
+      bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
+    }
+
+    if (typeof file) {
       bookDTO.image = this.booksService.bookImageUrl(file.originalname);
     }
     return this.booksService.update(id, bookDTO);

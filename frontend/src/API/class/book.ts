@@ -1,7 +1,6 @@
 import { Crud } from '../service';
 import { Book } from '../types/book';
-import { BookFile, BookFileUpdate } from '../types/bookFile';
-// import BookGenres from '@/API/class/book_genre'
+import { BookFile } from '../types/bookFile';
 
 
 export class Books extends Crud<Book> {
@@ -27,7 +26,7 @@ export class Books extends Crud<Book> {
         return response.json();
     }
 
-    async create(data: Partial<Book>): Promise<Book>{
+    async create(data: Partial<Book>): Promise<Book> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             headers: this.getHeaders(),
@@ -36,18 +35,20 @@ export class Books extends Crud<Book> {
         return res.json();
     }
 
-    async createBookFile(data: Partial<BookFile>, bookGenres: number[]): Promise<Book>{
+    async createBookFile(data: Partial<BookFile>, bookGenres: number[]): Promise<Book> {
         const formData = new FormData();
         formData.append("title", data.title + '');
         formData.append("author_id", data.author_id + '');
         formData.append("description", data.description + '');
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
-        if (data.image && typeof data.image === 'object') {
+
+        if (data.image && typeof data.image === 'string') {
             formData.append("image", data.image);
         } else if (data.image) {
             formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
         }
+        
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
@@ -62,18 +63,13 @@ export class Books extends Crud<Book> {
 
         const book = await res.json();
         console.log('Book created', book);
-        /*bookGenres.forEach(async (genreId) => {
-            const data = {id_book: book.id, id_genre: genreId}
-            console.log('Creating book genre association', data);
-            this.bookGenresAPI.create(data);
-        });*/
 
         return book;
     }
 
     async update(id: number, data: Partial<Book>): Promise<Book> {
-        
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`,{
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(data),
@@ -85,23 +81,23 @@ export class Books extends Crud<Book> {
         const formData = new FormData();
         formData.append('id', id.toString());
         formData.append("title", data.title + '');
-        
-        formData.append("author_id", data.author_id + '');
+
+        formData.append("author_id", data.author_id?.toString() || '');
         formData.append("description", data.description + '');
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
 
-        if (data.image && typeof data.image === 'object') {
-        formData.append("image", data.image);
+        if (data.image && typeof data.image === 'string') {
+            formData.append("image", data.image);
         } else if (data.image) {
-        formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+            formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
         }
 
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
 
-        
+
         formData.append("genre", JSON.stringify(bookGenres));
 
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
@@ -116,11 +112,19 @@ export class Books extends Crud<Book> {
         }
 
         const book = await res.json();
-        console.log('Book updated', book);
         return book;
     }
 
     async delete(id: number): Promise<void> {
-        await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {method: 'DELETE', headers: this.getHeaders(),});
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(),
+        });
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({ message: 'Error desconocido' }));
+            throw new Error(error.message || 'Error al eliminar');
+        }
     }
+
 }

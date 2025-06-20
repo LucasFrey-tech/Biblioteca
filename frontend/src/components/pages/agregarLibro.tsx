@@ -70,6 +70,10 @@ export default function AddBookDialog() {
     setForm({ ...form, [field]: value });
   };
 
+  useEffect(() => {
+    console.log("📦 Valor de subscriber_exclusive:", form.subscriber_exclusive);
+  }, [form.subscriber_exclusive]);
+
   const handleSubmit = async () => {
     const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
     const formGenresNumber = formGenresString.map(g => Number(g))
@@ -138,6 +142,7 @@ export default function AddBookDialog() {
       showConfirmButton: false,
     });
   };
+
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
     setGenres(prev => [...prev, genre]);

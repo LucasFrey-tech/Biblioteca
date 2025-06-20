@@ -8,6 +8,7 @@ import { BooksController } from './book.controller';
 import { Book } from '../../../entidades/book.entity';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
+import { DataSource } from 'typeorm';
 
 const myapp_config = require('../../../../private/app.config.json');
 

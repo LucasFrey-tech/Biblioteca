@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from 'src/settings.service';
@@ -15,6 +15,7 @@ export class BooksService {
 
     @InjectRepository(Book)
     private booksRepository: Repository<Book>,
+
     @InjectRepository(Genre)
     private genreRepository: Repository<Genre>,
   ) { }
@@ -64,7 +65,7 @@ export class BooksService {
 
   async update(id: number, bookDTO: CreateBookDTO) {
       // 1. Buscar el libro con relaciones
-    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
+    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!book) return null;
 
     // 2. Buscar los géneros por nombre
@@ -91,10 +92,18 @@ export class BooksService {
     return this.findOne(id);
   }
 
-  delete(id: number) {
-    this.logger.log('Libro Borrado');
-    return this.booksRepository.delete(id);
-  }
+  async delete(id: number): Promise<boolean> {
+  const book = await this.booksRepository.findOne({
+    where: { id },
+    relations: ['genres'], // 👈 NECESARIO para que remove limpie la tabla intermedia
+  });
+
+  if (!book) return false;
+
+  await this.booksRepository.remove(book); // 👈 borra el libro y limpia la tabla intermedia automáticamente
+
+  return true;
+}
   
   bookImageUrl = (imageName:string):string=>{
     return this.settingsService.getHostUrl()+this.settingsService.getBooksImagesPrefix()+"/"+imageName;
