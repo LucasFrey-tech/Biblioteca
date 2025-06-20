@@ -112,3 +112,19 @@ create table book_recommendations(
 	id serial primary key,
 	book_id INTEGER NOT NULL REFERENCES books(id)
 );
+
+-- CREAR TABLA user_subscription
+CREATE TABLE user_subscription (
+    id serial PRIMARY KEY,
+    id_user INTEGER NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    id_subscription INTEGER NOT NULL REFERENCES subscription_price(id) ON DELETE CASCADE,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    ongoing BOOLEAN DEFAULT(false)
+);
+
+-- CREAR TABLA subscription_price
+CREATE TABLE subscription_price (
+  id serial PRIMARY KEY,
+  price float NOT NULL
+);
