@@ -122,6 +122,5 @@ export class Books extends Crud<Book> {
 
     async delete(id: number): Promise<void> {
         await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {method: 'DELETE', headers: this.getHeaders(),});
-        
     }
 }

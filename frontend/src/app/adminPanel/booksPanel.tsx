@@ -12,8 +12,9 @@ import DragAndDrop from "@/components/pages/dropImage";
 import Image from "next/image";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
 import styles from '../../styles/panelAdmin.module.css';
+import Image from "next/image";
+import DragAndDrop from "@/components/pages/dropImage";
 
 import { BaseApi } from "@/API/baseApi";
 import { BookFileUpdate } from '@/API/types/bookFile';

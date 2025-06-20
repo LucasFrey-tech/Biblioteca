@@ -30,6 +30,13 @@ export function AddGenreDialog({ onAdd, onClose }: Props) {
         const newGenre: Genre = await res.json();
         onAdd(newGenre);
         setName('');
+        Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: 'Categoría agregada correctamente',
+            timer: 2000,
+            showConfirmButton: false,
+        });
         onClose();
       } else {
         Swal.fire({

@@ -37,7 +37,7 @@ export default function Navbar() {
   };
 
   const handleSubscription = async () => {
-    if (true) {
+    if (false) {
       setDropDown(false);
       setShowSubscriptionDialog(true); // Mostrar diálogo
     } else {

@@ -19,9 +19,8 @@ export interface BookFileUpdate {
     genre: number[];
     anio: number;
     isbn: string;
-    image: File | string; // Puede ser un File o una URL
+    image: File | string;
     stock: number;
     subscriber_exclusive: boolean;
     price: number;
-
 }
