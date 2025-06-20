@@ -31,8 +31,13 @@ export class Genres extends Crud<Genre> {
     update(_id: number, _data: Partial<Genre>): Promise<Genre> {
         throw new Error("Method not implemented.");
     }
-    delete(_id: number): Promise<void> {
-        throw new Error("Method not implemented.");
+    async delete(id: number): Promise<void> {
+         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(),
+            body: JSON.stringify(id),
+        });
+        return res.json();
     }
 
 }

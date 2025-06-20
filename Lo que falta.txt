@@ -1,6 +1,5 @@
 . Novedades
-. Subscripcion
-. Cambiar los fetch de addAuthor y de categoria
+. Cambiar los fetch de categoria
 
 .documentacion proyecto (typedoc)
 
