@@ -16,7 +16,7 @@ export interface BookFileUpdate {
     author: string;
     author_id: number;
     description: string;
-    genre: string[];
+    genre: number[];
     anio: number;
     isbn: string;
     image: File | string;

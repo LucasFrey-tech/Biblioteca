@@ -1,4 +1,5 @@
 import { IsBoolean, IsInt, IsNumber, IsString } from "class-validator";
+import { Genre } from "src/entidades/genre.entity";
 
 export class CatalogueBookDTO {
   @IsInt()
@@ -16,8 +17,8 @@ export class CatalogueBookDTO {
   @IsString()
   description: string;
 
-  @IsString({ each: true })
-  genre: string[];
+  // @IsString({ each: true })
+  genre: Genre[];
 
   @IsInt()
   anio: number;
@@ -40,7 +41,7 @@ export class CatalogueBookDTO {
     author: string,
     author_id: number,
     description: string,
-    genre: string[],
+    genre: Genre[],
     anio: number,
     image: string,
     stock: number,

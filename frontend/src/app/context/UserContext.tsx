@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { jwtDecode } from 'jwt-decode';
 
 interface UserContextType {
-  user:{ email: string , sub: number, username: string, admin: boolean } | null;
+  user:{ email: string , sub: number, username: string, admin: boolean,userSubscriptions?: { active: boolean }[]; } | null;
   setUser: (user: { email: string , sub: number, username: string, admin: boolean } | null) => void;
   refreshUser: () => void;
 }

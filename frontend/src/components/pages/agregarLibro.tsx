@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -43,7 +43,7 @@ export default function AddBookDialog() {
     subscriber_exclusive: 'false',
     price: '',
     authorId: '',
-    genres: '', 
+    genres: '',
   });
 
   useEffect(() => {
@@ -84,12 +84,10 @@ export default function AddBookDialog() {
       price: Number(form.price),
       author_id: Number(form.authorId),
     };
-    console.log('Form data:', newBook);
 
-    API.books.createBookFile(newBook, formGenresNumber);
+    try {
+      await API.books.createBookFile(newBook, formGenresNumber);
 
-
-    if (true) {
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -97,6 +95,7 @@ export default function AddBookDialog() {
         timer: 2000,
         showConfirmButton: false,
       });
+
       setOpen(false);
       setForm({
         title: '',
@@ -110,7 +109,9 @@ export default function AddBookDialog() {
         authorId: '',
         genres: '',
       });
-    } else {
+    } catch (error) {
+      console.error('Error al guardar el libro:', error);
+
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -191,9 +192,12 @@ export default function AddBookDialog() {
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />
 
             <Label>Exclusivo suscriptores</Label>
-            <Select onValueChange={value => handleChange('subscriber_exclusive', value)} value={form.subscriber_exclusive}>
+            <Select
+              onValueChange={value => handleChange('subscriber_exclusive', value)}
+              value={form.subscriber_exclusive}
+            >
               <SelectTrigger>
-                <SelectValue placeholder="Seleccionar" />
+                <SelectValue>{form.subscriber_exclusive === 'true' ? 'Sí' : 'No'}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="true">Sí</SelectItem>

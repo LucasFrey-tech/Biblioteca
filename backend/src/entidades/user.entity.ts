@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserSubscription } from './subscription_user.entity';
 
 @Entity('users')
 export class User {
@@ -42,4 +43,7 @@ export class User {
   @ApiProperty({example: '05-06-2025', description: 'Fecha de Registro del Usuario'})
   @CreateDateColumn({ name: 'registration_date' })
   registrationDate: Date;
+
+  @OneToMany(() => UserSubscription, userSub => userSub.user)
+  userSubscriptions: UserSubscription[];
 }

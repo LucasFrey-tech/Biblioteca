@@ -25,10 +25,14 @@ export class UsersService {
     });
   }
 
-  findOne(id: number) {
-    this.logger.log('Usuario Encontrado');
-    return this.usersRepository.findOne({ where: { id } });
-  }
+    async findOne(id: number) {
+      this.logger.log('Usuario Encontrado con Subscripciones');
+      return await this.usersRepository.findOne({
+        where: { id },
+        relations: ['userSubscriptions', 'userSubscriptions.subscription'],
+      });
+    }
+
 
   async create(user: Partial<User>) {
     const existingUserEmail = await this.usersRepository.findOne({ where: { email: user.email } });
@@ -79,5 +83,3 @@ export class UsersService {
     return this.usersRepository.delete(id);
   }
 }
-
-

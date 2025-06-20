@@ -7,12 +7,13 @@ import { useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import { useUser } from "@/app/context/UserContext";
 import SubscriptionDialog from "./subscriptionPanel";
-import Swal from "sweetalert2";
+import SubscriptionHandler from "./estadoSubscripcion";
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [menuDropDown, setDropDown] = useState(false);
   const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState<{ startDate: string, endDate: string } | null>(null);
 
   const { user, setUser } = useUser();
   const router = useRouter();
@@ -36,31 +37,9 @@ export default function Navbar() {
     }
   };
 
-  const handleSubscription = async () => {
-    if (false) {
-      setDropDown(false);
-      setShowSubscriptionDialog(true); // Mostrar diálogo
-    } else {
-      const result = await Swal.fire({
-        title: "No tienes subscripcion 🥲",
-        icon: "question",
-        html: `<h1>¡Hola ${user?.username}, deseas comprar una por 1 mes, al valor de (subscripcion.valor)?</h1>`,
-        showCloseButton: true,
-        showCancelButton: true,
-        focusConfirm: false,
-        confirmButtonText: '<i class="fa fa-thumbs-up"></i> Comprar',
-        cancelButtonText: '<i class="fa fa-thumbs-down"></i> Cancelar',
-      });
-
-      if (result.isConfirmed) {
-        await Swal.fire({
-          title: '¡Suscripción hecha!',
-          icon: 'success',
-          timer: 1000,
-          showConfirmButton: false,
-        });
-      }
-    }
+  const onSubscriptionConfirmed = (startDate: string, endDate: string) => {
+    setShowSubscriptionDialog(true);
+    setSubscriptionData({ startDate, endDate });
   };
 
   return (
@@ -94,7 +73,7 @@ export default function Navbar() {
                   {user.admin && (
                     <button onClick={() => router.push('/adminPanel')}>Panel de Admin</button>
                   )}
-                  <button onClick={handleSubscription}>Administrar subscripción</button>
+                  <SubscriptionHandler onSubscriptionConfirmed={onSubscriptionConfirmed} />
                   <button onClick={closeSession}>Cerrar Sesión</button>
                 </div>
               )}
@@ -139,7 +118,9 @@ export default function Navbar() {
               {user.admin && (
                 <li><button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button></li>
               )}
-              <li><button onClick={handleSubscription}>Administrar subscripción</button></li>
+              <li>
+                <SubscriptionHandler onSubscriptionConfirmed={onSubscriptionConfirmed} />
+              </li>
               <li><button onClick={closeSession}>Cerrar Sesión</button></li>
             </>
           ) : (
@@ -148,15 +129,13 @@ export default function Navbar() {
         </ul>
       </div>
 
-      {/* Mostrar el dialog de suscripción */}
-      {showSubscriptionDialog && (
+      {showSubscriptionDialog && subscriptionData && (
         <SubscriptionDialog
           onClose={() => setShowSubscriptionDialog(false)}
-          buyDate="2025-06-01"
-          expiryDate="2025-07-01"
+          buyDate={subscriptionData.startDate}
+          expiryDate={subscriptionData.endDate}
         />
       )}
     </>
   );
 }
-
