@@ -11,6 +11,8 @@ import { Libreria } from "./class/libreria";
 import { BookContent } from "./class/bookContent";
 //import { BookGenres } from "./class/book_genre";
 import { Subscription } from "./class/subscription";
+import { CarouselAPI } from "./class/carousel.api";
+import { BookRecomendationsAPI } from "./class/bookRecomendations.api";
 
 export class BaseApi {
     public readonly log: Login;
@@ -26,6 +28,8 @@ export class BaseApi {
     public readonly bookContent: BookContent;
     //public readonly bookGenre: BookGenres;
     public readonly subscription: Subscription;
+    public readonly carousel: CarouselAPI;
+    public readonly bookRecomendations: BookRecomendationsAPI;
 
     constructor(private token?:string){
         this.log = new Login();
@@ -41,5 +45,7 @@ export class BaseApi {
         this.bookContent = new  BookContent(token);
         //this.bookGenre = new BookGenres();
         this.subscription = new  Subscription(token);
+        this.carousel = new  CarouselAPI(token);
+        this.bookRecomendations = new  BookRecomendationsAPI(token);
     }
 }

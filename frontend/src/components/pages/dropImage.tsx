@@ -4,11 +4,12 @@ import styles from '../../styles/dragAndDrop.module.css';
 import Swal from 'sweetalert2';
 
 interface Props {
+  image: string|File
   onFileDrop: (file: File) => void;
 }
 
-const DragAndDrop: React.FC<Props> = ({ onFileDrop }) => {
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
+const DragAndDrop: React.FC<Props> = ({image, onFileDrop }) => {
+  const [previewFile, setPreviewFile] = useState<File | string | null>(image?image:null);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -37,9 +38,9 @@ const DragAndDrop: React.FC<Props> = ({ onFileDrop }) => {
 
       {previewFile && (
         <div className={styles.preview}>
-          <p><strong>{previewFile.name}</strong></p>
+          <p><strong>{previewFile instanceof File ? previewFile.name : previewFile}</strong></p>
             <Image
-              src={URL.createObjectURL(previewFile)}
+              src={previewFile instanceof File ? URL.createObjectURL(previewFile) : previewFile}
               alt="preview"
               className={styles.previewImage}
               width={200}

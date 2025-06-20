@@ -296,13 +296,7 @@ export default function BooksPanel(): React.JSX.Element {
                     </div>
 
                     <label>Imagen:</label>
-                    <Image
-                      src={typeof editState.formData.image === "string" ? editState.formData.image : '/placeholder.png'}
-                      alt="Imagen del libro"
-                      width={100}
-                      height={150}
-                    />
-                    <DragAndDrop onFileDrop={file => {
+                    <DragAndDrop image={book.image} onFileDrop={file => {
                       handleImage('image', file);
                     }} />
 

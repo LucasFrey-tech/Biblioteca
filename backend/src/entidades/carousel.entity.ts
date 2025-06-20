@@ -8,7 +8,7 @@ export class Carousel {
     id: number
 
     @ApiProperty({ example: 1, description: 'ID Único item del Carrusel' })
-    @Column({ name: 'id_book', type: 'integer' })
+    @Column({ name: 'book_id', type: 'integer' })
     idBook: number;
 
     @ApiProperty({example: '', description: 'Imagen del item del Carrusel'})
