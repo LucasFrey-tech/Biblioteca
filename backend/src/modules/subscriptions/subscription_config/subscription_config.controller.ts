@@ -6,7 +6,7 @@ import { SubscriptionDTO } from "./subscription.dto";
 @ApiTags('Configuracion de Subscripcion')
 @ApiBearerAuth()
 @Controller('subscriptions')
-export class UserSubscriptionController {
+export class SubscriptionController {
     constructor(private readonly subscriptionService: SubscriptionService) { }
 
     @Get()

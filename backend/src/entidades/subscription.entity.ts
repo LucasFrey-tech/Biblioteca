@@ -1,13 +1,15 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('user_subscription')
+import { UserSubscription } from "./subscription_user.entity";
+
+@Entity('subscription')
 export class Subscription {
-    @ApiProperty({example: 1, description: 'ID Único'})
-    @PrimaryGeneratedColumn()
-    id:number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ApiProperty({example: '14000', description: 'Precio de la Suscripción'})
-    @Column({ name: 'price', type: 'float' })
-    price: number;
+  @Column({ name: 'price', type: 'float' })
+  price: number;
+
+  @OneToMany(() => UserSubscription, userSub => userSub.subscription)
+  userSubscriptions: UserSubscription[];
 }

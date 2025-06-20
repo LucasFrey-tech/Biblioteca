@@ -1,25 +1,28 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../entidades/user.entity"; 
+import { Subscription } from "../entidades/subscription.entity"; 
 
 @Entity('user_subscription')
 export class UserSubscription {
-    @ApiProperty({example: 1, description: 'ID Único'})
-    @PrimaryGeneratedColumn()
-    id:number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ApiProperty({example: 1, description: 'ID Único del usuario'})
-    @Column({ name: 'id_user' })
-    idUser: number;
+  @ManyToOne(() => User, user => user.id, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'id_user' })
+  user: User;
 
-    @ApiProperty({example: '05-06-2025', description: 'Fecha Comienzo de Suscripción'})
-    @Column({ name: 'start_date', type: 'timestamp' })
-    startDate: Date;
+  @Column({ name: 'start_date', type: 'timestamp' })
+  startDate: Date;
 
-    @ApiProperty({example: '05-06-2026', description: 'Fecha Finalizacion de Suscripción'})
-    @Column({ name: 'end_date', type: 'timestamp' })
-    endDate: Date;
+  @Column({ name: 'end_date', type: 'timestamp' })
+  endDate: Date;
 
-    @ApiProperty({description: 'Validación de Suscripcion'})
-    @Column({ default: false })
-    ongoing: boolean;
+  @Column({ default: false })
+  ongoing: boolean;
+
+  @ManyToOne(() => Subscription, subscription => subscription.userSubscriptions, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'id_subscription' })
+  subscription: Subscription;
+  // userSubscription: UserSubscription;
 }
+

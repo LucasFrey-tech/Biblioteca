@@ -19,6 +19,7 @@
     "@types/gsap": "^3.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "gsap": "^3.13.0",
     "jwt-decode": "^4.0.0",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/date-fns": "^2.6.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

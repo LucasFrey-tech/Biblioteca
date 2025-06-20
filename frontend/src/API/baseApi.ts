@@ -40,6 +40,6 @@ export class BaseApi {
         this.libreria = new  Libreria(token);
         this.bookContent = new  BookContent(token);
         this.bookGenre = new BookGenres();
-        this.subscription = new  Subscription(token);
+        this.subscription = new Subscription(token);
     }
 }
