@@ -27,7 +27,9 @@ export default function SubscriptionPanel(): React.JSX.Element {
         }
 
         const res = await apiRef.current?.subscription.update(1,{price:subscriptionPrice});
+        console.log(res)
         if (res) {
+            Swal.fire("Success","El precio fue actualizado!", "success");
             setSubscriptionPrice(res.price);
         } else {
             Swal.fire("Error", "No se pudo actualizar el precio de la suscripción.", "error");
@@ -55,16 +57,21 @@ export default function SubscriptionPanel(): React.JSX.Element {
 
 
     return (
-        <div className="subscription-panel">
-            <label>
-                Precio:
-                <Input
-                    name="price"
-                    value={subscriptionPrice}
-                    onChange={(e) => handlePriceChange(e)}
-                />
-            </label>
-            <Button className={styles.botonEditar} onClick={() => saveChanges()}>Guardar</Button>
-        </div>
+    <div className="flex flex-col items-center gap-4 subscription-panel">
+        <h1 className="text-4xl font-bold text-center">Precio suscripción</h1>
+        <label className="text-lg">
+            Precio:
+            <Input
+                name="price"
+                value={subscriptionPrice}
+                onChange={(e) => handlePriceChange(e)}
+                className="ml-2"
+            />
+        </label>
+        <Button className={styles.botonEditar} onClick={() => saveChanges()}>
+            Guardar
+        </Button>
+    </div>
+
     )
 }

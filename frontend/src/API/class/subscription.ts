@@ -3,7 +3,6 @@ import { SubscriptionDTO } from "../types/subscription";
 
 export class Subscription extends Crud<SubscriptionDTO> {
   private endPoint: string;
-
   constructor(token?: string) {
     super(token);
     this.endPoint = 'subscriptions';
@@ -17,14 +16,23 @@ export class Subscription extends Crud<SubscriptionDTO> {
     return res.json();
   }
 
-  async update(id: number, data: Partial<SubscriptionDTO>): Promise<SubscriptionDTO> {
-    const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
-      method: 'PUT',
-      headers: this.getHeaders(),
-      body: JSON.stringify(data),
-    });
-    return res.json();
-  }
+    async update(_id: number, data: Partial<SubscriptionDTO>): Promise<SubscriptionDTO> {
+      const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+        method: 'PUT',
+        headers: this.getHeaders(),
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Error updating subscription');
+      }
+
+      return res.json();
+    }
+
+
+
 
   getAll(): Promise<SubscriptionDTO[]> {
     throw new Error("Method not implemented.");
