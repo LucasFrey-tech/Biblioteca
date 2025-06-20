@@ -1,54 +1,79 @@
 'use client';
 
 import Swal from "sweetalert2";
-import {
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AddBookDialog from "@/components/pages/agregarLibro"
 import DragAndDrop from "@/components/pages/dropImage";
 import Image from "next/image";
+
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
 import styles from '../../styles/panelAdmin.module.css';
 
 import { BaseApi } from "@/API/baseApi";
 import { BookFileUpdate } from '@/API/types/bookFile';
 import { Author } from '@/API/types/author';
 import { Genre } from "@/API/types/genre";
+
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@radix-ui/react-select";
 
 export default function BooksPanel(): React.JSX.Element {
+  const [books, setBooks] = useState<BookFileUpdate[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
-  const [books, setBooks] = useState<BookFileUpdate[]>([]);
   const [search, setSearch] = useState('');
   const apiRef = useRef(new BaseApi());
+
   const [booksEditState, setBooksEditState] = useState<{
 
     [key: number]: {
       editMode: boolean;
-      formData: BookFileUpdate & { genre: number[] };
+      formData: BookFileUpdate;
     }
   }>({});
 
-  const startEdit = (book: BookFileUpdate) => {
-    console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAA: ', book.genre);
-    const genreIds = genres
-      .filter((g) => (book.genre as string[]).includes(g.name))
-      .map((g) => g.id);
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    anio: '',
+    isbn: '',
+    image: null as File | null,
+    stock: '',
+    subscriber_exclusive: 'false',
+    price: '',
+    authorId: '',
+    genres: '',
+  });
 
-    setBooksEditState(prev => ({
+  // const startEdit = (book: BookFileUpdate) => {
+  //   console.log('HOLAAAAAAAAAAAAAAAAAAAAAAAAAAA: ', book.genre);
+  //   const genreIds = genres
+  //     .filter((g) => (book.genre as Genre[]).includes(g.id))
+  //     .map((g) => g.id);
+
+  //   setBooksEditState(prev => ({
+  //     ...prev,
+  //     [book.id]: {
+  //       editMode: true,
+  //       formData: { ...book, genre: genreIds}
+  //     }
+  //   }));
+  // };
+
+  const startEdit = (book: BookFileUpdate) => {
+        setBooksEditState(prev => ({
       ...prev,
       [book.id]: {
         editMode: true,
-        formData: { ...book, genre: genreIds}
+        formData: { ...book}
       }
     }));
-  };
+  }
 
   const handleBookChange = (
     bookId: number,
@@ -76,7 +101,7 @@ export default function BooksPanel(): React.JSX.Element {
     const bookState = booksEditState[bookId];
     if (!bookState) return;
 
-    const genreIds = bookState.formData.genre.map(g => Number(g));
+    const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
 
     try {
       const updatedBook = await apiRef.current.books.updateBookFile(bookId, bookState.formData, genreIds);
@@ -127,6 +152,10 @@ export default function BooksPanel(): React.JSX.Element {
     book.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const handleImage = (field: string, value: File) => {
+    setForm({ ...form, [field]: value });
+  };
+
   
 
   return (
@@ -145,7 +174,7 @@ export default function BooksPanel(): React.JSX.Element {
       {filteredBooks.map((book) => {
         const editState = booksEditState[book.id] || {
           editMode: false,
-          formData: { ...book, genre: book.genre.map(id => String(id)) }
+          formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
         };
 
         return (
@@ -221,31 +250,31 @@ export default function BooksPanel(): React.JSX.Element {
                       </SelectContent>
                     </Select>
 
+
                     <Label>Categorías</Label>
                     <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
                       {genres.map((genre) => {
                           console.log("Rendering checkbox for genre.id:", genre.id);
                           console.log("Current selected genres:", editState.formData.genre);
-                          console.log("Is checked:", editState.formData.genre.includes(genre.id));
+                          console.log("Is checked:", editState.formData.genre.includes(genre));
 
                           return (
                             <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
                               <input
                                 type="checkbox"
                                 value={genre.id}
-                                checked={editState.formData.genre.includes(genre.id)}
+                                checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
                                 onChange={(e) => {
                                   const checked = e.target.checked;
-                                  const value = Number(e.target.value);
 
                                   setBooksEditState((prev) => {
                                     const bookState = prev[book.id];
                                     if (!bookState) return prev;
 
-                                    const currentGenres = bookState.formData.genre;
+                                    const currentGenres = bookState.formData.genre as Genre[];
                                     const newGenres = checked
-                                      ? [...currentGenres, value]
-                                      : currentGenres.filter((id) => id !== value);
+                                      ? [...currentGenres, genre]
+                                      : currentGenres.filter((g) => g.id !== genre.id);
 
                                     return {
                                       ...prev,
@@ -274,7 +303,7 @@ export default function BooksPanel(): React.JSX.Element {
                       height={150}
                     />
                     <DragAndDrop onFileDrop={file => {
-                      // pendiente si se desea actualizar imagen
+                      handleImage('image', file);
                     }} />
 
                     <div className={styles.editButtons}>
