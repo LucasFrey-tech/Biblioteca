@@ -136,7 +136,6 @@ export default function BooksPanel(): React.JSX.Element {
     const authorId = bookState.formData.author_id;
 
     try {
-      console.log("000000000 ", bookState.formData.author);
       const updatedBook = await apiRef.current.books.updateBookFile(
         bookId,
         {
@@ -151,6 +150,7 @@ export default function BooksPanel(): React.JSX.Element {
         ...prev,
         [bookId]: { ...prev[bookId], editMode: false }
       }));
+
       Swal.fire("Éxito", "Libro actualizado correctamente", "success");
     } catch (error) {
       console.error(error);
@@ -273,9 +273,6 @@ export default function BooksPanel(): React.JSX.Element {
                     <Label>Autor</Label>
                     <Select
                       onValueChange={value => {
-                        console.log("BOOK ID: ", book.id)
-                        console.log("STATE BOOK ID: ", booksEditState[book.id])
-                        console.log("VALUE: ", value)
                         const selectedAuthor = authors.find(a => a.id === Number(value));
                         setBooksEditState(prev => ({
                           ...prev,
@@ -291,7 +288,6 @@ export default function BooksPanel(): React.JSX.Element {
                       }}
                       value={String(booksEditState[book.id]?.formData.author_id ?? '')}
                     >
-                      console.log(value={String(booksEditState[book.id]?.formData.author_id ?? '')}),
                       <SelectTrigger aria-label="Seleccionar autor">
                         <SelectValue placeholder="Seleccionar autor" />
                       </SelectTrigger>

@@ -65,7 +65,7 @@ export class BooksService {
 
   async update(id: number, bookDTO: CreateBookDTO) {
       // 1. Buscar el libro con relaciones
-    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
+    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!book) return null;
 
     // 2. Buscar los géneros por nombre

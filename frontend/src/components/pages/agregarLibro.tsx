@@ -198,7 +198,7 @@ export default function AddBookDialog() {
               value={form.subscriber_exclusive}
             >
               <SelectTrigger>
-                <SelectValue>{form.subscriber_exclusive === 'true' ? 'Sí' : 'No'}</SelectValue>
+                <SelectValue>{form.subscriber_exclusive ? "true" : "false"}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="true">Sí</SelectItem>

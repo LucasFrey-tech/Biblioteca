@@ -47,6 +47,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('image'))
   update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File | string) {
     
+    console.log("DATOS DEL LIBRO DTO ", bookDTO)
     if (typeof bookDTO.subscriber_exclusive === 'string') {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }

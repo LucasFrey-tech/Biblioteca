@@ -61,11 +61,6 @@ export class Books extends Crud<Book> {
 
         const book = await res.json();
         console.log('Book created', book);
-        /*bookGenres.forEach(async (genreId) => {
-            const data = {id_book: book.id, id_genre: genreId}
-            console.log('Creating book genre association', data);
-            this.bookGenresAPI.create(data);
-        });*/
 
         return book;
     }
@@ -85,7 +80,7 @@ export class Books extends Crud<Book> {
         formData.append('id', id.toString());
         formData.append("title", data.title + '');
 
-        formData.append("author_id", data.author_id + '');
+        formData.append("author_id", data.author_id?.toString() || '');
         formData.append("description", data.description + '');
         formData.append("anio", data.anio + '');
         formData.append("isbn", data.isbn + '');
@@ -115,7 +110,6 @@ export class Books extends Crud<Book> {
         }
 
         const book = await res.json();
-        console.log('Book updated', book);
         return book;
     }
 
