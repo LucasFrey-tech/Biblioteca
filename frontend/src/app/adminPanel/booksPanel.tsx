@@ -52,56 +52,59 @@ export default function BooksPanel(): React.JSX.Element {
   });
 
   const startEdit = (book: BookFileUpdate) => {
-        setBooksEditState(prev => ({
+    setBooksEditState(prev => ({
       ...prev,
       [book.id]: {
         editMode: true,
-        formData: { ...book}
+        formData: {
+          ...book,
+          author_id: book.author_id || authors.find(a => a.name === book.author)?.id || 0
+        }
       }
     }));
   }
 
   const eliminarLibro = async (bookId: number) => {
-  if (!bookId) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error',
-      text: 'No se ha especificado el libro a borrar',
-    });
-    return;
-  }
-
-  const confirmResult = await Swal.fire({
-    title: '¿Estás seguro?',
-    text: 'Esta acción no se puede deshacer',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonText: 'Sí, borrar libro',
-    cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-  });
-
-  if (confirmResult.isConfirmed) {
-    try {
-      await apiRef.current.books.delete(bookId);
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Libro borrado',
-        timer: 1500,
-        showConfirmButton: false,
-      });
-     } catch (error) {
-      console.error('Error al borrar libro:', error);
+    if (!bookId) {
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'No se pudo borrar el libro',
+        text: 'No se ha especificado el libro a borrar',
       });
+      return;
     }
-  }
-};
+
+    const confirmResult = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, borrar libro',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    });
+
+    if (confirmResult.isConfirmed) {
+      try {
+        await apiRef.current.books.delete(bookId);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Libro borrado',
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error('Error al borrar libro:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo borrar el libro',
+        });
+      }
+    }
+  };
 
   const handleBookChange = (
     bookId: number,
@@ -130,10 +133,19 @@ export default function BooksPanel(): React.JSX.Element {
     if (!bookState) return;
 
     const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
+    const authorId = bookState.formData.author_id;
 
     try {
-      console.log("000000000 ",bookState.formData.subscriber_exclusive);
-      const updatedBook = await apiRef.current.books.updateBookFile(bookId, bookState.formData, genreIds);
+      console.log("000000000 ", bookState.formData.author);
+      const updatedBook = await apiRef.current.books.updateBookFile(
+        bookId,
+        {
+          ...bookState.formData,
+          author_id: authorId
+        },
+        genreIds
+      );
+
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
       setBooksEditState(prev => ({
         ...prev,
@@ -185,7 +197,7 @@ export default function BooksPanel(): React.JSX.Element {
     setForm({ ...form, [field]: value });
   };
 
-  
+
 
   return (
     <>
@@ -205,7 +217,6 @@ export default function BooksPanel(): React.JSX.Element {
           editMode: false,
           formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
         };
-
         return (
           <div key={book.id} className={styles.bookCard}>
             <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
@@ -220,28 +231,27 @@ export default function BooksPanel(): React.JSX.Element {
                     <label>Título:
                       <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
-                    
+
                     <label>Descripción:
                       <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
                     </label>
-                    
+
                     <label>Año:
                       <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
-                    
+
                     <label>ISBN:
                       <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
-                    
+
                     <label>Stock:
                       <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
-                    
+
                     <label>Exclusivo suscriptores:
-                    
+
                       <select name="subscriber_exclusive" value={editState.formData.subscriber_exclusive ? "true" : "false"} onChange={(e) => {
                         const value = e.target.value === "true";
-                        console.log("111111111",value);
                         setBooksEditState(prev => ({
                           ...prev,
                           [book.id]: {
@@ -249,14 +259,13 @@ export default function BooksPanel(): React.JSX.Element {
                             formData: { ...prev[book.id].formData, subscriber_exclusive: value }
                           }
                         }));
-                        console.log("222222222",value);
                       }}>
                         <option value="true">Sí</option>
                         <option value="false">No</option>
                       </select>
-        
+
                     </label>
-                    
+
                     <label>Precio:
                       <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
                     </label>
@@ -264,19 +273,25 @@ export default function BooksPanel(): React.JSX.Element {
                     <Label>Autor</Label>
                     <Select
                       onValueChange={value => {
+                        console.log("BOOK ID: ", book.id)
+                        console.log("STATE BOOK ID: ", booksEditState[book.id])
+                        console.log("VALUE: ", value)
+                        const selectedAuthor = authors.find(a => a.id === Number(value));
                         setBooksEditState(prev => ({
                           ...prev,
                           [book.id]: {
                             ...prev[book.id],
                             formData: {
                               ...prev[book.id].formData,
-                              author_id: Number(value)
+                              author_id: Number(value),
+                              author: selectedAuthor ? selectedAuthor.name : ''
                             }
                           }
                         }));
                       }}
-                      value={String(editState.formData.author_id)}
+                      value={String(booksEditState[book.id]?.formData.author_id ?? '')}
                     >
+                      console.log(value={String(booksEditState[book.id]?.formData.author_id ?? '')}),
                       <SelectTrigger aria-label="Seleccionar autor">
                         <SelectValue placeholder="Seleccionar autor" />
                       </SelectTrigger>
@@ -288,50 +303,49 @@ export default function BooksPanel(): React.JSX.Element {
                         ))}
                       </SelectContent>
                     </Select>
+                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author_id}</p>
+                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author}</p>
 
 
                     <Label>Categorías</Label>
                     <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
                       {genres.map((genre) => {
-                          // console.log("Rendering checkbox for genre.id:", genre.id);
-                          // console.log("Current selected genres:", editState.formData.genre);
-                          // console.log("Is checked:", editState.formData.genre.includes(genre));
 
-                          return (
-                            <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
-                              <input
-                                type="checkbox"
-                                value={genre.id}
-                                checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
-                                onChange={(e) => {
-                                  const checked = e.target.checked;
+                        return (
+                          <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
+                            <input
+                              type="checkbox"
+                              value={genre.id}
+                              checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
 
-                                  setBooksEditState((prev) => {
-                                    const bookState = prev[book.id];
-                                    if (!bookState) return prev;
+                                setBooksEditState((prev) => {
+                                  const bookState = prev[book.id];
+                                  if (!bookState) return prev;
 
-                                    const currentGenres = bookState.formData.genre as Genre[];
-                                    const newGenres = checked
-                                      ? [...currentGenres, genre]
-                                      : currentGenres.filter((g) => g.id !== genre.id);
+                                  const currentGenres = bookState.formData.genre as Genre[];
+                                  const newGenres = checked
+                                    ? [...currentGenres, genre]
+                                    : currentGenres.filter((g) => g.id !== genre.id);
 
-                                    return {
-                                      ...prev,
-                                      [book.id]: {
-                                        ...bookState,
-                                        formData: {
-                                          ...bookState.formData,
-                                          genre: newGenres,
-                                        },
+                                  return {
+                                    ...prev,
+                                    [book.id]: {
+                                      ...bookState,
+                                      formData: {
+                                        ...bookState.formData,
+                                        genre: newGenres,
                                       },
-                                    };
-                                  });
-                                }}
-                              />
-                              {genre.name}
-                            </label>
-                          );
-                        })}
+                                    },
+                                  };
+                                });
+                              }}
+                            />
+                            {genre.name}
+                          </label>
+                        );
+                      })}
                     </div>
 
                     <label>Imagen:</label>
@@ -367,7 +381,7 @@ export default function BooksPanel(): React.JSX.Element {
                       <Button
                         onClick={() => eliminarLibro(book.id)}
                         className="flex-1 bg-red-600 text-white"
-                        >
+                      >
                         Borrar
                       </Button>
                     </div>
