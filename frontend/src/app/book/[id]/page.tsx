@@ -191,7 +191,7 @@ export default function BookDetail() {
                         <p><strong>Categorías:</strong></p>
                         <ul>
                             {book.genre.map((cat, idx) => (
-                                <li key={idx}>{cat}</li>
+                                <li key={cat.id || idx}>{cat.name}</li>
                             ))}
                         </ul>
                     </div>

@@ -1,3 +1,5 @@
+import { Genre } from "./genre";
+
 export interface BookFile {
     title: string;
     author_id: number;
@@ -16,7 +18,7 @@ export interface BookFileUpdate {
     author: string;
     author_id: number;
     description: string;
-    genre: number[];
+    genre: Genre[];
     anio: number;
     isbn: string;
     image: File | string;

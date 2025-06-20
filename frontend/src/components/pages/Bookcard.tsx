@@ -27,6 +27,7 @@ export default function BookCard({ book }: { book: Book }) {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
+        console.log("AHHHHHAAAA",userId);
 
         if (token && userId) {
             const api = new BaseApi(token);
