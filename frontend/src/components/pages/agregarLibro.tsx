@@ -276,9 +276,6 @@ export default function AddBookDialog() {
             <AlertDialogCancel className="bg-black text-white px-4 py-2 rounded">
               Salir
             </AlertDialogCancel>
-              <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">
-              Borrar Libro
-            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
