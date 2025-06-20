@@ -15,7 +15,7 @@ export class RecomendationsService {
     ) { }
 
     async findAll(): Promise<RecommendationDTO[]> {
-        const bookRecomendation = await this.recomendationsRepository.find({ relations: ['book'] });
+        const bookRecomendation = await this.recomendationsRepository.find({ relations: ['book','book.author'] });
         const formatedBookRecomendation = bookRecomendation
             .map(x => new RecommendationDTO(x))
             .sort((a, b) => a.id - b.id)
