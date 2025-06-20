@@ -1,9 +1,10 @@
 
 -- AÑADIR DATOS DE PRUEBA A USERS
-insert into users(username,email,password) values ('pepito','pepito@gmail.com','1234');
-insert into users(username,email,password) values ('armando','armando@gmail.com','1234');
-insert into users(username,email,password) values ('paredes','paredes@gmail.com','1234');
-insert into users(username,email,password,admin) values ('adm','adm@gmail.com','adm',true);
+insert into users(username,firstname ,lastname, email,password) values ('pepito','pepito','armando','pepito@gmail.com','1234');
+insert into users(username,firstname ,lastname, email,password) values ('armando','armando','paredes','armando@gmail.com','1234');
+insert into users(username,firstname ,lastname, email,password) values ('paredes','paredes','pepito','paredes@gmail.com','1234');
+insert into users(username,firstname ,lastname, email,password,admin) values ('adm','administrador','pagina','adm@gmail.com','adm',true);
+
 
 
 -- AÑADIR DATOS DE PRUEBA A GENRES
@@ -59,3 +60,16 @@ insert into reviews(id_user,id_book,rating,comment) values (
 	5,
 	'Efectivamente, es Literatura.'
 );
+
+
+insert into book_recommendations(book_id) values (1);
+insert into book_recommendations(book_id) values (2);
+insert into book_recommendations(book_id) values (3);
+insert into book_recommendations(book_id) values (4);
+insert into book_recommendations(book_id) values (5);
+insert into book_recommendations(book_id) values (6);
+insert into book_recommendations(book_id) values (7);
+insert into book_recommendations(book_id) values (8);
+
+insert into carousel(book_id,image) values (2,'http://localhost:3001/books_images/perros.jpg');
+insert into carousel(book_id,image) values (1,'http://localhost:3001/books_images/1984.png');
