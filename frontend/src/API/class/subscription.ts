@@ -38,10 +38,20 @@ export class Subscription extends Crud<SubscriptionDTO> {
     throw new Error("Method not implemented.");
   }
 
-  create(_data: Partial<SubscriptionDTO>): Promise<SubscriptionDTO> {
-    throw new Error("Method not implemented.");
-  }
+  async create(data: Partial<SubscriptionDTO>): Promise<SubscriptionDTO> {
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data),
+    });
 
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error.message || 'Error creating subscription');
+    }
+
+  return res.json();
+}
   delete(_id: number): Promise<void> {
     throw new Error("Method not implemented.");
   }

@@ -15,7 +15,7 @@ export default function SubscriptionPanel(): React.JSX.Element {
         setSubscriptionPrice(target.value);
     };
 
-    const saveChanges = async () => {
+const saveChanges = async () => {
   try {
     apiRef.current = new BaseApi();
 
@@ -29,19 +29,31 @@ export default function SubscriptionPanel(): React.JSX.Element {
       Swal.fire("Error", "Por favor ingresa un número válido para el precio.", "error");
       return;
     }
-    const res = await apiRef.current?.subscription.update(1, { price: priceNumber });
-    
-    if (res && Array.isArray(res) && res.length > 0 && res[0].price !== undefined) {
-      setSubscriptionPrice(res[0].price.toString());
-      Swal.fire("Success", "El precio fue actualizado!", "success");
+
+    let res;
+    try {
+      // Intentar actualizar
+      res = await apiRef.current?.subscription.update(1, { price: priceNumber });
+     Swal.fire("Success", "Suscripción actualizada con exito", "success");
+    } catch (err) {
+      console.error("Error: ", err)
+      // Si falla, intentar crearla
+      res = await apiRef.current?.subscription.create({ price: priceNumber });
+      Swal.fire("Success", `Suscripción creada con éxito al valor de ${priceNumber}`, "success");
+
+    }
+    if (res && res.price !== undefined) {
+      setSubscriptionPrice(res.price.toString());
+      Swal.fire("Success", "Suscripción actualizada", "success");
     } else {
-      Swal.fire("Error", "No se pudo actualizar el precio de la suscripción.", "error");
+      Swal.fire("Error", "No se pudo guardar la suscripción.", "error");
     }
   } catch (error) {
-    Swal.fire("Error", "Error al actualizar la suscripción.", "error");
+    Swal.fire("Error", "Error al guardar la suscripción.", "error");
     console.error("Error en saveChanges:", error);
   }
 };
+
 
     useEffect(() => {
         const fetchData = async () => {

@@ -1,4 +1,4 @@
-import { Controller, Body, Get, Param, Put, ParseIntPipe } from "@nestjs/common";
+import { Controller, Body, Get, Param, Put, ParseIntPipe, Post } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { SubscriptionService } from "./subscription_config.service";
 import { SubscriptionDTO } from "./subscription.dto";
@@ -25,5 +25,10 @@ export class SubscriptionController {
     ) {
         const defaultConfigId = 1;
         return this.subscriptionService.update(defaultConfigId, updateData);
+    }
+
+  @Post()
+  async create(@Body() data: SubscriptionDTO) {
+    return this.subscriptionService.create(data);
     }
 }

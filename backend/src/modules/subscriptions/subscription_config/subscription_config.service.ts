@@ -24,4 +24,8 @@ export class SubscriptionService {
         await this.subscriptionConfigRepository.update(id, config);
         return this.subscriptionConfigRepository.find({ where: { id: id } });
     }
+  async create(data: SubscriptionDTO): Promise<Subscription> {
+    const newSubscription = this.subscriptionConfigRepository.create(data);
+    return this.subscriptionConfigRepository.save(newSubscription);
+  }
 }

@@ -57,7 +57,6 @@ export default function BooksRecomendationSector(): React.JSX.Element {
                     :
                     <></>
             }
-
         </div>
     )
 }
