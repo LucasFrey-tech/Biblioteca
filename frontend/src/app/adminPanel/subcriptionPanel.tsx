@@ -93,7 +93,7 @@ const saveChanges = async () => {
                     onChange={handlePriceChange}
                     className="ml-2"
                     type="number"
-                    step="0.01"
+                    step="1"
                     min="0"
                 />
             </label>
