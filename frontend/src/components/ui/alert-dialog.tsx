@@ -51,6 +51,8 @@ function AlertDialogContent({
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
+      <AlertDialogTitle>
+      </AlertDialogTitle>
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
         className={cn(

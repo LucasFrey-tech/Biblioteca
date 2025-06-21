@@ -31,14 +31,14 @@ export default function BooksPanel(): React.JSX.Element {
   const apiRef = useRef(new BaseApi());
   const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
   const [booksEditState, setBooksEditState] = useState<{
-
+    
     [key: number]: {
       editMode: boolean;
       formData: BookFileUpdate;
-      tempImages? : File;
-    }
+      tempImages?: File;
+    };
   }>({});
-
+  
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -59,11 +59,11 @@ export default function BooksPanel(): React.JSX.Element {
       ...prev,
       [book.id]: {
         editMode: true,
+        tempImages: undefined,
         formData: {
           ...book,
           author_id: book.author_id || authors.find(a => a.name === book.author)?.id || 0
         },
-        tempImages : undefined,
       }
     }));
   }
@@ -133,12 +133,20 @@ export default function BooksPanel(): React.JSX.Element {
   };
 
   const saveChanges = async (bookId: number) => {
+    console.log("saveChanges llamado para libro ID:", bookId);
     const bookState = booksEditState[bookId];
-    if (!bookState) return;
+    if (!bookState) {
+      console.log("No hay estado de edición para ese libro");
+      return;
+    }
 
-    const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
+    const genreIds = Array.isArray(bookState.formData.genre)
+      ? bookState.formData.genre.map(g =>
+        typeof g === 'object' && 'id' in g ? g.id : Number(g)
+      ) : [];
+
     const authorId = bookState.formData.author_id;
-    const imageToSend = booksEditState[bookId]?.tempImages || bookState.formData.image; 
+    const imageToSend = tempImages[bookId] ?? bookState.formData.image;
     try {
       const updatedBook = await apiRef.current.books.updateBookFile(
         bookId,
@@ -153,8 +161,14 @@ export default function BooksPanel(): React.JSX.Element {
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
       setBooksEditState(prev => ({
         ...prev,
-        [bookId]: { ...prev[bookId], editMode: false, tempImages:undefined }
+        [bookId]: { ...prev[bookId], editMode: false, tempImages: undefined }
       }));
+
+      setTempImages(prev => {
+        const copy = { ...prev };
+        delete copy[bookId];
+        return copy;
+      });
 
       Swal.fire("Éxito", "Libro actualizado correctamente", "success");
     } catch (error) {
@@ -213,7 +227,10 @@ export default function BooksPanel(): React.JSX.Element {
       />
 
       <div className={styles.agregarLibro}>
-        <AddBookDialog />
+        <AddBookDialog
+          onAuthorAdded={(author) => setAuthors(prev => [...prev, author])}
+          onGenreAdded={(genre) => setGenres(prev => [...prev, genre])}
+        />
       </div>
 
       {filteredBooks.map((book) => {
@@ -357,20 +374,24 @@ export default function BooksPanel(): React.JSX.Element {
                     //       ? editState.formData.image
                     //       : '/libros/placeholder.png'
                     // }
-                    src = {booksEditState[book.id]?.tempImages ? URL.createObjectURL(booksEditState[book.id].tempImages! ) : typeof editState.formData.image === "string" ? editState.formData.image : '/libros/placeholder.png'}
+                    src={typeof editState.formData.image === "string"
+                      ? editState.formData.image
+                      : '/libros/placeholder.png'
+                    }
                     alt="Imagen del libro"
                     width={100}
                     height={150}
                     unoptimized
                   />
                     <DragAndDrop onFileDrop={file => {
+                      setTempImages(prev => ({ ...prev, [book.id]: file }));
                       setBooksEditState(prev => ({
                         ...prev,
                         [book.id]: {
                           ...prev[book.id],
+                          tempImages: file,
                           formData: {
                             ...prev[book.id].formData,
-                            tempImages:file
                           }
                         }
                       }));

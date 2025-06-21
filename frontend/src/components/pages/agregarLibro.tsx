@@ -26,7 +26,15 @@ import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
 
 
-export default function AddBookDialog() {
+export default function AddBookDialog({
+    onAuthorAdded,
+    onGenreAdded
+  }: {
+    onAuthorAdded?: (author: Author) => void;
+    onGenreAdded?: (genre: Genre) => void;
+  }) {
+  
+
   const [open, setOpen] = useState(false);
 
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -130,6 +138,7 @@ export default function AddBookDialog() {
   const handleNewAuthor = (author: Author) => {
     setAuthors(prev => [...prev, author]);
     setForm(prev => ({ ...prev, authorId: String(author.id) }));
+    if (onAuthorAdded) onAuthorAdded(author);
     setOpenAddAuthor(false);
     Swal.fire({
       icon: 'success',
@@ -141,23 +150,24 @@ export default function AddBookDialog() {
 
   // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
-    setGenres(prev => [...prev, genre]);
-    setForm(prevForm => {
-      const currentGenres = prevForm.genres ? prevForm.genres.split(',') : [];
-      const updatedGenres = [...currentGenres, genre.name];
-      return {
-        ...prevForm,
-        genres: updatedGenres.join(',')
-      };
-    });
-    setOpenAddGenre(false);
-    Swal.fire({
-      icon: 'success',
-      title: 'Categoría agregada',
-      timer: 1500,
-      showConfirmButton: false,
-    });
-  };
+  setGenres(prev => [...prev, genre]);
+  if (onGenreAdded) onGenreAdded(genre);
+  setForm(prevForm => {
+    const currentGenres = prevForm.genres ? prevForm.genres.split(',') : [];
+    const updatedGenres = [...currentGenres, String(genre.id)];  // <-- Aquí!
+    return {
+      ...prevForm,
+      genres: updatedGenres.join(',')
+    };
+  });
+  setOpenAddGenre(false);
+  Swal.fire({
+    icon: 'success',
+    title: 'Categoría agregada',
+    timer: 1500,
+    showConfirmButton: false,
+  });
+};
 
   return (
     <>
