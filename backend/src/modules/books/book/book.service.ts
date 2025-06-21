@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
-import { SettingsService } from 'src/settings.service';
+import { SettingsService } from '../../../settings.service';
 import { CreateBookDTO } from './createBook.dto';
-import { Genre } from 'src/entidades/genre.entity';
+import { Genre } from '../../../entidades/genre.entity';
 
 @Injectable()
 export class BooksService {
@@ -90,11 +90,10 @@ export class BooksService {
     const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!book) return null;
 
-    // 2. Buscar los géneros por nombre
-    const genres = await this.genreRepository.find({
-      where: bookDTO.genre.map((id) => ({ id })),
-    });
+    // 2. Buscar los géneros
+    const genres = await this.genreRepository.find();
 
+    
     // 3. Asignar los campos del DTO al libro
     book.title = bookDTO.title;
     book.description = bookDTO.description;
@@ -107,8 +106,27 @@ export class BooksService {
     book.subscriber_exclusive = bookDTO.subscriber_exclusive;
     book.price = bookDTO.price;
     book.author_id = bookDTO.author_id;
-    book.genres = genres;
+    
+    // Actualizar Generos:
+    const newGenres = bookDTO.genre.filter(x => !book.genres?.some(g => g.id == x))|| [];
+    console.log('Generos Nuevos: ', newGenres);
+    const genresToRemove = book.genres?.filter(x => !bookDTO.genre.some(g => x.id == g)) || [];
+    console.log('Generos removidos: ', genresToRemove);
 
+    newGenres.forEach(ng => {
+      const genreToAdd = genres.find(g => g.id == ng);
+      if (genreToAdd) {
+        book.genres?.push(genreToAdd);
+      }
+    })
+
+    genresToRemove.forEach(dg => {
+      const genreToRemoveIndex = book.genres?.findIndex(g => g.id == dg.id);
+      if (genreToRemoveIndex !== undefined && genreToRemoveIndex > -1 && book.genres) {
+        book.genres.splice(genreToRemoveIndex, 1);
+      }
+    })
+    
     // 4. Guardar
     await this.booksRepository.save(book);
 
