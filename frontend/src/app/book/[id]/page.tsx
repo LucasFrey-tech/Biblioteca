@@ -161,9 +161,13 @@ export default function BookDetail() {
         }
     };
 
+
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
+
+    const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
+    const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
 
     return (
         <div className={styles.container}>
@@ -174,12 +178,21 @@ export default function BookDetail() {
                         <Image
                             src={book.image}
                             alt={book.title}
-                            className={styles.cover}
+                            className={`${styles.cover} ${showExclusiveOverlay ? styles.blurred : ''}`}
                             width={300}
                             height={450}
                             placeholder="blur"
                             blurDataURL="/libros/placeholder.png"
                         />
+                        {showExclusiveOverlay && (
+                            <Image
+                                src="/libros/exclusivo-suscriptores.png"
+                                alt="Contenido exclusivo para suscriptores"
+                                className={styles.exclusiveOverlay}
+                                width={300}
+                                height={450}
+                            />
+                        )}
                     </div>
                 </div>
 
@@ -207,48 +220,59 @@ export default function BookDetail() {
                                 currency: 'ARS'
                             }).format(book.price)}
                         </p>
-                        <button className={styles.buyButton} onClick={handleBuyNow}>
-                            Comprar Ahora
-                        </button>
-                        <button className={styles.cartButton} onClick={handleAddToCart}>
-                            Agregar al Carrito
-                        </button>
                     </div>
 
-                    <div className={styles.formatButtons}>
-                        <button
-                            className={`${styles.format} ${selectedFormat === 'physical' ? styles.active : ''}`}
-                            onClick={() => setSelectedFormat('physical')}
-                        >
-                            Físico
-                        </button>
-                        <button
-                            className={`${styles.format} ${selectedFormat === 'ebook' ? styles.active : ''}`}
-                            onClick={() => setSelectedFormat('ebook')}
-                        >
-                            eBook
-                        </button>
-                    </div>
-
-                    {selectedFormat === 'physical' && (
-                        <div className={styles.stockBox}>
-                            <p><strong>Stock Disponible</strong></p>
-                            <p>Cantidad: {book.stock} Unidades</p>
-                            <div className={styles.amountSelector}>
-                                <label htmlFor="amount">Cantidad: </label>
-                                <input
-                                    id="amount"
-                                    type="number"
-                                    min={1}
-                                    max={book.stock}
-                                    value={amount}
-                                    onChange={(e) => setAmount(Number(e.target.value))}
-                                    className={styles.amountInput}
-                                />
-                            </div>
+                    {showExclusiveOverlay ? (
+                        <div className={styles.lockedMessage}>
+                            <p>📚 Este libro es exclusivo para suscriptores.</p>
+                            <p>Obtenga una suscripción para poder acceder a este contenido.</p>
                         </div>
+                    ) : (
+                        <>
+                            <button className={styles.buyButton} onClick={handleBuyNow}>
+                                Comprar Ahora
+                            </button>
+                            <button className={styles.cartButton} onClick={handleAddToCart}>
+                                Agregar al Carrito
+                            </button>
+
+                            <div className={styles.formatButtons}>
+                                <button
+                                    className={`${styles.format} ${selectedFormat === 'physical' ? styles.active : ''}`}
+                                    onClick={() => setSelectedFormat('physical')}
+                                >
+                                    Físico
+                                </button>
+                                <button
+                                    className={`${styles.format} ${selectedFormat === 'ebook' ? styles.active : ''}`}
+                                    onClick={() => setSelectedFormat('ebook')}
+                                >
+                                    eBook
+                                </button>
+                            </div>
+
+                            {selectedFormat === 'physical' && (
+                                <div className={styles.stockBox}>
+                                    <p><strong>Stock Disponible</strong></p>
+                                    <p>Cantidad: {book.stock} Unidades</p>
+                                    <div className={styles.amountSelector}>
+                                        <label htmlFor="amount">Cantidad: </label>
+                                        <input
+                                            id="amount"
+                                            type="number"
+                                            min={1}
+                                            max={book.stock}
+                                            value={amount}
+                                            onChange={(e) => setAmount(Number(e.target.value))}
+                                            className={styles.amountInput}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
+
             </div>
 
             {/* Sinopsis debajo del contenido principal */}

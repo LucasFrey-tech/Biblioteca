@@ -88,6 +88,27 @@
     font-size: 1rem;
 }
 
+.imageWrapper {
+    position: relative;
+    width: 200px;
+    height: 150px;
+    overflow: hidden;
+}
+
+.blurred {
+    filter: blur(3px) brightness(0.7);
+}
+
+.exclusiveOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 150px;
+    object-fit: contain;
+    z-index: 1;
+    pointer-events: none;
+}
 
 /* Formato responsive */
 @media (max-width: 1200px) {

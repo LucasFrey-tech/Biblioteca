@@ -4,21 +4,15 @@ import { FaCartPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import styles from '../../styles/BookCard.module.css';
 import Image from 'next/image';
-
 import { useEffect, useRef, useState } from 'react';
 import { BaseApi } from '@/API/baseApi';
 import { User } from '@/API/types/user';
+import { Book } from '@/API/types/book';
 import Swal from 'sweetalert2';
 
-type Book = {
-    id: number;
-    image: string;
-    title: string;
-    price: number;
-    author: string | undefined;
-};
+type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'author' | 'subscriber_exclusive'>;
 
-export default function BookCard({ book }: { book: Book }) {
+export default function BookCard({ book }: { book: BookCardProps }) {
     const authorName = book.author ?? 'Desconocido';
     const router = useRouter();
     const [user, setUser] = useState<User>();
@@ -27,7 +21,6 @@ export default function BookCard({ book }: { book: Book }) {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('userId');
-        console.log("AHHHHHAAAA",userId);
 
         if (token && userId) {
             const api = new BaseApi(token);
@@ -50,7 +43,6 @@ export default function BookCard({ book }: { book: Book }) {
         const userId = localStorage.getItem('userId');
 
         if (!token || !userId) {
-            
             router.push('/login');
             return;
         }
@@ -87,22 +79,35 @@ export default function BookCard({ book }: { book: Book }) {
         }
     };
 
+    const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
+    const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
 
     return (
         <div className={styles.card} onClick={handleCardClick}>
-            <Image
-                src={
-                    typeof book.image === 'string' && book.image.trim() !== ''
-                    ? book.image
-                    : '/libros/placeholder.png'
-                }
-                alt={book.title}
-                className={styles.cover}
-                width={200}
-                height={150}
-                placeholder="blur"
-                blurDataURL="/libros/placeholder.png"
-            />
+            <div className={styles.imageWrapper}>
+                <Image
+                    src={
+                        typeof book.image === 'string' && book.image.trim() !== ''
+                            ? book.image
+                            : '/libros/placeholder.png'
+                    }
+                    alt={book.title}
+                    className={`${styles.cover} ${showExclusiveOverlay ? styles.blurred : ''}`}
+                    width={200}
+                    height={150}
+                    placeholder="blur"
+                    blurDataURL="/libros/placeholder.png"
+                />
+                {showExclusiveOverlay && (
+                    <Image
+                        src="/libros/exclusivo-suscriptores.png"
+                        alt="Contenido exclusivo para suscriptores"
+                        className={styles.exclusiveOverlay}
+                        width={200}
+                        height={150}
+                    />
+                )}
+            </div>
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
