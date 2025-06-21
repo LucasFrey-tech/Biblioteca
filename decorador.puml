@@ -1,0 +1,533 @@
+@startuml Alejandria
+
+'========================
+'Entidades
+'========================
+package Entity {
+    class AuthorEntity{
+        - id: number
+        - name: string
+    }
+
+    class BookRecommendationEntity {
+        - id: number
+        - id_book: number
+        + book: Book
+    }
+
+    class BookEntity {
+        - id: number
+        - title: string
+        - author_id: number
+        - description: string
+        - anio: number
+        - isbn: string
+        - image: string = ""
+        - stock: number
+        - subscriber_exclusive: boolean = false
+        - price: number
+        + author: Author
+        + genres: Genre[]
+    }
+
+    class CarouselEntity  {
+        - id: number
+        - idBook: number
+        - image: string = ""
+    }
+
+    class  GenreEntity {
+        - id: number
+        - name: string
+    }
+
+    class PurchaseEntity {
+        - id: number
+        - idUser: number
+        - idBook: number
+        - amount: number
+        - price: number
+        - virtual: boolean = false
+        - purchaseDate: Date
+        + user: User
+        + book: Book
+    }
+
+    class ReviewEntity {
+        - id: number
+        - id_user: number
+        - id_book: number
+        - rating: number
+        - comment: string
+        - reviewDate: Date
+        + user: User
+    }
+
+    class SesionTokenEntity {
+        - id: number
+        - idBook: number
+        - token: string
+    }
+
+    class ShoppingCartBookEntity {
+        - id: number
+        - idUser: number
+        - idBook: number
+        - amount: number
+        - virtual: boolean
+        + user: User
+        + book: Book
+    }
+
+    class UserSubscriptionEntity {
+        - id: number
+        + user: User
+        - startDate: Date
+        - endDate: Date
+        - ongoing: boolean
+        - subscription: Subscription
+    }
+
+    class SubscriptionEntity {
+        - id: number
+        - price: number
+        + userSubscriptions: UserSubscription[]
+    }
+
+    class UserVirtualBooksEntity {
+        - id: number
+        - id_user: number
+        - id_book: number
+        + book: Book
+    }
+
+    class UserEntity {
+        - id: number
+        - firstname: string
+        - lastname: string
+        - username: string
+        - email: string
+        - password: string
+        - tel: string
+        - admin: boolean
+        - disabled: boolean
+        - registrationDate: Date
+        + userSubscriptions: UserSubscription[]
+    }
+
+    class VirtualBookContentEntity {
+        - id: number
+        - id_book:number
+        - content: string
+    }
+}
+
+'========================
+' DTOs
+'========================
+
+class LoginRequestBody {
+    + email: string
+    + password: string
+
+    + LoginRequestBody(email: string, password: string)
+}
+
+class RegisterRequestBody {
+    + username: string
+    + firstname: string
+    + lastname: string
+    + email: string
+    + password: string
+
+    + RegisterRequestBody(props: registerRequestBodyProps)
+}
+
+interface registerRequestBodyProps {
+    'flecha de uso de registerRequestBody a props
+    username: string,
+    firstname: string,
+    lastname: string,
+    email: string,
+    password: string
+}
+
+class CreateAuthorDto {
+    + name: string;
+
+    + CreateAuthorDto(name: string)
+}
+
+class BookDTO {
+    + id: number
+    + title: string
+    + author: string
+    + author_id: number
+    + description: string
+    + genre: Genre[];
+    + anio: number;
+    +  isbn: string;
+    +  image: string;
+    +  stock: number;
+    +  subscriber_exclusive: boolean;
+    +  price: number;
+
+    + BookDTO(props: BookDTOProps)
+    + {static} BookDTO2BookEntity(bookDTO: BookDTO): Book
+    + {static} BookEntity2BookDTO(book: Book): BookDTO
+}
+
+interface BookDTOProps {
+    id: number,
+    title: string,
+    author: string,
+    author_id: number,
+    description: string,
+    genre: Genre[],
+    anio: number,
+    isbn: string,
+    image: string,
+    stock: number,
+    subscriber_exclusive: boolean,
+    price: number
+}
+
+class CreateBookDto {
+    + title: string
+    + author_id: number
+    + description: string
+    + anio: number
+    + isbn: string
+    + image: string
+    + stock: number
+    + subscriber_exclusive: boolean
+    + price: number
+    + genre: number[]
+
+    + CreateBookDTO(props: CreateBookDTOProps)
+}
+
+interface CreateBookDTOProps {
+    title: string,
+    author_id: number,
+    description: string,
+    anio: number,
+    isbn: string,
+    image: string,
+    stock: number,
+    subscriber_exclusive: boolean,
+    price: number,
+    genre: number[],
+}
+
+class BookContentDTO {
+    + idBook: number
+    + content:string
+
+    + BookContentDTO(idBook:number, content:string)
+}
+
+class LibraryBookDTO {
+    + id: number
+    + title: string
+    + author_id: number
+    + description: string
+    + isbn: string
+    + image: string
+    + LibraryBookDTO(id: number, title: string, author_id: number, description: string, isbn: string, image: string)
+}
+
+class CreateUserVirtualBookDto {
+    + idUser: number
+    + idBook: number
+
+    + CreateUserVirtualBookDto(idUser: number, idBook: number)
+}
+
+class ReviewI {
+    + id: number
+    + id_user: number
+    + id_book: number
+    + username: string
+    + comment: string
+
+    + ReviewI(id: number, id_user: number, id_book: number, username: string, comment: string, rating: number, reviewDate: string)
+}
+
+class PurchaseDTO {
+    + id:number
+    + id_user:number
+    + title: string
+    + author: string
+    + image: string
+    + price: number
+    + virtual: boolean
+    + amount: number
+    + purchaseDate: Date
+
+    + PurchaseDTO(props: PurchaseDTOProps)
+}
+
+interface PurchaseDTOProps {
+    id: number,
+    id_user: number,
+    id_book: number,
+    title: string,
+    author: string,
+    image: string,
+    price: number,
+    virtual: boolean,
+    amount: number,
+    purchaseDate: Date,
+}
+
+class CreateRecommendationDTO {
+    + idBook: number
+}
+
+class RecommendationDTO {
+    + id: number
+    + idBook: number
+    + title: string
+    + author: string
+    + image:string
+
+    + RecommendationDTO(id:number, idBook: number, title: string, author:string, image:string)
+}
+
+class CarouselDTO {
+    + id: number
+    + idBook: number
+    + image: string
+}
+
+
+'========================
+'Servicies
+'========================
+
+class AuthService {
+    - usersService: UsersService
+    - jwtService: JwtService
+
+    + register(requestBody: RegisterRequestBody)
+    + login(requestBody: LoginRequestBody)
+    + validateUser(email: string, pass: string)
+}
+
+class AuthorService {
+    - authorRepository: Repository<Author>
+
+    + create(createAuthorDto: CreateAuthorDto): Promise<Author>
+    + findAll(): Promise<Author[]>
+    + findOne(id: number): Promise<Author>
+    + remove(id: number): Promise<void>
+}
+
+class BooksService {
+    - settingsService: SettingsService
+    - booksRepository: Repository<Book>
+    - genreRepository: Repository<Genre>
+
+    + findAll(): Promise<BookDTO[]>
+    + findAllWithGenre(genreId: number): Promise<BookDTO[]>
+    + findAllByAuthor(authorId: number): Promise<BookDTO[]>
+    + findOne(id: number): Promise<BookDTO | null>
+    + create(bookDTO: CreateBookDTO)
+    + update(id: number, bookDTO: CreateBookDTO)
+    + delete(id: number): Promise<boolean>
+
+    + bookImageUrl = (imageName:string):string
+}
+
+class CatalogueBooksService {
+    - booksService: BooksService
+
+    + findAll(): Promise<CatalogueBookDTO[]>
+    + findOne(id: number)
+}
+
+class BookContentService {
+    -  bookContentRepository: Repository<VirtualBookContent>
+
+    + get(id:number):Promise<BookContentDTO|null>
+    + create(bookContent: Partial<BookContentDTO>): Promise<BookContentDTO>
+    + update(id:number, bookContent: BookContentDTO)
+    + delete(id: number)
+}
+
+class LibraryBooksService {
+    - userVirtualBooks: Repository<UserVirtualBooks>
+
+    + findAllByUser(idUser: number): Promise<LibraryBookDTO[]>
+    + create(userVirtualBook: { idUser: number, idBook: number }): Promise<UserVirtualBooks>
+}
+
+class BookReviewsService {
+    - reviewRepository: Repository<Review>
+
+    + create(reviewData: Partial<ReviewI>): Promise<ReviewI>
+    + findAll(): Promise<Review[]>
+    + findOne(id: number): Promise<Review>
+    + findReviewsByBookId(bookId: number): Promise<ReviewI[]>
+    + update(id: number, reviewData: ReviewI)
+    + remove(id: number): Promise<void>
+}
+
+class GenresService {
+    - genreRepository: Repository<Genre>
+
+    + findAll(): Promise<Genre[]>
+    + create(genre: Partial<Genre>): Promise<Genre>
+}
+
+class PurchaseService {
+    - purchaseRepository: Repository<Purchase>,
+    - cartRepository: Repository<ShoppingCartBook>
+    - booksRepository: Repository<Book>
+    - userRepository: Repository<User>
+
+    + processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void>
+    + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+}
+
+class RecomendationsService {
+    - recomendationsRepository: Repository<BookRecommendation>
+
+    + findAll(): Promise<RecommendationDTO[]>
+    + findOne(id: number): Promise<RecommendationDTO>
+    + create(body: CreateRecommendationDTO): Promise<RecommendationDTO>
+    + update(id:number, body: CreateRecommendationDTO): Promise<RecommendationDTO>
+    + remove(id: number): Promise<void>
+}
+
+class CarouselService {
+    - settingsService: SettingsService
+    - carouselRepository: Repository<Carousel>
+
+    + findAll(): Promise<CarouselDTO[]>
+    + create(body: CarouselDTO): Promise<CarouselDTO>
+    + update(id: number, updateData: Partial<CarouselDTO>)
+    + remove(id: number): Promise<void>
+    + bookImageUrl = (imageName: string): string
+}
+
+
+
+
+'========================
+'Controllers
+'========================
+
+class AuthController {
+    - authService: AuthService
+
+    + login(LoginRequestBody: LoginRequestBody)
+    + registerUser(requestBody: RegisterRequestBody)
+}
+
+class AuthorController {
+    - authorService: AuthorService
+
+    + findAll()
+    + findOne(id: number)
+    + create(createAuthorDto: CreateAuthorDto): Promise<Author>
+    + remove(id: number)
+}
+
+class BookController {
+    - booksService: BooksService
+
+    + findAll(): Promise<BookDTO[]>
+    + getBooksWithGenre(id: number)
+    + getBooksByAuthor(id: number)
+    + findOne(id: number)
+    + create(bookDTO: CreateBookDTO, file: Express.Multer.File)
+    + update(id: number, bookDTO: CreateBookDTO, file: Express.Multer.File)
+    + delete(id: number)
+}
+
+class CatalogueBooksController {
+    - booksService: CatalogueBooksService
+
+    + findAll(): Promise<CatalogueBookDTO[]>
+    + findOne(id: number): Promise<CatalogueBookDTO | null>
+}
+
+class BookContentController {
+    - bookContentService: BookContentService
+
+    + get(id: number):Promise<BookContentDTO|null>
+    + post(bookContent: BookContentDTO):Promise<BookContentDTO>
+    + update(id: number, bookContent: BookContentDTO)
+    + delete(id: number)
+}
+
+class LibraryBooksController {
+    - libraryBooksService: LibraryBooksService
+
+    + findAllByUser(idUser: number): Promise<LibraryBookDTO[]>
+    + create(createUserVirtualBookDto: CreateUserVirtualBookDto): Promise<UserVirtualBooks>
+}
+
+class BookReviewsController {
+    - reviewService: BookReviewsService
+
+    + findAll()
+    + findOne(id: number) 
+    + findReviewsByBookId(bookId: number)
+    + create(reviewData: ReviewI)
+    + update(id:number, @Body() reviewData: ReviewI)
+    + remove(id: number)
+}
+
+class GenresController {
+    - genresService: GenresService
+
+    + findAll(): Promise<Genre[]>
+    + create(@Body() newGenre: Partial<Genre>): Promise<Genre>
+}
+
+class PurchasesController {
+    -  purchasesService: PurchasesService
+
+    + processPurchase(body: ProcessPurchaseDTO)
+    + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+}
+
+class RecomendationsController {
+    - recomendationsService: RecomendationsService
+
+    + findAll()
+    + findOne(id: string)
+    + reate(body: CreateRecommendationDTO): Promise<RecommendationDTO>
+    + update(id: string, body: CreateRecommendationDTO): Promise<RecommendationDTO>
+    + remove(id: string)
+}
+
+class CarouselController {
+    - carouselService: CarouselService
+
+    + findAll()
+    + create(body: CarouselDTO, file: Express.Multer.File): Promise<CarouselDTO>
+    + update(id: number, updateData: Partial<CarouselDTO>
+    + remove(id: string)
+}
+
+
+
+
+
+
+
+
+@enduml
+
+
+/'
+Book "1" *-- "n" Author : author ===> @ManyToOne (Libro → Autor)
+Book "*" -- "*" Genre : genre ===> @Many-to-Many (Libro → Género)
+User "1" *-- "1" Profile : profile ===> One-to-One (Usuario → Perfil)
+
+Author "1" *-- "n" Book : books ===> One-to-Many (Autor → Libros)
+'/
