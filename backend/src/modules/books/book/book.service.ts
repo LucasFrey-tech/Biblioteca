@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
-import { SettingsService } from 'src/settings.service';
+import { SettingsService } from '../../../settings.service';
 import { CreateBookDTO } from './createBook.dto';
-import { Genre } from 'src/entidades/genre.entity';
+import { Genre } from '../../../entidades/genre.entity';
 
 @Injectable()
 export class BooksService {

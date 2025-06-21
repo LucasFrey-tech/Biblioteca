@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {mockBook1,mockBooks} from '../mocks/books.mock'
+import {mockBook1,mockBooks} from '../mocks/entities/books.mock'
 import { BooksService } from '../../src/modules/books/book/book.service';
 import { CatalogueBookDTO } from '../../src/modules/books/catalogue//catalogue_book.dto';
 import { CatalogueBooksService } from '../../src/modules/books/catalogue/catalogue_books.service';

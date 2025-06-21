@@ -1,4 +1,5 @@
 import { Review } from "src/entidades/review.entity";
+import { mockUser1, mockUser2, mockUser3 } from "./user.mock";
 
 export const mockReview1: Review = {
     id: 1,
@@ -7,6 +8,7 @@ export const mockReview1: Review = {
     rating: 3,
     comment: "mastodonte",
     reviewDate: new Date("2020-05-02"),
+    user: mockUser1
 };
 
 export const mockReview2:Review = {
@@ -16,6 +18,7 @@ export const mockReview2:Review = {
     rating: 1,
     comment: "malardo",
     reviewDate: new Date("2020-05-02"),
+    user: mockUser2
 };
 
 export const mockReview3:Review = {
@@ -25,6 +28,7 @@ export const mockReview3:Review = {
     rating: 5,
     comment: "GOOOOOOD!",
     reviewDate: new Date("2020-05-02"),
+    user: mockUser3
 };
 
 export const mockReviews = [mockReview1, mockReview2, mockReview3];

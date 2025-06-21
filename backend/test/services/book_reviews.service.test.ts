@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from '../../src/entidades/review.entity';
-import { mockReview1, mockReviews } from '../mocks/review.mock';
+import { mockReview1, mockReviews } from '../mocks/entities/review.mock';
 import { BookReviewsService } from '../../src/modules/books/reviews/book_reviews.service';
 import { User } from "src/entidades/user.entity";
 

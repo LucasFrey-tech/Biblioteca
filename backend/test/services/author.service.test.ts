@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Author } from '../../src/entidades/author.entity';
-import { mockAuthor1, mockAuthors } from '../mocks/authors.mock';
+import { mockAuthor1, mockAuthors } from '../mocks/entities/authors.mock';
 import { AuthorService } from '../../src/modules/authors/author.service';
 
 describe('AuthorService', () => {

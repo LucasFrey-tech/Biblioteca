@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LibraryBooksService } from '../../src/modules/books/library/library_books.service';
 import { BooksService } from '../../src/modules/books/book/book.service';
 import { LibraryBookDTO } from '../../src/modules/books/library/dto/library_book.dto';
-import {mockBook1,mockBooks} from '../mocks/books.mock'
+import {mockBook1,mockBooks} from '../mocks/entities/books.mock'
 
 describe('LibraryBooksService', () => {
   let service: LibraryBooksService;
