@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RecomendationsService } from "./recomendations.service";
 import { RecommendationDTO } from "./recomendations.dto";
+import { CreateRecommendationDTO } from "./create_recomendations.dto";
 
 
 @ApiTags('Recomendations')
@@ -27,10 +28,18 @@ export class RecomendationsController {
 
     @Post()
     @ApiOperation({ summary: 'Crear Recomendacion' })
-    @ApiBody({ type: RecommendationDTO })
+    @ApiBody({ type: CreateRecommendationDTO })
     @ApiResponse({ status: 201, description: 'Recomendacion creada.', type: RecommendationDTO })
-    create(@Body() body: RecommendationDTO): Promise<RecommendationDTO> {
+    create(@Body() body: CreateRecommendationDTO): Promise<RecommendationDTO> {
         return this.recomendationsService.create(body);
+    }
+
+    @Put(':id')
+    @ApiOperation({ summary: 'Actualizar Recomendacion' })
+    @ApiBody({ type: CreateRecommendationDTO })
+    @ApiResponse({ status: 201, description: 'Recomendacion actualizada.', type: RecommendationDTO })
+    update(@Param('id') id: string, @Body() body: CreateRecommendationDTO): Promise<RecommendationDTO> {
+        return this.recomendationsService.update(Number(id),body);
     }
 
     @Delete(':id')

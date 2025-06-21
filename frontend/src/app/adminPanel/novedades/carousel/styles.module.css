@@ -1,0 +1,300 @@
+.pageContainer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #ddebfe;
+  padding: 2.5rem 1rem;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.titulo {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #1e40af; /* azul más intenso */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.navButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+  width: 90%;
+  max-width: 52rem;
+  min-width: 40rem;
+}
+
+.tabButton {
+  width: 15rem;
+  margin-left: 1%;
+  margin-right: 1%;
+  padding: 0.8rem 2rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  color: #475569;
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.tabButton:hover {
+  background-color: #cbd5e1;
+  color: #1e40af;
+  border-color: #1e40af;
+}
+
+.activeTab {
+  background-color: #2563eb;
+  color: white;
+  border-color: #1d4ed8;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+}
+
+.contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 52rem;
+  box-sizing: border-box;
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.1);
+}
+
+.inputSearch {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 1rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.inputSearch:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.4);
+}
+
+.userCard {
+  width: 100%;
+  border: 3px solid #94a3b8;
+  background-color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.userCard:hover {
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+}
+
+.userHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 1.125rem;
+  color: #334155;
+}
+
+.userDetails {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-sizing: border-box;
+  color: #475569;
+
+  /* Aseguramos que los hijos estén en columna */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.userActionRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.actionTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #334155;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.actionButton {
+  font-size: 1.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  transition: transform 0.2s ease, color 0.25s ease;
+  color: #475569;
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: scale(1.1);
+  color: #2563eb;
+}
+
+.enableButton {
+  color: #16a34a; /* verde */
+  filter: drop-shadow(0 0 2px #22c55e);
+}
+
+.disabledButton {
+  color: #dc2626; /* rojo */
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(50%);
+}
+
+.bookCard {
+  width: 100%;
+  border: 2px solid #94a3b8; /* un poco más fino para diferenciar */
+  background-color: #fafafa; /* fondo ligeramente diferente */
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  box-sizing: border-box;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+.bookCard:hover {
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+}
+
+.bookHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.bookTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1e40af; /* azul oscuro */
+}
+
+.bookDetails {
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #f3f4f6;
+  color: #475569;
+  font-weight: 400;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  
+  /* Hacemos que todo esté uno debajo del otro */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Estilos para inputs, textarea y selects en edición dentro de bookDetails */
+.bookDetails input,
+.bookDetails textarea,
+.bookDetails select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1.5px solid #94a3b8;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #334155;
+  background-color: white;
+}
+
+.bookDetails input:focus,
+.bookDetails textarea:focus,
+.bookDetails select:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+}
+
+.bookInput {
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  border: 1px solid #94a3b8;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.saveButton {
+  display: block;
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+  background-color: #1d4ed8;
+}
+
+.editButtons {
+  gap: 1vw;
+  display: flex;
+}
+
+.botonEditar:hover{
+  background-color: orange;
+  color: white;
+}
+
+.agregarLibro{
+  margin: 1vw;
+}
+
+.botonEditar{
+  cursor:pointer;
+}

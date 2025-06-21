@@ -31,6 +31,28 @@ export class BooksService {
     return result;
   }
 
+  async findAllWithGenre(genreId: number): Promise<BookDTO[]> {
+    const books = await this.booksRepository.find({ relations: ['genres','author'] });
+    const filteredBooks = books.filter(x => x.genres?.some(genre => genre.id === genreId));
+    const result = filteredBooks.map((book) => {
+      return BookDTO.BookEntity2BookDTO(book);
+    });
+
+    this.logger.log('Lista de libros Recibidos');
+    return result;
+  }
+
+  async findAllByAuthor(authorId: number): Promise<BookDTO[]> {
+    const books = await this.booksRepository.find({ relations: ['genres','author'] });
+    const filteredBooks = books.filter(x => x.author_id == authorId);
+    const result = filteredBooks.map((book) => {
+      return BookDTO.BookEntity2BookDTO(book);
+    });
+
+    this.logger.log('Lista de libros Recibidos');
+    return result;
+  }
+
   async findOne(id: number): Promise<BookDTO | null> {
     const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres','author'] });
     

@@ -14,6 +14,8 @@ import { UserSubscription } from './entidades/subscription_user.entity';
 import { Subscription } from './entidades/subscription.entity';
 import { VirtualBookContent } from './entidades/virtual_book_content.entity';
 import { UserVirtualBooks } from './entidades/user_virtual_books.entity';
+import { BookRecommendation } from './entidades/book_recommendations.entity';
+import { Carousel } from './entidades/carousel.entity';
 
 // Modulos
 import { AuthModule } from './modules/auth/auth.module';
@@ -31,6 +33,8 @@ import { LibraryBooksModule } from './modules/books/library/library_books.module
 import { BookContentModule } from './modules/books/content/book_content.module';
 import { UserSubscriptionModule } from './modules/subscriptions/users_subscriptions/subscription_user.module';
 import { SubscriptionModule } from './modules/subscriptions/subscription_config/subscription_config.module';
+import { CarouserModule } from './modules/recomendations/carousel/carousel.module';
+import { RecomendationsModule } from './modules/recomendations/book_recomendations/recomendations.module';
 
 const myapp_config = require('../private/app.config.json');
 
@@ -43,7 +47,7 @@ const myapp_config = require('../private/app.config.json');
       username: myapp_config.database_connection.username,
       password: myapp_config.database_connection.password,
       database: myapp_config.database_connection.database,
-      entities: [User, Book, Author, Review, Genre, ShoppingCartBook, Purchase, UserVirtualBooks,VirtualBookContent,UserSubscription,Subscription],
+      entities: [User, Book, Author, Review, Genre, ShoppingCartBook, Purchase, UserVirtualBooks,VirtualBookContent,UserSubscription,Subscription,Carousel,BookRecommendation],
 
       synchronize: false, 
     }),
@@ -65,6 +69,8 @@ const myapp_config = require('../private/app.config.json');
     BookContentModule,
     UserSubscriptionModule,
     SubscriptionModule,
+    CarouserModule,
+    RecomendationsModule
   ],
 })
 export class AppModule {}

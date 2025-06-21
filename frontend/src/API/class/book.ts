@@ -18,6 +18,21 @@ export class Books extends Crud<Book> {
         return res.json();
     }
 
+    async getBooksWithGenre(idGenre: number): Promise<Book[]> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idGenre}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        return res.json();
+    }
+    async getBooksByAuthor(idAuthor: number): Promise<Book[]> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        return res.json();
+    }
+
     async getOne(id: number): Promise<Book> {
         const response = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'GET',
