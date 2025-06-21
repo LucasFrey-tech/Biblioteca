@@ -31,20 +31,29 @@ const saveChanges = async () => {
     }
 
     let res;
+    let wasCreated = false;
+
     try {
       // Intentar actualizar
       res = await apiRef.current?.subscription.update(1, { price: priceNumber });
-     Swal.fire("Success", "Suscripción actualizada con exito", "success");
     } catch (err) {
-      console.error("Error: ", err)
+      console.warn("Fallo update, intento crear...", err);
       // Si falla, intentar crearla
       res = await apiRef.current?.subscription.create({ price: priceNumber });
-      Swal.fire("Success", `Suscripción creada con éxito al valor de ${priceNumber}`, "success");
-
+      wasCreated = true;
     }
-    if (res && res.price !== undefined) {
-      setSubscriptionPrice(res.price.toString());
-      Swal.fire("Success", "Suscripción actualizada", "success");
+      console.log("Res: ", res);
+      
+    if (res && Array.isArray(res) && res.length > 0 && res[0].price !== undefined) {
+    setSubscriptionPrice(res[0].price.toString());
+
+      Swal.fire(
+        "Success",
+        wasCreated
+          ? `Suscripción creada con éxito al valor de $${priceNumber.toFixed(2)}`
+          : "Suscripción actualizada con éxito.",
+        "success"
+      );
     } else {
       Swal.fire("Error", "No se pudo guardar la suscripción.", "error");
     }
@@ -53,7 +62,6 @@ const saveChanges = async () => {
     console.error("Error en saveChanges:", error);
   }
 };
-
 
     useEffect(() => {
         const fetchData = async () => {
