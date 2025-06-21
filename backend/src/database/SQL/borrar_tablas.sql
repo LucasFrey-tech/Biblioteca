@@ -1,36 +1,41 @@
-
--- BORRAR TABLA USERS
-drop table users;
-
--- BORRAR TABLA BOOKS
-drop table books;
-
--- BORRAR TABLA GENRES
-drop table genres;
+-- BORRAR TABLA AUTHORS
+drop table authors cascade;
 
 -- BORRAR TABLA BOOK_GENRES
-drop table book_genres;
+drop table book_genres cascade;
 
--- BORRAR TABLA AUTHORS
-drop table authors;
+-- Borrar Tabla BOOK_RECOMMENDATIONS
+drop table book_recommendations cascade;
 
--- BORRAR TABLA VIRTUAL_BOOK_CONTENT
-drop table virtual_book_content;
+-- BORRAR TABLA BOOKS
+drop table books cascade;
 
--- BORRAR TABLA USER_VIRTUAL_BOOKS
-drop table user_virtual_books;
+-- BORRAR TABLA CAROUSEL
+drop table carousel cascade;
 
--- BORRAR TABLA USER_FAVORITE_VIRTUAL_BOOKS
-drop table user_favorite_virtual_books;
+-- BORRAR TABLA GENRES
+drop table genres cascade;
+
+-- BORRAR TABLA PURCHASES
+drop table purchases cascade;
 
 -- BORRAR TABLA REVIEWS
-drop table reviews;
-
--- BORRAR TABLA USER_SUBSCRIPTION
-drop table user_subscription;
-
--- BORRAR TABLA SUBSCRIPTION_BOOK_DISCOUNT
-drop table subscription_book_discount;
+drop table reviews cascade;
 
 -- BORRAR TABLA SHOPPING_CART_BOOK
-drop table shopping_cart_book;
+drop table shopping_cart_book cascade;
+
+--BORRAR TABLA SUBSCRIPTION
+drop table subscription cascade;
+
+-- BORRAR TABLA USER_SUBSCRIPTION
+drop table user_subscription cascade;
+
+-- BORRAR TABLA USER_VIRTUAL_BOOKS
+drop table user_virtual_books cascade;
+
+-- BORRAR TABLA USERS
+drop table users cascade;
+
+-- BORRAR TABLA VIRTUAL_BOOK_CONTENT
+drop table virtual_book_content cascade;
