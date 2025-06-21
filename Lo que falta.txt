@@ -1,6 +1,4 @@
 . Novedades
-. Cambiar los fetch de categoria
-
 .documentacion proyecto (typedoc)
 
 .Agregar libro linea 98- Cambiar el true hardcodeado
