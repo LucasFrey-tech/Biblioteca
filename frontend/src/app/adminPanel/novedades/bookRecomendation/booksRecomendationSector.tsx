@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { BaseApi } from "@/API/baseApi";
 import { BookRecommendationDTO } from "@/API/types/bookRecomendation.dto";
 
-import styles from './panelAdmin.module.css';
+import styles from './styles.module.css';
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function BooksRecomendationSector(): React.JSX.Element {
@@ -27,7 +27,7 @@ export default function BooksRecomendationSector(): React.JSX.Element {
     const onBookIdChange = (id: number, idBook: number) => {
         setBookRecomendations(prev =>
             prev.map(br =>
-                br.id === id ? { id: id, idBook: idBook, title: br.title } : br
+                br.id === id ? { id: id, idBook: idBook, title: br.title, author: br.author, image: br.image } : br
             )
         );
         apiRef.current.bookRecomendations.update(id, { id: id, idBook: idBook, title: "" });

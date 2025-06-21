@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useRef, useState } from "react";
 import {
   Carousel,
@@ -8,12 +10,12 @@ import {
 } from "@/components/ui/carousel"
 import Styles from './styles.module.css';
 import { CarouselItemDTO } from "@/API/types/carousel.dto";
-import { BaseApi } from "@/API/baseApi";
 import { useRouter } from 'next/navigation';
-import test from "@/../public/images/carousel_placeholder.jpg"
+import { BaseApi } from "@/API/baseApi";
+import carousel_placeholder_img from "@/../public/images/carousel_placeholder.jpg"
 
 export default function NovedadesCarousel(): React.JSX.Element {
-  const [imagePlaceholder] = useState(test);
+  const [imagePlaceholder] = useState(carousel_placeholder_img);
   const [carouselItems, setCarouselItems] = useState<CarouselItemDTO[]>([]);
 
   const router = useRouter();

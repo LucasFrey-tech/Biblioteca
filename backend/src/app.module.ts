@@ -14,6 +14,8 @@ import { UserSubscription } from './entidades/subscription_user.entity';
 import { Subscription } from './entidades/subscription.entity';
 import { VirtualBookContent } from './entidades/virtual_book_content.entity';
 import { UserVirtualBooks } from './entidades/user_virtual_books.entity';
+import { BookRecommendation } from './entidades/book_recommendations.entity';
+import { Carousel } from './entidades/carousel.entity';
 
 // Modulos
 import { AuthModule } from './modules/auth/auth.module';
@@ -33,8 +35,6 @@ import { UserSubscriptionModule } from './modules/subscriptions/users_subscripti
 import { SubscriptionModule } from './modules/subscriptions/subscription_config/subscription_config.module';
 import { CarouserModule } from './modules/recomendations/carousel/carousel.module';
 import { RecomendationsModule } from './modules/recomendations/book_recomendations/recomendations.module';
-import { BookRecommendation } from './entidades/book_recommendations.entity';
-import { Carousel } from './entidades/carousel.entity';
 
 const myapp_config = require('../private/app.config.json');
 

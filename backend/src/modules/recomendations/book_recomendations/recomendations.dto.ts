@@ -1,7 +1,7 @@
 import { BookRecommendation } from "src/entidades/book_recommendations.entity";
 
 export class RecommendationDTO {
-    id: number;
+    id: number
     idBook: number;
     title: string;
     author: string;

@@ -57,10 +57,10 @@ export default function CarouselSector(): React.JSX.Element {
                         :
                         <>{
                             carouselItems.map((br, idx) => (
-                                <div>
+                                <div id={`${idx}`}>
                                     <Label>{"Carousel item " + (br.id) + ":"}</Label>
                                     <BookSelector id={br.id} idBook={br.idBook} onBookIdChange={onBookIdChange} />
-                                    <DragAndDrop image={br.image} onFileDrop={file => {
+                                    <DragAndDrop onFileDrop={file => {
                                         handleImage(br.id,'image', file);
                                     }} />
                                 </div>

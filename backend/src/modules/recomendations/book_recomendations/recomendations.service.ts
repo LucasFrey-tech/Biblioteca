@@ -4,7 +4,6 @@ import { BookRecommendation } from "src/entidades/book_recommendations.entity";
 import { Repository } from "typeorm";
 import { RecommendationDTO } from "./recomendations.dto";
 import { CreateRecommendationDTO } from "./create_recomendations.dto";
-import { CreateBookDTO } from "src/modules/books/book/createBook.dto";
 
 
 @Injectable()
@@ -22,8 +21,8 @@ export class RecomendationsService {
             .slice(0, 8);
         return formatedBookRecomendation;
     }
-
-
+    
+    
     async findOne(id: number): Promise<RecommendationDTO> {
         const bookRecomendation = await this.recomendationsRepository.findOne({
             where: { id }

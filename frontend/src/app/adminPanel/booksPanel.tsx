@@ -29,12 +29,13 @@ export default function BooksPanel(): React.JSX.Element {
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [search, setSearch] = useState('');
   const apiRef = useRef(new BaseApi());
-
+  const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
   const [booksEditState, setBooksEditState] = useState<{
 
     [key: number]: {
       editMode: boolean;
       formData: BookFileUpdate;
+      tempImages? : File;
     }
   }>({});
 
@@ -51,6 +52,8 @@ export default function BooksPanel(): React.JSX.Element {
     genres: '',
   });
 
+
+
   const startEdit = (book: BookFileUpdate) => {
     setBooksEditState(prev => ({
       ...prev,
@@ -59,7 +62,8 @@ export default function BooksPanel(): React.JSX.Element {
         formData: {
           ...book,
           author_id: book.author_id || authors.find(a => a.name === book.author)?.id || 0
-        }
+        },
+        tempImages : undefined,
       }
     }));
   }
@@ -134,13 +138,14 @@ export default function BooksPanel(): React.JSX.Element {
 
     const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
     const authorId = bookState.formData.author_id;
-
+    const imageToSend = booksEditState[bookId]?.tempImages || bookState.formData.image; 
     try {
       const updatedBook = await apiRef.current.books.updateBookFile(
         bookId,
         {
           ...bookState.formData,
-          author_id: authorId
+          author_id: authorId,
+          image: imageToSend
         },
         genreIds
       );
@@ -148,7 +153,7 @@ export default function BooksPanel(): React.JSX.Element {
       setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
       setBooksEditState(prev => ({
         ...prev,
-        [bookId]: { ...prev[bookId], editMode: false }
+        [bookId]: { ...prev[bookId], editMode: false, tempImages:undefined }
       }));
 
       Swal.fire("Éxito", "Libro actualizado correctamente", "success");
@@ -196,7 +201,6 @@ export default function BooksPanel(): React.JSX.Element {
   const handleImage = (field: string, value: File) => {
     setForm({ ...form, [field]: value });
   };
-
 
 
   return (
@@ -345,8 +349,31 @@ export default function BooksPanel(): React.JSX.Element {
                     </div>
 
                     <label>Imagen:</label>
-                    <DragAndDrop image={book.image} onFileDrop={file => {
-                      handleImage('image', file);
+                  <Image
+                    // src={
+                    //   tempImages[book.id]
+                    //     ? URL.createObjectURL(tempImages[book.id] as File)
+                    //     : typeof editState.formData.image === "string"
+                    //       ? editState.formData.image
+                    //       : '/libros/placeholder.png'
+                    // }
+                    src = {booksEditState[book.id]?.tempImages ? URL.createObjectURL(booksEditState[book.id].tempImages! ) : typeof editState.formData.image === "string" ? editState.formData.image : '/libros/placeholder.png'}
+                    alt="Imagen del libro"
+                    width={100}
+                    height={150}
+                    unoptimized
+                  />
+                    <DragAndDrop onFileDrop={file => {
+                      setBooksEditState(prev => ({
+                        ...prev,
+                        [book.id]: {
+                          ...prev[book.id],
+                          formData: {
+                            ...prev[book.id].formData,
+                            tempImages:file
+                          }
+                        }
+                      }));
                     }} />
 
                     <div className={styles.editButtons}>

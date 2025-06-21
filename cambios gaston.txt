@@ -1,0 +1,1048 @@
+book.controller.ts
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { BooksService } from './book.service';
+import { BookDTO } from './book.dto';
+import { ParseIntPipe } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { CreateBookDTO } from './createBook.dto';
+
+@ApiTags('Libros')
+@Controller('books')
+export class BooksController {
+  constructor(private readonly booksService: BooksService) { }
+
+  @Get()
+  @ApiOperation({ summary: 'Listar Todos los Libros' })
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros', type: [BookDTO] })
+  async findAll(): Promise<BookDTO[]> {
+    return (await this.booksService.findAll());
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener Libro por ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Libro Encontrado', type: BookDTO })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.findOne(id);
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Crear Libro' })
+  @ApiBody({ type: CreateBookDTO })
+  @ApiResponse({ status: 201, description: 'Libro Creado', type: CreateBookDTO })
+  @UseInterceptors(FileInterceptor('image'))
+  async create(@Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
+    console.log(bookDTO);
+    if (file) {
+      bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    }
+    return await this.booksService.create(bookDTO);
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Editar Libro' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiBody({ type: BookDTO })
+  @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
+  @UseInterceptors(FileInterceptor('image'))
+  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
+    
+    console.log("DATOS DEL LIBRO DTO ", bookDTO)
+    if (typeof bookDTO.subscriber_exclusive === 'string') {
+      bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
+    }
+
+    // if (typeof file !== 'string') {
+    //   bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    // }
+
+    if (file && file.originalname) {
+      bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    }
+
+    return this.booksService.update(id, bookDTO);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar Libro' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Libro Eliminado' })
+  delete(@Param('id', ParseIntPipe) id: number) {
+    return this.booksService.delete(id);
+  }
+}
+
+book.service.ts:
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, In, Repository } from 'typeorm';
+import { BookDTO } from './book.dto';
+import { Book } from '../../../entidades/book.entity';
+import { SettingsService } from 'src/settings.service';
+import { CreateBookDTO } from './createBook.dto';
+import { Genre } from 'src/entidades/genre.entity';
+
+@Injectable()
+export class BooksService {
+  private readonly logger = new Logger(BooksService.name);
+  constructor(
+    private readonly settingsService: SettingsService,
+
+    @InjectRepository(Book)
+    private booksRepository: Repository<Book>,
+
+    @InjectRepository(Genre)
+    private genreRepository: Repository<Genre>,
+  ) { }
+
+  async findAll(): Promise<BookDTO[]> {
+    const books = await this.booksRepository.find({ relations: ['genres','author'] });
+    
+    const result = books.map((book) => {
+      return BookDTO.BookEntity2BookDTO(book);
+    });
+
+    this.logger.log('Lista de libros Recibidos');
+    return result;
+  }
+
+  async findOne(id: number): Promise<BookDTO | null> {
+    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres','author'] });
+    
+    if (!book) return null;
+
+    this.logger.log('Libro Recibido');
+    return BookDTO.BookEntity2BookDTO(book);
+  }
+
+  async create(bookDTO: CreateBookDTO) {
+    this.logger.log('Libro Creado');
+
+    // 1. Buscar las entidades de género por nombre (bookDTO.genre)
+    const genres = await this.genreRepository.find({
+      where: { id: In(bookDTO.genre) },
+    });
+
+    if (genres.length !== bookDTO.genre.length) {
+      throw new Error('Algunos géneros no existen en la base de datos');
+    }
+
+    // 2. Crear la entidad de libro
+    const book = this.booksRepository.create({
+      ...bookDTO,
+      genres, // <-- Asociamos las entidades encontradas
+    });
+
+    // 3. Guardar el libro
+    const bookEntity = await this.booksRepository.save(book);
+    return bookEntity;
+  }
+
+  async update(id: number, bookDTO: CreateBookDTO) {
+      // 1. Buscar el libro con relaciones
+    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
+    if (!book) return null;
+
+    // 2. Buscar los géneros por nombre
+    const genres = await this.genreRepository.find({
+      where: bookDTO.genre.map((id) => ({ id })),
+    });
+
+    // 3. Asignar los campos del DTO al libro
+    book.title = bookDTO.title;
+    book.description = bookDTO.description;
+    book.anio = bookDTO.anio;
+    book.isbn = bookDTO.isbn;
+    if(bookDTO.image) {
+      book.image = bookDTO.image;
+    }
+    book.stock = bookDTO.stock;
+    book.subscriber_exclusive = bookDTO.subscriber_exclusive;
+    book.price = bookDTO.price;
+    book.author_id = bookDTO.author_id;
+    book.genres = genres;
+
+    // 4. Guardar
+    await this.booksRepository.save(book);
+
+    this.logger.log('Libro Actualizado');
+    return this.findOne(id);
+  }
+
+  async delete(id: number): Promise<boolean> {
+  const book = await this.booksRepository.findOne({
+    where: { id },
+    relations: ['genres'], // 👈 NECESARIO para que remove limpie la tabla intermedia
+  });
+
+  if (!book) return false;
+
+  await this.booksRepository.remove(book); // 👈 borra el libro y limpia la tabla intermedia automáticamente
+
+  return true;
+}
+  
+  bookImageUrl = (imageName:string):string=>{
+    return this.settingsService.getHostUrl()+this.settingsService.getBooksImagesPrefix()+"/"+imageName;
+  }
+}
+
+book.ts:
+import { Crud } from '../service';
+import { Book } from '../types/book';
+import { BookFile } from '../types/bookFile';
+
+
+export class Books extends Crud<Book> {
+    private endPoint: string;
+    constructor(token?: string) {
+        super(token);
+        this.endPoint = 'books';
+    }
+
+    async getAll(): Promise<Book[]> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        return res.json();
+    }
+
+    async getOne(id: number): Promise<Book> {
+        const response = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        return response.json();
+    }
+
+    async create(data: Partial<Book>): Promise<Book> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    }
+
+    async createBookFile(data: Partial<BookFile>, bookGenres: number[]): Promise<Book> {
+        const formData = new FormData();
+        formData.append("title", data.title + '');
+        formData.append("author_id", data.author_id + '');
+        formData.append("description", data.description + '');
+        formData.append("anio", data.anio + '');
+        formData.append("isbn", data.isbn + '');
+
+        if (data.image && typeof data.image === 'string') {
+            formData.append("image", data.image);
+        } else if (data.image) {
+            formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        }
+        
+        formData.append("stock", data.stock + '');
+        formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
+        formData.append("price", data.price + '');
+
+        formData.append("genre", JSON.stringify(bookGenres));
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'POST',
+            // headers: {'Content-Type': 'multipart/form'},
+            body: formData,
+        });
+
+        const book = await res.json();
+        console.log('Book created', book);
+
+        return book;
+    }
+
+    async update(id: number, data: Partial<Book>): Promise<Book> {
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'PUT',
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return res.json();
+    }
+
+    async updateBookFile(id: number, data: Partial<BookFile>, bookGenres: number[]): Promise<Book> {
+        const formData = new FormData();
+        formData.append('id', id.toString());
+        formData.append("title", data.title + '');
+
+        formData.append("author_id", data.author_id?.toString() || '');
+        formData.append("description", data.description + '');
+        formData.append("anio", data.anio + '');
+        formData.append("isbn", data.isbn + '');
+
+        // if (data.image && typeof data.image === 'string') {
+        //     formData.append("image", data.image);
+        // } else if (data.image) {
+        //     formData.append("image", new Blob([data.image], { type: 'image/jpeg' }));
+        // }
+
+        if (data.image instanceof File) {
+            formData.append("image", data.image)
+        } else if (typeof data.image === 'string') {
+            formData.append("existingImage", data.image)
+        }
+
+        formData.append("stock", data.stock + '');
+        formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
+        formData.append("price", data.price + '');
+
+
+        formData.append("genre", JSON.stringify(bookGenres));
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'PUT',
+            body: formData
+        });
+
+        if (!res.ok) {
+            const error = await res.json();
+            console.error("Update failed", error);
+            throw new Error("Failed to update book");
+        }
+
+        const book = await res.json();
+        return book;
+    }
+
+    async delete(id: number): Promise<void> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(),
+        });
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({ message: 'Error desconocido' }));
+            throw new Error(error.message || 'Error al eliminar');
+        }
+    }
+
+}
+
+bookPanel.tsx:
+'use client';
+
+import Swal from "sweetalert2";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import AddBookDialog from "@/components/pages/agregarLibro"
+import DragAndDrop from "@/components/pages/dropImage";
+import Image from "next/image";
+
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+import styles from '../../styles/panelAdmin.module.css';
+
+import { BaseApi } from "@/API/baseApi";
+import { BookFileUpdate } from '@/API/types/bookFile';
+import { Author } from '@/API/types/author';
+import { Genre } from "@/API/types/genre";
+
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+
+
+export default function BooksPanel(): React.JSX.Element {
+  const [books, setBooks] = useState<BookFileUpdate[]>([]);
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
+  const [search, setSearch] = useState('');
+  const apiRef = useRef(new BaseApi());
+  const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
+  const [booksEditState, setBooksEditState] = useState<{
+
+    [key: number]: {
+      editMode: boolean;
+      formData: BookFileUpdate;
+      tempImages? : File;
+    }
+  }>({});
+
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    anio: '',
+    isbn: '',
+    image: null as File | null,
+    stock: '',
+    subscriber_exclusive: 'false',
+    price: '',
+    authorId: '',
+    genres: '',
+  });
+
+
+
+  const startEdit = (book: BookFileUpdate) => {
+    setBooksEditState(prev => ({
+      ...prev,
+      [book.id]: {
+        editMode: true,
+        formData: {
+          ...book,
+          author_id: book.author_id || authors.find(a => a.name === book.author)?.id || 0
+        },
+        tempImages : undefined,
+      }
+    }));
+  }
+
+  const eliminarLibro = async (bookId: number) => {
+    if (!bookId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se ha especificado el libro a borrar',
+      });
+      return;
+    }
+
+    const confirmResult = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, borrar libro',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+    });
+
+    if (confirmResult.isConfirmed) {
+      try {
+        await apiRef.current.books.delete(bookId);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Libro borrado',
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error('Error al borrar libro:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo borrar el libro',
+        });
+      }
+    }
+  };
+
+  const handleBookChange = (
+    bookId: number,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
+    setBooksEditState(prev => {
+      const bookState = prev[bookId];
+      if (!bookState) return prev;
+      return {
+        ...prev,
+        [bookId]: {
+          ...bookState,
+          formData: {
+            ...bookState.formData,
+            [name]: type === "checkbox" ? checked : (type === "number" ? Number(value) : value),
+          }
+        }
+      };
+    });
+  };
+
+  const saveChanges = async (bookId: number) => {
+    const bookState = booksEditState[bookId];
+    if (!bookState) return;
+
+    const genreIds = (bookState.formData.genre as Genre[]).map(g => g.id);
+    const authorId = bookState.formData.author_id;
+    const imageToSend = booksEditState[bookId]?.tempImages || bookState.formData.image; 
+    try {
+      const updatedBook = await apiRef.current.books.updateBookFile(
+        bookId,
+        {
+          ...bookState.formData,
+          author_id: authorId,
+          image: imageToSend
+        },
+        genreIds
+      );
+
+      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
+      setBooksEditState(prev => ({
+        ...prev,
+        [bookId]: { ...prev[bookId], editMode: false, tempImages:undefined }
+      }));
+
+      Swal.fire("Éxito", "Libro actualizado correctamente", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "No se pudo guardar el libro", "error");
+    }
+  };
+
+  const cancelEdit = (bookId: number) => {
+    setBooksEditState(prev => ({
+      ...prev,
+      [bookId]: { ...prev[bookId], editMode: false }
+    }));
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const authorsData = await apiRef.current.authors.getAll();
+        setAuthors(authorsData);
+
+        const genresData = await apiRef.current.genre.getAll();
+        setGenres(genresData);
+
+        const booksData = await apiRef.current.books.getAll();
+        setBooks(booksData);
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const toggleBookOpen = (id: number) => {
+    setBookOpenIds((prev) =>
+      prev.includes(id) ? prev.filter(bid => bid !== id) : [...prev, id]
+    );
+  };
+
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleImage = (field: string, value: File) => {
+    setForm({ ...form, [field]: value });
+  };
+
+
+  return (
+    <>
+      <Input
+        placeholder="Buscar libro"
+        className={styles.inputSearch}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <div className={styles.agregarLibro}>
+        <AddBookDialog />
+      </div>
+
+      {filteredBooks.map((book) => {
+        const editState = booksEditState[book.id] || {
+          editMode: false,
+          formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
+        };
+        return (
+          <div key={book.id} className={styles.bookCard}>
+            <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
+              <span className={styles.bookName}>{book.title}</span>
+              {bookOpenIds.includes(book.id) ? <ChevronUp /> : <ChevronDown />}
+            </div>
+
+            {bookOpenIds.includes(book.id) && (
+              <div className={styles.bookDetails}>
+                {editState.editMode ? (
+                  <>
+                    <label>Título:
+                      <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
+                    </label>
+
+                    <label>Descripción:
+                      <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
+                    </label>
+
+                    <label>Año:
+                      <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
+                    </label>
+
+                    <label>ISBN:
+                      <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
+                    </label>
+
+                    <label>Stock:
+                      <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
+                    </label>
+
+                    <label>Exclusivo suscriptores:
+
+                      <select name="subscriber_exclusive" value={editState.formData.subscriber_exclusive ? "true" : "false"} onChange={(e) => {
+                        const value = e.target.value === "true";
+                        setBooksEditState(prev => ({
+                          ...prev,
+                          [book.id]: {
+                            ...prev[book.id],
+                            formData: { ...prev[book.id].formData, subscriber_exclusive: value }
+                          }
+                        }));
+                      }}>
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                      </select>
+
+                    </label>
+
+                    <label>Precio:
+                      <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
+                    </label>
+
+                    <Label>Autor</Label>
+                    <Select
+                      onValueChange={value => {
+                        const selectedAuthor = authors.find(a => a.id === Number(value));
+                        setBooksEditState(prev => ({
+                          ...prev,
+                          [book.id]: {
+                            ...prev[book.id],
+                            formData: {
+                              ...prev[book.id].formData,
+                              author_id: Number(value),
+                              author: selectedAuthor ? selectedAuthor.name : ''
+                            }
+                          }
+                        }));
+                      }}
+                      value={String(booksEditState[book.id]?.formData.author_id ?? '')}
+                    >
+                      <SelectTrigger aria-label="Seleccionar autor">
+                        <SelectValue placeholder="Seleccionar autor" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {authors.map(author => (
+                          <SelectItem key={author.id} value={String(author.id)}>
+                            {author.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author_id}</p>
+                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author}</p>
+
+
+                    <Label>Categorías</Label>
+                    <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
+                      {genres.map((genre) => {
+
+                        return (
+                          <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
+                            <input
+                              type="checkbox"
+                              value={genre.id}
+                              checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
+                              onChange={(e) => {
+                                const checked = e.target.checked;
+
+                                setBooksEditState((prev) => {
+                                  const bookState = prev[book.id];
+                                  if (!bookState) return prev;
+
+                                  const currentGenres = bookState.formData.genre as Genre[];
+                                  const newGenres = checked
+                                    ? [...currentGenres, genre]
+                                    : currentGenres.filter((g) => g.id !== genre.id);
+
+                                  return {
+                                    ...prev,
+                                    [book.id]: {
+                                      ...bookState,
+                                      formData: {
+                                        ...bookState.formData,
+                                        genre: newGenres,
+                                      },
+                                    },
+                                  };
+                                });
+                              }}
+                            />
+                            {genre.name}
+                          </label>
+                        );
+                      })}
+                    </div>
+
+                    <label>Imagen:</label>
+                  <Image
+                    // src={
+                    //   tempImages[book.id]
+                    //     ? URL.createObjectURL(tempImages[book.id] as File)
+                    //     : typeof editState.formData.image === "string"
+                    //       ? editState.formData.image
+                    //       : '/libros/placeholder.png'
+                    // }
+                    src = {booksEditState[book.id]?.tempImages ? URL.createObjectURL(booksEditState[book.id].tempImages! ) : typeof editState.formData.image === "string" ? editState.formData.image : '/libros/placeholder.png'}
+                    alt="Imagen del libro"
+                    width={100}
+                    height={150}
+                    unoptimized
+                  />
+                    <DragAndDrop onFileDrop={file => {
+                      setBooksEditState(prev => ({
+                        ...prev,
+                        [book.id]: {
+                          ...prev[book.id],
+                          formData: {
+                            ...prev[book.id].formData,
+                            tempImages:file
+                          }
+                        }
+                      }));
+                    }} />
+
+                    <div className={styles.editButtons}>
+                      <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
+                      <Button className={styles.botonEditar} onClick={() => cancelEdit(book.id)}>Cancelar</Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p><strong>Autor:</strong> {book.author}</p>
+                    <p><strong>Precio:</strong> ${book.price}</p>
+                    <p><strong>Año:</strong> {book.anio}</p>
+                    <p><strong>Descripción:</strong> {book.description}</p>
+                    <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => startEdit(book)}
+                        className="flex-1 bg-blue-600 text-white"
+                      >
+                        Editar ✏️
+                      </Button>
+                      <Button
+                        onClick={() => eliminarLibro(book.id)}
+                        className="flex-1 bg-red-600 text-white"
+                      >
+                        Borrar
+                      </Button>
+                    </div>
+
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+agregarLibro.tsx:
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import Swal from 'sweetalert2';
+
+import { AddAuthorDialog } from './AddAuthorDialog';
+import { AddGenreDialog } from './agregarCategoria';
+import DragAndDrop from './dropImage';
+import { BaseApi } from '@/API/baseApi';
+import { BookFile } from '@/API/types/bookFile';
+import { Genre } from '@/API/types/genre';
+import { Author } from '@/API/types/author';
+
+
+export default function AddBookDialog() {
+  const [open, setOpen] = useState(false);
+
+  const [authors, setAuthors] = useState<Author[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const API = new BaseApi(localStorage.getItem('token') || '');
+
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    anio: '',
+    isbn: '',
+    image: null as File | null,
+    stock: '',
+    subscriber_exclusive: 'false',
+    price: '',
+    authorId: '',
+    genres: '',
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const authorsData = await API.authors.getAll();
+        setAuthors(authorsData);
+
+        const genresData = await API.genre.getAll();
+        setGenres(genresData);
+
+      } catch (error) {
+        console.error('Error al cargar los datos', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const handleChange = (field: string, value: string) => {
+    setForm({ ...form, [field]: value });
+  };
+  const handleImage = (field: string, value: File) => {
+    setForm({ ...form, [field]: value });
+  };
+
+  const handleSubmit = async () => {
+    const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
+    const formGenresNumber = formGenresString.map(g => Number(g))
+    const newBook: Partial<BookFile> = {
+      title: form.title,
+      description: form.description,
+      anio: Number(form.anio),
+      isbn: form.isbn,
+      image: form.image ?? undefined,
+      stock: Number(form.stock),
+      subscriber_exclusive: form.subscriber_exclusive === 'true',
+      price: Number(form.price),
+      author_id: Number(form.authorId),
+    };
+
+    try {
+      await API.books.createBookFile(newBook, formGenresNumber);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Libro agregado correctamente',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setOpen(false);
+      setForm({
+        title: '',
+        description: '',
+        anio: '',
+        isbn: '',
+        image: null,
+        stock: '',
+        subscriber_exclusive: 'false',
+        price: '',
+        authorId: '',
+        genres: '',
+      });
+    } catch (error) {
+      console.error('Error al guardar el libro:', error);
+
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo guardar el libro',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  };
+
+  // Estados para abrir modales pequeños de autor y género
+  const [openAddAuthor, setOpenAddAuthor] = useState(false);
+  const [openAddGenre, setOpenAddGenre] = useState(false);
+
+  // Función que agrega un autor nuevo a la lista y selecciona ese autor en el form
+  const handleNewAuthor = (author: Author) => {
+    setAuthors(prev => [...prev, author]);
+    setForm(prev => ({ ...prev, authorId: String(author.id) }));
+    setOpenAddAuthor(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Autor agregado',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  // Función que agrega una categoría nueva a la lista y la agrega al form
+  const handleNewGenre = (genre: Genre) => {
+    setGenres(prev => [...prev, genre]);
+    setForm(prevForm => {
+      const currentGenres = prevForm.genres ? prevForm.genres.split(',') : [];
+      const updatedGenres = [...currentGenres, genre.name];
+      return {
+        ...prevForm,
+        genres: updatedGenres.join(',')
+      };
+    });
+    setOpenAddGenre(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Categoría agregada',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  return (
+    <>
+      {/* Modal grande para agregar libro */}
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger asChild>
+          <Button className="text-lg">Agregar libro</Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="max-h-[80vh] overflow-auto">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex justify-center">Agregar nuevo libro</AlertDialogTitle>
+          </AlertDialogHeader>
+
+          <div className="space-y-2">
+            <Label>Título</Label>
+            <Input value={form.title} onChange={e => handleChange('title', e.target.value)} />
+
+            <Label>Descripción</Label>
+            <Textarea value={form.description} onChange={e => handleChange('description', e.target.value)} />
+
+            <Label>Año</Label>
+            <Input type="number" value={form.anio} onChange={e => handleChange('anio', e.target.value)} />
+
+            <Label>ISBN</Label>
+            <Input value={form.isbn} onChange={e => handleChange('isbn', e.target.value)} />
+
+            <Label>Imagen</Label>
+            <DragAndDrop onFileDrop={file => {
+              handleImage('image', file);
+            }} />
+
+            <Label>Stock</Label>
+            <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />
+
+            <Label>Exclusivo suscriptores</Label>
+            <Select
+              onValueChange={value => handleChange('subscriber_exclusive', value)}
+              value={form.subscriber_exclusive}
+            >
+              <SelectTrigger>
+                <SelectValue>{form.subscriber_exclusive === 'true' ? 'Sí' : 'No'}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">Sí</SelectItem>
+                <SelectItem value="false">No</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Label>Precio</Label>
+            <Input type="number" value={form.price} onChange={e => handleChange('price', e.target.value)} />
+
+            <Label>Autor</Label>
+            <Select onValueChange={value => handleChange('authorId', value)} value={form.authorId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar autor" />
+              </SelectTrigger>
+              <SelectContent>
+                {authors.map(author => (
+                  <SelectItem key={author.id} value={String(author.id)}>
+                    {author.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setOpenAddAuthor(true)}
+              className="mt-2"
+            >
+              + Agregar autor
+            </Button>
+
+            <Label>Categorías</Label>
+            <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
+              {genres.map(genre => (
+                <label key={genre.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={form.genres.split(',').includes(genre.id.toString())}
+                    onChange={(e) => {
+                      const selectedGenres = form.genres ? form.genres.split(',') : [];
+                      const isChecked = e.target.checked;
+
+                      let updatedGenres = [];
+                      if (isChecked) {
+                        updatedGenres = [...selectedGenres, genre.id.toString()];
+                      } else {
+                        updatedGenres = selectedGenres.filter(g => g !== genre.id.toString());
+                      }
+
+                      handleChange('genres', updatedGenres.join(','));
+                    }}
+                  />
+                  <span>{genre.name}</span>
+                </label>
+
+              ))}
+
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setOpenAddGenre(true)}
+              className="mt-2"
+            >
+              + Agregar categoría
+            </Button>
+
+          </div>
+
+          <AlertDialogFooter className="flex justify-end gap-2 mt-4">
+            <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">
+              Guardar
+            </Button>
+            <AlertDialogCancel className="bg-black text-white px-4 py-2 rounded">
+              Salir
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Modal pequeño para agregar autor */}
+      <AlertDialog open={openAddAuthor} onOpenChange={setOpenAddAuthor}>
+        <AlertDialogContent>
+          <AddAuthorDialog onAdd={handleNewAuthor} onClose={() => setOpenAddAuthor(false)} />
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Modal pequeño para agregar categoría */}
+      <AlertDialog open={openAddGenre} onOpenChange={setOpenAddGenre}>
+        <AlertDialogContent>
+          <AddGenreDialog onAdd={handleNewGenre} onClose={() => setOpenAddGenre(false)} />
+        </AlertDialogContent>
+
+      </AlertDialog>
+
+    </>
+  );
+}
+
