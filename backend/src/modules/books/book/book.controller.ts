@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BooksService } from './book.service';
 import { BookDTO } from './book.dto';
@@ -45,12 +45,12 @@ export class BooksController {
   @ApiBody({ type: CreateBookDTO })
   @ApiResponse({ status: 201, description: 'Libro Creado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  async create(@Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
-    console.log(bookDTO);
+  async create(@UploadedFile() file: Express.Multer.File, @Body() data: CreateBookDTO) {
     if (file) {
-      bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+      data.image = this.booksService.bookImageUrl(file.filename); // ✅ ¡Usamos filename real!
     }
-    return await this.booksService.create(bookDTO);
+
+    return await this.booksService.create(data);
   }
 
   @Put(':id')
@@ -59,19 +59,29 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO, @UploadedFile() file: Express.Multer.File) {
-    
-    console.log("DATOS DEL LIBRO DTO ", bookDTO)
+  async update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
+    // Convertir string a booleano si viene así
     if (typeof bookDTO.subscriber_exclusive === 'string') {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
 
-    // if (typeof file !== 'string') {
-    //   bookDTO.image = this.booksService.bookImageUrl(file.originalname);
-    // }
+    // Si se subió una nueva imagen, usarla
+    if (file && file.filename) {
+      bookDTO.image = this.booksService.bookImageUrl(file.filename);
+    } else if (bookDTO.existingImage) {
+      // Si no hay archivo nuevo, pero sí imagen existente, mantenerla
+      bookDTO.image = bookDTO.existingImage;
+    } else {
+      // Si no hay ninguna imagen, poner null o un placeholder
+      bookDTO.image = '';
+    }
 
-    if (file && file.originalname) {
-      bookDTO.image = this.booksService.bookImageUrl(file.originalname);
+    if (typeof bookDTO.genre === 'string') {
+      try {
+        bookDTO.genre = JSON.parse(bookDTO.genre);
+      } catch {
+        throw new BadRequestException('Formato de género inválido');
+      }
     }
 
     return this.booksService.update(id, bookDTO);

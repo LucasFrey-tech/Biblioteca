@@ -91,7 +91,11 @@ export default function BookCard({ book }: { book: Book }) {
     return (
         <div className={styles.card} onClick={handleCardClick}>
             <Image
-                src={book.image}
+                src={
+                    typeof book.image === 'string' && book.image.trim() !== ''
+                    ? book.image
+                    : '/libros/placeholder.png'
+                }
                 alt={book.title}
                 className={styles.cover}
                 width={200}

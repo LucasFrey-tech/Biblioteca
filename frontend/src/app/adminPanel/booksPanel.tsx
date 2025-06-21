@@ -367,14 +367,7 @@ export default function BooksPanel(): React.JSX.Element {
 
                     <label>Imagen:</label>
                   <Image
-                    // src={
-                    //   tempImages[book.id]
-                    //     ? URL.createObjectURL(tempImages[book.id] as File)
-                    //     : typeof editState.formData.image === "string"
-                    //       ? editState.formData.image
-                    //       : '/libros/placeholder.png'
-                    // }
-                    src={typeof editState.formData.image === "string"
+                    src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
                       ? editState.formData.image
                       : '/libros/placeholder.png'
                     }
