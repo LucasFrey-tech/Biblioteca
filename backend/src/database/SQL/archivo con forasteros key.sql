@@ -120,7 +120,7 @@ CREATE TABLE user_subscription (
     end_date TIMESTAMP NOT NULL,
     ongoing BOOLEAN DEFAULT(false)
 );
-
+-- CREAR TABLA user_subscription_discount
 CREATE TABLE user_subscription_discount (
     id SERIAL PRIMARY KEY,
     id_subscription INTEGER NOT NULL,
