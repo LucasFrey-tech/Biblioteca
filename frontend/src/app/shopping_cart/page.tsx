@@ -25,7 +25,7 @@ const groupCartItems = (items: ShoppingCartBook[]) => {
 };
 
 export default function ShoppingCartPage() {
-    const params = useParams();
+
     const apiRef = useRef(new BaseApi());
     const [booksCartShopping, setBooksCartShopping] = useState<ShoppingCartBook[]>([]);
     const [loading, setLoading] = useState(true);
@@ -278,10 +278,14 @@ export default function ShoppingCartPage() {
                                 <span>Productos ({booksCartShopping.reduce((acc, item) => acc + item.amount, 0)})</span>
                                 <span>${calculateSubtotal().toLocaleString()}</span>
                             </div>
-                            
+
                             {isSubscriber && discountPercentage > 0 && (
                                 <div className={styles.summaryRow}>
-                                    <span>Descuento Subscriptor ({discountPercentage}%)</span>
+                                    <span>
+                                        Descuento suscriptor (<span className="font-semibold">{discountPercentage}%</span>)
+                                    </span>
+
+
                                     <span className={styles.discount}>
                                         -${descuentoSubscriptor(calculateSubtotal()).toLocaleString()}
                                     </span>
@@ -309,7 +313,7 @@ export default function ShoppingCartPage() {
                             disabled={booksCartShopping.length === 0}
                             onClick={handlePurchase}
                         >
-                            Continuar compra
+                            Pagar
                         </button>
                         {booksCartShopping.some(item => item.virtual) && (
                             <p className={styles.digitalNote}>
