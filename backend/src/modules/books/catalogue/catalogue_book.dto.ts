@@ -1,4 +1,4 @@
-import { IsBoolean, IsInt, IsNumber, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsInt, IsNumber, IsString } from "class-validator";
 import { Genre } from "src/entidades/genre.entity";
 
 export class CatalogueBookDTO {
@@ -17,7 +17,7 @@ export class CatalogueBookDTO {
   @IsString()
   description: string;
 
-  // @IsString({ each: true })
+  @IsArray()
   genre: Genre[];
 
   @IsInt()

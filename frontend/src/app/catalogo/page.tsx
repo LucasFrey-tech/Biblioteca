@@ -72,16 +72,17 @@ export default function BookPage() {
         );
     };
 
+    const selectedGenreNames = genres
+        .filter((g) => selectedGenres.includes(g.id))
+        .map((g) => g.name);
+
     const filteredBooks = books.filter((book) => {
         const lowerTitle = book.title.toLowerCase();
         const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
 
-        const matchesGenres =
-            selectedGenres.length === 0 ||
-            book.genre.some((genreName) => {
-                const genre = genres.find((g) => g.name === genreName);
-                return genre && selectedGenres.includes(genre.id);
-            });
+    const matchesGenres =
+        selectedGenres.length === 0 ||
+        book.genre.some((g) => selectedGenres.includes(g.id));
 
         const matchesAuthors =
             selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
