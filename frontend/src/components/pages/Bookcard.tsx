@@ -44,13 +44,24 @@ export default function BookCard({ book }: { book: BookCardProps }) {
         const userId = localStorage.getItem('userId');
 
         if (!token || !userId) {
-            
             router.push('/login');
             return;
         }
 
         if (!book || !user || !refAPI.current) {
             alert('Libro, usuario o API no disponible ❌');
+            return;
+        }
+
+        const detailedBook = await refAPI.current.books.getOne(book.id);
+        if (detailedBook.stock <= 0) {
+            Swal.fire({
+                title: "Sin stock",
+                text: "Este libro físico no tiene stock disponible.",
+                icon: "warning",
+                timer: 2000,
+                showConfirmButton: false
+            });
             return;
         }
 
@@ -81,6 +92,7 @@ export default function BookCard({ book }: { book: BookCardProps }) {
         }
     };
 
+
     const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
     const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
 
@@ -89,8 +101,8 @@ export default function BookCard({ book }: { book: BookCardProps }) {
             <Image
                 src={
                     typeof book.image === 'string' && book.image.trim() !== ''
-                    ? book.image
-                    : '/libros/placeholder.png'
+                        ? book.image
+                        : '/libros/placeholder.png'
                 }
                 alt={book.title}
                 className={styles.cover}

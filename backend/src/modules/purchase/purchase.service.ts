@@ -61,7 +61,7 @@ export class PurchasesService {
 
   async processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void> {
     if (!cartItems.length) {
-      this.logger.log('Carrito Vacio')
+      this.logger.log('Carrito Vacio');
       throw new Error('El carrito está vacío');
     }
 
@@ -72,6 +72,7 @@ export class PurchasesService {
     }
 
     const purchases: Partial<Purchase>[] = [];
+
     for (const item of cartItems) {
       const cartItem = await this.cartRepository.findOne({ where: { id: item.cartItemId, idUser } });
       if (!cartItem) {
@@ -79,10 +80,19 @@ export class PurchasesService {
         throw new Error(`Ítem del carrito con ID ${item.cartItemId} no encontrado`);
       }
 
-      const book = await this.booksRepository.findOne({ where: { id: cartItem.idBook } })
+      const book = await this.booksRepository.findOne({ where: { id: cartItem.idBook } });
       if (!book) {
         this.logger.log('Libro No encontrado');
         throw new Error(`Libro con ID ${cartItem.idBook} no encontrado`);
+      }
+
+      if (!item.virtual) {
+        if (book.stock < item.amount) {
+          throw new Error(`Stock insuficiente para el libro: ${book.title}`);
+        }
+
+        book.stock -= item.amount;
+        await this.booksRepository.save(book);
       }
 
       purchases.push({
@@ -93,13 +103,12 @@ export class PurchasesService {
         virtual: item.virtual,
         purchaseDate: new Date(),
       });
-
     }
-
-    this.logger.log('Compra Procesada');
 
     await this.purchaseRepository.save(purchases);
     await this.cartRepository.delete({ idUser });
+
+    this.logger.log('Compra Procesada');
   }
 
   async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
