@@ -8,6 +8,9 @@
     color: #333;
     margin-bottom: 20px;
     text-align: center;
+    font-size: 2rem;
+    text-transform: capitalize;
+    font-weight: bold;
 }
 
 .emptyMessage {

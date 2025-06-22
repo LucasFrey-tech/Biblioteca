@@ -71,11 +71,7 @@ export default function BookPage() {
                 : [...prev, authorId]
         );
     };
-
-    const selectedGenreNames = genres
-        .filter((g) => selectedGenres.includes(g.id))
-        .map((g) => g.name);
-
+    
     const filteredBooks = books.filter((book) => {
         const lowerTitle = book.title.toLowerCase();
         const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());

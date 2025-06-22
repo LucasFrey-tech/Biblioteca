@@ -80,15 +80,6 @@ export default function VentasPanel(): React.JSX.Element {
     }>);
 
     const purchaseGroups = Object.values(groupedPurchases);
-
-    if (loading) {
-        return (
-            <div className={styles.panelContainer}>
-                <h2>Cargando ventas...</h2>
-            </div>
-        );
-    }
-
     if (loading) {
         return (
             <div className={styles.panelContainer}>
