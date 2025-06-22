@@ -7,7 +7,9 @@ export class UserSubscriptionDiscountController {
   constructor(private readonly discountService: UserSubscriptionDiscountService) {}
 
   @Post()
-  create(@Body() data: Partial<UserSubscriptionDiscount>): Promise<UserSubscriptionDiscount> {
+  create(
+    @Body() data: { id_subscription: number; discount: number },
+  ): Promise<UserSubscriptionDiscount> {
     return this.discountService.create(data);
   }
 
@@ -24,7 +26,7 @@ export class UserSubscriptionDiscountController {
   @Put(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() data: Partial<UserSubscriptionDiscount>,
+    @Body() data: { discount: number },
   ): Promise<UserSubscriptionDiscount> {
     return this.discountService.update(id, data);
   }

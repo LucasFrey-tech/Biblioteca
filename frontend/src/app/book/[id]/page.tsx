@@ -162,6 +162,7 @@ export default function BookDetail() {
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
+    
     const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
     const showExclusiveFrame = book.subscriber_exclusive && !isSubscriber;
 

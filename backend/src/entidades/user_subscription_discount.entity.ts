@@ -10,9 +10,6 @@ export class UserSubscriptionDiscount {
   @JoinColumn({ name: 'id_subscription' })
   subscription: Subscription;
 
-  @Column({ name: 'id_subscription', insert: false, update: false })
-  id_subscription: number;
-
   @Column({ type: 'float', nullable: false })
   discount: number;
 }

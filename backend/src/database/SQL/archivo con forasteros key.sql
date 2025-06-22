@@ -120,3 +120,10 @@ CREATE TABLE user_subscription (
     end_date TIMESTAMP NOT NULL,
     ongoing BOOLEAN DEFAULT(false)
 );
+
+CREATE TABLE user_subscription_discount (
+    id SERIAL PRIMARY KEY,
+    id_subscription INTEGER NOT NULL,
+    discount FLOAT NOT NULL,
+    CONSTRAINT fk_subscription FOREIGN KEY (id_subscription) REFERENCES subscription(id) ON DELETE CASCADE
+);
