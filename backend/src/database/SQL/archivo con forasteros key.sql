@@ -47,7 +47,6 @@ create table book_genres(
 );
 
 
-
 -- CREAR TABLA VIRTUAL_BOOK_CONTENT
 create table virtual_book_content(
 	id serial primary key,

@@ -19,13 +19,21 @@ class ProcessPurchaseDTO {
 @ApiBearerAuth()
 @Controller('purchases')
 export class PurchasesController {
-  constructor(private readonly purchasesService: PurchasesService) {}
+  constructor(private readonly purchasesService: PurchasesService) { }
+
+  @Get()
+  @ApiOperation({ summary: 'Obtener todas las compras del sistema' })
+  @ApiResponse({ status: 200, description: 'Listado completo de compras', type: [PurchaseDTO] })
+  @ApiResponse({ status: 404, description: 'No se encontraron compras' })
+  async getAllPurchases(): Promise<PurchaseDTO[]> {
+    return this.purchasesService.getAllPurchases();
+  }
 
   @Post()
   @ApiOperation({ summary: 'Procesar compra de un usuario' })
   @ApiBody({ type: ProcessPurchaseDTO })
   @ApiResponse({ status: 200, description: 'Compra procesada exitosamente' })
-  async processPurchase(@Body() body: ProcessPurchaseDTO ) {
+  async processPurchase(@Body() body: ProcessPurchaseDTO) {
     await this.purchasesService.processPurchase(body.idUser, body.items);
     return { message: 'Compra procesada exitosamente' };
   }
