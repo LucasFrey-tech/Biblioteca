@@ -279,7 +279,7 @@ export default function BookDetail() {
                 ) : (
                     review.map((r) => (
                         <div key={r.id} className={styles.reviewCard}>
-                            <div className={styles.avatar}></div>
+                            {/* <div className={styles.avatar}></div> */}
                             <div className={styles.reviewContent}>
                                 <div className={styles.reviewHeader}>
                                     <strong>{r.username}</strong>

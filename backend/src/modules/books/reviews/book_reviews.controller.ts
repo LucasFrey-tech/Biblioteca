@@ -3,6 +3,7 @@ import { BookReviewsService } from './book_reviews.service';
 import { Review } from 'src/entidades/review.entity';
 import { ReviewI } from './dto/review.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { CreateReviewDto } from './dto/createReview.dto';
 
 @ApiTags('Críticas')
 @Controller('reviews')
@@ -34,7 +35,7 @@ export class BookReviewsController {
     }
 
     @Post()
-    create(@Body() reviewData: ReviewI){
+    create(@Body() reviewData: CreateReviewDto){
         return this.reviewService.create(reviewData);
     }
 
