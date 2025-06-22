@@ -27,7 +27,6 @@ export default function BookDetail() {
 
     const apiRef = useRef<BaseApi | null>(null);
 
-
     useEffect(() => {
         if (!params || !params.id) {
             setError('ID del libro no proporcionado.');
@@ -76,7 +75,6 @@ export default function BookDetail() {
     }, [params]);
 
     const handleAddToCart = async () => {
-
         if (!user) {
             router.push('/login');
             return;
@@ -138,7 +136,6 @@ export default function BookDetail() {
 
             await apiRef.current.shoppingCart.create(payload);
 
-
             Swal.fire({
                 title: "Libro agregado al carrito",
                 text: "Serás redirigido al carrito.",
@@ -161,38 +158,31 @@ export default function BookDetail() {
         }
     };
 
-
     if (loading) return <p>Cargando...</p>;
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
     const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
-    const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
+    const showExclusiveFrame = book.subscriber_exclusive && !isSubscriber;
 
     return (
         <div className={styles.container}>
             <div className={styles.columns}>
                 {/* Columna izquierda */}
                 <div className={styles.leftColumn}>
-                    <div className={styles.coverContainer}>
+                    <div className={`${styles.coverContainer} ${showExclusiveFrame ? styles.exclusiveFrame : ''}`}>
+                        {showExclusiveFrame && (
+                            <span className={styles.exclusiveBadge}>Suscriptores exclusivo</span>
+                        )}
                         <Image
                             src={book.image}
                             alt={book.title}
-                            className={`${styles.cover} ${showExclusiveOverlay ? styles.blurred : ''}`}
+                            className={styles.cover}
                             width={300}
                             height={450}
                             placeholder="blur"
                             blurDataURL="/libros/placeholder.png"
                         />
-                        {showExclusiveOverlay && (
-                            <Image
-                                src="/libros/exclusivo-suscriptores.png"
-                                alt="Contenido exclusivo para suscriptores"
-                                className={styles.exclusiveOverlay}
-                                width={300}
-                                height={450}
-                            />
-                        )}
                     </div>
                 </div>
 
@@ -222,7 +212,7 @@ export default function BookDetail() {
                         </p>
                     </div>
 
-                    {showExclusiveOverlay ? (
+                    {showExclusiveFrame ? (
                         <div className={styles.lockedMessage}>
                             <p>📚 Este libro es exclusivo para suscriptores.</p>
                             <p>Obtenga una suscripción para poder acceder a este contenido.</p>
@@ -272,10 +262,9 @@ export default function BookDetail() {
                         </>
                     )}
                 </div>
-
             </div>
 
-            {/* Sinopsis debajo del contenido principal */}
+            {/* Sinopsis */}
             <div className={styles.sinopsis}>
                 <h2>Sinopsis:</h2>
                 <p>{book.description}</p>

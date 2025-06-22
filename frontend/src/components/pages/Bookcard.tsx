@@ -4,12 +4,13 @@ import { FaCartPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import styles from '../../styles/BookCard.module.css';
 import Image from 'next/image';
+
 import { useEffect, useRef, useState } from 'react';
 import { BaseApi } from '@/API/baseApi';
 import { User } from '@/API/types/user';
-import { Book } from '@/API/types/book';
 import Swal from 'sweetalert2';
 
+import { Book } from '@/API/types/book';
 type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'author' | 'subscriber_exclusive'>;
 
 export default function BookCard({ book }: { book: BookCardProps }) {
@@ -43,6 +44,7 @@ export default function BookCard({ book }: { book: BookCardProps }) {
         const userId = localStorage.getItem('userId');
 
         if (!token || !userId) {
+            
             router.push('/login');
             return;
         }
@@ -84,30 +86,19 @@ export default function BookCard({ book }: { book: BookCardProps }) {
 
     return (
         <div className={styles.card} onClick={handleCardClick}>
-            <div className={styles.imageWrapper}>
-                <Image
-                    src={
-                        typeof book.image === 'string' && book.image.trim() !== ''
-                            ? book.image
-                            : '/libros/placeholder.png'
-                    }
-                    alt={book.title}
-                    className={`${styles.cover} ${showExclusiveOverlay ? styles.blurred : ''}`}
-                    width={200}
-                    height={150}
-                    placeholder="blur"
-                    blurDataURL="/libros/placeholder.png"
-                />
-                {showExclusiveOverlay && (
-                    <Image
-                        src="/libros/exclusivo-suscriptores.png"
-                        alt="Contenido exclusivo para suscriptores"
-                        className={styles.exclusiveOverlay}
-                        width={200}
-                        height={150}
-                    />
-                )}
-            </div>
+            <Image
+                src={
+                    typeof book.image === 'string' && book.image.trim() !== ''
+                    ? book.image
+                    : '/libros/placeholder.png'
+                }
+                alt={book.title}
+                className={styles.cover}
+                width={200}
+                height={150}
+                placeholder="blur"
+                blurDataURL="/libros/placeholder.png"
+            />
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
@@ -120,7 +111,12 @@ export default function BookCard({ book }: { book: BookCardProps }) {
                     maximumFractionDigits: 2,
                 })}
             </strong>
-            <button className={styles.buyButton} onClick={handleBuyClick}>
+            <button
+                className={styles.buyButton}
+                onClick={handleBuyClick}
+                disabled={showExclusiveOverlay}
+                title={showExclusiveOverlay ? "Solo disponible para suscriptores" : ""}
+            >
                 <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>COMPRAR</span>
             </button>

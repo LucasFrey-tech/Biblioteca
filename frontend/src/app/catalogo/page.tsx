@@ -188,17 +188,24 @@ export default function BookPage() {
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard
+                            <div
                                 key={book.id}
-                                book={{
-                                    id: book.id,
-                                    title: book.title,
-                                    image: book.image,
-                                    price: book.price,
-                                    author: book.author,
-                                    subscriber_exclusive: book.subscriber_exclusive,
-                                }}
-                            />
+                                className={book.subscriber_exclusive ? styles.exclusiveWrapper : undefined}
+                            >
+                                {book.subscriber_exclusive && (
+                                    <span className={styles.exclusiveLabel}>EXCLUSIVO SUSCRIPTORES</span>
+                                )}
+                                <BookCard
+                                    book={{
+                                        id: book.id,
+                                        title: book.title,
+                                        image: book.image,
+                                        price: book.price,
+                                        author: book.author,
+                                        subscriber_exclusive: book.subscriber_exclusive,
+                                    }}
+                                />
+                            </div>
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>

@@ -81,6 +81,12 @@
     background-color: #005bb5;
 }
 
+.buyButton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+}
+
 .cartIcon {
     font-size: 1rem;
 }
@@ -96,7 +102,7 @@
 }
 
 .blurred {
-    filter: blur(3px) brightness(0.7);
+    filter: blur(1.7px) brightness(0.7);
 }
 
 .exclusiveOverlay {
