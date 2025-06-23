@@ -47,7 +47,6 @@ create table book_genres(
 );
 
 
-
 -- CREAR TABLA VIRTUAL_BOOK_CONTENT
 create table virtual_book_content(
 	id serial primary key,
@@ -119,4 +118,11 @@ CREATE TABLE user_subscription (
     start_date TIMESTAMP NOT NULL,
     end_date TIMESTAMP NOT NULL,
     ongoing BOOLEAN DEFAULT(false)
+);
+-- CREAR TABLA user_subscription_discount
+CREATE TABLE user_subscription_discount (
+    id SERIAL PRIMARY KEY,
+    id_subscription INTEGER NOT NULL,
+    discount FLOAT NOT NULL,
+    CONSTRAINT fk_subscription FOREIGN KEY (id_subscription) REFERENCES subscription(id) ON DELETE CASCADE
 );

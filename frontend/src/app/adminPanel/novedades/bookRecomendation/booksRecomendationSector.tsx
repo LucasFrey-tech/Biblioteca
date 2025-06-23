@@ -48,7 +48,7 @@ export default function BooksRecomendationSector(): React.JSX.Element {
                         :
                         <>{
                             bookRecomendations.map((br, idx) => (
-                                <div>
+                                <div key={idx}>
                                     <Label>{"Libro " + (br.id)}</Label>
                                     <BookSelector id={br.id} idBook={br.idBook} onBookIdChange={onBookIdChange} />
                                 </div>

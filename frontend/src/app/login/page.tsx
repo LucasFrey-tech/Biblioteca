@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { useRouter } from 'next/navigation'; 
+import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BaseApi } from '@/API/baseApi';
 
@@ -53,102 +53,96 @@ export default function LogIn() {
   });
 
   const { refreshUser } = useUser();
-    // ENVIAR FORM
-const onSubmit = form.handleSubmit(async (values: UserType) => {
-  //localStorage.removeItem('token');
-  console.log('Enviando solicitud con:', values);
+  // ENVIAR FORM
+  const onSubmit = form.handleSubmit(async (values: UserType) => {
 
-  try {
-    const res = await api.log.login(values);
-    
-    console.log('Datos: ', res);
-    if (!res.success) {
-      let errorData;
-      try {
-        errorData = res;
-        console.log(errorData);
-      } catch (e) {
-        console.log(e);
+    try {
+      const res = await api.log.login(values);
+
+      if (!res.success) {
+        let errorData;
+        try {
+          errorData = res;
+          console.error(errorData);
+        } catch (e) {
+          console.error(e);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'La respuesta del servidor no es JSON válido',
+          });
+          return;
+        }
+        if (res.status === 403) {
+
+          Swal.fire({
+            icon: 'error',
+            title: 'Login fallido',
+            text: 'Usuario bloqueado',
+          });
+          return;
+        }
+
         Swal.fire({
           icon: 'error',
-          title: 'Error',
-          text: 'La respuesta del servidor no es JSON válido',
+          title: 'Login fallido',
+          text: 'Email o contraseña son incorrectos',
         });
         return;
       }
-      if(res.status === 403){
-        console.log(res.status);
+
+      const data = res;
+      // Verificar si la respuesta contiene el token
+      if (data.success) {
+        localStorage.setItem('token', data.data.access_token);
+        ////////////////////////////////////////////////////////////
+        type JwtPayload = { sub: string;[key: string]: unknown };
+        const decoded: JwtPayload = jwtDecode<JwtPayload>(data.data.access_token);
+        localStorage.setItem('userId', decoded.sub);
+        ////////////////////////////////////////////////////////////
+
+        refreshUser();
         Swal.fire({
-        icon: 'error',
-        title: 'Login fallido',
-        text: 'Usuario bloqueado',
-      });
-      return;
-    }
-      console.log(res.status);
-      
-      Swal.fire({
-        icon: 'error',
-        title: 'Login fallido',
-        text: 'Email o contraseña son incorrectos',
-      });
-      return;
-    }
-  
-    const data = res;
-    console.log('Datos:', data);
-    // Verificar si la respuesta contiene el token
-    if (data.success) {
-      localStorage.setItem('token', data.data.access_token);
-      ////////////////////////////////////////////////////////////
-      type JwtPayload = { sub: string; [key: string]: unknown };
-      const decoded: JwtPayload = jwtDecode<JwtPayload>(data.data.access_token);
-      localStorage.setItem('userId', decoded.sub);
-      ////////////////////////////////////////////////////////////
-      
-      refreshUser();
-      Swal.fire({
-        title: 'Iniciando sesión!',
-        text: 'Redirigiendo a la página de inicio...',
-        icon: 'success',
-        timer: 3000,
-        showConfirmButton: false,
-        timerProgressBar: true,
-      });
+          title: 'Iniciando sesión!',
+          text: 'Redirigiendo a la página de inicio...',
+          icon: 'success',
+          timer: 3000,
+          showConfirmButton: false,
+          timerProgressBar: true,
+        });
 
-      setTimeout(() => {
-        router.push('/inicio');
-      }, 3000);
+        setTimeout(() => {
+          router.push('/inicio');
+        }, 3000);
 
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error de inicio de sesión',
-        text: 'Hubo un problema al procesar tu ingreso. Por favor, intentá nuevamente.',
-      });
-      console.error('Error en la respuesta:', data);
-    }
-   
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error('Error de red:', error.message);
-      Swal.fire({
-        title: 'Error en la red',
-        text: 'Se perdió la conexión a la red',
-        icon: 'question',
-      });
-    } else {
-      console.error('Error desconocido:', error);
-      Swal.fire({
-        title: 'Error desconocido',
-        text: 'Enviar mensaje al soporte para arreglar este problema',
-        icon: 'question',
-      });
-    }
-  }
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de inicio de sesión',
+          text: 'Hubo un problema al procesar tu ingreso. Por favor, intentá nuevamente.',
+        });
+        console.error('Error en la respuesta:', data);
+      }
 
-  console.log(localStorage);
-});
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error('Error de red:', error.message);
+        Swal.fire({
+          title: 'Error en la red',
+          text: 'Se perdió la conexión a la red',
+          icon: 'question',
+        });
+      } else {
+        console.error('Error desconocido:', error);
+        Swal.fire({
+          title: 'Error desconocido',
+          text: 'Enviar mensaje al soporte para arreglar este problema',
+          icon: 'question',
+        });
+      }
+    }
+
+  });
 
   return (
     <div className={styles.pageContainer}>

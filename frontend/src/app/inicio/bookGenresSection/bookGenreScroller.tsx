@@ -21,7 +21,7 @@ export default function BooksGenreScroller({genreId,name}:BooksGenreScrollerProp
             setBooks(formatedBooks);
         }
         getCarouselItems()
-    }, []);
+    }, [genreId]);
 
     return (
         <div className={Styles.content_item} key={genreId}>

@@ -7,6 +7,9 @@ export class PurchaseDTO {
   @IsInt()
   id_user: number;
   
+  @IsString()
+  username: string;
+
   @IsInt()
   id_book: number;
   
@@ -34,6 +37,7 @@ export class PurchaseDTO {
   constructor(
     id: number,
     id_user: number,
+    username: string,
     id_book: number,
     title: string,
     author: string,
@@ -45,6 +49,7 @@ export class PurchaseDTO {
   ) {
     this.id = id;
     this.id_user = id_user,
+    this.username = username,
     this.id_book = id_book,
     this.title = title;
     this.author = author;

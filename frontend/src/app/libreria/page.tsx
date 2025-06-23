@@ -54,14 +54,13 @@ export default function Libreira() {
                 const resAuthors = await apiRef.current?.authors.getAll();
                 const resGenres = await apiRef.current?.genre.getAll();
 
-                if (!resBooks) {
-                    throw new Error(`HTTP error! status: ${resBooks}`);
+                // Verificar que resBooks es un array antes de ordenar
+                if (Array.isArray(resBooks)) {
+                    const sortedBooks = [...resBooks].sort((a, b) => a.id - b.id);
+                    setBooks(sortedBooks);
+                } else {
+                    setBooks([]); // O manejar el caso de error como prefieras
                 }
-                console.log("AHHHHHHHHH1 ", userId);
-
-                setBooks(resBooks.sort((a, b) => a.id - b.id));
-
-                console.log("AHHHHHHHHH ", resBooks);
 
                 setAuthors(resAuthors || []);
                 setGenres(resGenres || []);
@@ -70,7 +69,6 @@ export default function Libreira() {
                 console.error('Error al obtener datos:', error);
                 setBooks([]);
             }
-
         };
         fetchData();
     }, [userId]);

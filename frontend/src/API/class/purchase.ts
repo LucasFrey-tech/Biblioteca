@@ -2,16 +2,25 @@ import { Crud } from '../service';
 import { Purchase, PurchaseItem } from '../types/purchase';
 
 export class Purchases extends Crud<Purchase> {
-  private endPoint: string;
+    private endPoint: string;
 
-  constructor(token?: string) {
-    super(token);
-    this.endPoint = 'purchases';
-  }
-
-    getAll(): Promise<Purchase[]> {
-      throw new Error('Method not implemented.');
+    constructor(token?: string) {
+        super(token);
+        this.endPoint = 'purchases';
     }
+
+    async getAll(): Promise<Purchase[]> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            throw new Error(`Error fetching purchases: ${res.statusText}`);
+        }
+        const data = await res.json();
+        return data as Purchase[];
+    }
+
     getOne(_id: number): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }

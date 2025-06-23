@@ -22,7 +22,6 @@ export class BookDTO {
   description: string;
 
   @IsArray()
-  // @IsString({ each: true })
   genre: Genre[];
 
   @IsInt()

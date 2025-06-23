@@ -110,6 +110,7 @@ export default function AddBookReview({id_user, id_book}: AddBookReviewProps): R
         rating: 0,
       });
     } catch (error) {
+      console.warn(error)
       Swal.fire({
         icon: 'error',
         title: 'Error',

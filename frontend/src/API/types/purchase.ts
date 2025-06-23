@@ -1,6 +1,7 @@
 export interface Purchase {
   id: number;
   id_user: number;
+  username: string;
   id_book: number;
   title: string;
   author: string;
@@ -12,7 +13,7 @@ export interface Purchase {
 }
 
 export interface PurchaseItem {
-  cartItemId: number; //
+  cartItemId: number; 
   amount: number;
   virtual: boolean;
 }

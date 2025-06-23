@@ -20,7 +20,7 @@ export default function AuthorBookScroller({authorId,name}:AuthorBooksScrollerPr
                 setBooks(formatedBooks);
             }
             getCarouselItems()
-        }, []);
+        }, [authorId]);
 
         return (
             <div className={Styles.content_item} key={authorId}>

@@ -3,11 +3,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from '../../styles/shoppingCart.module.css';
 import Image from 'next/image';
-
 import { useParams } from "next/navigation";
 import { BaseApi } from "@/API/baseApi";
 import { ShoppingCartBook } from "@/API/types/shopping_cart";
 import { PurchaseItem } from "@/API/types/purchase";
+import { User } from "@/API/types/user";
 import Swal from "sweetalert2";
 
 const groupCartItems = (items: ShoppingCartBook[]) => {
@@ -24,15 +24,18 @@ const groupCartItems = (items: ShoppingCartBook[]) => {
     return Object.values(grouped);
 };
 
-
 export default function ShoppingCartPage() {
-    const params = useParams();
+
     const apiRef = useRef(new BaseApi());
     const [booksCartShopping, setBooksCartShopping] = useState<ShoppingCartBook[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userId, setUserId] = useState<number | null>(null);
     const [purchaseMessage, setPurchaseMessage] = useState<string | null>(null);
+    const [user, setUser] = useState<User>();
+    const [discountPercentage, setDiscountPercentage] = useState<number>(0);
+
+    const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
 
     useEffect(() => {
         const id = localStorage.getItem('userId');
@@ -49,8 +52,26 @@ export default function ShoppingCartPage() {
 
         const fetchData = async () => {
             try {
+                // 1. Primero cargamos el usuario
+                const userData = await apiRef.current.users.getOne(userId);
+                setUser(userData);
+
+                // 2. Si es subscriptor, cargamos el descuento
+                if (userData?.userSubscriptions?.some(sub => sub.ongoing)) {
+                    try {
+                        const discountData = await apiRef.current.userSubscriptionDiscount.getOne(1);
+                        if (discountData?.discount) {
+                            setDiscountPercentage(discountData.discount);
+                        }
+                    } catch (discountError) {
+                        console.warn(discountError)
+                        Swal.fire("error","No se pudo cargar el descuento para subscriptores","error")
+                       
+                    }
+                }
+
+                // 3. Finalmente cargamos el carrito
                 const cartData = await apiRef.current.shoppingCart.findByUser(userId);
-                console.log('Datos crudos del carrito:', cartData);
                 if (cartData) {
                     setBooksCartShopping(groupCartItems(cartData));
                 }
@@ -65,20 +86,34 @@ export default function ShoppingCartPage() {
         fetchData();
     }, [userId]);
 
+    const descuentoSubscriptor = (total: number): number => {
+        if (!user || !isSubscriber || discountPercentage <= 0) return 0;
+        return total * (discountPercentage / 100);
+    };
+
+    const calculateSubtotal = () => {
+        return booksCartShopping.reduce((total, item) => {
+            return total + item.price * item.amount;
+        }, 0);
+    };
+
+    const calculateTotal = () => {
+        const subtotal = calculateSubtotal();
+        const discount = descuentoSubscriptor(subtotal);
+        return subtotal - discount;
+    };
+
     const updateCartItem = async (idBookCart: number, newAmount: number) => {
         try {
             if (!userId) throw new Error('Usuario no identificado');
 
             if (newAmount <= 0) {
-                // Si la nueva cantidad es 0 o menos, eliminar el ítem
                 await apiRef.current.shoppingCart.delete(idBookCart);
                 setBooksCartShopping(prevItems =>
                     prevItems.filter(item => item.id !== idBookCart)
                 );
             } else {
-                // Si la cantidad es válida, actualizar
                 await apiRef.current.shoppingCart.update(idBookCart, { amount: newAmount });
-
                 setBooksCartShopping(prev =>
                     prev.map(item =>
                         item.id === idBookCart ? { ...item, amount: newAmount } : item
@@ -93,19 +128,12 @@ export default function ShoppingCartPage() {
     const removeFromCart = async (idBookCart: number) => {
         try {
             await apiRef.current.shoppingCart.delete(idBookCart);
-
             setBooksCartShopping(prevItems =>
                 prevItems.filter(item => item.id !== idBookCart)
             );
         } catch (error) {
             console.error('Error eliminando ítem del carrito:', error);
         }
-    };
-
-    const calculateTotal = () => {
-        return booksCartShopping.reduce((total, item) => {
-            return total + item.price * item.amount;
-        }, 0);
     };
 
     const handlePurchase = async () => {
@@ -127,17 +155,13 @@ export default function ShoppingCartPage() {
                 virtual: item.virtual,
             }));
 
-            // Procesar la compra
             await apiRef.current.purchase.processPurchase(userId, itemsToPurchase);
 
-            // Agregar libros virtuales a la libreria
             const virtualBooks = cartData.filter(item => item.virtual);
             if (virtualBooks.length > 0) {
                 try {
-                    // Usamos Promise.all para agregar todos los libros virtuales a la libreria
                     await Promise.all(
                         virtualBooks.map(async (book) => {
-                            // Para cada libro, agregamos tantas copias como la cantidad comprada
                             for (let i = 0; i < book.amount; i++) {
                                 await apiRef.current.libreria.create({
                                     idUser: userId,
@@ -151,7 +175,6 @@ export default function ShoppingCartPage() {
                 }
             }
 
-            // Limpiar el carrito
             setBooksCartShopping([]);
 
             Swal.fire({
@@ -170,6 +193,7 @@ export default function ShoppingCartPage() {
 
     if (loading) return <p>Cargando carrito...</p>;
     if (error) return <p>{error}</p>;
+
 
     return (
         <div className={styles.container}>
@@ -206,10 +230,8 @@ export default function ShoppingCartPage() {
                                             </div>
                                             <div className={styles.price}>${item.price.toLocaleString()}</div>
 
-                                            {/* Mostrar stock y controles solo para libros físicos */}
                                             {!item.virtual && (
                                                 <>
-
                                                     <div className={styles.quantityControl}>
                                                         <button
                                                             onClick={() => {
@@ -256,20 +278,26 @@ export default function ShoppingCartPage() {
                         <div className={styles.summaryDetails}>
                             <div className={styles.summaryRow}>
                                 <span>Productos ({booksCartShopping.reduce((acc, item) => acc + item.amount, 0)})</span>
-                                <span>${calculateTotal().toLocaleString()}</span>
+                                <span>${calculateSubtotal().toLocaleString()}</span>
                             </div>
+
+                            {isSubscriber && discountPercentage > 0 && (
+                                <div className={styles.summaryRow}>
+                                    <span>
+                                        Descuento suscriptor (<span className="font-semibold">{discountPercentage}%</span>)
+                                    </span>
+
+
+                                    <span className={styles.discount}>
+                                        -${descuentoSubscriptor(calculateSubtotal()).toLocaleString()}
+                                    </span>
+                                </div>
+                            )}
+
                             <div className={styles.summaryRow}>
                                 <span>Envío</span>
                                 <span className={styles.freeShipping}>
                                     {booksCartShopping.some(item => !item.virtual) ? 'Gratis' : 'No aplica'}
-                                </span>
-                            </div>
-                            <div className={styles.summaryRow}>
-                                <span>Impuestos</span>
-                                <span>
-                                    ${booksCartShopping.some(item => item.virtual)
-                                        ? (calculateTotal() * 0.21).toLocaleString()
-                                        : '0'}
                                 </span>
                             </div>
                         </div>
@@ -287,7 +315,7 @@ export default function ShoppingCartPage() {
                             disabled={booksCartShopping.length === 0}
                             onClick={handlePurchase}
                         >
-                            Continuar compra
+                            Pagar
                         </button>
                         {booksCartShopping.some(item => item.virtual) && (
                             <p className={styles.digitalNote}>

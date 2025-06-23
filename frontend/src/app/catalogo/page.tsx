@@ -71,17 +71,14 @@ export default function BookPage() {
                 : [...prev, authorId]
         );
     };
-
+    
     const filteredBooks = books.filter((book) => {
         const lowerTitle = book.title.toLowerCase();
         const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
 
-        const matchesGenres =
-            selectedGenres.length === 0 ||
-            book.genre.some((genreName) => {
-                const genre = genres.find((g) => g.name === genreName);
-                return genre && selectedGenres.includes(genre.id);
-            });
+    const matchesGenres =
+        selectedGenres.length === 0 ||
+        book.genre.some((g) => selectedGenres.includes(g.id));
 
         const matchesAuthors =
             selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
@@ -188,17 +185,24 @@ export default function BookPage() {
                 <div className={styles.mainGrid}>
                     {filteredBooks.length > 0 ? (
                         filteredBooks.map((book) => (
-                            <BookCard
+                            <div
                                 key={book.id}
-                                book={{
-                                    id: book.id,
-                                    title: book.title,
-                                    image: book.image,
-                                    price: book.price,
-                                    author: book.author,
-                                    subscriber_exclusive: book.subscriber_exclusive,
-                                }}
-                            />
+                                className={book.subscriber_exclusive ? styles.exclusiveWrapper : undefined}
+                            >
+                                {book.subscriber_exclusive && (
+                                    <span className={styles.exclusiveLabel}>EXCLUSIVO SUSCRIPTORES</span>
+                                )}
+                                <BookCard
+                                    book={{
+                                        id: book.id,
+                                        title: book.title,
+                                        image: book.image,
+                                        price: book.price,
+                                        author: book.author,
+                                        subscriber_exclusive: book.subscriber_exclusive,
+                                    }}
+                                />
+                            </div>
                         ))
                     ) : (
                         <p>No se encontraron libros.</p>

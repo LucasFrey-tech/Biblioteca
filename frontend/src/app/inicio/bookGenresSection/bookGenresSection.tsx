@@ -1,4 +1,3 @@
-import BooksScroller from "../booksScroller/books_scroller";
 import Styles from './styles.module.css';
 import { useEffect, useRef, useState } from "react";
 import { BaseApi } from "@/API/baseApi";
@@ -27,9 +26,9 @@ export default function GenresBooks(): React.JSX.Element {
             <div className={Styles.content}>
                 {
                     genres.length <= 0 ? <div></div> :
-                        genres.map((genre, idx) => {
+                        genres.map((genre) => {
                             return (
-                                <BooksGenreScroller genreId={genre.id} name={genre.name}/>
+                                <BooksGenreScroller key={genre.id} genreId={genre.id} name={genre.name}/>
                             );
                         })
                 }

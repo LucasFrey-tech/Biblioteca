@@ -31,28 +31,13 @@ export default function BooksPanel(): React.JSX.Element {
   const apiRef = useRef(new BaseApi());
   const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
   const [booksEditState, setBooksEditState] = useState<{
-    
+
     [key: number]: {
       editMode: boolean;
       formData: BookFileUpdate;
       tempImages?: File;
     };
   }>({});
-  
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    anio: '',
-    isbn: '',
-    image: null as File | null,
-    stock: '',
-    subscriber_exclusive: 'false',
-    price: '',
-    authorId: '',
-    genres: '',
-  });
-
-
 
   const startEdit = (book: BookFileUpdate) => {
     setBooksEditState(prev => ({
@@ -133,10 +118,9 @@ export default function BooksPanel(): React.JSX.Element {
   };
 
   const saveChanges = async (bookId: number) => {
-    console.log("saveChanges llamado para libro ID:", bookId);
     const bookState = booksEditState[bookId];
     if (!bookState) {
-      console.log("No hay estado de edición para ese libro");
+      Swal.fire("error","No hay estado de edicion para este libro","error")
       return;
     }
 
@@ -212,11 +196,6 @@ export default function BooksPanel(): React.JSX.Element {
     book.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleImage = (field: string, value: File) => {
-    setForm({ ...form, [field]: value });
-  };
-
-
   return (
     <>
       <Input
@@ -249,47 +228,53 @@ export default function BooksPanel(): React.JSX.Element {
               <div className={styles.bookDetails}>
                 {editState.editMode ? (
                   <>
-                    <label>Título:
-                      <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
-                    </label>
+                    <Label>Título:</Label>
+                    <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <label>Descripción:
-                      <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
-                    </label>
 
-                    <label>Año:
-                      <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
-                    </label>
+                    <Label>Descripción:</Label>
+                    <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
 
-                    <label>ISBN:
-                      <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
-                    </label>
 
-                    <label>Stock:
-                      <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
-                    </label>
+                    <Label>Año:                    </Label>
+                    <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <label>Exclusivo suscriptores:
 
-                      <select name="subscriber_exclusive" value={editState.formData.subscriber_exclusive ? "true" : "false"} onChange={(e) => {
-                        const value = e.target.value === "true";
+                    <Label>ISBN:</Label>
+                    <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
+
+
+                    <Label>Stock:</Label>
+                    <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
+
+                    <Label>Exclusivo suscriptores</Label>
+                    <Select
+                      value={editState.formData.subscriber_exclusive ? "true" : "false"}
+                      onValueChange={(value) => {
                         setBooksEditState(prev => ({
                           ...prev,
                           [book.id]: {
                             ...prev[book.id],
-                            formData: { ...prev[book.id].formData, subscriber_exclusive: value }
+                            formData: {
+                              ...prev[book.id].formData,
+                              subscriber_exclusive: value === "true"
+                            }
                           }
                         }));
-                      }}>
-                        <option value="true">Sí</option>
-                        <option value="false">No</option>
-                      </select>
+                      }}
+                    >
+                      <SelectTrigger className="bg-white border border-gray-300">
+                        <SelectValue placeholder="Seleccionar opción" className="text-black" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">Sí</SelectItem>
+                        <SelectItem value="false">No</SelectItem>
+                      </SelectContent>
+                    </Select>
 
-                    </label>
+                    <Label>Precio:</Label>
+                    <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <label>Precio:
-                      <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
-                    </label>
 
                     <Label>Autor</Label>
                     <Select
@@ -309,7 +294,7 @@ export default function BooksPanel(): React.JSX.Element {
                       }}
                       value={String(booksEditState[book.id]?.formData.author_id ?? '')}
                     >
-                      <SelectTrigger aria-label="Seleccionar autor">
+                      <SelectTrigger className="bg-white border border-gray-300">
                         <SelectValue placeholder="Seleccionar autor" />
                       </SelectTrigger>
                       <SelectContent>
@@ -320,62 +305,60 @@ export default function BooksPanel(): React.JSX.Element {
                         ))}
                       </SelectContent>
                     </Select>
-                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author_id}</p>
-                    <p>Autor seleccionado: {booksEditState[book.id]?.formData.author}</p>
-
 
                     <Label>Categorías</Label>
-                    <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
-                      {genres.map((genre) => {
+                    <div className="flex flex-col gap-1 max-h-40 overflow-y-auto border rounded p-2">
+                      {genres.map((genre) => (
+                        <label
+                          key={genre.id}
+                          className="flex items-center px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+                        >
+                          <span className="w-40 text-sm truncate">{genre.name}</span>
+                          <input
+                            type="checkbox"
+                            value={genre.id}
+                            checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setBooksEditState((prev) => {
+                                const bookState = prev[book.id];
+                                if (!bookState) return prev;
 
-                        return (
-                          <label key={genre.id} style={{ display: 'block', marginBottom: '4px' }}>
-                            <input
-                              type="checkbox"
-                              value={genre.id}
-                              checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
-                              onChange={(e) => {
-                                const checked = e.target.checked;
+                                const currentGenres = bookState.formData.genre as Genre[];
+                                const newGenres = checked
+                                  ? [...currentGenres, genre]
+                                  : currentGenres.filter((g) => g.id !== genre.id);
 
-                                setBooksEditState((prev) => {
-                                  const bookState = prev[book.id];
-                                  if (!bookState) return prev;
-
-                                  const currentGenres = bookState.formData.genre as Genre[];
-                                  const newGenres = checked
-                                    ? [...currentGenres, genre]
-                                    : currentGenres.filter((g) => g.id !== genre.id);
-
-                                  return {
-                                    ...prev,
-                                    [book.id]: {
-                                      ...bookState,
-                                      formData: {
-                                        ...bookState.formData,
-                                        genre: newGenres,
-                                      },
+                                return {
+                                  ...prev,
+                                  [book.id]: {
+                                    ...bookState,
+                                    formData: {
+                                      ...bookState.formData,
+                                      genre: newGenres,
                                     },
-                                  };
-                                });
-                              }}
-                            />
-                            {genre.name}
-                          </label>
-                        );
-                      })}
+                                  },
+                                };
+                              });
+                            }}
+                            className="ml-auto"
+                          />
+                        </label>
+                      ))}
                     </div>
 
-                    <label>Imagen:</label>
-                  <Image
-                    src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
-                      ? editState.formData.image
-                      : '/libros/placeholder.png'
-                    }
-                    alt="Imagen del libro"
-                    width={100}
-                    height={150}
-                    unoptimized
-                  />
+
+                    <Label>Imagen:</Label>
+                    <Image
+                      src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
+                        ? editState.formData.image
+                        : '/libros/placeholder.png'
+                      }
+                      alt="Imagen del libro"
+                      width={100}
+                      height={150}
+                      unoptimized
+                    />
                     <DragAndDrop onFileDrop={file => {
                       setTempImages(prev => ({ ...prev, [book.id]: file }));
                       setBooksEditState(prev => ({

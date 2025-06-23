@@ -42,6 +42,7 @@
 .container {
     background-color: red;
 }
+
 .searchBarContainer {
     background-color: #f4f4f4;
     padding: 0.7vw;
@@ -150,11 +151,35 @@
     padding: 0.5rem 0;
     text-align: left;
     transition: color 0.3s ease;
+    text-align: center;
 }
 
 .showMoreBtn:hover {
     color: #005bb5;
 }
+
+.exclusiveWrapper {
+    position: relative;
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.exclusiveLabel {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background-color: #d4af37;
+    color: white;
+    padding: 2px 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    border-radius: 4px;
+    z-index: 10;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+
 
 /* Formato responsive */
 @media (max-width: 1200px) {

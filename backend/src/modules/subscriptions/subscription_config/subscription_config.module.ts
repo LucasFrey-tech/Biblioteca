@@ -12,5 +12,6 @@ import { SubscriptionController } from './subscription_config.controller';
   ],
   providers: [SubscriptionService],
   controllers: [SubscriptionController],
+  exports: [TypeOrmModule],
 })
 export class SubscriptionModule {}

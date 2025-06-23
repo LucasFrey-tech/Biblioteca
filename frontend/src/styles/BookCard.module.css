@@ -1,140 +1,138 @@
 .card {
-    border: 1px solid #c0bebe;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 450px;
-    cursor: pointer;
-    max-width: 210px;
-    max-height: 496px;
+  width: 220px;
+  height: 420px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0,0,0,0.2);
+}
+
+/* Sólo cards exclusivas al pasar el mouse tienen borde y sombra dorada más visible */
+.exclusiveCard:hover {
+  border-color: #d4af37; /* dorado */
+  box-shadow:
+    0 0 10px 2px rgba(212, 175, 55, 0.8),
+    0 10px 20px rgba(212, 175, 55, 0.5);
 }
 
 .cover {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 2 / 3;
-    object-fit: contain;
-    max-width: 400px;
-    max-height: 450px;
-    margin: 0 auto 10px;
+  border-radius: 6px;
+  object-fit: cover;
+  width: 100%;
+  height: 200px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
+/* Ya no hay transform: scale en hover para .cover */
+
+.titleContainer {
+  margin-top: 10px;
+  height: 48px;
+  overflow: hidden;
+}
 .title {
-    font-size: clamp(1rem, 4vw, 1.2rem);
-    margin: 0;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: #373d45;
-    line-height: 1.2;
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* Limita a 2 líneas */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.title-container {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 60px; 
+  font-size: 1.1rem;
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .author {
-    font-size: 0.9rem;
-    color: #0070f3;
-    margin: 0.2vw;
+  font-size: 0.9rem;
+  text-align: center;
+  color: #555;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .price {
-    font-family: Proxima Nova, -apple-system, Roboto, Arial, sans-serif;
-    font-size: 1.1rem;
-    margin: 5px 0;
-    color: #222222;
+  font-weight: bold;
+  margin-top: auto;
+  color: #222;
 }
 
 .buyButton {
-    background-color: #0070f3;
-    color: white;
-    padding: 10px;
-    /* 0.625rem */
-    border: none;
-    border-radius: 4px;
-    /* 0.25rem */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    /* 0.3125rem */
-    font-size: 1rem;
-    /* 16px / 1rem */
-    text-transform: uppercase;
-    margin-top: 10px;
-    /* 0.625rem */
+  margin-top: 8px;
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease;
 }
 
-.buyButton:hover {
-    background-color: #005bb5;
+.buyButton:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.buyButton:hover:not(:disabled) {
+  background-color: #005bb5;
 }
 
 .cartIcon {
-    font-size: 1rem;
+  font-size: 1.1rem;
 }
 
-.imageWrapper {
-    position: relative;
-    width: 200px;
-    height: 150px;
-    overflow: hidden;
+.buyText {
+  user-select: none;
+  text-align: center;
 }
 
-.blurred {
-    filter: blur(3px) brightness(0.7);
+/* Etiqueta exclusiva suscriptores */
+.exclusiveLabel {
+  position: absolute;
+  top: -12px;
+  left: 10px;
+  background-color: #d4af37;
+  color: white;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 4px;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
-.exclusiveOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 150px;
-    object-fit: contain;
-    z-index: 1;
-    pointer-events: none;
+/* Deshabilitado (si no es suscriptor) */
+.disabledCard {
+  pointer-events: auto; /* permitimos hover, click solo deshabilitamos el botón */
 }
 
-/* Formato responsive */
-@media (max-width: 1200px) {
-    .card {
-        max-width: 456px;
-        max-height: 630px;
-    }
+.disabledCard .buyButton {
+  cursor: not-allowed;
+  background-color: #aaa;
 }
 
-@media (max-width: 992px) {
-    .card {
-        max-width: 456px;
-        max-height: 630px;
-    }
+.disabledCard .buyButton:hover {
+  background-color: #aaa;
 }
-
-@media (max-width: 576px) {
-    .card {
-        max-width: 456px;
-        max-height: 630px;
-    }
-}
-
-@media (max-width: 600px) {
-    .card {
-        max-width: 456px;
-        max-height: 630px;
-    }
+.button{ 
+  text-align: center;
 }

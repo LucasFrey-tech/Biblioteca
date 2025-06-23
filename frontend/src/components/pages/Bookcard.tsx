@@ -4,12 +4,13 @@ import { FaCartPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import styles from '../../styles/BookCard.module.css';
 import Image from 'next/image';
+
 import { useEffect, useRef, useState } from 'react';
 import { BaseApi } from '@/API/baseApi';
 import { User } from '@/API/types/user';
-import { Book } from '@/API/types/book';
 import Swal from 'sweetalert2';
 
+import { Book } from '@/API/types/book';
 type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'author' | 'subscriber_exclusive'>;
 
 export default function BookCard({ book }: { book: BookCardProps }) {
@@ -52,6 +53,18 @@ export default function BookCard({ book }: { book: BookCardProps }) {
             return;
         }
 
+        const detailedBook = await refAPI.current.books.getOne(book.id);
+        if (detailedBook.stock <= 0) {
+            Swal.fire({
+                title: "Sin stock",
+                text: "Este libro físico no tiene stock disponible.",
+                icon: "warning",
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
+        }
+
         try {
             const payload = {
                 idUser: user.id,
@@ -79,35 +92,32 @@ export default function BookCard({ book }: { book: BookCardProps }) {
         }
     };
 
+
     const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
     const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
 
     return (
-        <div className={styles.card} onClick={handleCardClick}>
-            <div className={styles.imageWrapper}>
-                <Image
-                    src={
-                        typeof book.image === 'string' && book.image.trim() !== ''
-                            ? book.image
-                            : '/libros/placeholder.png'
-                    }
-                    alt={book.title}
-                    className={`${styles.cover} ${showExclusiveOverlay ? styles.blurred : ''}`}
-                    width={200}
-                    height={150}
-                    placeholder="blur"
-                    blurDataURL="/libros/placeholder.png"
-                />
-                {showExclusiveOverlay && (
-                    <Image
-                        src="/libros/exclusivo-suscriptores.png"
-                        alt="Contenido exclusivo para suscriptores"
-                        className={styles.exclusiveOverlay}
-                        width={200}
-                        height={150}
-                    />
-                )}
-            </div>
+        <div
+            className={`${styles.card} ${book.subscriber_exclusive ? styles.exclusiveCard : ''} ${showExclusiveOverlay ? styles.disabledCard : ''}`}
+            onClick={handleCardClick}
+            title={showExclusiveOverlay ? "Solo disponible para suscriptores" : undefined}
+        >
+            {showExclusiveOverlay && (
+                <span className={styles.exclusiveLabel}>EXCLUSIVO SUSCRIPTORES</span>
+            )}
+            <Image
+                src={
+                    typeof book.image === 'string' && book.image.trim() !== ''
+                        ? book.image
+                        : '/libros/placeholder.png'
+                }
+                alt={book.title}
+                className={styles.cover}
+                width={220}
+                height={200}
+                placeholder="blur"
+                blurDataURL="/libros/placeholder.png"
+            />
             <div className={styles.titleContainer}>
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
@@ -120,7 +130,11 @@ export default function BookCard({ book }: { book: BookCardProps }) {
                     maximumFractionDigits: 2,
                 })}
             </strong>
-            <button className={styles.buyButton} onClick={handleBuyClick}>
+            <button
+                className={styles.buyButton}
+                onClick={handleBuyClick}
+                disabled={showExclusiveOverlay}
+            >
                 <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>COMPRAR</span>
             </button>

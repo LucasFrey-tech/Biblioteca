@@ -57,7 +57,7 @@ export default function CarouselSector(): React.JSX.Element {
                         :
                         <>{
                             carouselItems.map((br, idx) => (
-                                <div id={`${idx}`}>
+                                <div key={br.id} id={`${idx}`}>
                                     <Label>{"Carousel item " + (br.id) + ":"}</Label>
                                     <BookSelector id={br.id} idBook={br.idBook} onBookIdChange={onBookIdChange} />
                                     <DragAndDrop onFileDrop={file => {
