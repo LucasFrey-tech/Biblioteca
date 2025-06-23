@@ -1,0 +1,53 @@
+@startuml
+package moduloPurchase {
+    class PurchaseEntity {
+    - id: number
+    - idUser: number
+    - idBook: number
+    - amount: number
+    - price: number
+    - virtual: boolean = false
+    - purchaseDate: Date
+    + user: User
+    + book: Book
+    }
+
+    class PurchaseService {
+        - purchaseRepository: Repository<Purchase>,
+        - cartRepository: Repository<ShoppingCartBook>
+        - booksRepository: Repository<Book>
+        - userRepository: Repository<User>
+
+        + processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void>
+        + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+    }
+
+    class PurchaseController {
+        -  purchasesService: PurchasesService
+
+        + processPurchase(body: ProcessPurchaseDTO)
+        + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+    }
+
+    class PurchaseDTO {
+        + id:number
+        + id_user:number
+        + title: string
+        + author: string
+        + image: string
+        + price: number
+        + virtual: boolean
+        + amount: number
+        + purchaseDate: Date
+
+        + PurchaseDTO(props: PurchaseDTOProps)
+    }
+}
+
+' Relaciones
+PurchaseService --> PurchaseDTO : Depende de
+PurchaseService --> PurchaseEntity : Depende de
+PurchaseController --> PurchaseService : Depende de
+
+
+@enduml

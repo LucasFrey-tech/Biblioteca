@@ -1,126 +1,256 @@
 @startuml Alejandria
+skinparam linetype ortho
+
 
 '========================
 'Entidades
 '========================
-package Entity {
-    class AuthorEntity{
-        - id: number
-        - name: string
-    }
 
-    class BookRecommendationEntity {
-        - id: number
-        - id_book: number
-        + book: Book
-    }
-
-    class BookEntity {
-        - id: number
-        - title: string
-        - author_id: number
-        - description: string
-        - anio: number
-        - isbn: string
-        - image: string = ""
-        - stock: number
-        - subscriber_exclusive: boolean = false
-        - price: number
-        + author: Author
-        + genres: Genre[]
-    }
-
-    class CarouselEntity  {
-        - id: number
-        - idBook: number
-        - image: string = ""
-    }
-
-    class  GenreEntity {
-        - id: number
-        - name: string
-    }
-
-    class PurchaseEntity {
-        - id: number
-        - idUser: number
-        - idBook: number
-        - amount: number
-        - price: number
-        - virtual: boolean = false
-        - purchaseDate: Date
-        + user: User
-        + book: Book
-    }
-
-    class ReviewEntity {
-        - id: number
-        - id_user: number
-        - id_book: number
-        - rating: number
-        - comment: string
-        - reviewDate: Date
-        + user: User
-    }
-
-    class SesionTokenEntity {
-        - id: number
-        - idBook: number
-        - token: string
-    }
-
-    class ShoppingCartBookEntity {
-        - id: number
-        - idUser: number
-        - idBook: number
-        - amount: number
-        - virtual: boolean
-        + user: User
-        + book: Book
-    }
-
-    class UserSubscriptionEntity {
-        - id: number
-        + user: User
-        - startDate: Date
-        - endDate: Date
-        - ongoing: boolean
-        - subscription: Subscription
-    }
-
-    class SubscriptionEntity {
-        - id: number
-        - price: number
-        + userSubscriptions: UserSubscription[]
-    }
-
-    class UserVirtualBooksEntity {
-        - id: number
-        - id_user: number
-        - id_book: number
-        + book: Book
-    }
-
-    class UserEntity {
-        - id: number
-        - firstname: string
-        - lastname: string
-        - username: string
-        - email: string
-        - password: string
-        - tel: string
-        - admin: boolean
-        - disabled: boolean
-        - registrationDate: Date
-        + userSubscriptions: UserSubscription[]
-    }
-
-    class VirtualBookContentEntity {
-        - id: number
-        - id_book:number
-        - content: string
-    }
+class AuthorEntity{
+    - id: number
+    - name: string
 }
+
+class BookRecommendationEntity {
+    - id: number
+    - id_book: number
+    + book: Book
+}
+
+class BookEntity {
+    - id: number
+    - title: string
+    - author_id: number
+    - description: string
+    - anio: number
+    - isbn: string
+    - image: string = ""
+    - stock: number
+    - subscriber_exclusive: boolean = false
+    - price: number
+    + author: Author
+    + genres: Genre[]
+}
+
+class CarouselEntity  {
+    - id: number
+    - idBook: number
+    - image: string = ""
+}
+
+class  GenreEntity {
+    - id: number
+    - name: string
+}
+
+class PurchaseEntity {
+    - id: number
+    - idUser: number
+    - idBook: number
+    - amount: number
+    - price: number
+    - virtual: boolean = false
+    - purchaseDate: Date
+    + user: User
+    + book: Book
+}
+
+class ReviewEntity {
+    - id: number
+    - id_user: number
+    - id_book: number
+    - rating: number
+    - comment: string
+    - reviewDate: Date
+    + user: User
+}
+
+'class SesionTokenEntity {
+'    - id: number
+'    - idBook: number
+'    - token: string
+'}
+
+class ShoppingCartBookEntity {
+    - id: number
+    - idUser: number
+    - idBook: number
+    - amount: number
+    - virtual: boolean
+    + user: User
+    + book: Book
+}
+
+class UserSubscriptionEntity {
+    - id: number
+    + user: User
+    - startDate: Date
+    - endDate: Date
+    - ongoing: boolean
+    - subscription: Subscription
+}
+
+class SubscriptionEntity {
+    - id: number
+    - price: number
+    + userSubscriptions: UserSubscription[]
+}
+
+class UserVirtualBooksEntity {
+    - id: number
+    - id_user: number
+    - id_book: number
+    + book: Book
+}
+
+class VirtualBookContentEntity {
+    - id: number
+    - id_book:number
+    - content: string
+}
+
+class UserEntity {
+    - id: number
+    - firstname: string
+    - lastname: string
+    - username: string
+    - email: string
+    - password: string
+    - tel: string
+    - admin: boolean
+    - disabled: boolean
+    - registrationDate: Date
+    + userSubscriptions: UserSubscription[]
+}
+
+Class UserSubscriptionDiscountEntity {
+    - id: number
+    - subscription: Subscription
+    - discount: number
+}
+class AuthorEntity{
+    - id: number
+    - name: string
+}
+
+class BookRecommendationEntity {
+    - id: number
+    - id_book: number
+    + book: Book
+}
+
+class BookEntity {
+    - id: number
+    - title: string
+    - author_id: number
+    - description: string
+    - anio: number
+    - isbn: string
+    - image: string = ""
+    - stock: number
+    - subscriber_exclusive: boolean = false
+    - price: number
+    + author: Author
+    + genres: Genre[]
+}
+
+class CarouselEntity  {
+    - id: number
+    - idBook: number
+    - image: string = ""
+}
+
+class  GenreEntity {
+    - id: number
+    - name: string
+}
+
+class PurchaseEntity {
+    - id: number
+    - idUser: number
+    - idBook: number
+    - amount: number
+    - price: number
+    - virtual: boolean = false
+    - purchaseDate: Date
+    + user: User
+    + book: Book
+}
+
+class ReviewEntity {
+    - id: number
+    - id_user: number
+    - id_book: number
+    - rating: number
+    - comment: string
+    - reviewDate: Date
+    + user: User
+}
+
+'class SesionTokenEntity {
+'    - id: number
+'    - idBook: number
+'    - token: string
+'}
+
+class ShoppingCartBookEntity {
+    - id: number
+    - idUser: number
+    - idBook: number
+    - amount: number
+    - virtual: boolean
+    + user: User
+    + book: Book
+}
+
+class UserSubscriptionEntity {
+    - id: number
+    + user: User
+    - startDate: Date
+    - endDate: Date
+    - ongoing: boolean
+    - subscription: Subscription
+}
+
+class SubscriptionEntity {
+    - id: number
+    - price: number
+    + userSubscriptions: UserSubscription[]
+}
+
+class UserVirtualBooksEntity {
+    - id: number
+    - id_user: number
+    - id_book: number
+    + book: Book
+}
+
+class VirtualBookContentEntity {
+    - id: number
+    - id_book:number
+    - content: string
+}
+
+class UserEntity {
+    - id: number
+    - firstname: string
+    - lastname: string
+    - username: string
+    - email: string
+    - password: string
+    - tel: string
+    - admin: boolean
+    - disabled: boolean
+    - registrationDate: Date
+    + userSubscriptions: UserSubscription[]
+}
+
+Class UserSubscriptionDiscountEntity {
+    - id: number
+    - subscription: Subscription
+    - discount: number
+}
+
 
 '========================
 ' DTOs
@@ -164,13 +294,13 @@ class BookDTO {
     + author: string
     + author_id: number
     + description: string
-    + genre: Genre[];
-    + anio: number;
-    +  isbn: string;
-    +  image: string;
-    +  stock: number;
-    +  subscriber_exclusive: boolean;
-    +  price: number;
+    + genre: Genre[]
+    + anio: number
+    + isbn: string
+    + image: string
+    + stock: number
+    + subscriber_exclusive: boolean
+    + price: number
 
     + BookDTO(props: BookDTOProps)
     + {static} BookDTO2BookEntity(bookDTO: BookDTO): Book
@@ -220,6 +350,19 @@ interface CreateBookDTOProps {
     genre: number[],
 }
 
+class CatalogueBookDTO {
+    + id: number
+    + id_user: number
+    + id_book: number
+    + title: string
+    + author: string
+    + image: string
+    + price: number
+    + virtual: boolean
+    + amount: number
+    + purchaseDate: Date
+}
+
 class BookContentDTO {
     + idBook: number
     + content:string
@@ -234,7 +377,8 @@ class LibraryBookDTO {
     + description: string
     + isbn: string
     + image: string
-    + LibraryBookDTO(id: number, title: string, author_id: number, description: string, isbn: string, image: string)
+    + LibraryBookDTO(id: number, title: string, author_id: number,
+     description: string, isbn: string, image: string)
 }
 
 class CreateUserVirtualBookDto {
@@ -251,7 +395,9 @@ class ReviewI {
     + username: string
     + comment: string
 
-    + ReviewI(id: number, id_user: number, id_book: number, username: string, comment: string, rating: number, reviewDate: string)
+    + ReviewI(id: number, id_user: number, 
+    id_book: number, username: string, 
+    comment: string, rating: number, reviewDate: string)
 }
 
 class PurchaseDTO {
@@ -301,6 +447,34 @@ class CarouselDTO {
     + image: string
 }
 
+class BookCartDTO {
+    + id: number
+    + idBook: number
+    + title: string
+    + author: string
+    + image: string
+    + price: number
+    + virtual:boolean
+    + amount: number
+}
+
+class SubscriptionDTO {
+    + id:number
+    + price: number
+}
+
+class UserSubscriptionDTO {
+    + id: number
+    + startDate: string
+    + endDate: string
+    + ongoing: boolean
+    + subscription: SubscriptionDTO | null
+}
+
+class UpdateUserDto {
+    + admin: boolena
+    + disabled: boolean
+}
 
 '========================
 'Servicies
@@ -412,8 +586,56 @@ class CarouselService {
     + bookImageUrl = (imageName: string): string
 }
 
+class ShoppingCartService {
+    - cartBookShoppingRepository: Repository<ShoppingCartBook>
 
+    + findByUser(idUser: number): Promise<BookCartDTO[] | null>
+    + create(book: Partial<ShoppingCartBook>)
+    + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
+    + delete(id: number)
+}
 
+class SubscriptionService {
+    - subscriptionConfigRepository: Repository<Subscription>
+
+    + get(): Promise<SubscriptionDTO>
+    + update(id: number, config: Partial<SubscriptionDTO>)
+    + create(data: SubscriptionDTO): Promise<Subscription>
+}
+
+class UserSubscriptionService {
+    - userSubscriptionRepository: Repository<UserSubscription>
+    - userRepository: Repository<User>
+    - subscriptionRepository: Repository<Subscription>
+
+    + createSubscription(userId: number, startDate: Date, endDate: Date): Promise<UserSubscription>
+    + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+    + getUserSubscriptions(): Promise<UserSubscriptionDTO[]>
+    + cancelSubscription(id: number): Promise<void>
+}
+
+class UsersService {
+    - usersRepository: Repository<User>
+
+    + findAll(search = ''): Promise<User[]>
+    + findOne(id: number)
+    + create(user: Partial<User>)
+    + findByEmail(email: string): Promise<User | null>
+    + findByUser(username: string): Promise<User | null>
+    + update(id: number, updateData: Partial<User>)
+    + delete(id: number)
+}
+
+class UserSubscriptionDiscountService {
+    - discountRepo: Repository<UserSubscriptionDiscount>
+    - subscriptionRepo: Repository<Subscription>
+    
+    + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount>
+    + findAll(): Promise<UserSubscriptionDiscount[]>
+    + findOne(id: number): Promise<UserSubscriptionDiscount>
+    + update(id: number, data: { discount: number }): Promise<UserSubscriptionDiscount>
+    + delete(id: number): Promise<void>
+}
 
 '========================
 'Controllers
@@ -435,17 +657,6 @@ class AuthorController {
     + remove(id: number)
 }
 
-class BookController {
-    - booksService: BooksService
-
-    + findAll(): Promise<BookDTO[]>
-    + getBooksWithGenre(id: number)
-    + getBooksByAuthor(id: number)
-    + findOne(id: number)
-    + create(bookDTO: CreateBookDTO, file: Express.Multer.File)
-    + update(id: number, bookDTO: CreateBookDTO, file: Express.Multer.File)
-    + delete(id: number)
-}
 
 class CatalogueBooksController {
     - booksService: CatalogueBooksService
@@ -477,7 +688,7 @@ class BookReviewsController {
     + findOne(id: number) 
     + findReviewsByBookId(bookId: number)
     + create(reviewData: ReviewI)
-    + update(id:number, @Body() reviewData: ReviewI)
+    + update(id:number, reviewData: ReviewI)
     + remove(id: number)
 }
 
@@ -485,7 +696,7 @@ class GenresController {
     - genresService: GenresService
 
     + findAll(): Promise<Genre[]>
-    + create(@Body() newGenre: Partial<Genre>): Promise<Genre>
+    + create(newGenre: Partial<Genre>): Promise<Genre>
 }
 
 class PurchasesController {
@@ -514,11 +725,140 @@ class CarouselController {
     + remove(id: string)
 }
 
+class ShoppingCartController {
+    - shoppingCartService: ShoppingCartService
+
+    + findByUser(id: number): Promise<BookCartDTO[] | null>
+    + create(book: Partial<ShoopingCartBook>)
+    + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
+    + delete(id: number)
+}
+
+class SubscriptionController {
+    - subscriptionService: SubscriptionService
+
+    + getUserSubscriptions(): Promise<SubscriptionDTO>
+    + update(updateData: Partial<SubscriptionDTO>)
+    + create(data: SubscriptionDTO)
+}
+
+class UserSubscriptionController {
+    - userSubscriptionService: UserSubscriptionService
+
+    + createSubscription(userId: number, startDate: Date, endDate: Date,): Promise<UserSubscription>
+    + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+    + getUserSubscriptions() : Promise<UserSubscriptionDTO[]>
+    + cancelSubscription(id: number): Promise<void>
+}
+
+Class UsersControllers {
+    - usersService: UsersService
+
+    + getAllUsers(): Promise<User[]>
+    + findOne(id: number)
+    + create(user: Partial<User>)
+    + update(id: number, user: Partial<User>)
+    + delete(id: number)
+    + findAll(search: string)
+    + updateUser(id: number, dto: UpdateUserDto)
+}
+
+Class UserSubscriptionDiscountController {
+    - discountService: UserSubscriptionDiscountService
+
+    + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount>
+    + findAll(): Promise<UserSubscriptionDiscount[]>
+    + findOne(id: number): Promise<UserSubscriptionDiscount>
+    + update(id: number, data: { discount: number } ): Promise<UserSubscriptionDiscount> 
+    + delete(id: number): Promise<void>
+}
 
 
+' relaciones 
 
 
+BookEntity "0..*" *-- "1" AuthorEntity 
+BookEntity "*" -- "*" GenreEntity
+BookRecommendationEntity "0..*" *-- "1" BookEntity 
+CarouselEntity "1" --> "1" BookEntity : Libro
+PurchaseEntity "0..*" --> "1" UserEntity : Usuario
+PurchaseEntity "0..*" --> "1" BookEntity : Libro
+ReviewEntity "0..*" --> "1" UserEntity : Usuario
+ReviewEntity "0..*" --> "1" BookEntity : Libro
+ShoppingCartBookEntity "0..*" --> "1" UserEntity : Usuario
+ShoppingCartBookEntity "0..*" --> "1" BookEntity : Libro
+UserSubscriptionEntity "0..*" --> "1" UserEntity : Usuario
+UserSubscriptionEntity "0..*" --> "1" SubscriptionEntity : Suscripcion
+SubscriptionEntity "1" --> "0..*" UserSubscriptionEntity : Suscripcion Usuario
+UserVirtualBooksEntity "0..*" --> "1" UserEntity : Usuario
+UserVirtualBooksEntity "0..*" --> BookEntity : Libro
+VirtualBookContentEntity "1" --> "1" BookEntity : book
+UserSubscriptionDiscountEntity "0..*" --> "1" SubscriptionEntity : Suscripcion
+UserEntity "0..*" --> UserSubscriptionEntity : Suscripcion Usuario
 
+AuthController --> AuthService : Depende de
+AuthorController --> AuthorService : Depende de
+BookController --> BooksService : Depende de
+CatalogueBooksController --> CatalogueBooksService : Depende de
+BookContentController --> BookContentService : Depende de
+LibraryBooksController --> LibraryBooksService : Depende de
+BookReviewsController --> BookReviewsService : Depende de
+GenresController --> GenresService : Depende de
+PurchasesController --> PurchaseService : Depende de
+RecomendationsController --> RecomendationsService : Depende de
+CarouselController --> CarouselService : Depende de
+ShoppingCartController --> ShoppingCartService : Depende de
+SubscriptionController --> SubscriptionService : Depende de
+UserSubscriptionController --> UserSubscriptionService : Depende de
+UserSubscriptionDiscountController --> UserSubscriptionDiscountService :Depende de
+UsersControllers --> UsersService : Depende de
+
+AuthorService --> AuthorEntity : Depende de
+BooksService --> BookEntity : Depende de
+BooksService --> GenreEntity : Depende de
+BookContentService --> VirtualBookContentEntity : Depende de
+LibraryBooksService --> UserVirtualBooksEntity : Depende de
+BookReviewsService -- ReviewEntity : Depende de
+GenresService --> GenreEntity :Depende
+PurchaseService --> PurchaseEntity : Depende de 
+PurchaseService --> ShoppingCartBookEntity : Depende de
+PurchaseService --> BookEntity : Depende de
+PurchaseService --> UserEntity : Depende de
+RecomendationsService --> BookRecommendationEntity : Depende de
+CarouselService --> CarouselEntity : Depende de
+ShoppingCartService --> ShoppingCartBookEntity : Depende de
+SubscriptionService --> SubscriptionEntity : Depende de
+UserSubscriptionService --> UserSubscriptionEntity : Depende de
+UserSubscriptionService --> UserEntity : Depende de
+UserSubscriptionService --> SubscriptionEntity : Depende de
+UsersService --> UserEntity : Depende de
+UserSubscriptionDiscountService --> UserSubscriptionDiscountEntity : Depende de
+UserSubscriptionDiscountService --> SubscriptionEntity : Depende de
+
+AuthService --> LoginRequestBody : Depende de
+AuthService --> RegisterRequestBody : Depende de
+AuthorService --> CreateAuthorDto : Depende de
+BooksService --> BookDTO : Depende de
+BooksService --> CreateBookDto : Depende
+CatalogueBooksService --> CatalogueBookDTO : Depende de
+BookContentService --> BookContentDTO : Depende de
+LibraryBooksService --> LibraryBookDTO : Depende de
+BookReviewsService --> ReviewI : Depende de
+PurchaseService --> PurchaseDTO : Depende de
+RecomendationsService --> RecommendationDTO : Depende de
+RecomendationsService --> CreateRecommendationDTO : Depende de
+CarouselService --> CarouselDTO : Depende de
+ShoppingCartService --> BookCartDTO : Depende de
+SubscriptionService --> SubscriptionDTO : Depende de
+UserSubscriptionService --> UserSubscriptionDTO : Depende de
+
+UsersControllers --> UpdateUserDto : usa
+LibraryBooksController --> CreateUserVirtualBookDto : usa
+
+BookDTO --> BookDTOProps : usa
+CreateBookDto --> CreateBookDTOProps : usa
+RegisterRequestBody --> registerRequestBodyProps : usa
+PurchaseDTO --> PurchaseDTOProps : usa
 
 
 @enduml

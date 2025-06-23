@@ -1,0 +1,38 @@
+@startuml
+package moduloAuthors {
+    class AuthorService {
+        - authorRepository: Repository<Author>
+
+        + create(createAuthorDto: CreateAuthorDto): Promise<Author>
+        + findAll(): Promise<Author[]>
+        + findOne(id: number): Promise<Author>
+        + remove(id: number): Promise<void>
+    }
+
+    class AuthorController {
+        - authorService: AuthorService
+
+        + findAll()
+        + findOne(id: number)
+        + create(createAuthorDto: CreateAuthorDto): Promise<Author>
+        + remove(id: number)
+    }
+
+    class CreateAuthorDto {
+        + name: string;
+
+        + CreateAuthorDto(name: string)
+    }
+
+    class AuthorEntity{
+        - id: number
+        - name: string
+    }
+}
+
+' Relaciones
+AuthorController --> AuthorService : Depende de
+AuthorService --> CreateAuthorDto : Depende de
+AuthorService --> AuthorEntity : Depende de
+
+@enduml

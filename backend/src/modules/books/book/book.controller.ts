@@ -57,7 +57,7 @@ export class BooksController {
   @ApiOperation({ summary: 'Editar Libro' })
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: BookDTO })
-  @ApiResponse({ status: 200, description: 'Libro Editado', type: BookDTO })
+  @ApiResponse({ status: 200, description: 'Libro Editado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
   async update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
     // Convertir string a booleano si viene así

@@ -1,0 +1,51 @@
+@startuml
+
+package shoppingCart {
+    class ShoppingCartController {
+        - shoppingCartService: ShoppingCartService
+
+        + findByUser(id: number): Promise<BookCartDTO[] | null>
+        + create(book: Partial<ShoopingCartBook>)
+        + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
+        + delete(id: number)
+    }
+
+    class ShoppingCartService {
+        - cartBookShoppingRepository: Repository<ShoppingCartBook>
+
+        + findByUser(idUser: number): Promise<BookCartDTO[] | null>
+        + create(book: Partial<ShoppingCartBook>)
+        + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
+        + delete(id: number)
+    }
+
+    class BookCartDTO {
+        + id: number
+        + idBook: number
+        + title: string
+        + author: string
+        + image: string
+        + price: number
+        + virtual:boolean
+        + amount: number
+    }
+
+    class ShoppingCartBookEntity {
+        - id: number
+        - idUser: number
+        - idBook: number
+        - amount: number
+        - virtual: boolean
+        + user: User
+        + book: Book
+    }
+
+}
+
+' Relaciones
+ShoppingCartService --> ShoppingCartBookEntity : Depende de
+ShoppingCartController --> ShoppingCartService : Depende de
+ShoppingCartController --> ShoppingCartBookEntity : Depende de
+ShoppingCartController --> BookCartDTO : Depende de
+ShoppingCartService --> BookCartDTO : Depende de
+@enduml

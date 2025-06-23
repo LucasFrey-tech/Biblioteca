@@ -64,11 +64,11 @@ export class UsersController {
 
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar un Usuario'})
+  @ApiOperation({ summary: 'Actualizar Estado del Usuario'})
   @ApiParam({ name: 'id', type: Number })
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ status: 200, description: 'Usuario Actualizado', type: User})
-  updateUser(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+  @ApiResponse({ status: 200, description: 'Estado del Usuario Actualizado', type: User})
+  updateUserState(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
   
