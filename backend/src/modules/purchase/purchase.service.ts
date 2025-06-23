@@ -5,7 +5,6 @@ import { Purchase } from '../../entidades/purchase.entity';
 import { ShoppingCartBook } from '../../entidades/shopping_cart_book.entity';
 import { Book } from '../../entidades/book.entity';
 import { User } from '../../entidades/user.entity';
-import { Author } from '../../entidades/author.entity';
 import { PurchaseDTO } from './DTO/purchase.dto';
 
 
@@ -27,8 +26,6 @@ export class PurchasesService {
     private booksRepository: Repository<Book>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Author)
-    private authorRepository: Repository<Author>,
   ) { }
 
   async getAllPurchases(): Promise<PurchaseDTO[]> {
