@@ -1,13 +1,15 @@
+import { Genre } from "./genre";
+
 export interface BookLibreria {
   id: number;
   title: string;
   author: string;
   author_id: number;
   description: string;
-  genre: string[];
+  genre: Genre[];
   anio: number;
   image: string;
   subscriber_exclusive: boolean;
-  idUser?: number;  // Añadido
-  idBook?: number;  // Añadido
+  idUser?: number;
+  idBook?: number;
 };

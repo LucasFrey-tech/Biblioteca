@@ -1,5 +1,5 @@
-import { IsOptional } from "class-validator";
-import { IsInt, IsString } from "class-validator";
+import { IsArray, IsOptional, IsInt, IsString } from "class-validator";
+import { Genre } from "src/entidades/genre.entity";
 
 export class LibraryBookDTO {
   @IsInt()
@@ -11,13 +11,16 @@ export class LibraryBookDTO {
   @IsOptional()
   @IsInt()
   author_id?: number;
-  
+
   @IsString()
   description: string;
-  
+
+  @IsArray()
+  genre: Genre[];
+
   @IsString()
   isbn: string;
-  
+
   @IsString()
   image: string;
 
@@ -26,6 +29,7 @@ export class LibraryBookDTO {
     title: string,
     author_id: number | undefined,
     description: string,
+    genre: Genre[],
     isbn: string,
     image: string,
   ) {
@@ -33,6 +37,7 @@ export class LibraryBookDTO {
     this.title = title;
     this.author_id = author_id;
     this.description = description;
+    this.genre = genre;
     this.isbn = isbn;
     this.image = image;
   }

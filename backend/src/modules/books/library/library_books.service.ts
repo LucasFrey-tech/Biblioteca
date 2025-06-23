@@ -13,22 +13,25 @@ export class LibraryBooksService {
     ) { }
 
     async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
-        const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser }, relations: ['book', 'book.author'], });
+        const userVirtualBooks = await this.userVirtualBooks.find({
+            where: { idUser },
+            relations: ['book', 'book.author', 'book.genres'],
+        });
 
         const result = await Promise.all(
             userVirtualBooks.map(async (vb) => {
-
                 this.logger.log('Lista de Libros de Libreria del Usuario Obtenida');
                 return new LibraryBookDTO(
                     vb.book.id,
                     vb.book.title,
                     vb.book.author?.id,
                     vb.book.description,
+                    vb.book.genres ?? [],
                     vb.book.isbn,
                     vb.book.image
                 );
             })
-        )
+        );
 
         this.logger.log('Elementos null Removidos');
         return result.filter((item): item is LibraryBookDTO => item !== null);
