@@ -4,11 +4,14 @@ import { Repository } from 'typeorm';
 import { VirtualBookContent } from 'src/entidades/virtual_book_content.entity';
 import { BookContentDTO } from './book_content.dto';
 import { log } from 'console';
+import { SettingsService } from 'src/settings.service';
 
 @Injectable()
 export class BookContentService {
   private readonly logger = new Logger(BookContentService.name);
   constructor(
+    private settingsService: SettingsService,
+        
     @InjectRepository(VirtualBookContent)
     private bookContentRepository: Repository<VirtualBookContent>,
   ) { }
@@ -43,4 +46,7 @@ export class BookContentService {
     return this.bookContentRepository.delete(id);
   }
 
+  bookContentUrl = (fileName:string):string=>{
+    return this.settingsService.getHostUrl()+this.settingsService.getBooksImagesPrefix()+"/"+fileName;
+  }
 }

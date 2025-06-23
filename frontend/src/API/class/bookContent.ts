@@ -23,21 +23,32 @@ export class BookContent extends Crud<BookContentDTO>{
     }
     
     async create(data: Partial<BookContentDTO>): Promise<BookContentDTO> {
-        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+        const formData = new FormData();
+        if (data.content instanceof File) {
+            formData.append("content", data.content)
+        }
+
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(data),
+            // headers: {'Content-Type': 'multipart/form'},
+            body: formData,
         });
-        return resBook.json();
+
+        const content = await res.json();
+        console.log('Content uploaded.');
+
+        return content;
     }
+
     async update(id: number, data: Partial<BookContentDTO>): Promise<BookContentDTO> {
-        const resBook = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
-            method: 'POST',
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+            method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(data),
         });
-        return resBook.json();
+        return res.json();
     }
+    
     async delete(id: number): Promise<void> {
         const resBook = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'DELETE',

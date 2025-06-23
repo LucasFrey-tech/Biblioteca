@@ -24,6 +24,7 @@ import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
 import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
+import DragAndDropFile from './dropFile';
 
 
 export default function AddBookDialog({
@@ -52,6 +53,7 @@ export default function AddBookDialog({
     price: '',
     authorId: '',
     genres: '',
+    content: null as File | null
   });
 
   useEffect(() => {
@@ -91,6 +93,7 @@ export default function AddBookDialog({
       subscriber_exclusive: form.subscriber_exclusive === 'true',
       price: Number(form.price),
       author_id: Number(form.authorId),
+      content: form.content ?? undefined
     };
 
     try {
@@ -116,6 +119,7 @@ export default function AddBookDialog({
         price: '',
         authorId: '',
         genres: '',
+        content: null
       });
     } catch (error) {
       console.error('Error al guardar el libro:', error);
@@ -169,6 +173,13 @@ export default function AddBookDialog({
   });
 };
 
+async function handleDragAndDropChange(bookId: number, file: File): Promise<void> {
+          setForm(prev => ({
+            ...prev,
+            content: file
+          }));
+        }
+
   return (
     <>
       {/* Modal grande para agregar libro */}
@@ -198,6 +209,10 @@ export default function AddBookDialog({
             <DragAndDrop onFileDrop={file => {
               handleImage('image', file);
             }} />
+
+            <label>Contenido:</label>
+            <DragAndDropFile id={1} onFileDrop={handleDragAndDropChange} validFormats={['.txt']} />
+
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />

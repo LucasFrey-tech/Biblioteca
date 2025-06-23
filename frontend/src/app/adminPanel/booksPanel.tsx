@@ -19,8 +19,9 @@ import { BookFileUpdate } from '@/API/types/bookFile';
 import { Author } from '@/API/types/author';
 import { Genre } from "@/API/types/genre";
 
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import DragAndDropFile from "@/components/pages/dropFile";
 
 export default function BooksPanel(): React.JSX.Element {
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
@@ -31,14 +32,14 @@ export default function BooksPanel(): React.JSX.Element {
   const apiRef = useRef(new BaseApi());
   const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
   const [booksEditState, setBooksEditState] = useState<{
-    
+
     [key: number]: {
       editMode: boolean;
       formData: BookFileUpdate;
       tempImages?: File;
     };
   }>({});
-  
+
   const [form, setForm] = useState({
     title: '',
     description: '',
@@ -50,6 +51,7 @@ export default function BooksPanel(): React.JSX.Element {
     price: '',
     authorId: '',
     genres: '',
+    content: null as File | null,
   });
 
 
@@ -158,7 +160,15 @@ export default function BooksPanel(): React.JSX.Element {
         genreIds
       );
 
-      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
+      await apiRef.current.bookContent.update(1,{idBook:bookId, content: bookState.formData.content})
+
+      setBooks(prevBooks =>
+        prevBooks.map(b =>
+          b.id === bookId
+            ? { ...b, ...updatedBook, content: bookState.formData.content }
+            : b
+        )
+      );
       setBooksEditState(prev => ({
         ...prev,
         [bookId]: { ...prev[bookId], editMode: false, tempImages: undefined }
@@ -238,6 +248,20 @@ export default function BooksPanel(): React.JSX.Element {
           editMode: false,
           formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
         };
+
+        async function handleUpdateBookContent(bookId: number, file: File): Promise<void> {
+          setBooksEditState(prev => ({
+            ...prev,
+            [bookId]: { 
+              ...prev[bookId], 
+              formData: { 
+                ...prev[bookId].formData, 
+                content: file 
+              } 
+            }
+          }));
+        }
+
         return (
           <div key={book.id} className={styles.bookCard}>
             <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
@@ -366,16 +390,16 @@ export default function BooksPanel(): React.JSX.Element {
                     </div>
 
                     <label>Imagen:</label>
-                  <Image
-                    src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
-                      ? editState.formData.image
-                      : '/libros/placeholder.png'
-                    }
-                    alt="Imagen del libro"
-                    width={100}
-                    height={150}
-                    unoptimized
-                  />
+                    <Image
+                      src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
+                        ? editState.formData.image
+                        : '/libros/placeholder.png'
+                      }
+                      alt="Imagen del libro"
+                      width={100}
+                      height={150}
+                      unoptimized
+                    />
                     <DragAndDrop onFileDrop={file => {
                       setTempImages(prev => ({ ...prev, [book.id]: file }));
                       setBooksEditState(prev => ({
@@ -389,6 +413,8 @@ export default function BooksPanel(): React.JSX.Element {
                         }
                       }));
                     }} />
+                    <label>Contenido:</label>
+                    <DragAndDropFile id={book.id} onFileDrop={handleUpdateBookContent} validFormats={['.txt']} />
 
                     <div className={styles.editButtons}>
                       <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
