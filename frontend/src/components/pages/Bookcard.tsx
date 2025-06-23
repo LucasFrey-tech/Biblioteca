@@ -44,7 +44,6 @@ export default function BookCard({ book }: { book: BookCardProps }) {
         const userId = localStorage.getItem('userId');
 
         if (!token || !userId) {
-            
             router.push('/login');
             return;
         }
@@ -85,17 +84,24 @@ export default function BookCard({ book }: { book: BookCardProps }) {
     const showExclusiveOverlay = book.subscriber_exclusive && !isSubscriber;
 
     return (
-        <div className={styles.card} onClick={handleCardClick}>
+        <div
+            className={`${styles.card} ${book.subscriber_exclusive ? styles.exclusiveCard : ''} ${showExclusiveOverlay ? styles.disabledCard : ''}`}
+            onClick={handleCardClick}
+            title={showExclusiveOverlay ? "Solo disponible para suscriptores" : undefined}
+        >
+            {showExclusiveOverlay && (
+                <span className={styles.exclusiveLabel}>EXCLUSIVO SUSCRIPTORES</span>
+            )}
             <Image
                 src={
                     typeof book.image === 'string' && book.image.trim() !== ''
-                    ? book.image
-                    : '/libros/placeholder.png'
+                        ? book.image
+                        : '/libros/placeholder.png'
                 }
                 alt={book.title}
                 className={styles.cover}
-                width={200}
-                height={150}
+                width={220}
+                height={200}
                 placeholder="blur"
                 blurDataURL="/libros/placeholder.png"
             />
@@ -115,7 +121,6 @@ export default function BookCard({ book }: { book: BookCardProps }) {
                 className={styles.buyButton}
                 onClick={handleBuyClick}
                 disabled={showExclusiveOverlay}
-                title={showExclusiveOverlay ? "Solo disponible para suscriptores" : ""}
             >
                 <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>COMPRAR</span>
