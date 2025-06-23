@@ -85,6 +85,17 @@ export default function BookDetail() {
             return;
         }
 
+        if (selectedFormat === 'physical' && book.stock <= 0) {
+            Swal.fire({
+                title: "Sin stock",
+                text: "Este libro físico no tiene stock disponible.",
+                icon: "warning",
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
+        }
+
         try {
             const payload = {
                 idUser: user.id,
@@ -126,6 +137,17 @@ export default function BookDetail() {
             return;
         }
 
+        if (selectedFormat === 'physical' && book.stock <= 0) {
+            Swal.fire({
+                title: "Sin stock",
+                text: "Este libro físico no tiene stock disponible.",
+                icon: "warning",
+                timer: 2000,
+                showConfirmButton: false
+            });
+            return;
+        }
+
         try {
             const payload = {
                 idUser: user.id,
@@ -162,7 +184,7 @@ export default function BookDetail() {
     if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
     if (!book) return <p>Libro no encontrado!!!</p>;
 
-    
+
     const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
     const showExclusiveFrame = book.subscriber_exclusive && !isSubscriber;
 
@@ -279,7 +301,16 @@ export default function BookDetail() {
                 ) : (
                     review.map((r) => (
                         <div key={r.id} className={styles.reviewCard}>
-                            <div className={styles.avatar}></div>
+                            <div className={styles.avatar}>
+                                <Image
+                                    src="/logos/usuario.png"
+                                    alt={book.title}
+                                    className={styles.cover}
+                                    width={300}
+                                    height={450}
+                                />
+                            </div>
+
                             <div className={styles.reviewContent}>
                                 <div className={styles.reviewHeader}>
                                     <strong>{r.username}</strong>
