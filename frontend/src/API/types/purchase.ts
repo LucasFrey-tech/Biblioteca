@@ -13,7 +13,7 @@ export interface Purchase {
 }
 
 export interface PurchaseItem {
-  cartItemId: number; //
+  cartItemId: number; 
   amount: number;
   virtual: boolean;
 }

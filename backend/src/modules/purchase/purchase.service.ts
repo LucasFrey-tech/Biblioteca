@@ -109,7 +109,9 @@ export class PurchasesService {
   }
 
   async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
-    const purchases = await this.purchaseRepository.find({ where: { idUser }, relations: ['book', 'user'] });
+    const purchases = await this.purchaseRepository.find({ where: { idUser },
+    relations: ['book', 'user', 'book.author'] });
+    
     if (!purchases.length) {
       this.logger.log('Historial Vacio');
       return null;
