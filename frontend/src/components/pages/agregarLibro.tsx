@@ -19,26 +19,23 @@ import Swal from 'sweetalert2';
 
 import { AddAuthorDialog } from './AddAuthorDialog';
 import { AddGenreDialog } from './agregarCategoria';
+import { DeleteAuthorDialog } from './DeleteAuthorDialog';
+import { DeleteGenreDialog } from './DeleteCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
 import { BookFile } from '@/API/types/bookFile';
 import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
 
-
-export default function AddBookDialog({
-    onAuthorAdded,
-    onGenreAdded
-  }: {
-    onAuthorAdded?: (author: Author) => void;
-    onGenreAdded?: (genre: Genre) => void;
-  }) {
-  
-
+export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void }) {
   const [open, setOpen] = useState(false);
-
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [openAddAuthor, setOpenAddAuthor] = useState(false);
+  const [openAddGenre, setOpenAddGenre] = useState(false);
+  const [openDeleteAuthor, setOpenDeleteAuthor] = useState(false);
+  const [openDeleteGenre, setOpenDeleteGenre] = useState(false);
+
   const API = new BaseApi(localStorage.getItem('token') || '');
 
   const [form, setForm] = useState({
@@ -62,7 +59,6 @@ export default function AddBookDialog({
 
         const genresData = await API.genre.getAll();
         setGenres(genresData);
-
       } catch (error) {
         console.error('Error al cargar los datos', error);
       }
@@ -70,17 +66,17 @@ export default function AddBookDialog({
     fetchData();
   }, []);
 
-
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
   };
+
   const handleImage = (field: string, value: File) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleSubmit = async () => {
     const formGenresString = form.genres.split(',').map(g => g.trim()).filter(g => g !== '');
-    const formGenresNumber = formGenresString.map(g => Number(g))
+    const formGenresNumber = formGenresString.map(g => Number(g));
     const newBook: Partial<BookFile> = {
       title: form.title,
       description: form.description,
@@ -95,7 +91,6 @@ export default function AddBookDialog({
 
     try {
       await API.books.createBookFile(newBook, formGenresNumber);
-
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -119,7 +114,6 @@ export default function AddBookDialog({
       });
     } catch (error) {
       console.error('Error al guardar el libro:', error);
-
       Swal.fire({
         icon: 'error',
         title: 'Error',
@@ -130,11 +124,6 @@ export default function AddBookDialog({
     }
   };
 
-  // Estados para abrir modales pequeños de autor y género
-  const [openAddAuthor, setOpenAddAuthor] = useState(false);
-  const [openAddGenre, setOpenAddGenre] = useState(false);
-
-  // Función que agrega un autor nuevo a la lista y selecciona ese autor en el form
   const handleNewAuthor = (author: Author) => {
     setAuthors(prev => [...prev, author]);
     setForm(prev => ({ ...prev, authorId: String(author.id) }));
@@ -148,30 +137,55 @@ export default function AddBookDialog({
     });
   };
 
-  // Función que agrega una categoría nueva a la lista y la agrega al form
   const handleNewGenre = (genre: Genre) => {
-  setGenres(prev => [...prev, genre]);
-  if (onGenreAdded) onGenreAdded(genre);
-  setForm(prevForm => {
-    const currentGenres = prevForm.genres ? prevForm.genres.split(',') : [];
-    const updatedGenres = [...currentGenres, String(genre.id)];  // <-- Aquí!
-    return {
-      ...prevForm,
-      genres: updatedGenres.join(',')
-    };
-  });
-  setOpenAddGenre(false);
-  Swal.fire({
-    icon: 'success',
-    title: 'Categoría agregada',
-    timer: 1500,
-    showConfirmButton: false,
-  });
-};
+    setGenres(prev => [...prev, genre]);
+    if (onGenreAdded) onGenreAdded(genre);
+    setForm(prevForm => {
+      const currentGenres = prevForm.genres ? prevForm.genres.split(',') : [];
+      const updatedGenres = [...currentGenres, String(genre.id)];
+      return {
+        ...prevForm,
+        genres: updatedGenres.join(',')
+      };
+    });
+    setOpenAddGenre(false);
+    Swal.fire({
+      icon: 'success',
+      title: 'Categoría agregada',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  const handleDeleteGenre = (deletedId: number) => {
+    setGenres(prev => prev.filter(g => g.id !== deletedId));
+    setForm(prevForm => {
+      const updated = prevForm.genres
+        .split(',')
+        .filter(id => id !== String(deletedId))
+        .join(',');
+      return { ...prevForm, genres: updated };
+    });
+    Swal.fire({
+      icon: 'success',
+      title: 'Categoría eliminada',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  const handleAuthorDeleted = (id: number) => {
+    setAuthors(prev => prev.filter(author => author.id !== id));
+    Swal.fire({
+      icon: 'success',
+      title: 'Autor eliminado',
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
 
   return (
     <>
-      {/* Modal grande para agregar libro */}
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogTrigger asChild>
           <Button className="text-lg">Agregar libro</Button>
@@ -195,18 +209,13 @@ export default function AddBookDialog({
             <Input value={form.isbn} onChange={e => handleChange('isbn', e.target.value)} />
 
             <Label>Imagen</Label>
-            <DragAndDrop onFileDrop={file => {
-              handleImage('image', file);
-            }} />
+            <DragAndDrop onFileDrop={file => handleImage('image', file)} />
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />
 
             <Label>Exclusivo suscriptores</Label>
-            <Select
-              onValueChange={value => handleChange('subscriber_exclusive', value)}
-              value={form.subscriber_exclusive}
-            >
+            <Select value={form.subscriber_exclusive} onValueChange={value => handleChange('subscriber_exclusive', value)}>
               <SelectTrigger>
                 <SelectValue>{form.subscriber_exclusive === 'true' ? 'Sí' : 'No'}</SelectValue>
               </SelectTrigger>
@@ -232,14 +241,36 @@ export default function AddBookDialog({
                 ))}
               </SelectContent>
             </Select>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setOpenAddAuthor(true)}
-              className="mt-2"
-            >
-              + Agregar autor
-            </Button>
+
+            <div className="flex gap-2 mt-2">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setOpenAddAuthor(true)}
+              >
+                + Agregar autor
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => setOpenDeleteAuthor(true)}
+              >
+                Eliminar autor
+              </Button>
+            </div>
+
+            <AlertDialog open={openAddAuthor} onOpenChange={setOpenAddAuthor}>
+              <AlertDialogContent>
+                <AddAuthorDialog onAdd={handleNewAuthor} onClose={() => setOpenAddAuthor(false)} />
+              </AlertDialogContent>
+            </AlertDialog>
+
+            <AlertDialog open={openDeleteAuthor} onOpenChange={setOpenDeleteAuthor}>
+              <AlertDialogContent>
+                <DeleteAuthorDialog onDelete={handleAuthorDeleted} onClose={() => setOpenDeleteAuthor(false)} />
+              </AlertDialogContent>
+            </AlertDialog>
+
 
             <Label>Categorías</Label>
             <div className="flex flex-col space-y-1 max-h-40 overflow-y-auto border rounded p-2">
@@ -251,66 +282,46 @@ export default function AddBookDialog({
                     onChange={(e) => {
                       const selectedGenres = form.genres ? form.genres.split(',') : [];
                       const isChecked = e.target.checked;
-
-                      let updatedGenres = [];
-                      if (isChecked) {
-                        updatedGenres = [...selectedGenres, genre.id.toString()];
-                      } else {
-                        updatedGenres = selectedGenres.filter(g => g !== genre.id.toString());
-                      }
-
+                      const updatedGenres = isChecked
+                        ? [...selectedGenres, genre.id.toString()]
+                        : selectedGenres.filter(g => g !== genre.id.toString());
                       handleChange('genres', updatedGenres.join(','));
                     }}
                   />
                   <span>{genre.name}</span>
                 </label>
-
               ))}
-
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setOpenAddGenre(true)}
-              className="mt-2"
-            >
-              + Agregar categoría
-            </Button>
-
+            <div className="flex gap-2 mt-2">
+              <Button size="sm" variant="outline" onClick={() => setOpenAddGenre(true)}>+ Agregar categoría</Button>
+              <Button size="sm" variant="destructive" onClick={() => setOpenDeleteGenre(true)}>Eliminar categoría</Button>
+            </div>
           </div>
 
           <AlertDialogFooter className="flex justify-end gap-2 mt-4">
-            <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">
-              Guardar
-            </Button>
-            <AlertDialogCancel className="bg-black text-white px-4 py-2 rounded">
-              Salir
-            </AlertDialogCancel>
+            <Button onClick={handleSubmit} className="bg-black text-white px-4 py-2 rounded">Guardar</Button>
+            <AlertDialogCancel className="bg-black text-white px-4 py-2 rounded">Salir</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Modal pequeño para agregar autor */}
       <AlertDialog open={openAddAuthor} onOpenChange={setOpenAddAuthor}>
         <AlertDialogContent>
           <AddAuthorDialog onAdd={handleNewAuthor} onClose={() => setOpenAddAuthor(false)} />
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Modal pequeño para agregar categoría */}
       <AlertDialog open={openAddGenre} onOpenChange={setOpenAddGenre}>
         <AlertDialogContent>
           <AddGenreDialog onAdd={handleNewGenre} onClose={() => setOpenAddGenre(false)} />
         </AlertDialogContent>
-
       </AlertDialog>
 
+      <AlertDialog open={openDeleteGenre} onOpenChange={setOpenDeleteGenre}>
+        <AlertDialogContent>
+          <DeleteGenreDialog onDelete={handleDeleteGenre} onClose={() => setOpenDeleteGenre(false)} />
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
-
-
-
-
-
-
