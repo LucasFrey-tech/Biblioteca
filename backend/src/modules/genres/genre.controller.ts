@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { GenresService } from './genre.service';
 import { Genre } from 'src/entidades/genre.entity';
 import { ApiTags, ApiOperation, ApiResponse,ApiParam, ApiBody } from '@nestjs/swagger';
@@ -26,7 +26,7 @@ export class GenresController {
   @ApiOperation({ summary: 'Eliminar un Genero por ID' })
   @ApiParam({ name: 'id', type: Number, description: 'ID del género a eliminar' })
   @ApiResponse({ status: 200, description: 'Género eliminado correctamente' })
-  delete(@Param('id') id: number): Promise<void> {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.genresService.delete(id);
   }
 }

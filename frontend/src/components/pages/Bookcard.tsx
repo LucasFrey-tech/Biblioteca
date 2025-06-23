@@ -127,12 +127,13 @@ export default function BookCard({ book }: { book: BookCardProps }) {
                 <h3 className={styles.title}>{book.title}</h3>
             </div>
             <p className={styles.author}>{authorName}</p>
+            <div className={styles.bottomGroup}>
             <strong className={styles.price}>
                 {book.price.toLocaleString('es-AR', {
-                    style: 'currency',
-                    currency: 'ARS',
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
+                style: 'currency',
+                currency: 'ARS',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
                 })}
             </strong>
             <button
@@ -143,6 +144,7 @@ export default function BookCard({ book }: { book: BookCardProps }) {
                 <FaCartPlus className={styles.cartIcon} aria-hidden="true" />
                 <span className={styles.buyText}>COMPRAR</span>
             </button>
+            </div>
         </div>
     );
 }

@@ -16,7 +16,7 @@ export class Genres extends Crud<Genre> {
         return res.json();
     }
 
-    async create(data: Partial<Genre>): Promise<Genre>{
+    async create(data: Partial<Genre>): Promise<Genre> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
             headers: this.getHeaders(),
@@ -32,11 +32,13 @@ export class Genres extends Crud<Genre> {
         throw new Error("Method not implemented.");
     }
     async delete(id: number): Promise<void> {
-         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'DELETE',
             headers: this.getHeaders(),
-            body: JSON.stringify(id),
         });
+        if (!res.ok) {
+            throw new Error(`Error al eliminar el género con id ${id}`);
+        }
         return res.json();
     }
 
