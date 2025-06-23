@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Swal from 'sweetalert2';
 
-interface Author {
-  id: number;
-  name: string;
-}
+import { BaseApi } from '@/API/baseApi';
+import { Author } from '@/API/types/author';
 
 interface Props {
   onAdd: (author: Author) => void;
@@ -17,39 +15,38 @@ export function AddAuthorDialog({ onAdd, onClose }: Props) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Inicializamos correctamente apiRef
+  const apiRef = useRef(new BaseApi());
+
   const handleSubmit = async () => {
     if (!name.trim()) return;
     setLoading(true);
+
     try {
-      const res = await fetch('http://localhost:3001/authors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
+      const newAuthor = await apiRef.current.authors.create({ name });
+      onAdd(newAuthor);
+      setName('');
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Autor agregado correctamente',
+        timer: 2000,
+        showConfirmButton: false,
       });
-      if (res.ok) {
-        const newAuthor: Author = await res.json();
-        onAdd(newAuthor);
-        setName('');
-        Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: 'Autor agregado correctamente',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        onClose();
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error al cargar autor',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-      }
-    } catch {
-      alert('Error al agregar autor');
+
+      onClose();
+    } catch (error) {
+      console.error("Error al agregar autor", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al cargar autor',
+        timer: 2000,
+        showConfirmButton: false,
+      });
     }
+
     setLoading(false);
   };
 

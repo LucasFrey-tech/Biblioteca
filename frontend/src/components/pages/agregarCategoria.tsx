@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Swal from 'sweetalert2';
 
-interface Genre {
-  id: number;
-  name: string;
-}
+import { BaseApi } from '@/API/baseApi';
+import { Genre } from '@/API/types/genre';
+
 
 interface Props {
   onAdd: (genre: Genre) => void;
@@ -17,40 +16,35 @@ export function AddGenreDialog({ onAdd, onClose }: Props) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const apiRef = useRef(new BaseApi());
+
   const handleSubmit = async () => {
     if (!name.trim()) return;
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/genres', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name }),
+      const newGenre = await apiRef.current.genre.create({ name });
+      onAdd(newGenre);
+      setName('');
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Categoría agregada correctamente',
+        timer: 2000,
+        showConfirmButton: false,
       });
-      if (res.ok) {
-        const newGenre: Genre = await res.json();
-        onAdd(newGenre);
-        setName('');
-        Swal.fire({
-            icon: 'success',
-            title: 'Éxito',
-            text: 'Categoría agregada correctamente',
-            timer: 2000,
-            showConfirmButton: false,
-        });
-        onClose();
-      } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al cargar categoría',
-            timer: 2000,
-            showConfirmButton: false,
-        });
-      }
-    } catch {
-      alert('Error al agregar categoría');
+      onClose();
+      setLoading(false);
+    } catch (error) {
+      console.error("Error al agregar la categoria", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al cargar categoría',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -69,5 +63,3 @@ export function AddGenreDialog({ onAdd, onClose }: Props) {
     </div>
   );
 }
-
-
