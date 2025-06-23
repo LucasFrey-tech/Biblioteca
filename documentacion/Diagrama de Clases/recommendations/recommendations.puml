@@ -1,0 +1,92 @@
+@startuml
+
+package carousel {
+    class CarouselEntity  {
+        - id: number
+        - idBook: number
+        - image: string = ""
+    }
+
+    class CarouselService {
+        - settingsService: SettingsService
+        - carouselRepository: Repository<Carousel>
+
+        + findAll(): Promise<CarouselDTO[]>
+        + create(body: CarouselDTO): Promise<CarouselDTO>
+        + update(id: number, updateData: Partial<CarouselDTO>)
+        + remove(id: number): Promise<void>
+        + bookImageUrl = (imageName: string): string
+    }
+
+    class CarouselController {
+        - carouselService: CarouselService
+
+        + findAll()
+        + create(body: CarouselDTO, file: Express.Multer.File): Promise<CarouselDTO>
+        + update(id: number, updateData: Partial<CarouselDTO>
+        + remove(id: string)
+    }
+
+    class CarouselDTO {
+        + id: number
+        + idBook: number
+        + image: string
+    }
+
+}
+
+package recommendations {
+    class RecommendationsService {
+        - recommendationsRepository: Repository<BookRecommendation>
+
+        + findAll(): Promise<RecommendationDTO[]>
+        + findOne(id: number): Promise<RecommendationDTO>
+        + create(body: CreateRecommendationDTO): Promise<RecommendationDTO>
+        + update(id:number, body: CreateRecommendationDTO): Promise<RecommendationDTO>
+        + remove(id: number): Promise<void>
+    }
+
+    class RecommendationsController {
+        - recommendationsService: RecomendationsService
+
+        + findAll()
+        + findOne(id: string)
+        + reate(body: CreateRecommendationDTO): Promise<RecommendationDTO>
+        + update(id: string, body: CreateRecommendationDTO): Promise<RecommendationDTO>
+        + remove(id: string)
+    }
+
+    class RecommendationDTO {
+        + id: number
+        + idBook: number
+        + title: string
+        + author: string
+        + image:string
+
+        + RecommendationDTO(id:number, idBook: number, title: string, author:string, image:string)
+    }
+
+    class CreateRecommendationDTO {
+        + idBook: number
+    }
+
+    class BookRecommendationEntity {
+        - id: number
+        - id_book: number
+        + book: Book
+    }
+
+}
+
+' Relaciones
+CarouselService --> CarouselDTO : Depende de
+CarouselService --> CarouselEntity : Depende de
+CarouselController --> CarouselService : Depende de
+
+RecommendationsService --> BookRecommendationEntity : Depende de
+RecommendationsService --> RecommendationDTO : Depende de
+RecommendationsService --> CreateRecommendationDTO : Depende de
+RecommendationsController --> RecommendationsService : Depende de
+
+
+@enduml

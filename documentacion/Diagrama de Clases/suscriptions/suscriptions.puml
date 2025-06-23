@@ -1,0 +1,83 @@
+@startuml
+
+package moduloSubscription {
+    package userSubscription{
+        class UserSubscriptionEntity {
+            - id: number
+            + user: User
+            - startDate: Date
+            - endDate: Date
+            - ongoing: boolean
+            - subscription: Subscription
+        }
+
+        class UserSubscriptionDTO {
+            + id: number
+            + startDate: string
+            + endDate: string
+            + ongoing: boolean
+            + subscription: SubscriptionDTO | null
+        }
+
+        class UserSubscriptionService {
+            - userSubscriptionRepository: Repository<UserSubscription>
+            - userRepository: Repository<User>
+            - subscriptionRepository: Repository<Subscription>
+
+            + createSubscription(userId: number, startDate: Date, endDate: Date): Promise<UserSubscription>
+            + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+            + getUserSubscriptions(): Promise<UserSubscriptionDTO[]>
+            + cancelSubscription(id: number): Promise<void>
+        }
+
+        class UserSubscriptionController {
+            - userSubscriptionService: UserSubscriptionService
+
+            + createSubscription(userId: number, startDate: Date, endDate: Date,): Promise<UserSubscription>
+            + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+            + getUserSubscriptions() : Promise<UserSubscriptionDTO[]>
+            + cancelSubscription(id: number): Promise<void>
+        }
+    }
+
+    package subscriptionConfig {
+        class SubscriptionDTO {
+            + id:number
+            + price: number
+        }
+
+        class SubscriptionEntity {
+            - id: number
+            - price: number
+            + userSubscriptions: UserSubscription[]
+        }
+
+        class SubscriptionService {
+            - subscriptionConfigRepository: Repository<Subscription>
+
+            + get(): Promise<SubscriptionDTO>
+            + update(id: number, config: Partial<SubscriptionDTO>)
+            + create(data: SubscriptionDTO): Promise<Subscription>
+        }
+
+        class SubscriptionController {
+            - subscriptionService: SubscriptionService
+
+            + getUserSubscriptions(): Promise<SubscriptionDTO>
+            + update(updateData: Partial<SubscriptionDTO>)
+            + create(data: SubscriptionDTO)
+        }
+
+    }
+
+}
+
+' relaciones
+UserSubscriptionService --> UserSubscriptionEntity : Depende de
+UserSubscriptionService --> UserSubscriptionDTO : Depende de
+UserSubscriptionController --> UserSubscriptionService : Depende de
+
+SubscriptionService --> SubscriptionEntity : depende de
+SubscriptionService --> SubscriptionDTO : depende de
+SubscriptionController --> SubscriptionService : depende de
+@enduml

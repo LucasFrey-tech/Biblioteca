@@ -1,0 +1,53 @@
+@startuml
+
+package ModuloUser {
+    class UserEntity {
+        - id: number
+        - firstname: string
+        - lastname: string
+        - username: string
+        - email: string
+        - password: string
+        - tel: string
+        - admin: boolean
+        - disabled: boolean
+        - registrationDate: Date
+        
+        + userSubscriptions: UserSubscription[]
+    }
+
+    class UserService {
+        - usersRepository: Repository<User>
+
+        + findAll(search = ''): Promise<User[]>
+        + findOne(id: number)
+        + create(user: Partial<User>)
+        + findByEmail(email: string): Promise<User | null>
+        + findByUser(username: string): Promise<User | null>
+        + update(id: number, updateData: Partial<User>)
+        + delete(id: number)
+    }
+
+    Class UserController {
+        - userService: UserService
+
+        + getAllUsers(): Promise<User[]>
+        + findOne(id: number)
+        + create(user: Partial<User>)
+        + update(id: number, user: Partial<User>)
+        + delete(id: number)
+        + findAll(search: string)
+        + updateUser(id: number, dto: UpdateUserDto)
+    }
+
+    class UpdateUserDto {
+        + admin: boolena
+        + disabled: boolean
+    }
+}
+
+' relaciones 
+UserController --> UserService : Depende de
+UserService --> UserEntity : Depende de
+UserController --> UpdateUserDto : usa
+@enduml

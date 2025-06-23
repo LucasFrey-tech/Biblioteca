@@ -1,0 +1,28 @@
+@startuml
+package moduloGenres {
+    class  GenreEntity {
+        - id: number
+        - name: string
+    }
+
+    class GenresService {
+        - genreRepository: Repository<Genre>
+
+        + findAll(): Promise<Genre[]>
+        + create(genre: Partial<Genre>): Promise<Genre>
+    }
+
+    class GenresController {
+        - genresService: GenresService
+
+        + findAll(): Promise<Genre[]>
+        + create(newGenre: Partial<Genre>): Promise<Genre>
+    }
+
+}
+
+' Relaciones
+GenresController --> GenreEntity : Depende de
+GenresController --> GenresService : Depende de
+
+@enduml
