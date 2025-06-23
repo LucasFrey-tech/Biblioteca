@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Injectable, UnauthorizedException, BadRequestException, ForbiddenException, Logger } from '@nestjs/common';
 import { UsersService } from '../users/user.service';
 import { LoginRequestBody, RegisterRequestBody } from './dto/auth.dto';
+import { User } from 'src/entidades/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -74,8 +75,7 @@ export class AuthService {
     return { access_token };
   }
 
-  // Función para validar usuario (la tienes, pero la dejo para contexto)
-  async validateUser(email: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<Partial<User>> {
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Usuario no encontrado');
 
