@@ -14,7 +14,6 @@ const DragAndDrop: React.FC<Props> = ({ onFileDrop }) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file) {
-      console.log('Archivo recibido:', file);
       setPreviewFile(file); // guardar para mostrar
       onFileDrop(file);     // avisar al padre
     }

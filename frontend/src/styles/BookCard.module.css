@@ -43,7 +43,6 @@
   height: 48px;
   overflow: hidden;
 }
-
 .title {
   font-size: 1.1rem;
   text-align: center;
@@ -102,6 +101,7 @@
 
 .buyText {
   user-select: none;
+  text-align: center;
 }
 
 /* Etiqueta exclusiva suscriptores */
@@ -132,4 +132,7 @@
 
 .disabledCard .buyButton:hover {
   background-color: #aaa;
+}
+.button{ 
+  text-align: center;
 }

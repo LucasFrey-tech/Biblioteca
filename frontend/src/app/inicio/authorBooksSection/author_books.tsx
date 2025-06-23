@@ -26,9 +26,9 @@ export default function AuthorBooks(): React.JSX.Element {
             <div className={Styles.content}>
                 {
                     author.length <= 0 ? <div></div> :
-                        author.map((author, idx) => {
+                        author.map((author) => {
                             return (
-                                <AuthorBookScroller authorId={author.id} name={author.name} />
+                                <AuthorBookScroller key={author.id} authorId={author.id} name={author.name} />
                             );
                         })
                 }

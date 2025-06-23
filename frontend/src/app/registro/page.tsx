@@ -85,27 +85,26 @@ function Registro() {
       if (!res.ok) {
         const error = await res.json();
         Swal.fire({
-        icon: 'error',
-        title: 'Error al registrar',
-        text: error.message,
-  });
+          icon: 'error',
+          title: 'Error al registrar',
+          text: error.message,
+        });
         return;
       }
 
-
       const data = await res.json();
-      console.log('Token recibido:', data.access_token);
+
       localStorage.setItem('token', data.access_token);
-      
+
       Swal.fire({
         title: "Usuario registrado con exito!",
         text: "Registro completado!",
         icon: "success"
       }).then((result) => {
-      if (result.isConfirmed) {
-        router.push('/login');
-      }
-    });
+        if (result.isConfirmed) {
+          router.push('/login');
+        }
+      });
     } catch (error) {
       console.error('Error de red:', error);
       alert('Error de conexión con el servidor');

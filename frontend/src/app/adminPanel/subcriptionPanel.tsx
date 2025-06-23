@@ -88,7 +88,8 @@ export default function SubscriptionPanel(): React.JSX.Element {
           return;
         }
       } catch (updateError) {
-        console.log("No existe el registro, procediendo a crear uno nuevo...", updateError);
+        console.error(updateError)
+        Swal.fire("error","No existe el registro, procediendo a crear uno nuevo...", "error")
       }
 
       const createRes = await apiRef.current?.userSubscriptionDiscount.create({
@@ -125,7 +126,6 @@ export default function SubscriptionPanel(): React.JSX.Element {
         try {
           const discounts = await apiRef.current?.userSubscriptionDiscount.getAll();
           const discountRecord = discounts?.find(d => d.id === 1);
-          console.log("discounts recibidos:", discounts);
 
           if (discountRecord && discountRecord.discount != null) {
             setDiscount(discountRecord.discount.toString());

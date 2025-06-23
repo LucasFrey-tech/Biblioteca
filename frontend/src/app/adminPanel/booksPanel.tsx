@@ -118,10 +118,9 @@ export default function BooksPanel(): React.JSX.Element {
   };
 
   const saveChanges = async (bookId: number) => {
-    console.log("saveChanges llamado para libro ID:", bookId);
     const bookState = booksEditState[bookId];
     if (!bookState) {
-      console.log("No hay estado de edición para ese libro");
+      Swal.fire("error","No hay estado de edicion para este libro","error")
       return;
     }
 

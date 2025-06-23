@@ -23,9 +23,6 @@ export default function SubscriptionHandler({ onSubscriptionConfirmed }: Props) 
             const resSub = await subApi.getOne();
 
             const res = await api.getOneByUser(userId);
-            console.log(user)
-            console.log("SUBBBBBBBBBBBBBBBBB:", res);
-            console.log(resSub)
             const subscription = Array.isArray(res) ? res[0] : res;
 
             const price = resSub.price;

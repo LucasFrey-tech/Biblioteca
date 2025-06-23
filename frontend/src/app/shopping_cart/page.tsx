@@ -64,7 +64,9 @@ export default function ShoppingCartPage() {
                             setDiscountPercentage(discountData.discount);
                         }
                     } catch (discountError) {
-                        console.log("No se pudo cargar el descuento para subscriptores", discountError);
+                        console.warn(discountError)
+                        Swal.fire("error","No se pudo cargar el descuento para subscriptores","error")
+                       
                     }
                 }
 

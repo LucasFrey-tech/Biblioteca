@@ -1,6 +1,4 @@
 'use client';
-
-import { FaCartPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import styles from '../../styles/BookCard.module.css';
 import Image from 'next/image';
