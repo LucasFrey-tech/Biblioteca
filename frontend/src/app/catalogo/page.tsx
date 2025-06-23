@@ -198,7 +198,10 @@ export default function BookPage() {
                                         title: book.title,
                                         image: book.image,
                                         price: book.price,
-                                        author: book.author,
+                                        author: {
+                                            id: book.author_id ?? -1,
+                                            name: book.author
+                                        },
                                         subscriber_exclusive: book.subscriber_exclusive,
                                     }}
                                 />

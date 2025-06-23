@@ -11,10 +11,15 @@ import { User } from '@/API/types/user';
 import Swal from 'sweetalert2';
 
 import { Book } from '@/API/types/book';
-type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'author' | 'subscriber_exclusive'>;
+type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'subscriber_exclusive'> & {
+  author: {
+    id: number;
+    name: string;
+  } | null;
+};
 
 export default function BookCard({ book }: { book: BookCardProps }) {
-    const authorName = book.author ?? 'Desconocido';
+    const authorName = book.author?.name || 'Desconocido';
     const router = useRouter();
     const [user, setUser] = useState<User>();
     const refAPI = useRef<BaseApi | null>(null);

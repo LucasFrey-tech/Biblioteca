@@ -8,10 +8,6 @@ export class BookRecommendation {
     @PrimaryGeneratedColumn()
     id: number
 
-    @ApiProperty({ example: 1, description: 'ID Único del libro' })
-    @Column({ name: 'book_id', type: 'integer' })
-    idBook: number;
-
     @ManyToOne(() => Book)
     @JoinColumn({ name: "book_id", referencedColumnName: "id" })
     book: Book;

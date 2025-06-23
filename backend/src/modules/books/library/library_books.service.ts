@@ -13,13 +13,20 @@ export class LibraryBooksService {
     ) { }
 
     async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
-        const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser }, relations: ['book'] });
+        const userVirtualBooks = await this.userVirtualBooks.find({ where: { idUser }, relations: ['book', 'book.author'], });
 
         const result = await Promise.all(
             userVirtualBooks.map(async (vb) => {
 
                 this.logger.log('Lista de Libros de Libreria del Usuario Obtenida');
-                return new LibraryBookDTO(vb.book.id, vb.book.title, vb.book.author_id, vb.book.description, vb.book.isbn, vb.book.image);
+                return new LibraryBookDTO(
+                    vb.book.id,
+                    vb.book.title,
+                    vb.book.author?.id,
+                    vb.book.description,
+                    vb.book.isbn,
+                    vb.book.image
+                );
             })
         )
 

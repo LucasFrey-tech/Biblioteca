@@ -6,6 +6,7 @@ import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings.service';
 import { CreateBookDTO } from './createBook.dto';
 import { Genre } from '../../../entidades/genre.entity';
+import { Author } from 'src/entidades/author.entity';
 
 @Injectable()
 export class BooksService {
@@ -44,7 +45,7 @@ export class BooksService {
 
   async findAllByAuthor(authorId: number): Promise<BookDTO[]> {
     const books = await this.booksRepository.find({ relations: ['genres','author'] });
-    const filteredBooks = books.filter(x => x.author_id == authorId);
+    const filteredBooks = books.filter(x => x.author?.id === authorId);
     const result = filteredBooks.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
     });
@@ -77,7 +78,8 @@ export class BooksService {
     // 2. Crear la entidad de libro
     const book = this.booksRepository.create({
       ...bookDTO,
-      genres, // <-- Asociamos las entidades encontradas
+      genres,
+      author: { id: bookDTO.author_id}
     });
 
     // 3. Guardar el libro
@@ -105,7 +107,7 @@ export class BooksService {
     book.stock = bookDTO.stock;
     book.subscriber_exclusive = bookDTO.subscriber_exclusive;
     book.price = bookDTO.price;
-    book.author_id = bookDTO.author_id;
+    book.author = { id: bookDTO.author_id } as Author;
     
     // Actualizar Generos:
     const newGenres = bookDTO.genre.filter(x => !book.genres?.some(g => g.id == x))|| [];
@@ -137,12 +139,12 @@ export class BooksService {
   async delete(id: number): Promise<boolean> {
   const book = await this.booksRepository.findOne({
     where: { id },
-    relations: ['genres'], // 👈 NECESARIO para que remove limpie la tabla intermedia
+    relations: ['genres'],
   });
 
   if (!book) return false;
 
-  await this.booksRepository.remove(book); // 👈 borra el libro y limpia la tabla intermedia automáticamente
+  await this.booksRepository.remove(book); 
 
   return true;
 }

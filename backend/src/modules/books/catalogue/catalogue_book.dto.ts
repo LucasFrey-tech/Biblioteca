@@ -1,4 +1,4 @@
-import { IsArray, IsBoolean, IsInt, IsNumber, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsInt, IsNumber, IsString, IsOptional } from "class-validator";
 import { Genre } from "src/entidades/genre.entity";
 
 export class CatalogueBookDTO {
@@ -10,9 +10,10 @@ export class CatalogueBookDTO {
 
   @IsString()
   author: string;
-
+  
+  @IsOptional()
   @IsInt()
-  author_id: number;
+  author_id?: number;
 
   @IsString()
   description: string;
@@ -39,7 +40,7 @@ export class CatalogueBookDTO {
     id: number,
     title: string,
     author: string,
-    author_id: number,
+    author_id: number | undefined,
     description: string,
     genre: Genre[],
     anio: number,

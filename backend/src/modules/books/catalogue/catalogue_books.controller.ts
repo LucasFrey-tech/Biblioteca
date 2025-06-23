@@ -15,6 +15,7 @@ export class CatalogueBooksController {
         return this.booksService.findAll();
     }
 
+
     @Get(':id')
     @ApiOperation({ summary: 'Obtener Libro de Catalogo por ID' })
     @ApiParam({ name: 'id', type: Number })

@@ -9,7 +9,7 @@ export class RecommendationDTO {
 
     constructor(bookRecomendation: BookRecommendation){
         this.id = bookRecomendation.id
-        this.idBook = bookRecomendation.idBook
+        this.idBook = bookRecomendation.book.id
         this.title = bookRecomendation.book.title
         this.author = bookRecomendation.book.author.name
         this.image = bookRecomendation.book.image

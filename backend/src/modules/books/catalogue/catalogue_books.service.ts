@@ -8,23 +8,47 @@ export class CatalogueBooksService {
     constructor(private readonly booksService: BooksService) { }
 
     async findAll(): Promise<CatalogueBookDTO[]> {
-        return this.booksService.findAll().then(books =>
-            books.map(book => {
-                this.logger.log('Listado de Libros del Catalogo Obtenido');
-                return new CatalogueBookDTO(book.id, book.title, book.author, book.author_id, book.description, book.genre, book.anio, book.image, book.stock, book.subscriber_exclusive, book.price);
-            })
-        );
+        const books = await this.booksService.findAll();
+
+        console.log('Books raw from DB: ' ,books);
+
+        this.logger.log('Listado de Libros del Catalogo Obtenido');
+        return books.map(book => new CatalogueBookDTO(
+            book.id,
+            book.title,
+            book.author ?? "",
+            book.author_id ?? book.author_id,
+            book.description,
+            book.genre,
+            book.anio,
+            book.image,
+            book.stock,
+            book.subscriber_exclusive,
+            book.price
+        ));
     }
 
-    async findOne(id: number) {
-        return this.booksService.findOne(id).then(book => {
-            if (!book) {
-                this.logger.log('Libro No Encontrado');
-                return null;
-            }
+    async findOne(id: number): Promise<CatalogueBookDTO | null> {
+        const book = await this.booksService.findOne(id);
 
-            this.logger.log('Libro Encontrado');
-            return new CatalogueBookDTO(book.id, book.title, book.author, book.author_id, book.description, book.genre, book.anio, book.image, book.stock, book.subscriber_exclusive, book.price);
-        })
+        if (!book) {
+            this.logger.log('Libro No Encontrado');
+            return null;
+        }
+
+        this.logger.log('Libro Encontrado');
+        return new CatalogueBookDTO(
+            book.id,
+            book.title,
+            book.author ?? '',
+            book.author_id ?? book.author_id,
+            book.description,
+            book.genre,
+            book.anio,
+            book.image,
+            book.stock,
+            book.subscriber_exclusive,
+            book.price
+        );
     }
 }

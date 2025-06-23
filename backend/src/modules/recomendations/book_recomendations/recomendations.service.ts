@@ -14,15 +14,15 @@ export class RecomendationsService {
     ) { }
 
     async findAll(): Promise<RecommendationDTO[]> {
-        const bookRecomendation = await this.recomendationsRepository.find({ relations: ['book','book.author'] });
+        const bookRecomendation = await this.recomendationsRepository.find({ relations: ['book', 'book.author'] });
         const formatedBookRecomendation = bookRecomendation
             .map(x => new RecommendationDTO(x))
             .sort((a, b) => a.id - b.id)
             .slice(0, 8);
         return formatedBookRecomendation;
     }
-    
-    
+
+
     async findOne(id: number): Promise<RecommendationDTO> {
         const bookRecomendation = await this.recomendationsRepository.findOne({
             where: { id }
@@ -36,10 +36,10 @@ export class RecomendationsService {
     }
 
     async create(body: CreateRecommendationDTO): Promise<RecommendationDTO> {
-        const newBookRecomendation = this.recomendationsRepository.create(body);
+        const newBookRecomendation = this.recomendationsRepository.create({ book: { id: body.idBook } });
         const bookRecomendationEntity = await this.recomendationsRepository.save(newBookRecomendation);
 
-        // Recarga la entidad con la relación 'book'
+
         const loaded = await this.recomendationsRepository.findOne({
             where: { id: bookRecomendationEntity.id },
             relations: ['book'],
@@ -52,10 +52,10 @@ export class RecomendationsService {
         return new RecommendationDTO(loaded)
     }
 
-    async update(id:number, body: CreateRecommendationDTO): Promise<RecommendationDTO>{
-        await this.recomendationsRepository.update(id,body);
+    async update(id: number, body: CreateRecommendationDTO): Promise<RecommendationDTO> {
+        await this.recomendationsRepository.update(id, {book: { id: body.idBook } });
         const updatedBookRecomendation = await this.recomendationsRepository.findOne({
-            where: { id: id },
+            where: { id },
             relations: ['book'],
         });
         if (!updatedBookRecomendation) {

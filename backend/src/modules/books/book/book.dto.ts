@@ -13,10 +13,11 @@ export class BookDTO {
 
   @IsOptional()
   @IsString()
-  author: string;
+  author?: string;
 
+  @IsOptional()
   @IsInt()
-  author_id: number;
+  author_id?: number;
 
   @IsString()
   description: string;
@@ -49,7 +50,7 @@ export class BookDTO {
     id: number,
     title: string,
     author: string,
-    author_id: number,
+    author_id: number | undefined,
     description: string,
     genre: Genre[],
     anio: number,
@@ -77,7 +78,7 @@ export class BookDTO {
     return {
       id: bookDTO.id,
       title: bookDTO.title,
-      author_id: bookDTO.author_id,
+      //author: bookDTO.author_id ? { id: bookDTO.author_id } as Author: undefined,
       description: bookDTO.description,
       anio: bookDTO.anio,
       isbn: bookDTO.isbn,
@@ -94,8 +95,8 @@ export class BookDTO {
     return new BookDTO(
       book.id,
       book.title,
-      book.author ? book.author.name : "",
-      book.author_id,
+      book.author?.name || "",
+      book.author?.id,
       book.description,
       book.genres? book.genres:[],
       book.anio,

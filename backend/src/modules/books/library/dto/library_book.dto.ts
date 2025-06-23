@@ -1,3 +1,4 @@
+import { IsOptional } from "class-validator";
 import { IsInt, IsString } from "class-validator";
 
 export class LibraryBookDTO {
@@ -7,8 +8,9 @@ export class LibraryBookDTO {
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsInt()
-  author_id: number;
+  author_id?: number;
   
   @IsString()
   description: string;
@@ -22,7 +24,7 @@ export class LibraryBookDTO {
   constructor(
     id: number,
     title: string,
-    author_id: number,
+    author_id: number | undefined,
     description: string,
     isbn: string,
     image: string,

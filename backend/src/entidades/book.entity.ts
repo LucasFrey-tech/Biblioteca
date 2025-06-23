@@ -13,10 +13,6 @@ export class Book {
   @Column()
   title!: string;
 
-  @ApiProperty({ example: 1, description: 'ID Único de Autor' })
-  @Column()
-  author_id!: number;
-
   @ApiProperty({ example: 'Libro Infantil', description: 'Descripcion del Libro' })
   @Column('text')
   description!: string;
