@@ -70,6 +70,36 @@ package moduloSubscription {
 
     }
 
+    package subscriptionDiscount {
+        class SubscriptionDiscountController {
+            - discountService: UserSubscriptionDiscountService
+
+            + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount> {
+            + findAll(): Promise<UserSubscriptionDiscount[]>
+            + findOne(id: number): Promise<UserSubscriptionDiscount> {
+            + update(id: number, data: { discount: number }): Promise<UserSubscriptionDiscount>
+            + delete(id: number): Promise<void> {
+        }
+
+        class SubscriptionDiscountService {
+
+            - discountRepo: Repository<UserSubscriptionDiscount>
+            - subscriptionRepo: Repository<Subscription>
+            
+            + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount>
+            + findAll(): Promise<UserSubscriptionDiscount[]>
+            + findOne(id: number): Promise<UserSubscriptionDiscount>
+            + update(id: number, data: { discount: number }): Promise<UserSubscriptionDiscount>
+            + delete(id: number): Promise<void>
+        }
+
+        class UserSubscriptionDiscountEntity {
+            - id: number;
+            - subscription: Subscription;
+            - discount: number;
+        }
+    }
+
 }
 
 ' relaciones
@@ -80,4 +110,7 @@ UserSubscriptionController --> UserSubscriptionService : Depende de
 SubscriptionService --> SubscriptionEntity : depende de
 SubscriptionService --> SubscriptionDTO : depende de
 SubscriptionController --> SubscriptionService : depende de
+
+SubscriptionDiscountController --> SubscriptionDiscountService : Depende de
+SubscriptionDiscountService --> UserSubscriptionDiscountEntity : Depende de  
 @enduml
