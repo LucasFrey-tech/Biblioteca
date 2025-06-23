@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
 import { GenresService } from './genre.service';
 import { Genre } from 'src/entidades/genre.entity';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse,ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Generos')
 @Controller('genres')
@@ -21,5 +21,12 @@ export class GenresController {
   @ApiResponse({ status: 201, description: 'Genero Creado', type: Genre })
   create(@Body() newGenre: Partial<Genre>): Promise<Genre> {
     return this.genresService.create(newGenre);
+  }
+   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un Genero por ID' })
+  @ApiParam({ name: 'id', type: Number, description: 'ID del género a eliminar' })
+  @ApiResponse({ status: 200, description: 'Género eliminado correctamente' })
+  delete(@Param('id') id: number): Promise<void> {
+    return this.genresService.delete(id);
   }
 }
