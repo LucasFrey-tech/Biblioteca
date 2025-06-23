@@ -1,0 +1,39 @@
+@startuml review
+actor Usuario
+participant "Navbar (Next.js)" as Navbar
+participant "Next.js (Perfil/[userId])" as Perfil
+participant "BaseApi.review.create()" as Api
+participant "NestJS ReviewController" as ReviewCtrl
+participant "ReviewService" as ReviewService
+participant "BookService" as BookService
+participant "DB" as DB
+
+Usuario -> Navbar: Click en nombre de usuario
+Navbar -> Navbar: toggleMenu() → mostrar dropdown
+Usuario -> Navbar: Click en "Mi Perfil"
+Navbar -> Perfil: router.push(`/Perfil/${user.sub}`)
+
+Perfil -> Perfil: Cargar datos del usuario y compras
+Perfil --> Usuario: Renderizar historial + botón "Agregar reseña"
+
+Usuario -> Perfil: Click en "Agregar reseña"
+Perfil -> Perfil: Mostrar AlertDialog
+
+Usuario -> Perfil: Completar comentario y rating
+Usuario -> Perfil: Click en "Guardar"
+
+Perfil -> Api: review.create({ id_user, id_book, comment, rating }, JWT)
+Api -> ReviewCtrl: POST /reviews (token en headers)
+
+ReviewCtrl -> ReviewService: createReview(...)
+ReviewService -> BookService: validar existencia del libro
+BookService --> ReviewService: OK
+
+ReviewService -> DB: guardar review
+DB --> ReviewService: confirmación
+ReviewService --> ReviewCtrl: review creada
+ReviewCtrl --> Api: 201 Created
+Api --> Perfil: éxito
+Perfil --> Usuario: Mostrar mensaje "Reseña agregada correctamente"
+
+@enduml
