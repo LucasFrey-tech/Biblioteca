@@ -1,4 +1,4 @@
-@startuml login version 2
+@startuml login
 
 actor Usuario
 participant "Next.js (LoginForm)" as Next
