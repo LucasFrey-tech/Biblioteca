@@ -10,53 +10,89 @@ import { Genre } from 'src/entidades/genre.entity';
  */
 export class BookDTO {
 
-  /** ID del libro */
+  /**
+   * ID del libro
+   * @type {number}
+   */
   @IsInt()
   id: number;
 
-  /** Título del libro */
+  /**
+   * Título del libro 
+   * @type {string}
+   */
   @IsString()
   title: string;
 
-  /** Nombre del autor */
+  /**
+   * Nombre del autor
+   * */
   @IsOptional()
   @IsString()
   author?: string;
 
-  /** ID del autor */
+  /**
+   * ID del autor
+   * @type {number}
+   */
   @IsOptional()
   @IsInt()
   author_id?: number;
 
-  /** Descripcion del contenido del libro */
+  /**
+   * Descripcion del contenido del libro 
+   * @type {string}
+   */
   @IsString()
   description: string;
-  /** Lista de géneros */
+
+  /**
+   * Lista de géneros
+   * @type {Genre}
+   */
   @IsArray()
   genre: Genre[];
 
-  /** Año de publicación */
+  /**
+   * Año de publicación
+   * @type {number}
+   */
   @IsInt()
   anio: number;
 
-  /** Código ISBN */
+  /**
+   * Código ISBN
+   * @type {string} 
+   */
   @IsString()
   isbn: string;
 
-  /** Imagen del libro */
+  /**
+   * Imagen del libro 
+   * @type {string}
+   */
   @IsString()
   image: string;
 
-  /** Stock disponible */
+  /**
+   * Stock disponible 
+   * @type {number}
+   */
   @IsInt()
   stock: number;
 
-  /** Exclusividad para suscriptores */
+  /**
+   *  Exclusividad para suscriptores
+   * @type {boolean} 
+   */
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   subscriber_exclusive: boolean;
 
-  /** Precio del libro */
+  /**
+   * Precio del libro
+   * @type {number} 
+   */
   @IsNumber()
   @Min(0)
   price: number;

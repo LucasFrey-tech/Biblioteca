@@ -13,6 +13,9 @@ interface PurchaseItem {
   virtual: boolean;
 }
 
+/**
+ * Servicio que maneja la lógica de negocio para las compras.
+ */
 @Injectable()
 export class PurchasesService {
   private readonly logger = new Logger(PurchasesService.name);
@@ -28,6 +31,11 @@ export class PurchasesService {
     private userRepository: Repository<User>,
   ) {}
 
+  /**
+   * Obtener todas las compras
+   * 
+   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arrelgo de DTOs de compras.
+   */
   async getAllPurchases(): Promise<PurchaseDTO[]> {
     this.logger.log('Obteniendo todas las compras del sistema');
 
@@ -56,6 +64,12 @@ export class PurchasesService {
     ));
   }
 
+  /**
+   * Obtiene
+   * 
+   * @param {number} idUser 
+   * @param {PurchaseItem[]} cartItems 
+   */
   async processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void> {
     if (!cartItems.length) {
       this.logger.log('Carrito Vacío');
@@ -108,6 +122,12 @@ export class PurchasesService {
     this.logger.log('Compra Procesada');
   }
 
+  /**
+   * Obtiene el historial de compras del usuario específico
+   * 
+   * @param {number} idUser - ID del usaurio a buscar
+   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
+   */
   async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) {

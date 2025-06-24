@@ -47,7 +47,7 @@ export class BooksService {
    * 
    * @async
    * @param {number} genreId - El id del género a buscar.
-   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese género encontrada.
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese género encontrado.
    * 
    */
   async findAllWithGenre(genreId: number): Promise<BookDTO[]> {
@@ -168,9 +168,7 @@ export class BooksService {
 
     // Actualizar Generos:
     const newGenres = bookDTO.genre.filter(x => !book.genres?.some(g => g.id == x)) || [];
-    console.log('Generos Nuevos: ', newGenres);
     const genresToRemove = book.genres?.filter(x => !bookDTO.genre.some(g => x.id == g)) || [];
-    console.log('Generos removidos: ', genresToRemove);
 
     newGenres.forEach(ng => {
       const genreToAdd = genres.find(g => g.id == ng);

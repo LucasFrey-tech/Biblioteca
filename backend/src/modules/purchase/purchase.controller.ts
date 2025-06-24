@@ -15,12 +15,18 @@ class ProcessPurchaseDTO {
   price: number;
 }
 
+/**
+ * Servicio que maneja la lógica de negocio para los compras.
+ */
 @ApiTags('Purchases')
 @ApiBearerAuth()
 @Controller('purchases')
 export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) { }
 
+  /**
+   * 
+   */
   @Get()
   @ApiOperation({ summary: 'Obtener todas las compras del sistema' })
   @ApiResponse({ status: 200, description: 'Listado completo de compras', type: [PurchaseDTO] })

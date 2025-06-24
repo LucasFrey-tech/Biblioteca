@@ -74,7 +74,7 @@ export class RecomendationsController {
      * Elimina una actualizacion del sistema
      * 
      * @param {number} id - ID de la recomendación a eliminar
-     * @returns {Promise<void>}
+     * @returns {Promise<void>} - Recomendación eleiminada
      */
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar Recomendacion' })
