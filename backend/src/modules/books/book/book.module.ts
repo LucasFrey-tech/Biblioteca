@@ -8,9 +8,16 @@ import { BooksController } from './book.controller';
 import { Book } from '../../../entidades/book.entity';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
-import { DataSource } from 'typeorm';
 
 const myapp_config = require('../../../../private/app.config.json');
+
+/**
+ * Módulo de NestJS que agrupa los componentes relacionados a libros:
+ * - Controlador
+ * - Servicio
+ * - Repositorios TypeORM
+ * - Soporte para subir imágenes con Multer
+ */
 
 @Module({
   imports: [

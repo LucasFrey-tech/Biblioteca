@@ -6,11 +6,18 @@ import { ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateBookDTO } from './createBook.dto';
 
+/**
+ * Controlador para gestionar libros (crear, listar, actualizar, eliminar).
+ */
 @ApiTags('Libros')
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) { }
 
+  /**
+   * Lista todos los libros.
+   * @returns Arreglo de libros
+   */
   @Get()
   @ApiOperation({ summary: 'Listar Todos los Libros' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros', type: [BookDTO] })
@@ -18,6 +25,10 @@ export class BooksController {
     return (await this.booksService.findAll());
   }
   
+  /**
+   * Lista libros que pertenecen a un género específico.
+   * @param id ID del género
+   */
   @Get('/with_genre/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
@@ -25,6 +36,10 @@ export class BooksController {
     return this.booksService.findAllWithGenre(id);
   }
 
+  /**
+   * Lista libros escritos por un autor específico.
+   * @param id ID del autor
+   */
   @Get('/with_author/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo autor.' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
@@ -32,6 +47,10 @@ export class BooksController {
     return this.booksService.findAllByAuthor(id);
   }
 
+  /**
+   * Obtiene un libro por su ID.
+   * @param id ID del libro
+   */
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Libro por ID' })
   @ApiParam({ name: 'id', type: Number })
@@ -40,6 +59,11 @@ export class BooksController {
     return this.booksService.findOne(id);
   }
 
+  /**
+   * Crea un nuevo libro.
+   * @param file Imagen del libro (archivo subido)
+   * @param data Datos del libro
+   */
   @Post()
   @ApiOperation({ summary: 'Crear Libro' })
   @ApiBody({ type: CreateBookDTO })
@@ -53,6 +77,12 @@ export class BooksController {
     return await this.booksService.create(data);
   }
 
+  /**
+   * Actualiza un libro existente.
+   * @param id ID del libro
+   * @param bookDTO Datos actualizados
+   * @param file Imagen nueva (si se sube)
+   */
   @Put(':id')
   @ApiOperation({ summary: 'Editar Libro' })
   @ApiParam({ name: 'id', type: Number })
@@ -87,6 +117,10 @@ export class BooksController {
     return this.booksService.update(id, bookDTO);
   }
 
+  /**
+   * Elimina un libro por su ID.
+   * @param id ID del libro a eliminar
+   */
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar Libro' })
   @ApiParam({ name: 'id', type: Number })

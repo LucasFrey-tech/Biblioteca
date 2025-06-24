@@ -4,48 +4,67 @@ import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength, IsOption
 import { Author } from 'src/entidades/author.entity';
 import { Genre } from 'src/entidades/genre.entity';
 
+/**
+ * Data Transfer Object (DTO) para libro.
+ * Se usa para validar y transformar datos entre la base de datos y la API.
+ */
 export class BookDTO {
+
+  /** ID del libro */
   @IsInt()
   id: number;
 
+  /** Título del libro */
   @IsString()
   title: string;
 
+  /** Nombre del autor */
   @IsOptional()
   @IsString()
   author?: string;
 
+  /** ID del autor */
   @IsOptional()
   @IsInt()
   author_id?: number;
 
+  /** Descripcion del contenido del libro */
   @IsString()
   description: string;
-
+  /** Lista de géneros */
   @IsArray()
   genre: Genre[];
 
+  /** Año de publicación */
   @IsInt()
   anio: number;
 
+  /** Código ISBN */
   @IsString()
   isbn: string;
 
+  /** Imagen del libro */
   @IsString()
   image: string;
 
+  /** Stock disponible */
   @IsInt()
   stock: number;
 
+  /** Exclusividad para suscriptores */
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   subscriber_exclusive: boolean;
 
+  /** Precio del libro */
   @IsNumber()
   @Min(0)
   price: number;
 
 
+  /**
+   * Constructor del DTO.
+   */
   constructor(
     id: number,
     title: string,
@@ -74,6 +93,11 @@ export class BookDTO {
     this.price = price;
   }
 
+  /**
+   * Convierte un BookDTO a Book (Entidad).
+   * @param bookDTO DTO del libro
+   * @returns Entidad Book
+   */
   static BookDTO2BookEntity(bookDTO: BookDTO): Book {
     return {
       id: bookDTO.id,
@@ -89,7 +113,11 @@ export class BookDTO {
     }
   };
   
-
+  /**
+   * Convierte una entidad Book a un DTO.
+   * @param book Entidad Book
+   * @returns DTO del libro
+   */
   static BookEntity2BookDTO(book: Book): BookDTO {
     return new BookDTO(
       book.id,

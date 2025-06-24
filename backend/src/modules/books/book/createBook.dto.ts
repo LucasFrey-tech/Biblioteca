@@ -1,40 +1,59 @@
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength } from 'class-validator';
 
+/**
+ * DTO para la creación de un nuevo libro.
+ * Contiene validaciones para los campos del cuerpo de la petición.
+ */
 export class CreateBookDTO {
+
+  /** Título del libro */
   @IsString()
   title: string;
 
+  /** ID del autor */
   @Type(() => Number)
   author_id: number;
 
+  /** Descripcion del contenido del libro */
   @IsString()
   description: string;
 
+  /** Año de publicación */
   @Type(() => Number)
   anio: number;
 
+  /** Código ISBN */
   @IsString()
   isbn: string;
 
+  /** Imágen del libro */
+  @IsString()
   image: string;
 
+  /** Stock disponible */
   @Type(() => Number)
   stock: number;
   
+  /** Exclusividad para suscriptores */
   @IsBoolean()
   @Transform(({ value }) => value === 'true')
   subscriber_exclusive: boolean;
 
+   /** Precio del libro */
   @Type(() => Number)
   @Min(0)
   price: number;
 
+  /** Arreglo de IDs de géneros */
   @Transform(({ value }) => JSON.parse(value))
   @IsArray()
-  @IsInt({ each: true }) // << no usar @IsString si ahora usás ids
+  @IsInt({ each: true })
   genre: number[];
 
+  /**
+   * Constructor del DTO.
+   */
   constructor(
     title: string,
     author_id: number,
