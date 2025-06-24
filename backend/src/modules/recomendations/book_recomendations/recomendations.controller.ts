@@ -29,8 +29,8 @@ export class RecomendationsController {
     /**
      * Obtiene una recomendación específica por su ID.
      * 
-     * @param {number} id - ID del recomendación a buscar 
-     * @returns {Promise<RecommendationDTO>}
+     * @param {number} id - ID de la recomendación a buscar 
+     * @returns {Promise<RecommendationDTO>} Recomendación encontrada
      */
     @Get(':id')
     @ApiOperation({ summary: 'Obtener recomendacion por ID' })
@@ -45,7 +45,7 @@ export class RecomendationsController {
      * Crea una nueva recomendación de libro en el sistema
      * 
      * @param {CreateRecommendationDTO} body - Datos de la recomendacion a crear
-     * @returns {Promise<RecommendationDTO>} - recomendacion creada
+     * @returns {Promise<RecommendationDTO>} - Recomendación creada
      */
     @Post()
     @ApiOperation({ summary: 'Crear Recomendacion' })
@@ -73,7 +73,7 @@ export class RecomendationsController {
     /**
      * Elimina una actualizacion del sistema
      * 
-     * @param {number} id - ID - ID de la recomendación a eliminar
+     * @param {number} id - ID de la recomendación a eliminar
      * @returns {Promise<void>}
      */
     @Delete(':id')

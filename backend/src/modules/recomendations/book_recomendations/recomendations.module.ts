@@ -6,7 +6,7 @@ import { RecomendationsService } from './recomendations.service';
 import { BookRecommendation } from 'src/entidades/book_recommendations.entity';
 
 /**
- * Módulo de NestJS que agrupa los componentes relacionados a recomendación de libros:
+ * Módulo de NestJS que agrupa los componentes relacionados a 'Recomendations':
  * - Controlador
  * - Servicio
  * - Repositorios TypeORM

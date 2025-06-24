@@ -2,11 +2,13 @@ import { IsNumber } from "class-validator";
 
 /**
  * DTO para la creación de una nueva recomendación.
- * Contiene validaciones para los campos del cuerpo de la petición.
  */
 export class CreateRecommendationDTO {
 
-    /** ID del libro recomendado */
+    /**
+     *  ID del libro recomendado
+     * @type {number} 
+     */
     @IsNumber()
     idBook: number;
 

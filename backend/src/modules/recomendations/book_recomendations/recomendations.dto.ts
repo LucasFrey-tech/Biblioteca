@@ -1,25 +1,44 @@
 import { IsNumber, IsString } from "class-validator";
 import { BookRecommendation } from "src/entidades/book_recommendations.entity";
 
+/**
+ * Data Transfer Object (DTO) para Recomendations
+ * Esta clase se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
+ */
 export class RecommendationDTO {
 
-    /** ID de la recomendación */
+    /** 
+     * ID de la recomendación
+     * @type {number} 
+    */
     @IsNumber()
     id: number
 
-    /** ID del libro recomendado */
+    /**
+     * ID del libro recomendado
+     *  @type {number} 
+     */
     @IsNumber()
     idBook: number;
     
-    /** Título del libro recomendado */
+    /** 
+     * Título del libro recomendado
+     * @type {string} 
+    */
     @IsString()
     title: string;
     
-    /** Nombre del autor del libro recomendado */
+    /** 
+     * Nombre del autor del libro recomendado
+     * @type {string} 
+     */
     @IsString()
     author: string;
     
-    /** Imagen del libro recomendado */
+    /** 
+     * Imagen del libro recomendado
+     * @type {string} 
+     */
     @IsString()
     image: string;
 

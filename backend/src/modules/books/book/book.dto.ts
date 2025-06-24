@@ -5,8 +5,8 @@ import { Author } from 'src/entidades/author.entity';
 import { Genre } from 'src/entidades/genre.entity';
 
 /**
- * Data Transfer Object (DTO) para libro.
- * Se usa para validar y transformar datos entre la base de datos y la API.
+ * Data Transfer Object (DTO) para Books.
+ * Se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
  */
 export class BookDTO {
 
