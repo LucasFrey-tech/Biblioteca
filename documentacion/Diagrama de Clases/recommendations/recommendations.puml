@@ -21,10 +21,10 @@ package carousel {
     class CarouselController {
         - carouselService: CarouselService
 
-        + findAll()
+        + findAll(): Promise<CarouselDTO[]>
         + create(body: CarouselDTO, file: Express.Multer.File): Promise<CarouselDTO>
         + update(id: number, updateData: Partial<CarouselDTO>
-        + remove(id: string)
+        + remove(id: number): Promise<void>
     }
 
     class CarouselDTO {
@@ -32,7 +32,10 @@ package carousel {
         + idBook: number
         + image: string
     }
+    
+    class RepositoryC<<Carousel>> {
 
+    }
 }
 
 package recommendations {
@@ -49,11 +52,11 @@ package recommendations {
     class RecommendationsController {
         - recommendationsService: RecomendationsService
 
-        + findAll()
-        + findOne(id: string)
-        + reate(body: CreateRecommendationDTO): Promise<RecommendationDTO>
+        + findAll(): Promise<RecommendationDTO[]>
+        + findOne(id: number): Promise<RecommendationDTO>
+        + create(body: CreateRecommendationDTO): Promise<RecommendationDTO>
         + update(id: string, body: CreateRecommendationDTO): Promise<RecommendationDTO>
-        + remove(id: string)
+        + remove(id: number): Promise<void>
     }
 
     class RecommendationDTO {
@@ -72,20 +75,24 @@ package recommendations {
 
     class BookRecommendationEntity {
         - id: number
-        - id_book: number
         + book: Book
     }
 
+    class Repository<<Recommendation>> {
+
+    }
 }
 
 ' Relaciones
-CarouselService --> CarouselDTO : Depende de
-CarouselService --> CarouselEntity : Depende de
+CarouselService ..> CarouselDTO : Usa/devuelve
 CarouselController --> CarouselService : Depende de
+CarouselService --> RepositoryC : Depende de
+RepositoryC --> CarouselEntity : Accede a
 
-RecommendationsService --> BookRecommendationEntity : Depende de
-RecommendationsService --> RecommendationDTO : Depende de
-RecommendationsService --> CreateRecommendationDTO : Depende de
+RecommendationsService --> Repository : Depende de
+Repository --> BookRecommendationEntity : Accede a
+RecommendationsService ..> RecommendationDTO : Devuelve
+RecommendationsService ..> CreateRecommendationDTO : Usa
 RecommendationsController --> RecommendationsService : Depende de
 
 

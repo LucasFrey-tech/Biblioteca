@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { User } from "../../../entidades/user.entity";
+import { Book } from "src/entidades/book.entity";
 import { Review } from "../../../entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 import { CreateReviewDto } from "./dto/createReview.dto";
@@ -17,16 +18,18 @@ export class BookReviewsService {
     private userRepository: Repository<User>,
   ) { }
 
-  async create(reviewData: CreateReviewDto, idUser: number): Promise<ReviewI> {
-    const user = await this.userRepository.findOne({ where: { id: idUser } });
+  async create(reviewData: CreateReviewDto): Promise<ReviewI> {
+    const user = await this.userRepository.findOne({ where: { id: reviewData.id_user } });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
 
     const newReview = this.reviewRepository.create({
-      ...reviewData,
+      rating: reviewData.rating,
+      comment: reviewData.comment,
       reviewDate: new Date(),
       user,
+      book: { id: reviewData.id_book },
     });
 
     const savedReview = await this.reviewRepository.save(newReview);
@@ -44,7 +47,7 @@ export class BookReviewsService {
     return new ReviewI(
       savedReview.id,
       savedReview.user.id,
-      savedReview.id_book,
+      savedReview.book.id,
       username,
       savedReview.comment,
       savedReview.rating,
@@ -52,7 +55,7 @@ export class BookReviewsService {
     );
   }
 
-  findAll(): Promise<Review[]> {
+  async findAll(): Promise<Review[]> {
     this.logger.log('Lista de Criticas Obtenida');
     return this.reviewRepository.find({ relations: ['user'] });
   }
@@ -74,7 +77,7 @@ export class BookReviewsService {
 
   async findReviewsByBookId(bookId: number): Promise<ReviewI[]> {
     const reviews = await this.reviewRepository.find({
-      where: { id_book: bookId },
+      where: { book: { id: bookId } },
       relations: ['user'],
     });
 
@@ -82,7 +85,7 @@ export class BookReviewsService {
       return new ReviewI(
         r.id,
         r.user.id,
-        r.id_book,
+        r.book.id,
         r.user ? r.user.username : '',
         r.comment,
         r.rating,

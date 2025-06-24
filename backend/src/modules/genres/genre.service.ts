@@ -9,19 +9,20 @@ export class GenresService {
   constructor(
     @InjectRepository(Genre)
     private genreRepository: Repository<Genre>,
-  ) {}
+  ) { }
 
-  findAll(): Promise<Genre[]> {
+  async findAll(): Promise<Genre[]> {
     this.logger.log('Lista de Generos Obtenida');
     return this.genreRepository.find();
   }
 
-  create(genre: Partial<Genre>): Promise<Genre> {
+  async create(genre: Partial<Genre>): Promise<Genre> {
     const newGenre = this.genreRepository.create(genre);
     this.logger.log('Genero Creado');
     return this.genreRepository.save(newGenre);
   }
-    async delete(id: number): Promise<void> {
+
+  async delete(id: number): Promise<void> {
     const result = await this.genreRepository.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Género con id ${id} no encontrado`);

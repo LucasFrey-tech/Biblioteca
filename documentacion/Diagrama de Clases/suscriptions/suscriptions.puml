@@ -38,6 +38,18 @@ package moduloSubscription {
             + getUserSubscriptions() : Promise<UserSubscriptionDTO[]>
             + cancelSubscription(id: number): Promise<void>
         }
+
+        class RepositoryUS<<UserSubscription>> {
+
+        }
+
+        Class RepositoryU<<User>> {
+
+        }
+
+        class RepositoryS1<<Subscription>> {
+
+        }
     }
 
     package subscriptionConfig {
@@ -68,6 +80,10 @@ package moduloSubscription {
             + create(data: SubscriptionDTO)
         }
 
+        class RepositoryCS<<ConfigSubscription>> {
+
+        }
+
     }
 
     package subscriptionDiscount {
@@ -95,22 +111,37 @@ package moduloSubscription {
 
         class UserSubscriptionDiscountEntity {
             - id: number;
-            - subscription: Subscription;
             - discount: number;
+            + subscription: Subscription;
         }
+
+        class RepositorySD<<UserSubscriptionDiscount>> {
+
+        }
+
+        class RepositoryS2<<Subscription>> {
+
+        }
+
     }
 
 }
 
 ' relaciones
-UserSubscriptionService --> UserSubscriptionEntity : Depende de
-UserSubscriptionService --> UserSubscriptionDTO : Depende de
+UserSubscriptionService ..> UserSubscriptionDTO : Devuelve
 UserSubscriptionController --> UserSubscriptionService : Depende de
+UserSubscriptionService --> RepositoryUS: Depende de
+UserSubscriptionService --> RepositoryU: Depende de
+UserSubscriptionService --> RepositoryS1: Depende de
+RepositoryUS --> UserSubscriptionEntity: Accede a 
 
-SubscriptionService --> SubscriptionEntity : depende de
-SubscriptionService --> SubscriptionDTO : depende de
+SubscriptionService ..> SubscriptionDTO : Usa
 SubscriptionController --> SubscriptionService : depende de
+SubscriptionService --> RepositoryCS : depende de
+RepositoryCS --> SubscriptionEntity : Accede a
 
 SubscriptionDiscountController --> SubscriptionDiscountService : Depende de
-SubscriptionDiscountService --> UserSubscriptionDiscountEntity : Depende de  
+SubscriptionDiscountService --> RepositorySD : Depende de
+SubscriptionDiscountService --> RepositoryS2 : Depende de
+RepositorySD --> UserSubscriptionDiscountEntity : Accede a
 @enduml

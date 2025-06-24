@@ -13,7 +13,7 @@ export class BookReviewsController {
     @Get()
     @ApiOperation({ summary: 'Listar Todas las Críticas' })
     @ApiResponse({ status: 200, description: 'Lista de Críticas', type: [Review]})
-    findAll() {
+    findAll(): Promise<Review[]> {
         return this.reviewService.findAll();
     }
 
@@ -21,7 +21,7 @@ export class BookReviewsController {
     @ApiOperation({ summary: 'Obtener una Crítica por ID' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Crítica Encontrada', type: Review })
-    findOne(@Param('id', ParseIntPipe) id: number) {
+    findOne(@Param('id', ParseIntPipe) id: number): Promise<Review> {
         return this.reviewService.findOne(id);
     }
 
@@ -30,7 +30,7 @@ export class BookReviewsController {
     @ApiOperation({ summary: 'Listar Críticas por ID de Libro' })
     @ApiParam({ name: 'bookId', type: Number })
     @ApiResponse({ status: 200, description: 'Lista de Críticas por ID de Libro' })
-    findReviewsByBookId(@Param('bookId', ParseIntPipe) bookId: number) {
+    findReviewsByBookId(@Param('bookId', ParseIntPipe) bookId: number): Promise<ReviewI[]> {
         return this.reviewService.findReviewsByBookId(bookId);
     }
 
@@ -38,14 +38,12 @@ export class BookReviewsController {
     @ApiOperation({ summary: 'Crear Crítica' })
     @ApiBody({ type: CreateReviewDto })
     @ApiResponse({ status: 201, description: 'Crítica creada' })
-    async create(@Body() reviewData: CreateReviewDto, @Req() req) {
-        
-        const idUser = req.user?.id;
-
-        return this.reviewService.create(reviewData, idUser);
+    async create(@Body() reviewData: CreateReviewDto): Promise<ReviewI> {
+        return this.reviewService.create(reviewData);
     }
+
     @Put(':id')
-    update(@Param('id', ParseIntPipe) id:number, @Body() reviewData: ReviewI){
+    update(@Param('id', ParseIntPipe) id:number, @Body() reviewData: ReviewI) {
         return this.reviewService.update(id, reviewData);
     }
 
@@ -53,7 +51,7 @@ export class BookReviewsController {
     @ApiOperation({ summary: 'Eliminar Crítica por ID de Crítica' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Crítica Eliminada' })
-    remove(@Param('id', ParseIntPipe) id: number) {
+    remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.reviewService.remove(id);
     }
 }

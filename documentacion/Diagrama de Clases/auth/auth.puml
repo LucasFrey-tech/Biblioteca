@@ -34,12 +34,22 @@ package moduloAuthentication {
             + LoginRequestBody(email: string, password: string)
         }
     }
+
+        interface registerRequestBodyProps {
+        username: string,
+        firstname: string,
+        lastname: string,
+        email: string,
+        password: string
+    }
+
 }
 
 ' Relaciones
 AuthController --> AuthService : Depende de
-AuthService --> LoginRequestBody : Depende de
-AuthService --> RegisterRequestBody : Depende de
+AuthService ..> LoginRequestBody : usa
+AuthService ..> RegisterRequestBody : usa
 
+RegisterRequestBody ..> registerRequestBodyProps : Usa
 
 @enduml

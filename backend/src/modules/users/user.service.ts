@@ -25,13 +25,14 @@ export class UsersService {
     });
   }
 
-    async findOne(id: number) {
-      this.logger.log('Usuario Encontrado con Subscripciones');
-      return await this.usersRepository.findOne({
-        where: { id },
-        relations: ['userSubscriptions', 'userSubscriptions.subscription'],
-      });
-    }
+  async findOne(id: number): Promise<User|null> {
+    this.logger.log('Usuario Encontrado con Subscripciones');
+
+    return await this.usersRepository.findOne({
+      where: { id },
+      relations: ['userSubscriptions', 'userSubscriptions.subscription'],
+    });
+  }
 
 
   async create(user: Partial<User>) {

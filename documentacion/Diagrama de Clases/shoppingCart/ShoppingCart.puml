@@ -5,16 +5,17 @@ package shoppingCart {
         - shoppingCartService: ShoppingCartService
 
         + findByUser(id: number): Promise<BookCartDTO[] | null>
-        + create(book: Partial<ShoopingCartBook>)
+        + create(bookDto: ShoppingCartCreateDTO)
         + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
         + delete(id: number)
     }
 
     class ShoppingCartService {
         - cartBookShoppingRepository: Repository<ShoppingCartBook>
+        - user: Repository<User>
 
         + findByUser(idUser: number): Promise<BookCartDTO[] | null>
-        + create(book: Partial<ShoppingCartBook>)
+        + create(input: ShoppingCartCreateDTO): Promise<ShoppingCartBook>
         + update(idBookCart: number, updateData: Partial<ShoppingCartBook>)
         + delete(id: number)
     }
@@ -32,20 +33,37 @@ package shoppingCart {
 
     class ShoppingCartBookEntity {
         - id: number
-        - idUser: number
-        - idBook: number
         - amount: number
         - virtual: boolean
         + user: User
         + book: Book
     }
 
+
+    class ShoppingCartCreateDto {
+        + idUser: number
+        + idBook: number
+        + amount: number
+        + virtual: boolean
+    }
+
+    class RepositoryS<<ShoppingCartRepository>>{
+
+    }
+
+    class RepositoryU<<User>> {
+
+    }
+
 }
 
 ' Relaciones
-ShoppingCartService --> ShoppingCartBookEntity : Depende de
 ShoppingCartController --> ShoppingCartService : Depende de
-ShoppingCartController --> ShoppingCartBookEntity : Depende de
-ShoppingCartController --> BookCartDTO : Depende de
-ShoppingCartService --> BookCartDTO : Depende de
+ShoppingCartService --> RepositoryS : Depende de
+ShoppingCartService --> RepositoryU : Depende de
+RepositoryS --> ShoppingCartBookEntity : Accede a
+
+ShoppingCartService ..> BookCartDTO : Devuelve
+
+ShoppingCartService ..> ShoppingCartCreateDto : usa
 @enduml

@@ -12,7 +12,7 @@ package moduloAuthors {
     class AuthorController {
         - authorService: AuthorService
 
-        + findAll()
+        + findAll(): Promise<Author>
         + findOne(id: number)
         + create(createAuthorDto: CreateAuthorDto): Promise<Author>
         + remove(id: number)
@@ -28,11 +28,15 @@ package moduloAuthors {
         - id: number
         - name: string
     }
+
+    class Repository<<Author>>{
+
+    }
 }
 
 ' Relaciones
 AuthorController --> AuthorService : Depende de
-AuthorService --> CreateAuthorDto : Depende de
-AuthorService --> AuthorEntity : Depende de
-
+AuthorService ..> CreateAuthorDto : Usa
+AuthorService --> Repository : Depende de
+Repository --> AuthorEntity : Accede a
 @enduml

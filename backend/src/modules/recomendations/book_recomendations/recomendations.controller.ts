@@ -14,7 +14,7 @@ export class RecomendationsController {
     @Get()
     @ApiOperation({ summary: 'Listar Todas las recomendaciones' })
     @ApiResponse({ status: 200, description: 'Lista de recomendaciones.', type: [RecommendationDTO] })
-    findAll() {
+    findAll(): Promise<RecommendationDTO[]> {
         return this.recomendationsService.findAll();
     }
 
@@ -22,7 +22,7 @@ export class RecomendationsController {
     @ApiOperation({ summary: 'Obtener recomendacion por ID' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Recomendacion encontrada.', type: RecommendationDTO})
-    findOne(@Param('id') id: number) {
+    findOne(@Param('id') id: number): Promise<RecommendationDTO> {
         return this.recomendationsService.findOne(id);
     }
 
@@ -46,7 +46,7 @@ export class RecomendationsController {
     @ApiOperation({ summary: 'Eliminar Recomendacion' })
     @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Recomendacion eliminada.' })
-    remove(@Param('id') id: number) {
+    remove(@Param('id') id: number): Promise<void> {
         return this.recomendationsService.remove(id);
     }
 }
