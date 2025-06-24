@@ -13,29 +13,45 @@ export class BookContentService {
     private bookContentRepository: Repository<VirtualBookContent>,
   ) { }
 
-  async get(id:number):Promise<BookContentDTO|null>{
-    const bookContent = await this.bookContentRepository.findOne({ where: {idBook: id} })
-    if(!bookContent) {
+  async get(id: number): Promise<BookContentDTO | null> {
+    const bookContent = await this.bookContentRepository.findOne({
+      where: { book: { id } },
+      relations: ['book'],
+    });
+
+    if (!bookContent) {
       this.logger.log('Contenido No Encontrado');
-      return null
-    } 
-      
+      return null;
+    }
+
     this.logger.log('Contenido Encontrado');
     return {
-      idBook: bookContent?.idBook,
-      content: bookContent?.content
-    }
+      idBook: bookContent.book.id,
+      content: bookContent.content,
+    };
   }
 
-  create(bookContent: Partial<BookContentDTO>): Promise<BookContentDTO> {
-    const newGenre = this.bookContentRepository.create(bookContent);
+  async create(bookContentDto: Partial<BookContentDTO>): Promise<BookContentDTO> {
+    const entity = this.bookContentRepository.create({
+      book: { id: bookContentDto.idBook },
+      content: bookContentDto.content,
+    });
+
+    const saved = await this.bookContentRepository.save(entity);
     this.logger.log('Contenido Creado');
-    return this.bookContentRepository.save(newGenre);
+
+    return {
+      idBook: saved.book.id,
+      content: saved.content,
+    };
   }
 
-  update(id:number, bookContent: BookContentDTO){
+  async update(id: number, bookContentDto: BookContentDTO) {
+    await this.bookContentRepository.update(id, {
+      book: { id: bookContentDto.idBook },
+      content: bookContentDto.content,
+    });
     this.logger.log('Contenido Actualizado');
-    this.bookContentRepository.update(id,bookContent)
   }
 
   delete(id: number) {
