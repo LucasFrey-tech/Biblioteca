@@ -7,7 +7,9 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } 
 import { CreateBookDTO } from './createBook.dto';
 
 /**
- * Controlador para gestionar libros (crear, listar, actualizar, eliminar).
+ * Controlador para gestionar las operaciones CRUD de libros.
+ * Proporciona endpoints para crear, leer, actualizar y eliminar libros,
+ * así como para obtener libros filtrados por género o autor.
  */
 @ApiTags('Libros')
 @Controller('books')
@@ -15,8 +17,9 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) { }
 
   /**
-   * Lista todos los libros.
-   * @returns Arreglo de libros
+   * Obtiene todos los libros disponibles en el sistema.
+   * 
+   * @returns {Promise<BookDTO[]>} Lista de libros en formato DTO
    */
   @Get()
   @ApiOperation({ summary: 'Listar Todos los Libros' })
@@ -26,8 +29,10 @@ export class BooksController {
   }
   
   /**
-   * Lista libros que pertenecen a un género específico.
-   * @param id ID del género
+   * Obtiene todos los libros pertenecientes a un género específico.
+   * 
+   * @param {number} id - ID del género a filtrar
+   * @returns {Promise<BookDTO[]>} Lista de libros del género especificado
    */
   @Get('/with_genre/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
@@ -37,8 +42,10 @@ export class BooksController {
   }
 
   /**
-   * Lista libros escritos por un autor específico.
-   * @param id ID del autor
+   * Obtiene todos los libros escritos por un autor específico.
+   * 
+   * @param {number} id - ID del autor a filtrar
+   * @returns {Promise<BookDTO[]>} Lista de libros del autor especificado
    */
   @Get('/with_author/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo autor.' })
@@ -48,8 +55,10 @@ export class BooksController {
   }
 
   /**
-   * Obtiene un libro por su ID.
-   * @param id ID del libro
+   * Obtiene un libro específico por su ID.
+   * 
+   * @param {number} id - ID del libro a buscar
+   * @returns {Promise<BookDTO>} Libro encontrado
    */
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Libro por ID' })
@@ -60,9 +69,11 @@ export class BooksController {
   }
 
   /**
-   * Crea un nuevo libro.
-   * @param file Imagen del libro (archivo subido)
-   * @param data Datos del libro
+   * Crea un nuevo libro en el sistema.
+   * 
+   * @param {Express.Multer.File} file - Archivo de imagen del libro (opcional)
+   * @param {CreateBookDTO} data - Datos del libro a crear
+   * @returns {Promise<Book>} Libro creado
    */
   @Post()
   @ApiOperation({ summary: 'Crear Libro' })
@@ -71,7 +82,7 @@ export class BooksController {
   @UseInterceptors(FileInterceptor('image'))
   async create(@UploadedFile() file: Express.Multer.File, @Body() data: CreateBookDTO) {
     if (file) {
-      data.image = this.booksService.bookImageUrl(file.filename); // ✅ ¡Usamos filename real!
+      data.image = this.booksService.bookImageUrl(file.filename);
     }
 
     return await this.booksService.create(data);
@@ -79,9 +90,12 @@ export class BooksController {
 
   /**
    * Actualiza un libro existente.
-   * @param id ID del libro
-   * @param bookDTO Datos actualizados
-   * @param file Imagen nueva (si se sube)
+   * 
+   * @param {number} id - ID del libro a actualizar
+   * @param {CreateBookDTO} bookDTO - Datos actualizados del libro
+   * @param {Express.Multer.File} file - Nueva imagen del libro (opcional)
+   * @returns {Promise<Book>} Libro actualizado
+   * @throws {BadRequestException} Si el formato del género es inválido
    */
   @Put(':id')
   @ApiOperation({ summary: 'Editar Libro' })
@@ -89,20 +103,20 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  async update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
-    // Convertir string a booleano si viene así
+  async update(
+    @Param('id', ParseIntPipe) id: number, 
+    @Body() bookDTO: CreateBookDTO & { existingImage?: string }, 
+    @UploadedFile() file: Express.Multer.File
+  ) {
     if (typeof bookDTO.subscriber_exclusive === 'string') {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
 
-    // Si se subió una nueva imagen, usarla
     if (file && file.filename) {
       bookDTO.image = this.booksService.bookImageUrl(file.filename);
     } else if (bookDTO.existingImage) {
-      // Si no hay archivo nuevo, pero sí imagen existente, mantenerla
       bookDTO.image = bookDTO.existingImage;
     } else {
-      // Si no hay ninguna imagen, poner null o un placeholder
       bookDTO.image = '';
     }
 
@@ -118,14 +132,18 @@ export class BooksController {
   }
 
   /**
-   * Elimina un libro por su ID.
-   * @param id ID del libro a eliminar
+   * Elimina un libro del sistema.
+   * 
+   * @param {number} id - ID del libro a eliminar
+   * @returns {Promise<boolean>} Resultado de la operación:
+   * - true si el libro fue eliminado
+   * - false si el libro no existía
    */
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar Libro' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Libro Eliminado' })
-  delete(@Param('id', ParseIntPipe) id: number) {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return this.booksService.delete(id);
   }
 }
