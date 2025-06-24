@@ -36,4 +36,3 @@ const myapp_config = require('../../../../private/app.config.json');
   exports: [BooksService],
 })
 export class BooksModule {}
-

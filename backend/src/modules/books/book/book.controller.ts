@@ -7,7 +7,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } 
 import { CreateBookDTO } from './createBook.dto';
 
 /**
- * Controlador para gestionar las operaciones CRUD de libros.
+ * Controlador para gestionar las operaciones de los libros.
  * Proporciona endpoints para crear, leer, actualizar y eliminar libros,
  * así como para obtener libros filtrados por género o autor.
  */
@@ -37,7 +37,7 @@ export class BooksController {
   @Get('/with_genre/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
-  getBooksWithGenre(@Param('id', ParseIntPipe) id: number) {
+  getBooksWithGenre(@Param('id', ParseIntPipe) id: number): Promise<BookDTO[]> {
     return this.booksService.findAllWithGenre(id);
   }
 
@@ -50,7 +50,7 @@ export class BooksController {
   @Get('/with_author/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo autor.' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
-  getBooksByAuthor(@Param('id', ParseIntPipe) id: number) {
+  getBooksByAuthor(@Param('id', ParseIntPipe) id: number): Promise<BookDTO[]> {
     return this.booksService.findAllByAuthor(id);
   }
 
