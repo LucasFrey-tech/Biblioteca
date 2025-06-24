@@ -6,7 +6,7 @@ import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings.service';
 import { CreateBookDTO } from './createBook.dto';
 import { Genre } from '../../../entidades/genre.entity';
-import { Author } from 'src/entidades/author.entity';
+import { Author } from '../../../entidades/author.entity';
 
 @Injectable()
 export class BooksService {

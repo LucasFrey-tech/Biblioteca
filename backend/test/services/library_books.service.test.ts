@@ -1,24 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LibraryBooksService } from '../../src/modules/books/library/library_books.service';
-import { BooksService } from '../../src/modules/books/book/book.service';
-import { LibraryBookDTO } from '../../src/modules/books/library/dto/library_book.dto';
-import {mockBook1,mockBooks} from '../mocks/books.mock'
+import { mockDtoLibraryBooksFromUser1 } from '../mocks/dtos/libraryBookDTOs.mock';
+import { mockDeletedUserVirtualBooks, mockNewUserVirtualBooks, mockUserVirtualBooks, mockUserVirtualBooks1 } from '../mocks/entities/user_virtual_books.mock';
+import { UserVirtualBooks } from '../../src/entidades/user_virtual_books.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 describe('LibraryBooksService', () => {
   let service: LibraryBooksService;
-  let booksService: { findAll: jest.Mock; findOne: jest.Mock };
+
+  const mockUserVirtualBookRepository = {
+    find: jest.fn().mockResolvedValue(mockUserVirtualBooks),
+    findOne: jest.fn().mockResolvedValue(mockUserVirtualBooks1),
+    create: jest.fn().mockResolvedValue(mockNewUserVirtualBooks),
+    delete: jest.fn().mockResolvedValue(mockDeletedUserVirtualBooks),
+    save: jest.fn().mockResolvedValue(mockNewUserVirtualBooks),    
+    remove: jest.fn().mockResolvedValue(mockDeletedUserVirtualBooks),    
+  };
 
   beforeEach(async () => {
-    booksService = {
-      findAll: jest.fn(),
-      findOne: jest.fn(),
-    };
 
     const module: TestingModule = await Test.createTestingModule({
-      // imports: [BooksService],
       providers: [
         LibraryBooksService,
-        { provide: BooksService, useValue: booksService },
+        {
+          provide: getRepositoryToken(UserVirtualBooks),
+          useValue: mockUserVirtualBookRepository,
+        },
       ],
     }).compile();
 
@@ -31,38 +38,17 @@ describe('LibraryBooksService', () => {
 
   describe('findAllByUser', () => {
     it('should return an array of LibraryBookDTO', async () => {
-      booksService.findAll.mockResolvedValue(mockBooks);
-      const result = await service.findAllByUser(1);
-      expect(booksService.findAll).toHaveBeenCalled();
-      expect(result).toHaveLength(3);
-      expect(result[0]).toBeInstanceOf(LibraryBookDTO);
-      expect(result[0]).toMatchObject({
-        id: mockBook1.id,
-        title: mockBook1.title,
-        author_id: mockBook1.author_id,
-        description: mockBook1.description,
-        isbn: mockBook1.isbn,
-        image: mockBook1.image,
-      });
+      const userId = 1 
+      const result = await service.findAllByUser(userId)
+      expect(result).toEqual(mockDtoLibraryBooksFromUser1)
     });
   });
 
   describe('findOne', () => {
     it('should return a LibraryBookDTO if found', async () => {
-      booksService.findOne.mockResolvedValue(mockBook1);
-      const result = await service.findAllByUser(1);
-      expect(booksService.findOne).toHaveBeenCalledWith(1);
-      expect(result).toBeInstanceOf(LibraryBookDTO);
-      expect(result).toMatchObject({
-        id: mockBook1.id,
-        title: mockBook1.title,
-      });
-    });
-
-    it('should return null if not found', async () => {
-      booksService.findOne.mockResolvedValue(null);
-      const result = await service.findAllByUser(999);
-      expect(result).toBeNull();
+      const userId = 1
+      const result = await service.findAllByUser(userId);
+      expect(result).toEqual(mockDtoLibraryBooksFromUser1);
     });
   });
 });

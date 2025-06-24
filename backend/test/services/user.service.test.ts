@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../src/entidades/user.entity';
-import { mockUser1, mockUser2, mockUsers } from '../mocks/user.mock';
+import { mockUser1, mockUser2, mockUsers } from '../mocks/entities/user.mock';
 import { UsersService } from "../../src/modules/users/user.service";
 
 describe('UsersService', () => {

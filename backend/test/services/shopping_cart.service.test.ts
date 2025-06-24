@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import {mockShoppingCart1, mockShoppingCarts} from '../mocks/shopping_cart_book.mock';
+import {mockDeletedShoppingCarts, mockNewShoppingCart, mockShoppingCart1, mockShoppingCarts, mockShoppingCartsByUser1} from '../mocks/entities/shopping_cart_book.mock';
 import { ShoppingCartBook } from '../../src/entidades/shopping_cart_book.entity';
 import { ShoppingCartService } from '../../src/modules/shopping_cart/shopping_cart.service';
 
@@ -9,18 +9,22 @@ describe('ShoppingCartService', () => {
   let service: ShoppingCartService;
   let repo: jest.Mocked<Repository<ShoppingCartBook>>;
 
+  const mockShoppingCartBookRepository = {
+    find: jest.fn().mockResolvedValue(mockShoppingCarts),
+    findOne: jest.fn().mockResolvedValue(mockShoppingCart1),
+    create: jest.fn().mockResolvedValue(mockNewShoppingCart),
+    delete: jest.fn().mockResolvedValue(mockDeletedShoppingCarts),
+    save: jest.fn().mockResolvedValue(mockNewShoppingCart),    
+    remove: jest.fn().mockResolvedValue({affected: 1}),    
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ShoppingCartService,
         {
           provide: getRepositoryToken(ShoppingCartBook),
-          useValue: {
-            findOne: jest.fn(),
-            save: jest.fn(),
-            update: jest.fn(),
-            delete: jest.fn(),
-          },
+          useValue: mockShoppingCartBookRepository,
         },
       ],
     }).compile();
@@ -34,11 +38,11 @@ describe('ShoppingCartService', () => {
   });
 
   describe('findByUser', () => {
-    it('should return a cart book by user id', async () => {
-      repo.findOne.mockResolvedValue(mockShoppingCart1);
-      const result = await service.findByUser(1);
-      expect(repo.findOne).toHaveBeenCalledWith({ where: { idUser: 1 } });
-      expect(result).toEqual(mockShoppingCart1);
+    it('should return a cart with books by user id', async () => {
+      const userId = 1
+      const result = await service.findByUser(userId);
+      // expect(repo.find).toHaveBeenCalledWith({ where: { userId }, relations: ['user', 'book','book.author'] });
+      expect(result).toEqual(mockShoppingCartsByUser1);
     });
   });
 

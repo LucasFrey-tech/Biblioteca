@@ -9,8 +9,8 @@ export const mockUser1: User = {
     password: "a",
     admin: false,
     disabled: false,
-    image: "https://mir-s3-cdn-cf.behance.net/projects/404/ae2a60174729493.Y3JvcCwxOTk5LDE1NjQsMCwyMTc.png",
     registrationDate: new Date("2020-05-02"),
+    userSubscriptions: []
 };
 
 export const mockUser2:User = {
@@ -22,8 +22,8 @@ export const mockUser2:User = {
     password: "si",
     admin: false,
     disabled: false,
-    image: "https://mir-s3-cdn-cf.behance.net/projects/404/ae2a60174729493.Y3JvcCwxOTk5LDE1NjQsMCwyMTc.png",
-    registrationDate: new Date("2020-05-02")
+    registrationDate: new Date("2020-05-02"),
+    userSubscriptions: []
 };
 
 export const mockUser3:User = {
@@ -35,8 +35,8 @@ export const mockUser3:User = {
     password: "si",
     admin: false,
     disabled: false,
-    image: "https://mir-s3-cdn-cf.behance.net/projects/404/ae2a60174729493.Y3JvcCwxOTk5LDE1NjQsMCwyMTc.png",
-    registrationDate: new Date("2020-05-02")
+    registrationDate: new Date("2020-05-02"),
+    userSubscriptions: []
 };
 
 export const mockUsers = [mockUser1, mockUser2, mockUser3];

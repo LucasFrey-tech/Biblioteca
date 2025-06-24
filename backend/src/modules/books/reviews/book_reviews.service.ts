@@ -1,8 +1,8 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { User } from "src/entidades/user.entity";
-import { Review } from "src/entidades/review.entity";
+import { User } from "../../../entidades/user.entity";
+import { Review } from "../../../entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 import { CreateReviewDto } from "./dto/createReview.dto";
 
