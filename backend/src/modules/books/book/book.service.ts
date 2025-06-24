@@ -28,7 +28,7 @@ export class BooksService {
    * Obtiene todos los libros disponibles.
    * 
    * @async
-   * @returns {Promise<BookDTO[]>} una promesa que resuelve con un arrelgo de DTOs de libros.
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con un arrelgo de DTOs de libros.
    * 
    */
   async findAll(): Promise<BookDTO[]> {
@@ -85,8 +85,8 @@ export class BooksService {
    * Busca un libro específico por su ID.
    * 
    * @async
-   * @param {number} id - El id del autor a buscar.
-   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO del libro encontrado.
+   * @param {number} id - El id del libro a buscar.
+   * @returns {Promise<BookDTO | null>} Una promesa que resuelve con el DTO del libro encontrado.
    * @throws {NotFoundException} Si no encuenta ningún libro con el ID especificado.
    * 
    */
@@ -135,11 +135,11 @@ export class BooksService {
   }
 
   /**
-   * Crea un nuevo libro en el sistema con sus géneros asociados.
+   * Actualiza un libro en el sistema.
    * 
    * @async
-   * @param {number} id - Objeto de transferencia de datos con la información del libro a crear.
-   * @param {CreateBookDTO} bookDTO - Objeto de transferencia de datos con la información del libro a crear.
+   * @param {number} id - ID del libro a actualizar
+   * @param {CreateBookDTO} bookDTO - DTO con los nuevos datos para la recomendación.
    * Debe incluir los IDs de géneros y el ID del autor.
    * @returns {Promise<Book>} Promesa que resuelve con la entidad del libro actualizado.
    * @throws {Error} Cuando alguno de los géneros proporcionados no existe en la base de datos.
