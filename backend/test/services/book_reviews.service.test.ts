@@ -82,7 +82,7 @@ describe('BookReviewsService', () => {
       const searchReviewBookId = 1
       repo.find = jest.fn().mockResolvedValue(mockReviewsSearchByBookId);
       const result = await service.findReviewsByBookId(searchReviewBookId);
-      expect(repo.find).toHaveBeenCalledWith({ where: { id_book: searchReviewBookId }, relations: ['user'] });
+      expect(repo.find).toHaveBeenCalledWith({ where: { book: { id: searchReviewBookId } }, relations: ['user'] });
       expect(result).toEqual(mockReviewDtosSearchByBookId);
     });
   });
