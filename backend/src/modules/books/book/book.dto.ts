@@ -78,7 +78,6 @@ export class BookDTO {
     return {
       id: bookDTO.id,
       title: bookDTO.title,
-      //author: bookDTO.author_id ? { id: bookDTO.author_id } as Author: undefined,
       description: bookDTO.description,
       anio: bookDTO.anio,
       isbn: bookDTO.isbn,

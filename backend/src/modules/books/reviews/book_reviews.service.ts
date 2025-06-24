@@ -1,6 +1,7 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
+import { User } from "src/entidades/user.entity";
 import { Review } from "src/entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 import { CreateReviewDto } from "./dto/createReview.dto";
@@ -12,12 +13,20 @@ export class BookReviewsService {
   constructor(
     @InjectRepository(Review)
     private reviewRepository: Repository<Review>,
-  ) {}
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+  ) { }
 
-  async create(reviewData: CreateReviewDto): Promise<ReviewI> {
+  async create(reviewData: CreateReviewDto, idUser: number): Promise<ReviewI> {
+    const user = await this.userRepository.findOne({ where: { id: idUser } });
+    if (!user) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+
     const newReview = this.reviewRepository.create({
       ...reviewData,
       reviewDate: new Date(),
+      user,
     });
 
     const savedReview = await this.reviewRepository.save(newReview);
@@ -34,7 +43,7 @@ export class BookReviewsService {
 
     return new ReviewI(
       savedReview.id,
-      savedReview.id_user,
+      savedReview.user.id,
       savedReview.id_book,
       username,
       savedReview.comment,
@@ -72,7 +81,7 @@ export class BookReviewsService {
     const result = reviews.map((r) => {
       return new ReviewI(
         r.id,
-        r.id_user,
+        r.user.id,
         r.id_book,
         r.user ? r.user.username : '',
         r.comment,

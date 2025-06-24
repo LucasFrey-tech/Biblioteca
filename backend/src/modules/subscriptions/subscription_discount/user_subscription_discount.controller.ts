@@ -7,9 +7,7 @@ export class UserSubscriptionDiscountController {
   constructor(private readonly discountService: UserSubscriptionDiscountService) {}
 
   @Post()
-  create(
-    @Body() data: { id_subscription: number; discount: number },
-  ): Promise<UserSubscriptionDiscount> {
+  create(@Body() data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount> {
     return this.discountService.create(data);
   }
 

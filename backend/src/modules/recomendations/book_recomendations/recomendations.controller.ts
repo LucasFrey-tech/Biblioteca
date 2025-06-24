@@ -20,10 +20,10 @@ export class RecomendationsController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Obtener recomendacion por ID' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Recomendacion encontrada.', type: RecommendationDTO})
-    findOne(@Param('id') id: string) {
-        return this.recomendationsService.findOne(+id);
+    findOne(@Param('id') id: number) {
+        return this.recomendationsService.findOne(id);
     }
 
     @Post()
@@ -44,9 +44,9 @@ export class RecomendationsController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar Recomendacion' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Recomendacion eliminada.' })
-    remove(@Param('id') id: string) {
-        return this.recomendationsService.remove(+id);
+    remove(@Param('id') id: number) {
+        return this.recomendationsService.remove(id);
     }
 }

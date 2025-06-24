@@ -23,6 +23,4 @@ export class UserSubscription {
   @ManyToOne(() => Subscription, subscription => subscription.userSubscriptions, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'id_subscription' })
   subscription: Subscription;
-  // userSubscription: UserSubscription;
 }
-

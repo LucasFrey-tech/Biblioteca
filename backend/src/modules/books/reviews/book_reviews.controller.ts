@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, Req } from '@nestjs/common';
 import { BookReviewsService } from './book_reviews.service';
 import { Review } from 'src/entidades/review.entity';
 import { ReviewI } from './dto/review.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/createReview.dto';
 
 @ApiTags('Críticas')
@@ -35,10 +35,15 @@ export class BookReviewsController {
     }
 
     @Post()
-    create(@Body() reviewData: CreateReviewDto){
-        return this.reviewService.create(reviewData);
-    }
+    @ApiOperation({ summary: 'Crear Crítica' })
+    @ApiBody({ type: CreateReviewDto })
+    @ApiResponse({ status: 201, description: 'Crítica creada' })
+    async create(@Body() reviewData: CreateReviewDto, @Req() req) {
+        
+        const idUser = req.user?.id;
 
+        return this.reviewService.create(reviewData, idUser);
+    }
     @Put(':id')
     update(@Param('id', ParseIntPipe) id:number, @Body() reviewData: ReviewI){
         return this.reviewService.update(id, reviewData);

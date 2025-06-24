@@ -3,57 +3,63 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LibraryBookDTO } from './dto/library_book.dto';
 import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
+import { User } from 'src/entidades/user.entity';
+import { Book } from 'src/entidades/book.entity';
 
 @Injectable()
 export class LibraryBooksService {
-    private readonly logger = new Logger(LibraryBooksService.name);
-    constructor(
-        @InjectRepository(UserVirtualBooks)
-        private userVirtualBooks: Repository<UserVirtualBooks>,
-    ) { }
+  private readonly logger = new Logger(LibraryBooksService.name);
 
-    async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
-        const userVirtualBooks = await this.userVirtualBooks.find({
-            where: { idUser },
-            relations: ['book', 'book.author', 'book.genres'],
-        });
+  constructor(
+    @InjectRepository(UserVirtualBooks)
+    private userVirtualBooksRepository: Repository<UserVirtualBooks>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Book)
+    private bookRepository: Repository<Book>,
+  ) {}
 
-        const result = await Promise.all(
-            userVirtualBooks.map(async (vb) => {
-                this.logger.log('Lista de Libros de Libreria del Usuario Obtenida');
-                return new LibraryBookDTO(
-                    vb.book.id,
-                    vb.book.title,
-                    vb.book.author?.id,
-                    vb.book.description,
-                    vb.book.genres ?? [],
-                    vb.book.isbn,
-                    vb.book.image
-                );
-            })
-        );
+  async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
+    const user = await this.userRepository.findOne({ where: { id: idUser } });
+    if (!user) throw new Error('Usuario no encontrado');
 
-        this.logger.log('Elementos null Removidos');
-        return result.filter((item): item is LibraryBookDTO => item !== null);
+    const userVirtualBooks = await this.userVirtualBooksRepository.find({
+      where: { user },
+      relations: ['book', 'book.author', 'book.genres'],
+    });
+
+    const result = userVirtualBooks.map(vb => new LibraryBookDTO(
+      vb.book.id,
+      vb.book.title,
+      vb.book.author?.id,
+      vb.book.description,
+      vb.book.genres ?? [],
+      vb.book.isbn,
+      vb.book.image
+    ));
+
+    this.logger.log('Lista de Libros de Librería del Usuario Obtenida');
+    return result;
+  }
+
+  async create(input: { idUser: number, idBook: number }): Promise<UserVirtualBooks> {
+    const user = await this.userRepository.findOne({ where: { id: input.idUser } });
+    if (!user) throw new Error('Usuario no encontrado');
+
+    const book = await this.bookRepository.findOne({ where: { id: input.idBook } });
+    if (!book) throw new Error('Libro no encontrado');
+
+    const existing = await this.userVirtualBooksRepository.findOne({
+      where: { user, book }
+    });
+
+    if (existing) {
+      this.logger.log('Libro ya Obtenido por el Usuario');
+      throw new Error('El usuario ya tiene este libro en su biblioteca');
     }
 
-    async create(userVirtualBook: { idUser: number, idBook: number }): Promise<UserVirtualBooks> {
-        // Verifico si el usuario ya tiene este libro en su libreria
-        const existingRecord = await this.userVirtualBooks.findOne({
-            where: {
-                idUser: userVirtualBook.idUser,
-                idBook: userVirtualBook.idBook
-            }
-        });
-
-        if (existingRecord) {
-            this.logger.log('Libro ya Obtenido por el Usuario');
-            throw new Error('El usuario ya tiene este libro en su biblioteca');
-        }
-
-        // Crear el nuevo registro
-        const newRecord = this.userVirtualBooks.create(userVirtualBook);
-        this.logger.log('Libro de Libreria Creado');
-        return await this.userVirtualBooks.save(newRecord);
-    }
+    const newRecord = this.userVirtualBooksRepository.create({ user, book });
+    this.logger.log('Libro de Librería Creado');
+    return await this.userVirtualBooksRepository.save(newRecord);
+  }
 }

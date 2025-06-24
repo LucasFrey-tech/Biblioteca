@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, NotFound
 import { ShoppingCartService } from './shopping_cart.service';
 import { ShoppingCartBook } from 'src/entidades/shopping_cart_book.entity';
 import { BookCartDTO } from './book_cart.dto'
+import { ShoppingCartCreateDTO } from './shopping_cart_create.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Changuito')
@@ -20,10 +21,10 @@ export class ShoppingCartController {
 
   @Post()
   @ApiOperation({ summary: 'Crear Changuito' })
-  @ApiBody({ type: ShoppingCartBook })
+  @ApiBody({ type: ShoppingCartCreateDTO })
   @ApiResponse({ status: 201, description: 'Changuito Creado' })
-  create(@Body() book: Partial<ShoppingCartBook>) {
-    return this.shoppingCartService.create(book);
+  create(@Body() bookDto: ShoppingCartCreateDTO) {
+    return this.shoppingCartService.create(bookDto);
   }
 
   @Put(':idBookCart')

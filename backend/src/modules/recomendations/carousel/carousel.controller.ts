@@ -42,9 +42,9 @@ export class CarouselController {
 
     @Delete(':id')
     @ApiOperation({ summary: 'Eliminar Item del Carousel' })
-    @ApiParam({ name: 'id', type: String })
+    @ApiParam({ name: 'id', type: Number })
     @ApiResponse({ status: 200, description: 'Item del carousel eliminado.' })
-    remove(@Param('id') id: string) {
-        return this.carouselService.remove(+id);
+    remove(@Param('id') id: number) {
+        return this.carouselService.remove(id);
     }
 }

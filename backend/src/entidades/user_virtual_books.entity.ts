@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne} from 'typeorm';
 import { Book } from './book.entity';
+import { User } from './user.entity';
 
 @Entity('user_virtual_books')
 export class UserVirtualBooks{
@@ -8,13 +9,9 @@ export class UserVirtualBooks{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty({example: 1, description: 'ID Único del Usuario'})
-    @Column({name: 'id_user', type: 'integer' })
-    idUser: number;
-
-    @ApiProperty({example: 1, description: 'ID Único del Libro'})
-    @Column({name: 'id_book', type: 'integer' })
-    idBook: number;
+    @ManyToOne(() => User)
+    @JoinColumn({ name: 'id_user', referencedColumnName: 'id' })
+    user: User;
 
     @ManyToOne(() => Book)
     @JoinColumn({ name: "id_book", referencedColumnName: "id" })

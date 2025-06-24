@@ -18,7 +18,7 @@ export class AuthorService {
         return this.authorRepository.save(author);
     }
 
-    findAll(): Promise<Author[]> {
+    async findAll(): Promise<Author[]> {
         this.logger.log('Lista de Autores Obtenida');
         return this.authorRepository.find({});
     }

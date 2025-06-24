@@ -8,10 +8,6 @@ export class Review{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty({example: 1, description: 'ID Único del Usuario'})
-    @Column({name: 'id_user', type: 'integer' })
-    id_user: number;
-
     @ApiProperty({example: 1, description: 'ID Único del Libro'})
     @Column({name: 'id_book', type: 'integer' })
     id_book: number;

@@ -12,7 +12,7 @@ export class AuthorController {
     @Get()
     @ApiOperation({ summary: 'Listar Todos los Autores' })
     @ApiResponse({ status: 200, description: 'Lista de Autores', type: [Author] })
-    findAll() {
+    findAll(): Promise<Author[]> {
         return this.authorService.findAll();
     }
 
