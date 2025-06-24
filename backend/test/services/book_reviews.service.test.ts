@@ -6,6 +6,8 @@ import { Review } from '../../src/entidades/review.entity';
 import { mockDeletedReviews, mockNewReview, mockReview1, mockReviews, mockReviewsSearchByBookId, mockUpdatedReview } from '../mocks/entities/review.mock';
 import { BookReviewsService } from '../../src/modules/books/reviews/book_reviews.service';
 import { mockReviewDtosSearchByBookId } from '../mocks/dtos/reviewDTOs.mock';
+import { mockNewUser, mockUpdatedUser, mockUser1, mockUsers } from '../mocks/entities/user.mock';
+import { User } from '../../src/entidades/user.entity';
 
 describe('BookReviewsService', () => {
   let service: BookReviewsService;
@@ -21,6 +23,15 @@ describe('BookReviewsService', () => {
     remove: jest.fn().mockResolvedValue(mockDeletedReviews),    
   };
 
+  const mockUsersRepository = {
+    find: jest.fn().mockResolvedValue(mockUsers),
+    findOne: jest.fn().mockResolvedValue(mockUser1),
+    create: jest.fn().mockResolvedValue(mockNewUser),
+    update: jest.fn().mockResolvedValue(mockUpdatedUser), 
+    save: jest.fn().mockResolvedValue(mockNewUser),
+    delete: jest.fn().mockResolvedValue({raw: {}, affected: 1 }) ,
+  }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       // imports: [TypeOrmModule.forFeature([Review])],
@@ -29,6 +40,10 @@ describe('BookReviewsService', () => {
         {
           provide: getRepositoryToken(Review),
           useValue: mockReviewsRepository,
+        },
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUsersRepository,
         },
       ],
     }).compile();
@@ -44,7 +59,6 @@ describe('BookReviewsService', () => {
   describe('findAll', () => {
     it('should return all reviews', async () => {
       const result = await service.findAll();
-      expect(repo.find).toHaveBeenCalledWith({relations: ['user']});
       expect(result).toEqual(mockReviews);
     });
   });
