@@ -18,8 +18,8 @@ export class BookReviewsService {
     private userRepository: Repository<User>,
   ) { }
 
-  async create(reviewData: CreateReviewDto, idUser: number): Promise<ReviewI> {
-    const user = await this.userRepository.findOne({ where: { id: idUser } });
+  async create(reviewData: CreateReviewDto): Promise<ReviewI> {
+    const user = await this.userRepository.findOne({ where: { id: reviewData.id_user } });
     if (!user) {
       throw new NotFoundException('Usuario no encontrado');
     }
@@ -55,7 +55,7 @@ export class BookReviewsService {
     );
   }
 
-  findAll(): Promise<Review[]> {
+  async findAll(): Promise<Review[]> {
     this.logger.log('Lista de Criticas Obtenida');
     return this.reviewRepository.find({ relations: ['user'] });
   }
