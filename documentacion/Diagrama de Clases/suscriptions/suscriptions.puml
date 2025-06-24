@@ -1,0 +1,147 @@
+@startuml
+
+package moduloSubscription {
+    package userSubscription{
+        class UserSubscriptionEntity {
+            - id: number
+            + user: User
+            - startDate: Date
+            - endDate: Date
+            - ongoing: boolean
+            - subscription: Subscription
+        }
+
+        class UserSubscriptionDTO {
+            + id: number
+            + startDate: string
+            + endDate: string
+            + ongoing: boolean
+            + subscription: SubscriptionDTO | null
+        }
+
+        class UserSubscriptionService {
+            - userSubscriptionRepository: Repository<UserSubscription>
+            - userRepository: Repository<User>
+            - subscriptionRepository: Repository<Subscription>
+
+            + createSubscription(userId: number, startDate: Date, endDate: Date): Promise<UserSubscription>
+            + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+            + getUserSubscriptions(): Promise<UserSubscriptionDTO[]>
+            + cancelSubscription(id: number): Promise<void>
+        }
+
+        class UserSubscriptionController {
+            - userSubscriptionService: UserSubscriptionService
+
+            + createSubscription(userId: number, startDate: Date, endDate: Date,): Promise<UserSubscription>
+            + getUserSubscription(userId: number): Promise<UserSubscriptionDTO>
+            + getUserSubscriptions() : Promise<UserSubscriptionDTO[]>
+            + cancelSubscription(id: number): Promise<void>
+        }
+
+        class RepositoryUS<<UserSubscription>> {
+
+        }
+
+        Class RepositoryU<<User>> {
+
+        }
+
+        class RepositoryS1<<Subscription>> {
+
+        }
+    }
+
+    package subscriptionConfig {
+        class SubscriptionDTO {
+            + id:number
+            + price: number
+        }
+
+        class SubscriptionEntity {
+            - id: number
+            - price: number
+            + userSubscriptions: UserSubscription[]
+        }
+
+        class SubscriptionService {
+            - subscriptionConfigRepository: Repository<Subscription>
+
+            + get(): Promise<SubscriptionDTO>
+            + update(id: number, config: Partial<SubscriptionDTO>)
+            + create(data: SubscriptionDTO): Promise<Subscription>
+        }
+
+        class SubscriptionController {
+            - subscriptionService: SubscriptionService
+
+            + getUserSubscriptions(): Promise<SubscriptionDTO>
+            + update(updateData: Partial<SubscriptionDTO>)
+            + create(data: SubscriptionDTO)
+        }
+
+        class RepositoryCS<<ConfigSubscription>> {
+
+        }
+
+    }
+
+    package subscriptionDiscount {
+        class SubscriptionDiscountController {
+            - discountService: UserSubscriptionDiscountService
+
+            + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount> {
+            + findAll(): Promise<UserSubscriptionDiscount[]>
+            + findOne(id: number): Promise<UserSubscriptionDiscount> {
+            + update(id: number, data: { discount: number }): Promise<UserSubscriptionDiscount>
+            + delete(id: number): Promise<void> {
+        }
+
+        class SubscriptionDiscountService {
+
+            - discountRepo: Repository<UserSubscriptionDiscount>
+            - subscriptionRepo: Repository<Subscription>
+            
+            + create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount>
+            + findAll(): Promise<UserSubscriptionDiscount[]>
+            + findOne(id: number): Promise<UserSubscriptionDiscount>
+            + update(id: number, data: { discount: number }): Promise<UserSubscriptionDiscount>
+            + delete(id: number): Promise<void>
+        }
+
+        class UserSubscriptionDiscountEntity {
+            - id: number;
+            - discount: number;
+            + subscription: Subscription;
+        }
+
+        class RepositorySD<<UserSubscriptionDiscount>> {
+
+        }
+
+        class RepositoryS2<<Subscription>> {
+
+        }
+
+    }
+
+}
+
+' relaciones
+UserSubscriptionService ..> UserSubscriptionDTO : Devuelve
+UserSubscriptionController --> UserSubscriptionService : Depende de
+UserSubscriptionService --> RepositoryUS: Depende de
+UserSubscriptionService --> RepositoryU: Depende de
+UserSubscriptionService --> RepositoryS1: Depende de
+RepositoryUS --> UserSubscriptionEntity: Accede a 
+
+SubscriptionService ..> SubscriptionDTO : Usa
+SubscriptionController --> SubscriptionService : depende de
+SubscriptionService --> RepositoryCS : depende de
+RepositoryCS --> SubscriptionEntity : Accede a
+
+SubscriptionDiscountController --> SubscriptionDiscountService : Depende de
+SubscriptionDiscountService --> RepositorySD : Depende de
+SubscriptionDiscountService --> RepositoryS2 : Depende de
+RepositorySD --> UserSubscriptionDiscountEntity : Accede a
+@enduml

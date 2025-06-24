@@ -1,0 +1,55 @@
+@startuml
+package moduloAuthentication {
+    class AuthService {
+        - usersService: UsersService
+        - jwtService: JwtService
+
+        + register(requestBody: RegisterRequestBody)
+        + login(requestBody: LoginRequestBody)
+        + validateUser(email: string, pass: string)
+    }
+
+    class AuthController {
+        - authService: AuthService
+
+        + login(LoginRequestBody: LoginRequestBody)
+        + registerUser(requestBody: RegisterRequestBody)
+    }
+
+    package authDto {
+        class RegisterRequestBody {
+            + username: string
+            + firstname: string
+            + lastname: string
+            + email: string
+            + password: string
+
+            + RegisterRequestBody(props: registerRequestBodyProps)
+        }
+
+            class LoginRequestBody {
+            + email: string
+            + password: string
+
+            + LoginRequestBody(email: string, password: string)
+        }
+    }
+
+        interface registerRequestBodyProps {
+        username: string,
+        firstname: string,
+        lastname: string,
+        email: string,
+        password: string
+    }
+
+}
+
+' Relaciones
+AuthController --> AuthService : Depende de
+AuthService ..> LoginRequestBody : usa
+AuthService ..> RegisterRequestBody : usa
+
+RegisterRequestBody ..> registerRequestBodyProps : Usa
+
+@enduml

@@ -1,0 +1,344 @@
+@startuml
+package moduloBook {
+    package Book {
+        class BookDTO {
+            + id: number
+            + title: string
+            + author: string
+            + author_id: number
+            + description: string
+            + genre: Genre[]
+            + anio: number
+            + isbn: string
+            + image: string
+            + stock: number
+            + subscriber_exclusive: boolean
+            + price: number
+
+            + BookDTO(props: BookDTOProps)
+            + {static} BookDTO2BookEntity(bookDTO: BookDTO): Book
+            + {static} BookEntity2BookDTO(book: Book): BookDTO
+        }
+
+        class CreateBookDto {
+            + title: string
+            + author_id: number
+            + description: string
+            + anio: number
+            + isbn: string
+            + image: string
+            + stock: number
+            + subscriber_exclusive: boolean
+            + price: number
+            + genre: number[]
+
+            + CreateBookDTO(props: CreateBookDTOProps)
+        }
+
+        class BooksService {
+            - settingsService: SettingsService
+            - booksRepository: Repository<Book>
+            - genreRepository: Repository<Genre>
+
+            + findAll(): Promise<BookDTO[]>
+            + findAllWithGenre(genreId: number): Promise<BookDTO[]>
+            + findAllByAuthor(authorId: number): Promise<BookDTO[]>
+            + findOne(id: number): Promise<BookDTO | null>
+            + create(bookDTO: CreateBookDTO)
+            + update(id: number, bookDTO: CreateBookDTO)
+            + delete(id: number): Promise<boolean>
+
+            + bookImageUrl = (imageName:string):string
+        }
+
+        class BookController {
+            - booksService: BooksService
+
+            + findAll(): Promise<BookDTO[]>
+            + getBooksWithGenre(id: number)
+            + getBooksByAuthor(id: number)
+            + findOne(id: number)
+            + create(bookDTO: CreateBookDTO, file: Express.Multer.File)
+            + update(id: number, bookDTO: CreateBookDTO, file: Express.Multer.File)
+            + delete(id: number)
+        }
+
+        class BookEntity {
+            - id: number
+            - title: string
+            - description: string
+            - anio: number
+            - isbn: string
+            - image: string = ""
+            - stock: number
+            - subscriber_exclusive: boolean = false
+            - price: number
+            + author: Author
+            + genres: Genre[]
+        }
+
+        interface BookDTOProps {
+            id: number,
+            title: string,
+            author: string,
+            author_id: number,
+            description: string,
+            genre: Genre[],
+            anio: number,
+            isbn: string,
+            image: string,
+            stock: number,
+            subscriber_exclusive: boolean,
+            price: number
+        }
+
+        interface CreateBookDTOProps {
+            title: string,
+            author_id: number,
+            description: string,
+            anio: number,
+            isbn: string,
+            image: string,
+            stock: number,
+            subscriber_exclusive: boolean,
+            price: number,
+            genre: number[],
+        }
+
+        Class RepositoryB1<<Book>>{
+
+        }
+
+    }
+    
+    package Catalogue {
+        class CatalogueBookDTO {
+            + id: number
+            + title: string
+            + author: string
+            + author_id: number
+            + descripcion: string
+            + genre: genre[]
+            + anio: number
+            + image: string
+            + stock: number
+            + subscriber_exclusive: boolean
+            + price: number
+        }
+
+        class CatalogueBooksService {
+            - booksService: BooksService
+
+            + findAll(): Promise<CatalogueBookDTO[]>
+            + findOne(id: number): Promise<CatalogueBookDTO | null>
+        }
+
+        class CatalogueBooksController {
+            - booksService: CatalogueBooksService
+
+            + findAll(): Promise<CatalogueBookDTO[]>
+            + findOne(id: number): Promise<CatalogueBookDTO | null>
+        }
+
+        class "BooksService" as b1 {
+            + findAll(): Promise<BookDTO[]>
+            + findOne(id: number): Promise<BookDTO | null> 
+        }
+
+    }
+
+    package Content {
+        class BookContentDTO {
+            + idBook: number
+            + content:string
+
+            + BookContentDTO(idBook:number, content:string)
+        }
+
+        class BookContentService {
+            -  bookContentRepository: Repository<VirtualBookContent>
+
+            + get(id:number):Promise<BookContentDTO|null>
+            + create(bookContent: Partial<BookContentDTO>): Promise<BookContentDTO>
+            + update(id:number, bookContent: BookContentDTO)
+            + delete(id: number)
+        }
+
+        class BookContentController {
+            - bookContentService: BookContentService
+
+            + get(id: number):Promise<BookContentDTO|null>
+            + post(bookContent: BookContentDTO):Promise<BookContentDTO>
+            + update(id: number, bookContent: BookContentDTO)
+            + delete(id: number)
+        }
+
+        class VirtualBookContentEntity {
+            - id: number
+            - content: string
+            + book: Book
+        }
+
+        class RepositoryC<<Content>> {
+
+        }
+
+    }
+
+    package Library {
+        class LibraryBookDTO {
+            + id: number
+            + title: string
+            + author_id: number
+            + description: string
+            + genre: Genre[]
+            + isbn: string
+            + image: string
+            + LibraryBookDTO(id: number, title: string, author_id: number,
+            description: string, genre: Genre[], isbn: string, image: string)
+        }
+
+        class CreateUserVirtualBookDto {
+            + idUser: number
+            + idBook: number
+
+            + CreateUserVirtualBookDto(idUser: number, idBook: number)
+        }
+
+        class LibraryBooksService {
+            - userVirtualBooks: Repository<UserVirtualBooks>
+            - userRepository: Repository<User>
+            - bookRepository: Repository<Book>
+
+            + findAllByUser(idUser: number): Promise<LibraryBookDTO[]>
+            + create(userVirtualBook: { idUser: number, idBook: number }): Promise<UserVirtualBooks>
+        }
+
+        class LibraryBooksController {
+            - libraryBooksService: LibraryBooksService
+
+            + findAllByUser(idUser: number): Promise<LibraryBookDTO[]>
+            + create(createUserVirtualBookDto: CreateUserVirtualBookDto): Promise<UserVirtualBooks>
+        }
+
+        class UserVirtualBooksEntity {
+            - id: number
+            + user: User
+            + book: Book
+        }
+
+        class RepositoryUV<<UserVirtualBooks>> {
+
+        }
+
+        class RepositoryU1<<User>> {
+
+        }
+
+        class RepositoryB2<<Books>> {
+
+        }
+
+    }
+
+    package Reviews {
+        class ReviewEntity {
+            - id: number
+            - rating: number
+            - comment: string
+            - reviewDate: Date
+            + user: User
+            + book: Book
+        }
+
+        class BookReviewsService {
+            - reviewRepository: Repository<Review>
+            - user: Repository<User>
+
+            + create(reviewData: CreateReviewDto): Promise<ReviewI>
+            + findAll(): Promise<Review[]>
+            + findOne(id: number): Promise<Review>
+            + findReviewsByBookId(bookId: number): Promise<ReviewI[]>
+            + update(id: number, reviewData: ReviewI)
+            + remove(id: number): Promise<void>
+        }
+
+        class BookReviewsController {
+            - reviewService: BookReviewsService
+
+            + findAll(): Promise<Review[]>
+            + findOne(id: number) 
+            + findReviewsByBookId(bookId: number)
+            + create(reviewData: CreateReviewDto)
+            + update(id:number, reviewData: ReviewI)
+            + remove(id: number): Promise<void>
+        }
+
+        class ReviewI {
+            + id: number
+            + id_user: number
+            + id_book: number
+            + username: string
+            + comment: string
+            + reviewDate: string
+
+            + ReviewI(id: number, id_user: number, id_book: number, 
+            username: string, comment: string, rating: number, reviewDate: string)
+        }
+
+        class CreateReviewDto {
+            + id_user: number
+            + id_book: number
+            + comment: string
+            + rating: number
+
+            createReviewDto(id_user: number, id_book: number, 
+            comment: string, rating: number)
+        }
+
+        class RepositoryR<<Review>> {
+
+        }
+
+        class RepositoryU2<<User>> {
+
+        }
+    }
+}
+
+' Relaciones 
+BookController --> BooksService : Depende de
+BooksService --> BookDTO : Depende de
+BooksService ..> CreateBookDto : Usa
+BooksService --> RepositoryB1 : Depende de
+RepositoryB1 --> BookEntity : Accede a
+
+
+CatalogueBooksController --> CatalogueBooksService : Depende de
+CatalogueBooksService ..> CatalogueBookDTO : Devuelve
+CatalogueBooksService --> b1 :Depende de
+
+
+BookContentController --> BookContentService : Depende de
+BookContentService ..> BookContentDTO : Usa/devuelve
+BookContentService --> RepositoryC : Depende de
+RepositoryC --> VirtualBookContentEntity : accede a
+
+LibraryBooksController --> LibraryBooksService : Depende de
+LibraryBooksController ..> CreateUserVirtualBookDto : Usa
+LibraryBooksService --> RepositoryUV : Depende de
+LibraryBooksService --> RepositoryU1 : Depende de
+LibraryBooksService --> RepositoryB2 : Depende
+RepositoryUV --> UserVirtualBooksEntity : Accede a
+LibraryBooksService ..> LibraryBookDTO : Devuelve
+
+
+BookReviewsController --> BookReviewsService : Depende de
+BookReviewsService ..> ReviewI : Usa/devuelve
+BookReviewsService --> RepositoryR : Depende de
+BookReviewsService --> RepositoryU2 : Depende de
+RepositoryR --> ReviewEntity : Accede a
+
+BookDTO ..> BookDTOProps : Usa
+CreateBookDto ..> CreateBookDTOProps : Usa
+@enduml

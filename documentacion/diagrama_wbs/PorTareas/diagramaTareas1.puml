@@ -1,0 +1,60 @@
+@startwbs
+* Proyecto: Aplicación Web de Gestión de Libros (Enfoque Tareas Dividido)
+** Front-end
+*** Configuración inicial de proyecto NextJS + TypeScript
+*** Estructura de rutas, layouts y temas globales
+*** Autenticación (registro, login, logout)
+*** Manejo de sesiones y redirecciones según rol
+*** Diseño de Home y Catálogo de Libros
+*** Página de Detalle de Libro
+*** Funcionalidad de Reservar Libros
+*** Agregar a Favoritos
+*** Carrito de Compras (agregar, eliminar libros)
+*** Selección de Tipo de Libro (físico, virtual, audio)
+*** Calificar Libros y Crear Reseñas
+*** Comentar en Libros
+*** Vista y Formulario de Suscripciones
+*** Perfil de Usuario (ver, editar datos personales)
+*** Panel de Administración: ABM de Libros
+*** Panel de Administración: Visualizar y gestionar Reservas
+*** Panel de Reclamos y Bloqueo de Usuarios
+*** Panel de Publicación de Novedades
+*** Gestión de Usuarios y Roles (Admin)
+*** Vista Bibliotecario (opcional)
+*** Implementación de Filtros, Búsquedas y Paginación en Catálogo
+*** Integración con APIs (consumo seguro de backend)
+*** Manejo de errores de APIs
+*** Testing Front-end (React Testing Library)
+*** Validación de formularios en Front
+*** Documentación de Manual de Usuario Cliente y Admin
+*** Deploy en plataforma (Vercel o similar)
+
+** Back-end
+*** Configuración inicial de proyecto NestJS + TypeScript
+*** Configuración de estructura modular de NestJS
+*** Implementación de Autenticación (JWT)
+*** Middleware de autorización según roles (Admin, Usuario)
+*** Modelado de Base de Datos PostgreSQL
+*** Creación de Diagrama Entidad-Relación (ER)
+*** Migraciones y Seeds de Base de Datos
+*** API de Registro/Login/Logout de Usuario
+*** API de Perfil de Usuario (GET, PUT)
+*** API de Libros (CRUD)
+*** API de Reservas (Crear, Listar, Actualizar Estado)
+*** API de Favoritos (Agregar, Listar)
+*** API de Carrito de Compras (Agregar, Eliminar, Ver)
+*** API de Calificaciones y Reseñas de Libros
+*** API de Comentarios en Libros
+*** API de Suscripciones
+*** API de Reclamos de Daños y Bloqueo de Usuarios
+*** API de Novedades
+*** API de Gestión de Roles y Permisos
+*** Endpoints específicos para Bibliotecario (opcional)
+*** Implementación de Logs de Operaciones
+*** Validación de datos de entrada (DTOs, Pipes)
+*** Manejo centralizado de Errores
+*** Testing Unitario e Integración (Jest y Supertest)
+*** Documentación API (Swagger o Postman)
+*** Asegurar cobertura de código +80%
+*** Deploy en Railway/Render (Backend y Base de Datos)
+@endwbs

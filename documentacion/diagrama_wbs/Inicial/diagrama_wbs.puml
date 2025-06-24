@@ -1,0 +1,53 @@
+@startwbs
+
+* Desarrollo de Aplicación para Pedidos y Reservas de Libros
+** Frontend
+***< Clientes
+***> Administradores
+
+***< [#SkyBlue] Gestionar reservas
+***> Visualizar y actualizar reservas
+***< Reclamos por daños
+
+** Frontend para Clientes
+*** Consultar catálogo
+*** Reservar libros y marcar favoritos
+*** Cargar al carrito
+*** Seleccionar tipo de libro
+*** Calificar y comentar
+*** Suscribirse a un plan
+
+** Frontend para Administradores
+*** Gestionar libros
+**** Cargar nuevos libros
+**** Borrar libros
+***[#SkyBlue] Gestionar reservas
+*** Visualizar y actualizar reservas
+*** Reclamos por daños
+
+** Backend / API
+*** Endpoints para el catálogo, reservas, carrito, usuarios
+*** Lógica de negocio (validaciones, reglas de reserva)
+*** Integración con sistemas de pago y envío de correos
+
+** Base de Datos
+*** Modelo de libros (título, tipo, disponibilidad)
+*** Modelo de usuarios y suscripciones
+*** Modelo de reservas
+*** Modelo de calificaciones y comentarios
+*** Reclamos por daños
+
+** Sistema de Autenticación
+*** Registro e inicio de sesión
+*** Roles (cliente, administrador)
+*** Seguridad y control de acceso
+
+**[#Red] Sistema de Notificaciones
+
+** Planes y Subscripciones
+
+** Infraestructura / DevOps
+
+** QA y Testing
+
+@endwbs

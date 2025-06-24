@@ -1,0 +1,304 @@
+.container {
+  width: 100vw;
+  min-height: 80vh;
+  background-color: rgb(221, 235, 254);
+  padding: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 3vw;
+  padding-right: 4vw;
+}
+
+.loading {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+}
+
+.mainContent {
+  display: flex;
+  gap: 20px;
+}
+
+.productsColumn {
+  flex: 1;
+  min-width: 0;
+}
+
+.summaryColumn {
+  width: 300px;
+  flex-shrink: 0;
+}
+
+.cartSection {
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.emptyCart {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+}
+
+.itemsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+}
+
+.cartItem {
+  display: flex;
+  gap: 20px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+
+}
+
+.itemImage img {
+  width: 100px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.itemDetails {
+  flex: 1;
+}
+
+.itemDetails h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.itemDetails p {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.price {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.quantityButton {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.quantity {
+  min-width: 30px;
+  text-align: center;
+}
+
+.itemActions {
+  display: flex;
+  gap: 10px;
+}
+
+.removeButton,
+.compareButton {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.ebookImage {
+  opacity: 0.8;
+  border: 2px solid #4a90e2;
+}
+
+.ebookBadge {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: #2b7edd;
+  color: white;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.formatInfo {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 5px 0;
+}
+
+.digitalNote {
+  font-size: 0.8rem;
+  color: #4a90e2;
+  margin-top: 10px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Estilo para items físicos */
+.physicalItem {
+  border-left: 4px solid #ff9500;
+}
+
+/* Deshabilitar botón de comparar para eBooks */
+.compareButton[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.itemImage {
+  position: relative;
+}
+
+.removeButton {
+  background-color: #f8f8f8;
+  color: #666;
+}
+
+.compareButton {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.shippingInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.freeShipping {
+  color: #00a650;
+  font-weight: bold;
+}
+
+.shareButton {
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.capacities {
+  color: #666;
+  font-size: 14px;
+}
+
+.moreProducts {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  text-align: center;
+  color: #666;
+}
+
+.summarySection {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px;
+}
+
+.discount {
+  color: #f44336;
+  /* Rojo para indicar descuento */
+  font-weight: bold;
+}
+
+.summaryDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.totalSection {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5);
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+}
+
+.totalTitle {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.totalAmount {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.checkoutButton {
+  padding: 12px;
+  background-color: #3483fa;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: bold;
+}
+
+.vendorInfo {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+}
+
+.vendorInfo h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.vendorInfo p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}

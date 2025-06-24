@@ -1,0 +1,36 @@
+@startuml addBook
+actor Usuario
+participant "Navbar (Next.js)" as Navbar
+participant "AdminPanel (Next.js)" as AdminPanel
+participant "BooksPanel (Next.js)" as BooksPanel
+participant "API" as Api
+participant "BookController (NestJS)" as BookCtrl
+participant "BookService (NestJS)" as BookService
+participant "DB" as DB
+
+Usuario -> Navbar: Click en nombre de usuario
+Navbar -> Navbar: toggleMenu() → mostrar dropdown
+Usuario -> Navbar: Click en "Panel de administrador"
+Navbar -> AdminPanel: router.push('/adminPanel')
+
+Usuario -> AdminPanel: Click en sección "Libros"
+AdminPanel -> BooksPanel: Mostrar libros (si hay cargados)
+
+Usuario -> BooksPanel: Click en "Agregar libro"
+BooksPanel -> BooksPanel: Mostrar formulario de carga
+
+Usuario -> BooksPanel: Completar inputs, select, checkbox, drag-and-drop
+Usuario -> BooksPanel: Click en "Guardar"
+
+BooksPanel -> Api: books.createBookFile(newBook, formGenresNumber)
+Api -> BookCtrl: POST /books (Nuevo Libro la con imagen y sus generos)
+
+BookCtrl -> BookService: createBook(...)
+BookService -> DB: Insertar nuevo libro
+DB --> BookService: Confirmación
+
+BookService --> BookCtrl: Libro creado
+BookCtrl --> Api: 201 Created + libro
+Api --> BooksPanel: Éxito
+BooksPanel --> Usuario: Mostrar mensaje de confirmación
+@enduml
