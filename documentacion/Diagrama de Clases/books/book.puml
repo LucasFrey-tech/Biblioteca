@@ -66,7 +66,6 @@ package moduloBook {
         class BookEntity {
             - id: number
             - title: string
-            - author_id: number
             - description: string
             - anio: number
             - isbn: string
@@ -77,27 +76,61 @@ package moduloBook {
             + author: Author
             + genres: Genre[]
         }
+
+        interface BookDTOProps {
+            id: number,
+            title: string,
+            author: string,
+            author_id: number,
+            description: string,
+            genre: Genre[],
+            anio: number,
+            isbn: string,
+            image: string,
+            stock: number,
+            subscriber_exclusive: boolean,
+            price: number
+        }
+
+        interface CreateBookDTOProps {
+            title: string,
+            author_id: number,
+            description: string,
+            anio: number,
+            isbn: string,
+            image: string,
+            stock: number,
+            subscriber_exclusive: boolean,
+            price: number,
+            genre: number[],
+        }
+
+        Class RepositoryB1<<Book>>{
+
+        }
+
     }
     
     package Catalogue {
         class CatalogueBookDTO {
             + id: number
-            + id_user: number
-            + id_book: number
             + title: string
             + author: string
+            + author_id: number
+            + descripcion: string
+            + genre: genre[]
+            + anio: number
             + image: string
+            + stock: number
+            + subscriber_exclusive: boolean
             + price: number
-            + virtual: boolean
-            + amount: number
-            + purchaseDate: Date
         }
 
         class CatalogueBooksService {
             - booksService: BooksService
 
             + findAll(): Promise<CatalogueBookDTO[]>
-            + findOne(id: number)
+            + findOne(id: number): Promise<CatalogueBookDTO | null>
         }
 
         class CatalogueBooksController {
@@ -105,6 +138,11 @@ package moduloBook {
 
             + findAll(): Promise<CatalogueBookDTO[]>
             + findOne(id: number): Promise<CatalogueBookDTO | null>
+        }
+
+        class "BooksService" as b1 {
+            + findAll(): Promise<BookDTO[]>
+            + findOne(id: number): Promise<BookDTO | null> 
         }
 
     }
@@ -137,8 +175,12 @@ package moduloBook {
 
         class VirtualBookContentEntity {
             - id: number
-            - id_book:number
             - content: string
+            + book: Book
+        }
+
+        class RepositoryC<<Content>> {
+
         }
 
     }
@@ -149,10 +191,11 @@ package moduloBook {
             + title: string
             + author_id: number
             + description: string
+            + genre: Genre[]
             + isbn: string
             + image: string
             + LibraryBookDTO(id: number, title: string, author_id: number,
-            description: string, isbn: string, image: string)
+            description: string, genre: Genre[], isbn: string, image: string)
         }
 
         class CreateUserVirtualBookDto {
@@ -164,6 +207,8 @@ package moduloBook {
 
         class LibraryBooksService {
             - userVirtualBooks: Repository<UserVirtualBooks>
+            - userRepository: Repository<User>
+            - bookRepository: Repository<Book>
 
             + findAllByUser(idUser: number): Promise<LibraryBookDTO[]>
             + create(userVirtualBook: { idUser: number, idBook: number }): Promise<UserVirtualBooks>
@@ -178,9 +223,20 @@ package moduloBook {
 
         class UserVirtualBooksEntity {
             - id: number
-            - id_user: number
-            - id_book: number
+            + user: User
             + book: Book
+        }
+
+        class RepositoryUV<<UserVirtualBooks>> {
+
+        }
+
+        class RepositoryU1<<User>> {
+
+        }
+
+        class RepositoryB2<<Books>> {
+
         }
 
     }
@@ -188,18 +244,18 @@ package moduloBook {
     package Reviews {
         class ReviewEntity {
             - id: number
-            - id_user: number
-            - id_book: number
             - rating: number
             - comment: string
             - reviewDate: Date
             + user: User
+            + book: Book
         }
 
         class BookReviewsService {
             - reviewRepository: Repository<Review>
+            - user: Repository<User>
 
-            + create(reviewData: Partial<ReviewI>): Promise<ReviewI>
+            + create(reviewData: CreateReviewDto): Promise<ReviewI>
             + findAll(): Promise<Review[]>
             + findOne(id: number): Promise<Review>
             + findReviewsByBookId(bookId: number): Promise<ReviewI[]>
@@ -210,12 +266,12 @@ package moduloBook {
         class BookReviewsController {
             - reviewService: BookReviewsService
 
-            + findAll()
+            + findAll(): Promise<Review[]>
             + findOne(id: number) 
             + findReviewsByBookId(bookId: number)
-            + create(reviewData: ReviewI)
+            + create(reviewData: CreateReviewDto)
             + update(id:number, reviewData: ReviewI)
-            + remove(id: number)
+            + remove(id: number): Promise<void>
         }
 
         class ReviewI {
@@ -224,9 +280,28 @@ package moduloBook {
             + id_book: number
             + username: string
             + comment: string
+            + reviewDate: string
 
             + ReviewI(id: number, id_user: number, id_book: number, 
             username: string, comment: string, rating: number, reviewDate: string)
+        }
+
+        class CreateReviewDto {
+            + id_user: number
+            + id_book: number
+            + comment: string
+            + rating: number
+
+            createReviewDto(id_user: number, id_book: number, 
+            comment: string, rating: number)
+        }
+
+        class RepositoryR<<Review>> {
+
+        }
+
+        class RepositoryU2<<User>> {
+
         }
     }
 }
@@ -234,22 +309,36 @@ package moduloBook {
 ' Relaciones 
 BookController --> BooksService : Depende de
 BooksService --> BookDTO : Depende de
-BooksService --> CreateBookDto : Depende de
-BooksService --> BookEntity : Depende de
+BooksService ..> CreateBookDto : Usa
+BooksService --> RepositoryB1 : Depende de
+RepositoryB1 --> BookEntity : Accede a
+
 
 CatalogueBooksController --> CatalogueBooksService : Depende de
-CatalogueBooksService --> CatalogueBookDTO : Depende de
+CatalogueBooksService ..> CatalogueBookDTO : Devuelve
+CatalogueBooksService --> b1 :Depende de
+
 
 BookContentController --> BookContentService : Depende de
-BookContentService --> BookContentDTO : Depende de
-BookContentService --> VirtualBookContentEntity : Depende de
+BookContentService ..> BookContentDTO : Usa/devuelve
+BookContentService --> RepositoryC : Depende de
+RepositoryC --> VirtualBookContentEntity : accede a
 
 LibraryBooksController --> LibraryBooksService : Depende de
-LibraryBooksController --> CreateUserVirtualBookDto : Depende de
-LibraryBooksService --> UserVirtualBooksEntity : Depende de
-LibraryBooksService --> LibraryBookDTO : Depende de
+LibraryBooksController ..> CreateUserVirtualBookDto : Usa
+LibraryBooksService --> RepositoryUV : Depende de
+LibraryBooksService --> RepositoryU1 : Depende de
+LibraryBooksService --> RepositoryB2 : Depende
+RepositoryUV --> UserVirtualBooksEntity : Accede a
+LibraryBooksService ..> LibraryBookDTO : Devuelve
+
 
 BookReviewsController --> BookReviewsService : Depende de
-BookReviewsService --> ReviewI : Depende de
-BookReviewsService --> ReviewEntity : Depende de
+BookReviewsService ..> ReviewI : Usa/devuelve
+BookReviewsService --> RepositoryR : Depende de
+BookReviewsService --> RepositoryU2 : Depende de
+RepositoryR --> ReviewEntity : Accede a
+
+BookDTO ..> BookDTOProps : Usa
+CreateBookDto ..> CreateBookDTOProps : Usa
 @enduml

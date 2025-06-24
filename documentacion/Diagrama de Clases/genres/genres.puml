@@ -10,6 +10,7 @@ package moduloGenres {
 
         + findAll(): Promise<Genre[]>
         + create(genre: Partial<Genre>): Promise<Genre>
+        + delete(id: number): Promise<Void>
     }
 
     class GenresController {
@@ -17,12 +18,17 @@ package moduloGenres {
 
         + findAll(): Promise<Genre[]>
         + create(newGenre: Partial<Genre>): Promise<Genre>
+        + delete(id: number): Promise<Void>
+    }
+
+    class Repository<<Genre>> {
+
     }
 
 }
 
 ' Relaciones
-GenresController --> GenreEntity : Depende de
 GenresController --> GenresService : Depende de
-
+GenresService --> Repository : Depende de
+Repository --> GenreEntity : Accede a
 @enduml

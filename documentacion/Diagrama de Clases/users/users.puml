@@ -20,7 +20,7 @@ package ModuloUser {
         - usersRepository: Repository<User>
 
         + findAll(search = ''): Promise<User[]>
-        + findOne(id: number)
+        + findOne(id: number): Promise<User | null>
         + create(user: Partial<User>)
         + findByEmail(email: string): Promise<User | null>
         + findByUser(username: string): Promise<User | null>
@@ -32,11 +32,11 @@ package ModuloUser {
         - userService: UserService
 
         + getAllUsers(): Promise<User[]>
-        + findOne(id: number)
+        + findOne(id: number): Promise<User | null>
         + create(user: Partial<User>)
         + update(id: number, user: Partial<User>)
         + delete(id: number)
-        + findAll(search: string)
+        + findAll(search: string): Promise<User[]>
         + updateUser(id: number, dto: UpdateUserDto)
     }
 
@@ -44,10 +44,16 @@ package ModuloUser {
         + admin: boolena
         + disabled: boolean
     }
+
+    class Repository<<User>> {
+
+    }
+
 }
 
 ' relaciones 
 UserController --> UserService : Depende de
-UserService --> UserEntity : Depende de
-UserController --> UpdateUserDto : usa
+UserService --> Repository : Depende de
+Repository --> UserEntity : Accede a
+UserController ..> UpdateUserDto : usa
 @enduml

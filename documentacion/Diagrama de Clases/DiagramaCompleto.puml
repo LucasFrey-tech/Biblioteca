@@ -274,7 +274,6 @@ class RegisterRequestBody {
 }
 
 interface registerRequestBodyProps {
-    'flecha de uso de registerRequestBody a props
     username: string,
     firstname: string,
     lastname: string,

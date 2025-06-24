@@ -2,8 +2,6 @@
 package moduloPurchase {
     class PurchaseEntity {
     - id: number
-    - idUser: number
-    - idBook: number
     - amount: number
     - price: number
     - virtual: boolean = false
@@ -20,6 +18,7 @@ package moduloPurchase {
 
         + processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void>
         + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+        + getAllPurchases(): Promise<PurchaseDTO[]> 
     }
 
     class PurchaseController {
@@ -27,11 +26,14 @@ package moduloPurchase {
 
         + processPurchase(body: ProcessPurchaseDTO)
         + getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null>
+        + getAllPurchases(): Promise<PurchaseDTO[]> 
     }
 
     class PurchaseDTO {
-        + id:number
-        + id_user:number
+        + id: number
+        + id_user: number
+        + username: string
+        + id_book: number
         + title: string
         + author: string
         + image: string
@@ -42,12 +44,46 @@ package moduloPurchase {
 
         + PurchaseDTO(props: PurchaseDTOProps)
     }
+
+    interface PurchaseDTOProps {
+        id: number,
+        id_user: number,
+        id_book: number,
+        title: string,
+        author: string,
+        image: string,
+        price: number,
+        virtual: boolean,
+        amount: number,
+        purchaseDate: Date,
+    }
+
+    class RepositoryP<<Purchase>> {
+
+    }
+
+    class RepositoryC<<Cart>> {
+
+    }
+
+    class RepositoryB<<Book>> {
+
+    }
+
+    class RepositoryU<<User>> {
+
+    }
+
 }
 
 ' Relaciones
-PurchaseService --> PurchaseDTO : Depende de
-PurchaseService --> PurchaseEntity : Depende de
+PurchaseService ..> PurchaseDTO : Devuelve
+PurchaseService --> RepositoryP : Depende de
+PurchaseService --> RepositoryC : Depende de
+PurchaseService --> RepositoryB : Depende de
+PurchaseService --> RepositoryU : Depende de
+RepositoryP --> PurchaseEntity : Accede a
 PurchaseController --> PurchaseService : Depende de
 
-
+PurchaseDTO ..> PurchaseDTOProps : Usa
 @enduml
