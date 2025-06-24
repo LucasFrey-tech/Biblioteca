@@ -112,5 +112,5 @@ export const mockDtoBook3:BookDTO = {
 
 export const mockDtoBooks = [mockDtoBook1, mockDtoBook2, mockDtoBook3];
 export const mockDtoBooksWithGenreAccion = [mockDtoBook1, mockDtoBook2];
-export const mockDtoBooksByAuthor = [mockDtoBook1, mockDtoBook2];
+export const mockDtoBooksByAuthorIdOne = [mockDtoBook1, mockDtoBook2];
 export const mockDtoDeletedBooks = [mockDtoBook1, mockDtoBook2];

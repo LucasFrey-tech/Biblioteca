@@ -22,4 +22,12 @@ export const mockUserVirtualBooks3:UserVirtualBooks = {
     book: mockBook3
 };
 
+export const mockNewUserVirtualBooks:UserVirtualBooks = {
+    id: 4,
+    idBook: 3,
+    idUser: 1,
+    book: mockBook3
+};
+
 export const mockUserVirtualBooks = [mockUserVirtualBooks1, mockUserVirtualBooks2, mockUserVirtualBooks3];
+export const mockDeletedUserVirtualBooks = [mockUserVirtualBooks1, mockUserVirtualBooks2];

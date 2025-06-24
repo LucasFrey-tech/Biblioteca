@@ -24,11 +24,33 @@ export const mockReview2:Review = {
 export const mockReview3:Review = {
     id: 3,
     id_user: 3,
-    id_book: 2,
+    id_book: 1,
     rating: 5,
     comment: "GOOOOOOD!",
     reviewDate: new Date("2020-05-02"),
     user: mockUser3
 };
 
+export const mockNewReview:Review = {
+    id: 4,
+    id_user: 1,
+    id_book: 1,
+    rating: 4,
+    comment: "Buenardo.",
+    reviewDate: new Date("2020-05-02"),
+    user: mockUser1
+};
+
+export const mockUpdatedReview:Review = {
+    id: 1,
+    id_user: 1,
+    id_book: 1,
+    rating: 5,
+    comment: "10/10",
+    reviewDate: new Date("2020-05-02"),
+    user: mockUser1
+};
+
 export const mockReviews = [mockReview1, mockReview2, mockReview3];
+export const mockReviewsSearchByBookId = [mockReview1, mockReview3];
+export const mockDeletedReviews = [mockReview1, mockReview2];

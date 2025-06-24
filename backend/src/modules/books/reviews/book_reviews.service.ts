@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
-import { Review } from "src/entidades/review.entity";
+import { Review } from "../../../entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 
 @Injectable()

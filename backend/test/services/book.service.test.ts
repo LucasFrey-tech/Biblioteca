@@ -5,7 +5,7 @@ import { Book } from '../../src/entidades/book.entity';
 import { Genre } from '../../src/entidades/genre.entity';
 import { mockBook1, mockBooks, mockDeletedBooks, mockNewBook, mockUpdateBook as mockUpdatedBook } from '../mocks/entities/books.mock';
 import { BooksService } from '../../src/modules/books/book/book.service';
-import { mockDtoBook1, mockDtoBooks, mockDtoBooksByAuthor, mockDtoBooksWithGenreAccion, mockDtoDeletedBooks, mockDtoNewBook, mockDtoNewBookWithUnexistingGenre, mockDtoUpdateBook, mockDtoUpdateBookId } from '../mocks/dtos/bookDTOs.mock';
+import { mockDtoBook1, mockDtoBooks, mockDtoBooksByAuthorIdOne, mockDtoBooksWithGenreAccion, mockDtoDeletedBooks, mockDtoNewBook, mockDtoNewBookWithUnexistingGenre, mockDtoUpdateBook, mockDtoUpdateBookId } from '../mocks/dtos/bookDTOs.mock';
 import { SettingsService } from '../../src/settings.service';
 import { mockGenre1, mockGenres } from '../mocks/entities/genres.mock';
 import { mockAuthor1 } from '../mocks/entities/authors.mock';
@@ -80,7 +80,7 @@ const mockBooksRepository = {
   it('findAllByAuthor should filter by author', async () => {
     const result = await service.findAllByAuthor(mockAuthor1.id);
     expect(mockBooksRepository.find).toHaveBeenCalledWith({ relations: ['genres', 'author'] });
-    expect(result).toEqual(mockDtoBooksByAuthor);
+    expect(result).toEqual(mockDtoBooksByAuthorIdOne);
   });
 
   it('create should save and return a book', async () => {

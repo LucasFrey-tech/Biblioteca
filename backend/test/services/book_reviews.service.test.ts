@@ -3,13 +3,23 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { Review } from '../../src/entidades/review.entity';
-import { mockReview1, mockReviews } from '../mocks/entities/review.mock';
+import { mockDeletedReviews, mockNewReview, mockReview1, mockReviews, mockReviewsSearchByBookId, mockUpdatedReview } from '../mocks/entities/review.mock';
 import { BookReviewsService } from '../../src/modules/books/reviews/book_reviews.service';
-import { User } from "src/entidades/user.entity";
+import { mockReviewDtosSearchByBookId } from '../mocks/dtos/reviewDTOs.mock';
 
 describe('BookReviewsService', () => {
   let service: BookReviewsService;
   let repo: jest.Mocked<Repository<Review>>;
+
+  const mockReviewsRepository = {
+    find: jest.fn().mockResolvedValue(mockReviews),
+    findOne: jest.fn().mockResolvedValue(mockReview1),
+    create: jest.fn().mockResolvedValue(mockNewReview),
+    update: jest.fn().mockResolvedValue(mockUpdatedReview),
+    delete: jest.fn().mockResolvedValue(mockDeletedReviews),
+    save: jest.fn().mockResolvedValue(mockUpdatedReview),    
+    remove: jest.fn().mockResolvedValue(mockDeletedReviews),    
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,11 +28,7 @@ describe('BookReviewsService', () => {
         BookReviewsService,
         {
           provide: getRepositoryToken(Review),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            delete: jest.fn(),
-          },
+          useValue: mockReviewsRepository,
         },
       ],
     }).compile();
@@ -37,33 +43,33 @@ describe('BookReviewsService', () => {
 
   describe('findAll', () => {
     it('should return all reviews', async () => {
-      repo.find.mockResolvedValue(mockReviews);
       const result = await service.findAll();
-      expect(repo.find).toHaveBeenCalledWith({});
+      expect(repo.find).toHaveBeenCalledWith({relations: ['user']});
       expect(result).toEqual(mockReviews);
     });
   });
 
   describe('findOne', () => {
     it('should return a review by id', async () => {
-      repo.findOne.mockResolvedValue(mockReview1);
-      const result = await service.findOne(1);
-      expect(repo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+      const searchReviewId = 1
+      const result = await service.findOne(searchReviewId);
+      expect(repo.findOne).toHaveBeenCalledWith({ where: { id: searchReviewId }, relations: ['user'] });
       expect(result).toEqual(mockReview1);
     });
 
     it('should throw NotFoundException if review not found', async () => {
       repo.findOne.mockResolvedValue(null);
-      await expect(service.findOne(2)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(6)).rejects.toThrow(NotFoundException);
     });
   });
 
   describe('findReviewsByBookId', () => {
     it('should return reviews by book id', async () => {
-      repo.find.mockResolvedValue(mockReviews);
-      const result = await service.findReviewsByBookId(2);
-      expect(repo.find).toHaveBeenCalledWith({ where: { idBook: 2 } });
-      expect(result).toEqual(mockReviews);
+      const searchReviewBookId = 1
+      repo.find = jest.fn().mockResolvedValue(mockReviewsSearchByBookId);
+      const result = await service.findReviewsByBookId(searchReviewBookId);
+      expect(repo.find).toHaveBeenCalledWith({ where: { id_book: searchReviewBookId }, relations: ['user'] });
+      expect(result).toEqual(mockReviewDtosSearchByBookId);
     });
   });
 

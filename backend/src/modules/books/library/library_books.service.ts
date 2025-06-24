@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LibraryBookDTO } from './dto/library_book.dto';
-import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
+import { UserVirtualBooks } from '../../../entidades/user_virtual_books.entity';
 
 @Injectable()
 export class LibraryBooksService {

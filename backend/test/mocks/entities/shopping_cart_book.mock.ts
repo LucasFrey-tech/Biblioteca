@@ -14,7 +14,7 @@ export const mockShoppingCart1:ShoppingCartBook = {
 
 export const mockShoppingCart2:ShoppingCartBook = {
     id: 2,
-    idUser:  1,
+    idUser:  2,
     idBook:  2,
     amount:  2,
     virtual: true,
@@ -25,11 +25,33 @@ export const mockShoppingCart2:ShoppingCartBook = {
 export const mockShoppingCart3:ShoppingCartBook = {
     id: 3,
     idUser:  2,
-    idBook:  1,
+    idBook:  3,
     amount:  1,
     virtual: false,
-    user: mockUser3,
+    user: mockUser2,
+    book: mockBook3
+};
+
+export const mockNewShoppingCart:ShoppingCartBook = {
+    id: 4,
+    idUser:  2,
+    idBook:  3,
+    amount:  1,
+    virtual: true,
+    user: mockUser2,
+    book: mockBook3
+};
+
+export const mockUpdatedhoppingCart:ShoppingCartBook = {
+    id: 4,
+    idUser:  2,
+    idBook:  3,
+    amount:  4,
+    virtual: true,
+    user: mockUser2,
     book: mockBook3
 };
 
 export const mockShoppingCarts = [mockShoppingCart1, mockShoppingCart2, mockShoppingCart3];
+export const mockShoppingCartsByUser1 = [mockShoppingCart1];
+export const mockDeletedShoppingCarts = [mockShoppingCart1, mockShoppingCart2];
