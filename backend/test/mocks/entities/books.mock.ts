@@ -1,10 +1,9 @@
 import { Book } from "src/entidades/book.entity";
 import { mockAuthor1, mockAuthor2, mockAuthor3 } from "./authors.mock";
 
-export const mockNewBook:Book = {
+export const mockNewBook: Book = {
     id: 4,
     title: "Asesino de Bujas",
-    author_id: 3,
     description: "Asesino de Bujas description.",
     isbn: "9789874132574",
     image: "http://localhost:3001/books_images/ab_dioses_y_monstruos.png",
@@ -16,47 +15,46 @@ export const mockNewBook:Book = {
     genres: [
         {
             id: 1,
-            name:  "Accion"
+            name: "Accion"
         },
         {
             id: 2,
-            name:  "Aventura"
+            name: "Aventura"
         },
         {
             id: 3,
-            name:  "Misterio"
+            name: "Misterio"
         },
     ]
 };
 
-export const mockUpdateBook:Book = {
-    id: 1,
-    title: "1984",
-    author_id: 1,
-    description: "1984 description updated.",
-    isbn: "9789875669284",
-    image: "http://localhost:3001/books_images/1984.png",
-    stock: 10,
-    subscriber_exclusive: false,
-    price: 272990,
+export const mockUpdateBook = {
+    title: '1984',
+    description: '1984 description updated.',
     anio: 1984,
-    author: mockAuthor1,
-    genres: [
+    author: '',
+    author_id: 1,
+    genre: [
         {
             id: 1,
-            name:  "Accion"
+            name: 'Accion',
         },
         {
             id: 2,
-            name:  "Aventura"
+            name: 'Aventura',
         },
-    ]
+    ],
+    id: 1,
+    image: 'http://localhost:3001/books_images/1984.png',
+    isbn: "9789875669284",
+    price: 272990,
+    stock: 10,
+    subscriber_exclusive: false,
 };
 
-export const mockBook1:Book = {
+export const mockBook1: Book = {
     id: 1,
     title: "1984",
-    author_id: 1,
     description: "1984 description.",
     isbn: "9789875669284",
     image: "http://localhost:3001/books_images/1984.png",
@@ -68,19 +66,18 @@ export const mockBook1:Book = {
     genres: [
         {
             id: 1,
-            name:  "Accion"
+            name: "Accion"
         },
         {
             id: 2,
-            name:  "Aventura"
+            name: "Aventura"
         },
     ]
 };
 
-export const mockBook2:Book = {
+export const mockBook2: Book = {
     id: 2,
     title: "Rebelion En La Granja",
-    author_id: 1,
     description: "Rebelion En La Granja description.",
     isbn: "9786075574028",
     image: "http://localhost:3001/books_images/rebelion_en_la_granja.png",
@@ -92,19 +89,18 @@ export const mockBook2:Book = {
     genres: [
         {
             id: 1,
-            name:  "Accion"
+            name: "Accion"
         },
         {
             id: 3,
-            name:  "Misterio"
+            name: "Misterio"
         },
     ]
 };
 
-export const mockBook3:Book = {
+export const mockBook3: Book = {
     id: 3,
     title: "El Codigo Da Vinci",
-    author_id: 2,
     description: "El Codigo Da Vinci description.",
     isbn: "9788408013259",
     image: "http://localhost:3001/books_images/el_codigo_davinci.png",
@@ -116,7 +112,7 @@ export const mockBook3:Book = {
     genres: [
         {
             id: 3,
-            name:  "Misterio"
+            name: "Misterio"
         }
     ]
 };
