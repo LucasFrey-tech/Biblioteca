@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import AddBookDialog from "@/components/pages/agregarLibro"
+import AddBookDialog from "@/components/pages/agregarLibro";
 import DragAndDrop from "@/components/pages/dropImage";
 import Image from "next/image";
 
@@ -20,7 +20,14 @@ import { Author } from '@/API/types/author';
 import { Genre } from "@/API/types/genre";
 
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination";
 
 export default function BooksPanel(): React.JSX.Element {
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
@@ -31,13 +38,16 @@ export default function BooksPanel(): React.JSX.Element {
   const apiRef = useRef(new BaseApi());
   const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
   const [booksEditState, setBooksEditState] = useState<{
-
     [key: number]: {
       editMode: boolean;
       formData: BookFileUpdate;
       tempImages?: File;
     };
   }>({});
+
+  // Paginación
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const startEdit = (book: BookFileUpdate) => {
     setBooksEditState(prev => ({
@@ -84,6 +94,11 @@ export default function BooksPanel(): React.JSX.Element {
           timer: 1500,
           showConfirmButton: false,
         });
+
+        // Refrescar lista después de borrar
+        const booksData = await apiRef.current.books.getAll();
+        setBooks(booksData);
+
       } catch (error) {
         console.error('Error al borrar libro:', error);
         Swal.fire({
@@ -192,8 +207,16 @@ export default function BooksPanel(): React.JSX.Element {
     );
   };
 
+  // Filtrar libros por búsqueda
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Paginación cálculo
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+  const currentBooks = filteredBooks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
@@ -202,7 +225,10 @@ export default function BooksPanel(): React.JSX.Element {
         placeholder="Buscar libro"
         className={styles.inputSearch}
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1); // Reiniciar página al buscar
+        }}
       />
 
       <div className={styles.agregarLibro}>
@@ -212,7 +238,7 @@ export default function BooksPanel(): React.JSX.Element {
         />
       </div>
 
-      {filteredBooks.map((book) => {
+      {currentBooks.map((book) => {
         const editState = booksEditState[book.id] || {
           editMode: false,
           formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
@@ -231,18 +257,14 @@ export default function BooksPanel(): React.JSX.Element {
                     <Label>Título:</Label>
                     <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
 
-
                     <Label>Descripción:</Label>
                     <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
 
-
-                    <Label>Año:                    </Label>
+                    <Label>Año:</Label>
                     <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
-
 
                     <Label>ISBN:</Label>
                     <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
-
 
                     <Label>Stock:</Label>
                     <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
@@ -274,7 +296,6 @@ export default function BooksPanel(): React.JSX.Element {
 
                     <Label>Precio:</Label>
                     <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
-
 
                     <Label>Autor</Label>
                     <Select
@@ -347,7 +368,6 @@ export default function BooksPanel(): React.JSX.Element {
                       ))}
                     </div>
 
-
                     <Label>Imagen:</Label>
                     <Image
                       src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
@@ -399,7 +419,6 @@ export default function BooksPanel(): React.JSX.Element {
                         Borrar
                       </Button>
                     </div>
-
                   </>
                 )}
               </div>
@@ -407,6 +426,34 @@ export default function BooksPanel(): React.JSX.Element {
           </div>
         );
       })}
-    </>
-  );
-}
+
+            {/* PAGINACIÓN */}
+            <Pagination className="pt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    aria-disabled={currentPage === 1}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, idx) => (
+                  <PaginationItem key={idx + 1}>
+                    <PaginationLink
+                      isActive={currentPage === idx + 1}
+                      onClick={() => setCurrentPage(idx + 1)}
+                    >
+                      {idx + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    aria-disabled={currentPage === totalPages}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </>
+        );
+      }

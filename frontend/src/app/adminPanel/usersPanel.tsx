@@ -1,5 +1,8 @@
-import React, { useEffect,useState } from "react";
+'use client';
+
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import styles from '../../styles/panelAdmin.module.css';
 import Swal from "sweetalert2";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -7,35 +10,45 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { BaseApi } from "@/API/baseApi";
 import { User } from "@/API/types/user";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext
+} from "@/components/ui/pagination";
+
+const PAGE_SIZE = 1;
+
 export default function UsersPanel(): React.JSX.Element {
   const [userOpenIds, setUserOpenIds] = useState<number[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState('');
   const [apiRef, setApiRef] = useState<BaseApi | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // Initialize apiRef on client side
   useEffect(() => {
     const token = localStorage.getItem('token') || '';
     setApiRef(new BaseApi(token));
   }, []);
 
-  // Fetch usuarios
-  const fetchUsers = async () => {
+  const fetchUsers = React.useCallback(async () => {
     if (!apiRef) return;
-    
+
     try {
       const userData = await apiRef.users.getAll();
       setUsers(userData);
     } catch (error) {
       console.error('Error al obtener usuarios', error);
     }
-  };
+  }, [apiRef]);
 
   useEffect(() => {
     if (apiRef) {
       fetchUsers();
     }
-  }, [apiRef]);
+  }, [apiRef, fetchUsers]);
 
   const toggleUserOpen = (id: number) => {
     setUserOpenIds((prev) =>
@@ -45,10 +58,17 @@ export default function UsersPanel(): React.JSX.Element {
 
   const updateUser = async (id: number, updates: Partial<User>) => {
     if (!apiRef) return;
-    
+
     try {
       await apiRef.users.update(id, updates);
       await fetchUsers();
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Usuario actualizado",
+        showConfirmButton: false,
+        timer: 1500
+      });
     } catch (error) {
       console.error(error);
       Swal.fire('Error', 'No se pudo actualizar el usuario', 'error');
@@ -59,22 +79,33 @@ export default function UsersPanel(): React.JSX.Element {
     user.username.toLowerCase().includes(search.toLowerCase())
   );
 
-  
+  const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE);
+
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
+
+  const goToPage = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  };
+
   return (
     <>
       <Input
         placeholder='Buscar usuario'
         className={styles.inputSearch}
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1);
+        }}
       />
 
-      {filteredUsers.map((user: User) => (
+      {paginatedUsers.map((user: User) => (
         <div key={user.id} className={styles.userCard}>
-          <div
-            className={styles.userHeader}
-            onClick={() => toggleUserOpen(user.id)}
-          >
+          <div className={styles.userHeader} onClick={() => toggleUserOpen(user.id)}>
             <span className={styles.userName}>{user.firstname} {user.lastname}</span>
             {userOpenIds.includes(user.id) ? <ChevronUp /> : <ChevronDown />}
           </div>
@@ -125,7 +156,7 @@ export default function UsersPanel(): React.JSX.Element {
                           Swal.fire({
                             position: "top-end",
                             icon: "success",
-                            title: "Se quito el rol administrador a este usuario",
+                            title: "Se quitó el rol administrador a este usuario",
                             showConfirmButton: false,
                             timer: 2000
                           });
@@ -194,6 +225,36 @@ export default function UsersPanel(): React.JSX.Element {
           )}
         </div>
       ))}
+
+      {/* Paginación con estilo Shad y botón activo en gris */}
+      {totalPages > 1 && (
+        <Pagination className="pt-4">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => goToPage(currentPage - 1)}
+              />
+            </PaginationItem>
+
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => goToPage(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => goToPage(currentPage + 1)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </>
   );
 }
