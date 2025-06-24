@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings.service';
@@ -9,7 +9,7 @@ import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 
 /**
- * Servicio para operaciones CRUD de libros.
+ * Servicio para operaciones de negocios de los libros.
  */
 @Injectable()
 export class BooksService {
@@ -89,7 +89,7 @@ export class BooksService {
    * Crea un nuevo libro.
    * @param bookDTO DTO con los datos del libro
    */
-  async create(bookDTO: CreateBookDTO) {
+  async create(bookDTO: CreateBookDTO): Promise<Book> {
     this.logger.log('Libro Creado');
 
     // 1. Buscar las entidades de género por nombre (bookDTO.genre)
