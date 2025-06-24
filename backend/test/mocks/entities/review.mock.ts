@@ -3,7 +3,6 @@ import { mockUser1, mockUser2, mockUser3 } from "./user.mock";
 
 export const mockReview1: Review = {
     id: 1,
-    id_user: 1,
     id_book: 1,
     rating: 3,
     comment: "mastodonte",
@@ -13,7 +12,6 @@ export const mockReview1: Review = {
 
 export const mockReview2:Review = {
     id: 2,
-    id_user: 2,
     id_book: 3,
     rating: 1,
     comment: "malardo",
@@ -23,7 +21,6 @@ export const mockReview2:Review = {
 
 export const mockReview3:Review = {
     id: 3,
-    id_user: 3,
     id_book: 1,
     rating: 5,
     comment: "GOOOOOOD!",
@@ -33,7 +30,6 @@ export const mockReview3:Review = {
 
 export const mockNewReview:Review = {
     id: 4,
-    id_user: 1,
     id_book: 1,
     rating: 4,
     comment: "Buenardo.",
@@ -43,7 +39,6 @@ export const mockNewReview:Review = {
 
 export const mockUpdatedReview:Review = {
     id: 1,
-    id_user: 1,
     id_book: 1,
     rating: 5,
     comment: "10/10",
