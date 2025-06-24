@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { BookDTO } from './book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings.service';
@@ -9,7 +9,7 @@ import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 
 /**
- * Servicio para operaciones CRUD de libros.
+ * Servicio que maneja la lógica de negocio para los libros.
  */
 @Injectable()
 export class BooksService {
@@ -25,8 +25,11 @@ export class BooksService {
   ) { }
 
   /**
-   * Obtiene todos los libros.
-   * @returns Lista de BookDTO
+   * Obtiene todos los libros disponibles.
+   * 
+   * @async
+   * @returns {Promise<BookDTO[]>} una promesa que resuelve con un arrelgo de DTOs de libros.
+   * 
    */
   async findAll(): Promise<BookDTO[]> {
     const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
@@ -40,9 +43,12 @@ export class BooksService {
   }
 
   /**
-   * Obtiene libros filtrados por género.
-   * @param genreId ID del género
-   * @returns Lista de libros con ese género
+   * Obtiene libros filtrados por un género específico.
+   * 
+   * @async
+   * @param {number} genreId - El id del género a buscar.
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese género encontrada.
+   * 
    */
   async findAllWithGenre(genreId: number): Promise<BookDTO[]> {
     const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
@@ -55,10 +61,14 @@ export class BooksService {
     return result;
   }
 
+
   /**
-   * Obtiene libros filtrados por autor.
-   * @param authorId ID del autor
-   * @returns Lista de libros del autor
+   * Obtiene libros filtrados por un autor específico.
+   * 
+   * @async
+   * @param {number} authorId - El id del autor a buscar.
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese autor encontrada.
+   * 
    */
   async findAllByAuthor(authorId: number): Promise<BookDTO[]> {
     const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
@@ -72,24 +82,35 @@ export class BooksService {
   }
 
   /**
-   * Busca un libro por su ID.
-   * @param id ID del libro
-   * @returns DTO del libro o null
+   * Busca un libro específico por su ID.
+   * 
+   * @async
+   * @param {number} id - El id del autor a buscar.
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO del libro encontrado.
+   * @throws {NotFoundException} Si no encuenta ningún libro con el ID especificado.
+   * 
    */
   async findOne(id: number): Promise<BookDTO | null> {
     const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
 
-    if (!book) return null;
+    if (!book) {
+      throw new NotFoundException(`Book with ID ${id} not found`)
+    }
 
     this.logger.log('Libro Recibido');
     return BookDTO.BookEntity2BookDTO(book);
   }
 
   /**
-   * Crea un nuevo libro.
-   * @param bookDTO DTO con los datos del libro
+   * Crea un nuevo libro en el sistema con sus géneros asociados.
+   * 
+   * @async
+   * @param {CreateBookDTO} bookDTO - Objeto de transferencia de datos con la información del libro a crear.
+   * Debe incluir los IDs de géneros y el ID del autor.
+   * @returns {Promise<Book>} Promesa que resuelve con la entidad del libro recién creado.
+   * @throws {Error} Cuando alguno de los géneros proporcionados no existe en la base de datos.
    */
-  async create(bookDTO: CreateBookDTO) {
+  async create(bookDTO: CreateBookDTO): Promise<Book> {
     this.logger.log('Libro Creado');
 
     // 1. Buscar las entidades de género por nombre (bookDTO.genre)
@@ -113,10 +134,15 @@ export class BooksService {
     return bookEntity;
   }
 
- /**
-   * Actualiza un libro existente.
-   * @param id ID del libro
-   * @param bookDTO Datos nuevos
+  /**
+   * Crea un nuevo libro en el sistema con sus géneros asociados.
+   * 
+   * @async
+   * @param {number} id - Objeto de transferencia de datos con la información del libro a crear.
+   * @param {CreateBookDTO} bookDTO - Objeto de transferencia de datos con la información del libro a crear.
+   * Debe incluir los IDs de géneros y el ID del autor.
+   * @returns {Promise<Book>} Promesa que resuelve con la entidad del libro actualizado.
+   * @throws {Error} Cuando alguno de los géneros proporcionados no existe en la base de datos.
    */
   async update(id: number, bookDTO: CreateBookDTO) {
     // 1. Buscar el libro con relaciones
@@ -168,9 +194,14 @@ export class BooksService {
   }
 
   /**
-   * Elimina un libro por ID.
-   * @param id ID del libro
-   * @returns `true` si se eliminó, `false` si no existía
+   * Elimina un libro específico de la base de datos.
+   * 
+   * @async
+   * @param {number} id - ID del libro a eliminar
+   * @returns {Promise<boolean>} Promesa que resuelve con:
+   * - `true` si el libro existía y fue eliminado correctamente
+   * - `false` si el libro no existía
+   *
    */
   async delete(id: number): Promise<boolean> {
     const book = await this.booksRepository.findOne({
@@ -186,9 +217,13 @@ export class BooksService {
   }
 
   /**
-   * Genera la URL completa de una imagen de libro.
-   * @param imageName Nombre del archivo de imagen
-   * @returns URL completa
+   * Genera la URL completa para acceder a la imagen de un libro.
+   * 
+   * @param {string} imageName - Nombre del archivo de imagen (sin ruta)
+   * @returns {string} URL completa formada por:
+   * - Host base del servicio
+   * - Prefijo/ruta de imágenes de libros
+   * - Nombre del archivo de imagen
    */
   bookImageUrl = (imageName: string): string => {
     return this.settingsService.getHostUrl() + this.settingsService.getBooksImagesPrefix() + "/" + imageName;
