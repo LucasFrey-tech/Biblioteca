@@ -1,5 +1,5 @@
 import { IsArray, IsOptional, IsInt, IsString } from "class-validator";
-import { Genre } from "src/entidades/genre.entity";
+import { Genre } from "../../../../entidades/genre.entity";
 
 export class LibraryBookDTO {
   @IsInt()
