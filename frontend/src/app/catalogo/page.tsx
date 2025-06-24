@@ -2,12 +2,10 @@
 
 import { useEffect, useState, FormEvent, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
-
 import { BaseApi } from '@/API/baseApi';
 import { BookCatalogo } from '@/API/types/bookCatalogo';
 import { Author } from '@/API/types/author';
 import { Genre } from '@/API/types/genre';
-
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
 
@@ -27,7 +25,7 @@ export default function BookPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            apiRef.current = new BaseApi(); //ahora funciona sin token
+            apiRef.current = new BaseApi(); 
 
             const token = localStorage.getItem('token');
             if (token) {
@@ -80,8 +78,7 @@ export default function BookPage() {
         selectedGenres.length === 0 ||
         book.genre.some((g) => selectedGenres.includes(g.id));
 
-        const matchesAuthors =
-            selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
+        const matchesAuthors = selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
 
         return matchesSearch && matchesGenres && matchesAuthors;
     });
