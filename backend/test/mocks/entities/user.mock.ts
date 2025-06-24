@@ -39,4 +39,31 @@ export const mockUser3:User = {
     userSubscriptions: []
 };
 
+export const mockNewUser:User = {
+    id: 4,
+    username: "Usuario",
+    firstname: "Agregado",
+    lastname: "Agregado",
+    email: "usuario@agregados.com",
+    password: "si",
+    admin: false,
+    disabled: false,
+    registrationDate: new Date("2020-05-02"),
+    userSubscriptions: []
+};
+
+export const idMockedUpdatedUser = 1
+export const mockUpdatedUser:User = {
+    id: 1,
+    username: "actualizado",
+    firstname: "truc",
+    lastname: "actualizado",
+    email: "curt@si.com",
+    password: "a",
+    admin: false,
+    disabled: false,
+    registrationDate: new Date("2020-05-02"),
+    userSubscriptions: []
+};
+
 export const mockUsers = [mockUser1, mockUser2, mockUser3];
