@@ -4,7 +4,7 @@ import { BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { User } from '../../entidades/user.entity';
-import { Log }  from 'src/logger/logger';
+import { Log }  from '../../logger/logger';
 
 @Injectable()
 export class UsersService {

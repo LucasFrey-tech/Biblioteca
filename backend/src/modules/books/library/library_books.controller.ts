@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { LibraryBooksService } from './library_books.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
-import { UserVirtualBooks } from 'src/entidades/user_virtual_books.entity';
+import { UserVirtualBooks } from '../../../entidades/user_virtual_books.entity';
 import { CreateUserVirtualBookDto } from './dto/library_book_create.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 

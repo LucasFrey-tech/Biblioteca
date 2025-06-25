@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { SettingsService } from 'src/settings.service';
+import { SettingsService } from 'src/settings/settings.service';
 import { BooksService } from './book.service';
 import { BooksController } from './book.controller';
 import { Book } from '../../../entidades/book.entity';

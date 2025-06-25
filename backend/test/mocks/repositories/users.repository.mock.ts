@@ -45,7 +45,7 @@ export const mockNewUser:User = {
     firstname: "Agregado",
     lastname: "Agregado",
     email: "usuario@agregados.com",
-    password: "si",
+    password: "12345678",
     admin: false,
     disabled: false,
     registrationDate: new Date("2020-05-02"),
@@ -67,3 +67,12 @@ export const mockUpdatedUser:User = {
 };
 
 export const mockUsers = [mockUser1, mockUser2, mockUser3];
+
+export const mockUsersRepository = {
+    find: jest.fn().mockResolvedValue(mockUsers),
+    findOne: jest.fn().mockResolvedValue(mockUser1),
+    create: jest.fn().mockResolvedValue(mockNewUser),
+    update: jest.fn().mockResolvedValue(mockUpdatedUser), 
+    save: jest.fn().mockResolvedValue(mockNewUser),
+    delete: jest.fn().mockResolvedValue({raw: {}, affected: 1 }) ,
+  }

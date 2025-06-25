@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { UserSubscriptionDiscountService } from './user_subscription_discount.service';
-import { UserSubscriptionDiscount } from 'src/entidades/user_subscription_discount.entity';
+import { UserSubscriptionDiscount } from '../../../../src/entidades/user_subscription_discount.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('Descuentos de Suscripción por Usuario')

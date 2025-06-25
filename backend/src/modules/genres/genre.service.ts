@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Genre } from 'src/entidades/genre.entity';
+import { Genre } from '../../../src/entidades/genre.entity';
 
 @Injectable()
 export class GenresService {

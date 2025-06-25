@@ -1,5 +1,5 @@
 import { Book } from "src/entidades/book.entity";
-import { mockAuthor1, mockAuthor2, mockAuthor3 } from "./authors.mock";
+import { mockAuthor1, mockAuthor2, mockAuthor3 } from "./authors.repository.mock";
 
 export const mockNewBook: Book = {
     id: 4,
@@ -28,7 +28,7 @@ export const mockNewBook: Book = {
     ]
 };
 
-export const mockUpdateBook = {
+export const mockUpdatedBook = {
     title: '1984',
     description: '1984 description updated.',
     anio: 1984,
@@ -119,3 +119,14 @@ export const mockBook3: Book = {
 
 export const mockBooks = [mockBook1, mockBook2, mockBook3];
 export const mockDeletedBooks = [mockBook1, mockBook2];
+
+export const mockBooksRepository = {
+  find: jest.fn().mockResolvedValue(mockBooks),
+  findOne: jest.fn().mockResolvedValue(mockBook1),
+  create: jest.fn().mockResolvedValue(mockNewBook),
+  update: jest.fn().mockResolvedValue(mockUpdatedBook),
+  delete: jest.fn().mockResolvedValue(mockDeletedBooks),
+  save: jest.fn().mockResolvedValue(mockNewBook),    
+  remove: jest.fn().mockResolvedValue(mockBook1),    
+};
+

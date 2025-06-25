@@ -3,21 +3,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../src/entidades/user.entity';
-import { idMockedUpdatedUser, mockNewUser, mockUpdatedUser, mockUser1, mockUser2, mockUsers } from '../mocks/entities/user.mock';
+import { idMockedUpdatedUser, mockNewUser, mockUpdatedUser, mockUser1, mockUser2, mockUsers, mockUsersRepository } from '../mocks/repositories/users.repository.mock';
 import { UsersService } from "../../src/modules/users/user.service";
 
 describe('UsersService', () => {
   let service: UsersService;
   let repo: jest.Mocked<Repository<User>>;
-
-const mockUsersRepository = {
-  find: jest.fn().mockResolvedValue(mockUsers),
-  findOne: jest.fn().mockResolvedValue(mockUser1),
-  create: jest.fn().mockResolvedValue(mockNewUser),
-  update: jest.fn().mockResolvedValue(mockUpdatedUser), 
-  save: jest.fn().mockResolvedValue(mockNewUser),
-  delete: jest.fn().mockResolvedValue({raw: {}, affected: 1 }) ,
-}
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -5,32 +5,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '../../src/entidades/user.entity';
 import { UserSubscription } from '../../src/entidades/subscription_user.entity';
 import { UserSubscriptionService } from '../../src/modules/subscriptions/users_subscriptions/subscription_user.service';
-import { mockUserSubscription1, mockUserSubscriptions } from '../mocks/entities/subscription_user.mock';
+import { mockUserSubscription1, mockUserSubscriptionRepository, mockUserSubscriptions } from '../mocks/repositories/subscription_user.mock.repository';
 import { Subscription } from '../../src/entidades/subscription.entity';
-import { mockNewUser, mockUpdatedUser, mockUser1, mockUsers } from '../mocks/entities/user.mock';
-import { mockSubscription1, mockSubscriptions } from '../mocks/entities/subscription.mock';
+import { mockNewUser, mockUpdatedUser, mockUser1, mockUsers, mockUsersRepository } from '../mocks/repositories/users.repository.mock';
+import { mockSubscription1, mockSubscriptionRepository, mockSubscriptions } from '../mocks/repositories/subscription.repository.mock';
 
 describe('UserSubscriptionService', () => {
   let service: UserSubscriptionService;
-
-  const mockUserSubscriptionRepository = {
-    find: jest.fn().mockResolvedValue(mockUserSubscriptions),
-    findOne: jest.fn().mockResolvedValue(mockUserSubscription1),
-    create: jest.fn().mockResolvedValue(mockUserSubscription1),
-    update: jest.fn().mockResolvedValue(mockUserSubscription1),
-    save: jest.fn().mockResolvedValue(mockUserSubscription1),
-    delete: jest.fn().mockResolvedValue({ raw: {}, affected: 1 }),
-  }
-
-  const mockUsersRepository = {
-    find: jest.fn().mockResolvedValue(mockUsers),
-    findOne: jest.fn().mockResolvedValue(mockUser1),
-  }
-
-  const mockSubscriptionRepository = {
-    find: jest.fn().mockResolvedValue(mockSubscriptions),
-    findOne: jest.fn().mockResolvedValue(mockSubscription1),
-  }
+ 
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserSubscriptionDiscount } from 'src/entidades/user_subscription_discount.entity';
-import { Subscription } from 'src/entidades/subscription.entity';
+import { UserSubscriptionDiscount } from '../../../../src/entidades/user_subscription_discount.entity';
+import { Subscription } from '../../../../src/entidades/subscription.entity';
 
 @Injectable()
 export class UserSubscriptionDiscountService {

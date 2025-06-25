@@ -1,6 +1,6 @@
 import { Review } from "src/entidades/review.entity";
-import { mockUser1, mockUser2, mockUser3 } from "./user.mock";
-import { mockBook1, mockBook3 } from "./books.mock";
+import { mockUser1, mockUser2, mockUser3 } from "./users.repository.mock";
+import { mockBook1, mockBook3 } from "./books.repository.mock";
 
 export const mockReview1: Review = {
     id: 1,
@@ -50,3 +50,13 @@ export const mockUpdatedReview:Review = {
 export const mockReviews = [mockReview1, mockReview2, mockReview3];
 export const mockReviewsSearchByBookId = [mockReview1, mockReview3];
 export const mockDeletedReviews = [mockReview1, mockReview2];
+
+export const mockReviewsRepository = {
+    find: jest.fn().mockResolvedValue(mockReviews),
+    findOne: jest.fn().mockResolvedValue(mockReview1),
+    create: jest.fn().mockResolvedValue(mockNewReview),
+    update: jest.fn().mockResolvedValue(mockUpdatedReview),
+    delete: jest.fn().mockResolvedValue(mockDeletedReviews),
+    save: jest.fn().mockResolvedValue(mockUpdatedReview),    
+    remove: jest.fn().mockResolvedValue(mockDeletedReviews),    
+  };
