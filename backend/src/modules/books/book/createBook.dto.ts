@@ -28,7 +28,6 @@ export class CreateBookDTO {
   isbn: string;
 
   /** Imágen del libro */
-  @IsString()
   image: string;
 
   /** Stock disponible */
