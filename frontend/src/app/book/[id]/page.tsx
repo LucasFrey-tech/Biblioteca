@@ -72,7 +72,29 @@ export default function BookDetail() {
     fetchData();
   }, [params]);
 
+  if (loading) return <p>Cargando...</p>;
+  if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
+  if (!book) return <p>Libro no encontrado!!!</p>;
+
+  const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
+  const isBlocked = book.subscriber_exclusive && !isSubscriber;
+
+  const showSubscriptionAlert = async () => {
+    await Swal.fire({
+      icon: 'info',
+      title: 'Solo para suscriptores',
+      text: 'Este libro es exclusivo para suscriptores.',
+      timer: 2500,
+      showConfirmButton: false,
+    });
+  };
+
   const handleAddToCart = async () => {
+    if (isBlocked) {
+      await showSubscriptionAlert();
+      return;
+    }
+
     if (!user) {
       router.push('/login');
       return;
@@ -125,6 +147,11 @@ export default function BookDetail() {
   };
 
   const handleBuyNow = async () => {
+    if (isBlocked) {
+      await showSubscriptionAlert();
+      return;
+    }
+
     if (!user) {
       router.push('/login');
       return;
@@ -178,18 +205,11 @@ export default function BookDetail() {
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p style={{ color: 'red' }}>❌ {error}</p>;
-  if (!book) return <p>Libro no encontrado!!!</p>;
-
-  const isSubscriber = user?.userSubscriptions?.some(sub => sub.ongoing);
-  const showExclusiveFrame = book.subscriber_exclusive && !isSubscriber;
-
   return (
     <div className={styles.container}>
       <div className={styles.productMain}>
-        <div className={`${styles.imageColumn} ${showExclusiveFrame ? styles.exclusiveFrame : ''}`}>
-          {showExclusiveFrame && (
+        <div className={`${styles.imageColumn} ${isBlocked ? styles.exclusiveFrame : ''}`}>
+          {isBlocked && (
             <span className={styles.exclusiveBadge}>Suscriptores exclusivo</span>
           )}
           <Image
@@ -254,8 +274,13 @@ export default function BookDetail() {
               </>
             )}
 
-            <button className={styles.btnBuy} onClick={handleBuyNow}>Comprar ahora</button>
-            <button className={styles.btnCart} onClick={handleAddToCart}>Agregar al carrito</button>
+            <button className={styles.btnBuy} onClick={handleBuyNow}>
+              Comprar ahora
+            </button>
+
+            <button className={styles.btnCart} onClick={handleAddToCart}>
+              Agregar al carrito
+            </button>
           </div>
 
           <div className={styles.categories}>
