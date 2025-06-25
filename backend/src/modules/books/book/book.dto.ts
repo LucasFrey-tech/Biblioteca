@@ -6,7 +6,7 @@ import { Genre } from 'src/entidades/genre.entity';
 
 /**
  * Data Transfer Object (DTO) para Books.
- * Se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
+ * Se usa para validar y transformar datos entre el cliente y el servidor.
  */
 export class BookDTO {
 

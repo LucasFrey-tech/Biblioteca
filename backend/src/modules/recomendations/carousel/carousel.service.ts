@@ -22,7 +22,7 @@ export class CarouselService {
     /**
      * Obtiene todos los carousel disponible
      * 
-     * @returns {Promise<CarouselDTO[]} Una promesa que resuelve con un arreglo de DTOs de carousel.
+     * @returns {Promise<CarouselDTO[]} - Una promesa que resuelve con un arreglo de DTOs de carousel.
      */
     async findAll(): Promise<CarouselDTO[]> {
         return this.carouselRepository.find({});
@@ -44,7 +44,7 @@ export class CarouselService {
      * 
      * @param {number} id - ID del carousel a actualizar
      * @param {Partial<CarouselDTO>} updateData - DTO con los nuevos datos para el carousel.
-     * @returns {Promise<CarouselEntity[]>} Promesa que resuelve con un arreglo del elemento actualizado
+     * @returns {Promise<CarouselEntity[]>} - Promesa que resuelve con un arreglo del elemento actualizado
      */
     async update(id: number, updateData: Partial<CarouselDTO>) {
         await this.carouselRepository.update(id, updateData);

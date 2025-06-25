@@ -3,7 +3,7 @@ import { BookRecommendation } from "src/entidades/book_recommendations.entity";
 
 /**
  * Data Transfer Object (DTO) para Recomendations
- * Esta clase se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
+ * Esta clase se usa para validar y transformar datos entre el cliente y el servidor.
  */
 export class RecommendationDTO {
 

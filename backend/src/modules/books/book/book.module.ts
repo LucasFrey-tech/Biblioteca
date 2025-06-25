@@ -18,7 +18,6 @@ const myapp_config = require('../../../../private/app.config.json');
  * - Repositorios TypeORM
  * - Soporte para subir imágenes con Multer
  */
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Book, Genre, Author])

@@ -2,7 +2,7 @@ import { IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
 
 /**
  * Data Transfer Object (DOT) para Purchase.
- * Se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
+ * Se usa para validar y transformar datos entre el cliente y el servidor.
  */
 export class PurchaseDTO {
   /**

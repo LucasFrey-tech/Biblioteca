@@ -8,6 +8,13 @@ import { Book } from '../../entidades/book.entity';
 import { User } from '../../entidades/user.entity';
 import { Author } from '../../entidades/author.entity';
 
+/**
+ * Módulo de NestJS que agrupa los componentes relacionados a compras:
+ * - Controlador
+ * - Servicio
+ * - Repositorios TypeORM
+ * - Soporte para subir imágenes con Multer
+ */
 @Module({
   imports: [TypeOrmModule.forFeature([Purchase, ShoppingCartBook, Book, User, Author])],
   controllers: [PurchasesController],

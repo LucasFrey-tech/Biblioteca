@@ -133,7 +133,7 @@ export class BooksService {
    * Actualiza un libro en el sistema.
    * 
    * @param {number} id - ID del libro a actualizar
-   * @param {CreateBookDTO} bookDTO - DTO con los nuevos datos para la recomendación.
+   * @param {CreateBookDTO} bookDTO - DTO con los nuevos datos para el libro.
    * Debe incluir los IDs de géneros y el ID del autor.
    * @returns {Promise<Book>} Promesa que resuelve con la entidad del libro actualizado.
    * @throws {Error} Cuando alguno de los géneros proporcionados no existe en la base de datos.

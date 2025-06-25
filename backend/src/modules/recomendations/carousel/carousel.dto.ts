@@ -2,7 +2,7 @@ import { IsNumber, IsString } from "class-validator";
 
 /**
  * Data Transfer Object (DTO) para carousel
- * Esta clase se usa para validar y transformar datos entre el cliente y el servidor, incluyendo validaciones.
+ * Esta clase se usa para validar y transformar datos entre el cliente y el servidor.
  */
 export class CarouselDTO {
     /**
