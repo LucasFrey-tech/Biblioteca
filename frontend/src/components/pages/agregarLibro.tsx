@@ -23,11 +23,11 @@ import { DeleteAuthorDialog } from './DeleteAuthorDialog';
 import { DeleteGenreDialog } from './DeleteCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
-import { BookFile } from '@/API/types/bookFile';
+import { BookFile, BookFileUpdate } from '@/API/types/bookFile';
 import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
 
-export default function AddBookDialog({ onAuthorAdded, onGenreAdded, onAdded }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void, onAdded?: () => void}) {
+export default function AddBookDialog({ onAuthorAdded, onGenreAdded, onBookCreated }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void, onBookCreated?: (book: BookFileUpdate) => void}) {
   const [open, setOpen] = useState(false);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -90,8 +90,10 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded, onAdded }: 
     };
 
     try {
-      await API.books.createBookFile(newBook, formGenresNumber);
-      if (onAdded) onAdded();
+      const createdId = (await API.books.createBookFile(newBook, formGenresNumber)).id;
+      const createdBook = await API.books.getOne(createdId);
+
+      if (onBookCreated) onBookCreated(createdBook); 
       setOpen(false);
       Swal.fire({
         icon: 'success',
