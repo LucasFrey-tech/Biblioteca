@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Biblioteca Online
 
-## Getting Started
+Plataforma web que simula una biblioteca digital y física, donde los usuarios pueden explorar un catálogo de libros, realizar compras, dejar críticas y puntuar títulos. Además, cuenta con funcionalidades administrativas avanzadas para la gestión de contenido y usuarios.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Usuarios
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Registro e inicio de sesión con autenticación segura (JWT).
+- Búsqueda de libros por nombre, autor o palabra clave.
+- Filtros por género, tipo (físico o ebook), orden alfabético o por puntaje.
+- Visualización de detalles de libros.
+- Compra de libros físicos y ebooks.
+- Envío de críticas y puntuaciones para libros leídos.
+- Suscripción al servicio para obtener beneficios exclusivos (descuentos, novedades, etc.).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Administradores
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Asignación o bloqueo de usuarios como administradores.
+- Gestión completa del catálogo de libros:
+  - Agregar, editar o eliminar libros.
+  - Subida de portada y metadatos (género, autor, etc.).
+- Visualización de ventas realizadas.
+- Administración de novedades literarias y recomendaciones destacadas.
+- Configuración del precio de suscripciones y sus respectivos descuentos.
 
-## Learn More
+## Tecnologías utilizadas
 
-To learn more about Next.js, take a look at the following resources:
+### Frontend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Next.js – Framework para React con soporte SSR y rutas automáticas.
+- TypeScript – Tipado estático robusto.
+- Tailwind CSS – Estilos rápidos y responsivos.
+- JWT – Manejo de sesiones stateless.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Backend
 
-## Deploy on Vercel
+- NestJS – Framework robusto para Node.js.
+- TypeORM – ORM para bases de datos relacionales.
+- PostgreSQL – Sistema de base de datos principal.
+- Swagger – Documentación automática de la API.
+- Winston Logger – Gestión de logs del sistema.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Otros
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- PlantUML – Modelado visual de clases y procesos.
+- Swagger UI – Interfaz interactiva para la documentación de endpoints.
+
+## Estado del proyecto
+
+En desarrollo – Se siguen integrando nuevas funcionalidades y mejoras en la UI/UX, administración avanzada y rendimiento general.
