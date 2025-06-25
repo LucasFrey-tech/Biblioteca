@@ -16,6 +16,7 @@ export default function BooksDisplayerFlex({title,books}:BooksDisplayerProps): R
             <div className={Styles.content}>
                 {books.map((book) => (
                     <BookCardWithColumnInfo
+                        key={book.id}
                         id={book.id}
                         title={book.title}
                         writer={book.writer}

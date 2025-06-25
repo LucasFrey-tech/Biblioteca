@@ -95,7 +95,7 @@ export default function BooksPanel(): React.JSX.Element {
           showConfirmButton: false,
         });
 
-        // Refrescar lista después de borrar
+        // Refresca lista después de borrar
         const booksData = await apiRef.current.books.getAll();
         setBooks(booksData);
 
@@ -207,12 +207,12 @@ export default function BooksPanel(): React.JSX.Element {
     );
   };
 
-  // Filtrar libros por búsqueda
+  // Filtrar libros por busqueda
   const filteredBooks = books.filter(book =>
     book.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Paginación cálculo
+  // Paginación calculo
   const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
   const currentBooks = filteredBooks.slice(
     (currentPage - 1) * itemsPerPage,

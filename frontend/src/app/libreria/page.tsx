@@ -1,5 +1,4 @@
 'use client';
-
 import { useEffect, useState, FormEvent, useRef } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
@@ -22,9 +21,9 @@ export default function Libreria() {
   const [showMoreGenres, setShowMoreGenres] = useState(false);
   const [showMoreAuthors, setShowMoreAuthors] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null); // Inicializamos como null
+  const [userId, setUserId] = useState<number | null>(null); 
 
-  // Obtener userId desde localStorage
+  // userId desde localStorage
   useEffect(() => {
     const id = localStorage.getItem('userId');
     if (id) {
@@ -57,7 +56,7 @@ export default function Libreria() {
         const resAuthors = await apiRef.current?.authors.getAll();
         const resGenres = await apiRef.current?.genre.getAll();
 
-        // Validar y transformar resBooks
+        // Validar 
         if (Array.isArray(resBooks)) {
           const sortedBooks = resBooks
             .map((book) => ({
@@ -74,7 +73,6 @@ export default function Libreria() {
         setAuthors(Array.isArray(resAuthors) ? resAuthors : []);
         setGenres(Array.isArray(resGenres) ? resGenres : []);
 
-        console.log('Datos de la API (resBooks):', resBooks); // Depurar respuesta
       } catch (error) {
         console.error('Error al obtener datos:', error);
         setBooks([]);
