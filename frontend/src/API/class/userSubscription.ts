@@ -1,20 +1,19 @@
 import { Crud } from "../service";
 import { UserSubscriptionDTO } from "../types/userSubscription";
 
+export interface UserSubscriptionCreateInput {
+  userId: number;
+  startDate: string;  
+  endDate: string;    
+}
+
+export interface UserSubscriptionUpdateInput {
+  startDate?: string;
+  endDate?: string;
+  ongoing?: boolean;
+}
+
 export class UserSubscriptionAPI extends Crud<UserSubscriptionDTO> {
-  async getAll(): Promise<UserSubscriptionDTO[]> {
-    const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
-    method: 'GET',
-    headers: this.getHeaders(),
-  });
-  return res.json();
-  }
-  getOne(_id: number): Promise<UserSubscriptionDTO> {
-      throw new Error("Method not implemented.");
-  }
-  delete(_id: number): Promise<void> {
-      throw new Error("Method not implemented.");
-  }
   private endPoint: string;
 
   constructor(token?: string) {
@@ -22,16 +21,36 @@ export class UserSubscriptionAPI extends Crud<UserSubscriptionDTO> {
     this.endPoint = "user-subscriptions";
   }
 
-async getOneByUser(userId: number): Promise<UserSubscriptionDTO> {
-  console.log(`Fetching subscription for user ID: ${userId}`);
+  async getAll(): Promise<UserSubscriptionDTO[]> {
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+      method: 'GET',
+      headers: this.getHeaders(),
+    });
+    return res.json();
+  }
+
+  getOne(_id: number): Promise<UserSubscriptionDTO> {
+    throw new Error("Method not implemented.");
+  }
+
+  delete(_id: number): Promise<void> {
+    throw new Error("Method not implemented.");
+  }
+
+  async getOneByUser(userId: number): Promise<UserSubscriptionDTO> {
   const res = await fetch(`${this.baseUrl}/${this.endPoint}/${userId}`, {
     method: 'GET',
     headers: this.getHeaders(),
   });
+
+  if (!res.ok) {
+    throw new Error('No subscription found');
+  }
+
   return res.json();
 }
 
-  async create(data: UserSubscriptionDTO): Promise<UserSubscriptionDTO> {
+  async create(data: UserSubscriptionCreateInput): Promise<UserSubscriptionDTO> {
     const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
       method: "POST",
       headers: this.getHeaders(),
@@ -40,7 +59,7 @@ async getOneByUser(userId: number): Promise<UserSubscriptionDTO> {
     return res.json();
   }
 
-  async update(id: number, data: Partial<UserSubscriptionDTO>): Promise<UserSubscriptionDTO> {
+  async update(id: number, data: UserSubscriptionUpdateInput): Promise<UserSubscriptionDTO> {
     const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
       method: "PUT",
       headers: this.getHeaders(),
@@ -49,4 +68,3 @@ async getOneByUser(userId: number): Promise<UserSubscriptionDTO> {
     return res.json();
   }
 }
-

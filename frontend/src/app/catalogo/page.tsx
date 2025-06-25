@@ -186,9 +186,6 @@ export default function BookPage() {
                                 key={book.id}
                                 className={book.subscriber_exclusive ? styles.exclusiveWrapper : undefined}
                             >
-                                {book.subscriber_exclusive && (
-                                    <span className={styles.exclusiveLabel}>EXCLUSIVO SUSCRIPTORES</span>
-                                )}
                                 <BookCard
                                     book={{
                                         id: book.id,

@@ -46,39 +46,41 @@ export class UserSubscriptionService {
   }
 
   async getUserSubscription(userId: number): Promise<UserSubscriptionDTO> {
-    this.logger.log('Obtener Suscripción de Usuario por ID');
-    const userSubscriptions = await this.userSubscriptionRepository.findOne({
-      where: { user: { id: userId } },
-      relations: ['user', 'subscription'],
-    });
+  this.logger.log('Obtener Suscripción de Usuario por ID');
 
-    if (!userSubscriptions) {
-      this.logger.log('Suscripción de usuario no encontrada');
-      throw new NotFoundException(`No se encontró suscripción para el usuario con ID ${userId}`);
-    }
+  const userSubscription = await this.userSubscriptionRepository.findOne({
+    where: { user: { id: userId } },
+    relations: ['user', 'subscription'],
+  });
 
-    return {
-      id: userSubscriptions.id,
-      startDate: userSubscriptions.startDate.toISOString(),
-      endDate: userSubscriptions.endDate.toISOString(),
-      ongoing: userSubscriptions.ongoing,
-      subscription: userSubscriptions.subscription
-        ? {
-            id: userSubscriptions.subscription.id,
-            price: userSubscriptions.subscription.price,
-          }
-        : null,
-    };
+  if (!userSubscription) {
+    this.logger.log('Suscripción de usuario no encontrada');
+    throw new NotFoundException(`No se encontró suscripción para el usuario con ID ${userId}`);
   }
+
+  return {
+    id: userSubscription.id,
+    startDate: userSubscription.startDate.toISOString(),
+    endDate: userSubscription.endDate.toISOString(),
+    ongoing: userSubscription.ongoing,
+    subscription: userSubscription.subscription
+      ? {
+          id: userSubscription.subscription.id,
+          price: userSubscription.subscription.price,
+        }
+      : null,
+  };
+}
+
+
   async getUserSubscriptions(): Promise<UserSubscriptionDTO[]> {
-    this.logger.log('Obtener Suscripción de Usuario por ID');
+    this.logger.log('Obtener todas las suscripciones');
+
     const userSubscriptions = await this.userSubscriptionRepository.find({
-      
       relations: ['user', 'subscription'],
     });
-    
-    return userSubscriptions.map((sub) => {
-      return {
+
+    return userSubscriptions.map((sub) => ({
       id: sub.id,
       startDate: sub.startDate.toISOString(),
       endDate: sub.endDate.toISOString(),
@@ -89,7 +91,7 @@ export class UserSubscriptionService {
             price: sub.subscription.price,
           }
         : null,
-    }});
+    }));
   }
 
   async cancelSubscription(id: number): Promise<void> {
@@ -103,4 +105,17 @@ export class UserSubscriptionService {
     this.logger.log('Subscripción Cancelada');
     await this.userSubscriptionRepository.save(subscription);
   }
+
+  async updateSubscription(id: number, data: Partial<UserSubscription>): Promise<UserSubscription> {
+  const sub = await this.userSubscriptionRepository.findOne({ where: { id } });
+
+  if (!sub) {
+    throw new NotFoundException(`No se encontró suscripción con ID ${id}`);
+  }
+
+  Object.assign(sub, data);
+
+  this.logger.log(`Suscripción actualizada para ID ${id}`);
+  return this.userSubscriptionRepository.save(sub);
+}
 }
