@@ -71,7 +71,7 @@ export class BookDTO {
    * Imagen del libro 
    * @type {string}
    */
-  @IsString()
+  // @IsString()
   image: string;
 
   /**
