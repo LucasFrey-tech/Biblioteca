@@ -225,7 +225,7 @@ export default function UsersPanel(): React.JSX.Element {
         </div>
       ))}
 
-      {/* Paginación con estilo Shad y botón activo en gris */}
+      {/* Paginación*/}
       {totalPages > 1 && (
         <Pagination className="pt-4">
           <PaginationContent>

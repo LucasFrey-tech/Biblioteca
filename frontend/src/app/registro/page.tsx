@@ -16,6 +16,8 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+import { RegisterService } from "@/API/class/registro";
 
 const userSchema = z.object({
   firstname: z.string({
@@ -66,38 +68,24 @@ function Registro() {
   });
 
   const router = useRouter();
+  const apiRef = useRef(new RegisterService());
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = form.handleSubmit(async (values: UserType) => {
+    setLoading(true);
     try {
-      const res = await fetch('http://localhost:3001/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstname: values.firstname,
-          lastname: values.lastname,
-          username: values.username,
-          email: values.email,
-          password: values.password,
-        }),
+      const data = await apiRef.current.register({
+        firstname: values.firstname,
+        lastname: values.lastname,
+        username: values.username,
+        email: values.email,
+        password: values.password,
       });
-
-      if (!res.ok) {
-        const error = await res.json();
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al registrar',
-          text: error.message,
-        });
-        return;
-      }
-
-      const data = await res.json();
 
       localStorage.setItem('token', data.access_token);
 
       Swal.fire({
-        title: "Usuario registrado con exito!",
+        title: "Usuario registrado con éxito!",
         text: "Registro completado!",
         icon: "success"
       }).then((result) => {
@@ -106,8 +94,14 @@ function Registro() {
         }
       });
     } catch (error) {
-      console.error('Error de red:', error);
-      alert('Error de conexión con el servidor');
+      console.error(error)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error al registrar',
+        text: 'Ocurrió un error inesperado',
+      });
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -127,7 +121,7 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Nombre</FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} placeholder='Ingresa tu nombre' />
+                      <Input type="text" {...field} placeholder='Ingresa tu nombre' disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -140,7 +134,7 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Apellido</FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} placeholder='Ingresa tu apellido' />
+                      <Input type="text" {...field} placeholder='Ingresa tu apellido' disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -153,7 +147,7 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Nombre de usuario</FormLabel>
                     <FormControl>
-                      <Input type="text" {...field} placeholder='Ingresa tu usuario' />
+                      <Input type="text" {...field} placeholder='Ingresa tu usuario' disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -166,7 +160,7 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} placeholder='Debe contener "@" y ".com"' />
+                      <Input type="email" {...field} placeholder='Debe contener "@" y ".com"' disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -179,7 +173,7 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Crea una contraseña</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} placeholder="Ingresa contraseña" />
+                      <Input type="password" {...field} placeholder="Ingresa contraseña" disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,13 +186,15 @@ function Registro() {
                   <FormItem className="mb-4">
                     <FormLabel className={styles.tituloLabel}>Repetir la contraseña</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} placeholder="Ingresa contraseña" />
+                      <Input type="password" {...field} placeholder="Ingresa contraseña" disabled={loading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button className={styles.botonEnviar} type="submit">Enviar</Button>
+              <Button className={styles.botonEnviar} type="submit" disabled={loading}>
+                {loading ? "Registrando..." : "Enviar"}
+              </Button>
             </form>
           </Form>
         </CardContent>

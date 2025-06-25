@@ -30,10 +30,6 @@ export class Subscription extends Crud<SubscriptionDTO> {
 
       return res.json();
     }
-
-
-
-
   getAll(): Promise<SubscriptionDTO[]> {
     throw new Error("Method not implemented.");
   }

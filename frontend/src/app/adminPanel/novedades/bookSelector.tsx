@@ -2,7 +2,6 @@ import { BaseApi } from "@/API/baseApi";
 import React, { useEffect, useRef, useState } from "react";
 import Styles from "./styles.module.css"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@radix-ui/react-label";
 
 type Book = {
   id: number;
