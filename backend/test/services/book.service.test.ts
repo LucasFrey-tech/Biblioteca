@@ -3,31 +3,20 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Book } from '../../src/entidades/book.entity';
 import { Genre } from '../../src/entidades/genre.entity';
-import { mockBook1, mockBooks, mockDeletedBooks, mockNewBook, mockUpdateBook as mockUpdatedBook } from '../mocks/entities/books.mock';
+import { mockBook1,mockNewBook, mockUpdatedBook as mockUpdatedBook } from '../mocks/repositories/books.repository.mock';
 import { BooksService } from '../../src/modules/books/book/book.service';
 import { mockDtoBook1, mockDtoBooks, mockDtoBooksByAuthorIdOne, mockDtoBooksWithGenreAccion, mockDtoDeletedBooks, mockDtoNewBook, mockDtoNewBookWithUnexistingGenre, mockDtoUpdateBook, mockDtoUpdateBookId } from '../mocks/dtos/bookDTOs.mock';
-import { SettingsService } from '../../src/settings.service';
-import { mockGenre1, mockGenres } from '../mocks/entities/genres.mock';
-import { mockAuthor1 } from '../mocks/entities/authors.mock';
+import { SettingsService } from '../../src/settings/settings.service';
+import { mockGenre1, mockGenresRepository } from '../mocks/repositories/genres.repository.mock';
+import { mockSettingsService } from '../mocks/services/settings.service.mock'
+import { mockBooksRepository } from '../mocks/repositories/books.repository.mock';
+import { mockAuthor1 } from '../mocks/repositories/authors.repository.mock';
 
 
 describe('BooksService', () => {
   let service: BooksService;
   let repo: Repository<Book>;
-
-const mockBooksRepository = {
-  find: jest.fn().mockResolvedValue(mockBooks),
-  findOne: jest.fn().mockResolvedValue(mockBook1),
-  create: jest.fn().mockResolvedValue(mockNewBook),
-  update: jest.fn().mockResolvedValue(mockUpdatedBook),
-  delete: jest.fn().mockResolvedValue(mockDeletedBooks),
-  save: jest.fn().mockResolvedValue(mockNewBook),    
-  remove: jest.fn().mockResolvedValue(mockBook1),    
-};
-
-  const mockGenresRepository = {
-    find: jest.fn().mockResolvedValue(mockGenres),
-  };
+  const mockedSettingService = mockSettingsService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -43,10 +32,7 @@ const mockBooksRepository = {
         },
         {
           provide: SettingsService,
-          useValue: {
-            getHostUrl: jest.fn().mockReturnValue('http://localhost:3001'),
-            getBooksImagesPrefix: jest.fn().mockReturnValue('/books_images'),
-          },
+          useValue: mockedSettingService,
         },
       ],
     }).compile();
@@ -105,7 +91,7 @@ const mockBooksRepository = {
     const result = await service.update(999, mockDtoUpdateBook);
     expect(result).toBeNull();
   });
-
+  
   it('delete should remove book and return true', async () => {
     mockBooksRepository.findOne = jest.fn().mockResolvedValue(mockBook1);
     const result = await service.delete(1);
@@ -113,16 +99,17 @@ const mockBooksRepository = {
     expect(mockBooksRepository.remove).toHaveBeenCalledWith(mockBook1);
     expect(result).toBe(true);
   });
-
+  
   it('delete should return false if book not found', async () => {
     mockBooksRepository.findOne = jest.fn().mockResolvedValue(null);
     const result = await service.delete(999);
     expect(result).toBe(false);
   });
-
-  it('bookImageUrl should return correct url', () => {
-    const imageName = 'test.png';
-    const url = service.bookImageUrl(imageName);
-    expect(url).toBe('http://localhost:3001/books_images/test.png');
+  
+  it('bookImageUrl should return correct url', async () => {
+    const imageFileName = 'test.png';
+    const result =  service.bookImageUrl(imageFileName);
+    const expectedResult = mockedSettingService.getHostUrl()+mockedSettingService.getBooksImagesPrefix()+"/"+imageFileName
+    expect(result).toEqual(expectedResult);
   });
 });

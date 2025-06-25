@@ -1,36 +1,17 @@
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken, TypeOrmModule } from '@nestjs/typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { Review } from '../../src/entidades/review.entity';
-import { mockDeletedReviews, mockNewReview, mockReview1, mockReviews, mockReviewsSearchByBookId, mockUpdatedReview } from '../mocks/entities/review.mock';
+import { mockReview1, mockReviews, mockReviewsRepository, mockReviewsSearchByBookId, mockUpdatedReview } from '../mocks/repositories/reviews.repository.mock';
 import { BookReviewsService } from '../../src/modules/books/reviews/book_reviews.service';
 import { mockReviewDtosSearchByBookId } from '../mocks/dtos/reviewDTOs.mock';
-import { mockNewUser, mockUpdatedUser, mockUser1, mockUsers } from '../mocks/entities/user.mock';
+import { mockUsersRepository } from '../mocks/repositories/users.repository.mock';
 import { User } from '../../src/entidades/user.entity';
 
 describe('BookReviewsService', () => {
   let service: BookReviewsService;
   let repo: jest.Mocked<Repository<Review>>;
-
-  const mockReviewsRepository = {
-    find: jest.fn().mockResolvedValue(mockReviews),
-    findOne: jest.fn().mockResolvedValue(mockReview1),
-    create: jest.fn().mockResolvedValue(mockNewReview),
-    update: jest.fn().mockResolvedValue(mockUpdatedReview),
-    delete: jest.fn().mockResolvedValue(mockDeletedReviews),
-    save: jest.fn().mockResolvedValue(mockUpdatedReview),    
-    remove: jest.fn().mockResolvedValue(mockDeletedReviews),    
-  };
-
-  const mockUsersRepository = {
-    find: jest.fn().mockResolvedValue(mockUsers),
-    findOne: jest.fn().mockResolvedValue(mockUser1),
-    create: jest.fn().mockResolvedValue(mockNewUser),
-    update: jest.fn().mockResolvedValue(mockUpdatedUser), 
-    save: jest.fn().mockResolvedValue(mockNewUser),
-    delete: jest.fn().mockResolvedValue({raw: {}, affected: 1 }) ,
-  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

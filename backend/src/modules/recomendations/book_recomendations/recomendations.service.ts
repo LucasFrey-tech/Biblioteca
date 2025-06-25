@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { BookRecommendation } from "src/entidades/book_recommendations.entity";
+import { BookRecommendation } from "../../../../src/entidades/book_recommendations.entity";
 import { Repository } from "typeorm";
 import { RecommendationDTO } from "./recomendations.dto";
 import { CreateRecommendationDTO } from "./create_recomendations.dto";

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { SubscriptionDTO } from "./subscription.dto";
-import { Subscription } from "src/entidades/subscription.entity";
+import { Subscription } from "../../../../src/entidades/subscription.entity";
 
 
 @Injectable()

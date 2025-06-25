@@ -1,6 +1,6 @@
-import { BookDTO } from "src/modules/books/book/book.dto";
-import { mockAuthor1, mockAuthor2 } from "../entities/authors.mock";
-import { CreateBookDTO } from "src/modules/books/book/createBook.dto";
+import { BookDTO } from "../../../src/modules/books/book/book.dto";
+import { mockAuthor1, mockAuthor2 } from "../repositories/authors.repository.mock";
+import { CreateBookDTO } from "../../../src/modules/books/book/createBook.dto";
 
 export const mockDtoNewBook:CreateBookDTO = {
     title: "Asesino de Bujas",

@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe } from "@nestjs/common";
 import { AuthorService } from "./author.service";
-import { Author } from "src/entidades/author.entity";
-import { CreateAuthorDto } from "src/modules/authors/crear-autor.dto";
+import { Author } from "../../entidades/author.entity";
+import { CreateAuthorDto } from "../../modules/authors/crear-autor.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 
 /**
