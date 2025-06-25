@@ -123,90 +123,167 @@ export default function ProfilePage() {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={styles.background}>
-                <div>
-                    <h2>Información del Perfil</h2>
-                </div>
-                <div className={styles.info}>
-                    <div className={styles.name}>{user.username}</div>
-                    <div className={styles.userInfo}>
-                        {editMode[user.id] ? (
-                            <form>
-                                <label htmlFor='fname' className={styles.campoNombre}>Nombre</label><br/>
-                                <input type='text' id='fname' name='fname' className={styles.inputNombre} value={editedProduct[user.id]?.firstname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], firstname: e.target.value}}))}/><br />
-                                <label htmlFor='lname' className={styles.campoApellido}>Apellido</label><br/>
-                                <input type='text' id='lname' name='lname' className={styles.inputApellido} value={editedProduct[user.id]?.lastname} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], lastname: e.target.value}}))}/><br />
-                                <label htmlFor='uname' className={styles.campoUsuario}>Nombre de Usuario</label><br/>
-                                <input type='text' id='uname' name='uname' className={styles.inputUName} value={editedProduct[user.id]?.username} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], username: e.target.value}}))}/><br />
-                                <label htmlFor='email' className={styles.campoEmail}>Correo Electronico</label><br/>
-                                <input type='email' id='e-mail' name='e-mail' className={styles.inputEmail} value={editedProduct[user.id]?.email} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value}}))}/><br />
-                                <label htmlFor='pass' className={styles.campoContraseña}>Contraseña</label><br/>
-                                <input type='password' name='pass' id='pass' className={styles.inputContraseña} value={editedProduct[user.id]?.pass ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], pass: e.target.value}}))}/><br/>
-                                <label htmlFor='text' className={styles.campoTel}>Numero de telefono</label><br/>
-                                <input type='tel' id='tel' name='tel' className={styles.inputTel} value={editedProduct[user.id]?.tel ?? ''} onChange={(e) =>setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: Number(e.target.value)}}))}/>
-                                <button className={styles.saveChanges} type="button" onClick={() => saveChanges(user.id)}>Guardar</button>
-                                <button className={styles.cancel} onClick={() => setEditMode(prev => ({ ...prev, [user.id]: false }))}>Cancelar</button>
-                            </form>
-                        ) : (
-                            <div className={styles.user}>
-                                <label className={styles.campoNombre}>Nombre</label>
-                                <span className={styles.inputNombre} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.firstname}</span>
-                                <label className={styles.campoApellido}>Apellido</label>
-                                <span className={styles.inputApellido} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.lastname}</span>
-                                <label className={styles.campoUsuario}>Nombre de Usuario</label>
-                                <span className={styles.inputUName} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.username}</span>
-                                <label className={styles.campoEmail}>Correo Electronico</label>
-                                <span className={styles.inputEmail} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.email}</span>
-                                <label className={styles.campoContraseña}>Contraseña</label>
-                                <span className={styles.inputContraseña} onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>******</span>
-                                <label>Numero de Telefono</label>
-                                <span onCopy={(e) => e.preventDefault()} onSelect={(e) => e.preventDefault()} onMouseDown={(e) => e.preventDefault()}>{user.tel}</span>
-                                <button className={styles.edit} type="button" onClick={() => editActivate(user)}>Editar</button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <div className={styles.history}>
-                    <div>
-                        <h2>Historial de Compras</h2>
-                    </div>
-                    <div className={styles.info}>
-                        <table className={styles.purchases}>
-                            <thead>
-                                <tr className={styles.header}>
-                                    <th>Título</th>
-                                    <th>Autor</th>
-                                    <th>Cantidad</th>
-                                    <th>Formato</th>
-                                    <th>Precio</th>
-                                    <th>Fecha</th>
-                                    <th>Review</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {purchases && purchases.length > 0 ? (
-                                    purchases.map((purchases) => (
-                                        <tr className={styles.cells} key={purchases.id}>
-                                            <td className={styles.details}>{purchases.title}</td>
-                                            <td className={styles.details}>{purchases.author}</td>
-                                            <td className={styles.details}>{purchases.amount}</td>
-                                            <td className={styles.details}>{purchases.virtual ? 'Digital' : 'Fisico'}</td>
-                                            <td className={styles.details}>{purchases.price.toLocaleString('es-AR')}</td>
-                                            <td className={styles.details}>{formatDate(purchases.purchaseDate)}</td>
-                                            <td className={styles.details}><AddBookReview id_user={purchases.id_user} id_book={purchases.id_book} /></td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={7} className={styles.noPurchases}>No hay compras realizadas</td>
-                                    </tr> 
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+  <div className={styles.container}>
+    <div className={styles.background}>
+      <h2>Información del Perfil</h2>
+
+      <div className={styles.info}>
+        <div className={styles.usernameCentered}>
+          <span className={styles.name}>{user.username}</span>
         </div>
-    )
+
+        {editMode[user.id] ? (
+          <form>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label htmlFor='fname'>Nombre</label><br />
+                <input
+                  type='text'
+                  id='fname'
+                  value={editedProduct[user.id]?.firstname}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], firstname: e.target.value } }))}
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor='lname'>Apellido</label><br />
+                <input
+                  type='text'
+                  id='lname'
+                  value={editedProduct[user.id]?.lastname}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], lastname: e.target.value } }))}
+                />
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label htmlFor='uname'>Nombre de Usuario</label><br />
+                <input
+                  type='text'
+                  id='uname'
+                  value={editedProduct[user.id]?.username}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], username: e.target.value } }))}
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor='email'>Correo Electrónico</label><br />
+                <input
+                  type='email'
+                  id='email'
+                  value={editedProduct[user.id]?.email}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value } }))}
+                />
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label htmlFor='pass'>Contraseña</label><br />
+                <input
+                  type='password'
+                  id='pass'
+                  value={editedProduct[user.id]?.pass ?? ''}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], pass: e.target.value } }))}
+                />
+              </div>
+              <div className={styles.field}>
+                <label htmlFor='tel'>Número de teléfono</label><br />
+                <input
+                  type='tel'
+                  id='tel'
+                  value={editedProduct[user.id]?.tel ?? ''}
+                  onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: Number(e.target.value) } }))}
+                />
+              </div>
+            </div>
+
+            <div className={styles.buttonRow}>
+              <button type="button" className={styles.saveChanges} onClick={() => saveChanges(user.id)}>Guardar</button>
+              <button type="button" className={styles.cancel} onClick={() => setEditMode(prev => ({ ...prev, [user.id]: false }))}>Cancelar</button>
+            </div>
+          </form>
+        ) : (
+          <div>
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label>Nombre</label>
+                <span>{user.firstname}</span>
+              </div>
+              <div className={styles.field}>
+                <label>Apellido</label>
+                <span>{user.lastname}</span>
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label>Nombre de Usuario</label>
+                <span>{user.username}</span>
+              </div>
+              <div className={styles.field}>
+                <label>Correo Electrónico</label>
+                <span>{user.email}</span>
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label>Contraseña</label>
+                <span>******</span>
+              </div>
+              <div className={styles.field}>
+                <label>Número de teléfono</label>
+                <span>{user.tel}</span>
+              </div>
+            </div>
+
+            <div className={styles.buttonRow}>
+              <button type="button" className={styles.edit} onClick={() => editActivate(user)}>Editar</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className={styles.history}>
+        <h2>Historial de Compras</h2>
+
+        <div className={styles.purchaseTableWrapper}>
+          <table className={styles.purchases}>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Cantidad</th>
+                <th>Formato</th>
+                <th>Precio</th>
+                <th>Fecha</th>
+                <th>Review</th>
+              </tr>
+            </thead>
+            <tbody>
+              {purchases && purchases.length > 0 ? (
+                purchases.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.title}</td>
+                    <td>{p.author}</td>
+                    <td>{p.amount}</td>
+                    <td>{p.virtual ? 'Digital' : 'Físico'}</td>
+                    <td>{p.price.toLocaleString('es-AR')}</td>
+                    <td>{formatDate(p.purchaseDate)}</td>
+                    <td><AddBookReview id_user={p.id_user} id_book={p.id_book} /></td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className={styles.noPurchases}>No hay compras realizadas</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 }
