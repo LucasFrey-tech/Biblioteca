@@ -17,7 +17,6 @@ export class GenresService {
   /**
    * Obtiene todos los generos disponibles
    * 
-   * @async
    * @returns {Promise<Genre[]>} Una promesa que resuelve con un arreglo de DTOs de generos.
    * 
    */
@@ -29,7 +28,6 @@ export class GenresService {
   /**
    * Crea un nuevo genero en el sistema.
    * 
-   * @async
    * @param {Partial<Genre>} genre - Objeto de transferencia de datos con la información del genero a crear
    * @returns {Promise<Genre>} - Promesa que resuelve con la entidad de generos recién creada
    */
@@ -42,7 +40,6 @@ export class GenresService {
   /**
    * Elimina un genero especifico
    * 
-   * @async
    * @param {number} id - ID del genero a eliminar
    * @throws {NotFoundException} Cuando un genero con la ID buscada no es encontrada
    */

@@ -22,7 +22,6 @@ export class CarouselService {
     /**
      * Obtiene todos los carousel disponible
      * 
-     * @async
      * @returns {Promise<CarouselDTO[]} Una promesa que resuelve con un arreglo de DTOs de carousel.
      */
     async findAll(): Promise<CarouselDTO[]> {
@@ -32,7 +31,6 @@ export class CarouselService {
     /**
      * Crea un nuevo carousel en el sistema.
      * 
-     * @async
      * @param {CarouselDTO} body - Objeto de transferencia de datos con la información del carousel a crear. 
      * @returns {Promise<CarouselDTO>} - Promesa que resuelve con la entidad del carousel recién creada.
      */
@@ -44,7 +42,6 @@ export class CarouselService {
     /**
      * Actualiza un carousel en el sistema.
      * 
-     * @async
      * @param {number} id - ID del carousel a actualizar
      * @param {Partial<CarouselDTO>} updateData - DTO con los nuevos datos para el carousel.
      * @returns {Promise<CarouselEntity[]>} Promesa que resuelve con un arreglo del elemento actualizado
@@ -57,8 +54,7 @@ export class CarouselService {
 
     /**
      * Elimina un carousel específico de la base de datos.
-     * 
-     * @async 
+     *  
      * @param {number} id - ID del carousel a eliminar
      */
     async remove(id: number): Promise<void> {

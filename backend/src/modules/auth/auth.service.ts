@@ -5,6 +5,10 @@ import { UsersService } from '../users/user.service';
 import { LoginRequestBody, RegisterRequestBody } from './dto/auth.dto';
 import { User } from 'src/entidades/user.entity';
 
+
+/**
+ * Servicio que maneja la lógica de negocio para el Sistema de Autenticación
+ */
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
@@ -15,16 +19,23 @@ export class AuthService {
     this.logger.log('AuthService inicializado');
   }
 
+  /**
+   * Registra un nuevo usuario en el sistema.
+   * 
+   * @param {RegisterRequestBody} requestBody - Datos de registro del usuario
+   * @returns {Promise<Omit<User, 'password'>>} Promesa que resuelve con los datos del usuario creado (sin contraseña)
+   * @throws {BadRequestException} En estos casos:
+   * - Si el email y nombre de usuario ya existen
+   * - Si el email ya está registrado
+   * - Si el nombre de usuario ya existe 
+   */
   // REGISTRO
-  async register(requestBody: RegisterRequestBody) {
+  async register(requestBody: RegisterRequestBody): Promise<Omit<User, 'password'>> {
     
     // Verificar si ya existe el usuario por email
     const existingUserEmail = await this.usersService.findByEmail(requestBody.email);
     // Verificar si ya existe el usuario por nombre de usuario
     const existingUserName = await this.usersService.findByUser(requestBody.username);
-    
-    console.log('existingUserEmail:', existingUserEmail);
-    console.log('existingUserName:', existingUserName);
     
     if (existingUserEmail && existingUserName) {
       throw new BadRequestException('El correo y el usuario ya existen!');
@@ -53,11 +64,18 @@ export class AuthService {
     return result;
   }
 
-  // LOGIN
+  /**
+   * Autentica a un usuario y genera un token JWT
+   * 
+   * @param {LoginRequestBody} requestBody - Objeto que contiene las credenciales del usuario
+   * @returns - Un objeto con el token de acceso.
+   * @throws {UnauthorizedException} Si las credenciales son incorrectas
+   * @throws {ForbiddenException} Si el usuario está desabilidato
+   */
 
+  // LOGIN
   async login(requestBody: LoginRequestBody) {
     // Validamos el usuario y la contraseña
-    console.log(requestBody)
     const user = await this.validateUser(requestBody.email, requestBody.password);
 
     if (user.disabled) {

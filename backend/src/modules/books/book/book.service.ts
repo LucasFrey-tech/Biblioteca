@@ -27,7 +27,6 @@ export class BooksService {
   /**
    * Obtiene todos los libros disponibles.
    * 
-   * @async
    * @returns {Promise<BookDTO[]>} Una promesa que resuelve con un arrelgo de DTOs de libros.
    * 
    */
@@ -45,7 +44,6 @@ export class BooksService {
   /**
    * Obtiene libros filtrados por un género específico.
    * 
-   * @async
    * @param {number} genreId - El id del género a buscar.
    * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese género encontrado.
    * 
@@ -65,7 +63,6 @@ export class BooksService {
   /**
    * Obtiene libros filtrados por un autor específico.
    * 
-   * @async
    * @param {number} authorId - El id del autor a buscar.
    * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese autor encontrada.
    * 
@@ -84,7 +81,6 @@ export class BooksService {
   /**
    * Busca un libro específico por su ID.
    * 
-   * @async
    * @param {number} id - El id del libro a buscar.
    * @returns {Promise<BookDTO | null>} Una promesa que resuelve con el DTO del libro encontrado.
    * @throws {NotFoundException} Si no encuenta ningún libro con el ID especificado.
@@ -104,7 +100,6 @@ export class BooksService {
   /**
    * Crea un nuevo libro en el sistema con sus géneros asociados.
    * 
-   * @async
    * @param {CreateBookDTO} bookDTO - Objeto de transferencia de datos con la información del libro a crear.
    * Debe incluir los IDs de géneros y el ID del autor.
    * @returns {Promise<Book>} Promesa que resuelve con la entidad del libro recién creado.
@@ -137,7 +132,6 @@ export class BooksService {
   /**
    * Actualiza un libro en el sistema.
    * 
-   * @async
    * @param {number} id - ID del libro a actualizar
    * @param {CreateBookDTO} bookDTO - DTO con los nuevos datos para la recomendación.
    * Debe incluir los IDs de géneros y el ID del autor.
@@ -194,7 +188,6 @@ export class BooksService {
   /**
    * Elimina un libro específico de la base de datos.
    * 
-   * @async
    * @param {number} id - ID del libro a eliminar
    * @returns {Promise<boolean>} Promesa que resuelve con:
    * - `true` si el libro existía y fue eliminado correctamente

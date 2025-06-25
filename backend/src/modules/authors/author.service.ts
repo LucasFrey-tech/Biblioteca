@@ -19,7 +19,6 @@ export class AuthorService {
     /**
      * Obtiene todods los autores disponibles.
      * 
-     * @async
      * @returns {Promise<Author[]>} Una promesa que resuelve con un arreglo de DTOs de autores 
      */
     async findAll(): Promise<Author[]> {
@@ -30,7 +29,6 @@ export class AuthorService {
     /**
      * Busca un autor específico por su ID.
      * 
-     * @async
      * @param {number} id - El ID del autor a buscar.
      * @returns {Promise<Author>} Una promesa que resuelve con el autor encontrado.
      * @throws {NotFoundException} Si no encuentra ningun autor con el ID específicado.
@@ -51,7 +49,6 @@ export class AuthorService {
     /**
      * Crea un nuevo autor en el sistema.
      * 
-     * @async
      * @param {CreateAuthorDto} createAuthorDto - Objeto de transferencia de datos con la información para crear un autor.
      * @returns {Promise<Author>} Promesa que resuelve con la entidad del autor recién creada.
      */
@@ -63,8 +60,7 @@ export class AuthorService {
 
     /**
      * Elimina un autor específico de la base de datos
-     * 
-     * @async
+     *
      * @param {number} id - ID del autor a eliminar
      */
     async remove(id: number): Promise<void> {

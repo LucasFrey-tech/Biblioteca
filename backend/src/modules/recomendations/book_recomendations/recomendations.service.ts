@@ -18,7 +18,6 @@ export class RecomendationsService {
     /**
      * Obtiene todas las recomendaciones de libros disponibles.
      * 
-     * @async
      * @returns {Promise<RecommendationDTO[]>} Una promesa que resuelve con un arreglo de DTOs de recomendaciones.
      * Las recomendaciones están ordenadas por ID y limitadas a 8 elementos.
      * 
@@ -36,7 +35,6 @@ export class RecomendationsService {
     /**
      * Busca una recomendación específica por su ID.
      * 
-     * @async
      * @param {number} id - El ID de la recomendación a buscar.
      * @returns {Promise<RecommendationDTO>} Una promesa que resuelve con el DTO de la recomendación encontrada.
      * @throws {NotFoundException} Si no se encuentra ninguna recomendación con el ID especificado.
@@ -58,7 +56,6 @@ export class RecomendationsService {
     /**
      * Crea una nueva recomendación de libro.
      * 
-     * @async
      * @param {CreateRecommendationDTO} body - DTO con los datos necesarios para crear la recomendación.
      * Debe incluir el ID del libro a recomendar.
      * @returns {Promise<RecommendationDTO>} Una promesa que resuelve con el DTO de la recomendación creada.
@@ -85,7 +82,6 @@ export class RecomendationsService {
     /**
      * Actualiza una recomendación existente.
      * 
-     * @async
      * @param {number} id - El ID de la recomendación a actualizar.
      * @param {CreateRecommendationDTO} body - DTO con los nuevos datos para la recomendación.
      * @returns {Promise<RecommendationDTO>} Una promesa que resuelve con el DTO de la recomendación actualizada.
@@ -108,7 +104,6 @@ export class RecomendationsService {
     /**
      * Elimina una recomendación existente de la base de datos.
      * 
-     * @async
      * @param {number} id - El ID de la recomendación a eliminar.
      * @returns {Promise<void>} Una promesa que resuelve cuando la eliminación es exitosa.
      * @throws {NotFoundException} Si no se encuentra ninguna recomendación con el ID especificado.
