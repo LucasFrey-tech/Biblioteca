@@ -48,4 +48,4 @@ Plataforma web que simula una biblioteca digital y física, donde los usuarios p
 
 ## Estado del proyecto
 
-En desarrollo – Se siguen integrando nuevas funcionalidades y mejoras en la UI/UX, administración avanzada y rendimiento general.
+En desarrollo – Se siguen integrando nuevas funcionalidades, mejoras en la UI/UX y rendimiento general.
