@@ -238,7 +238,10 @@ export default function BooksPanel(): React.JSX.Element {
         <AddBookDialog
           onAuthorAdded={(author) => setAuthors(prev => [...prev, author])}
           onGenreAdded={(genre) => setGenres(prev => [...prev, genre])}
-          onAdded={() => apiRef.current.books.getAll().then(setBooks)}
+          onBookCreated={(newBook) => {
+            setBooks(prev => [newBook, ...prev].sort((a, b) => b.id - a.id));
+            setCurrentPage(1);
+          }}
         />
       </div>
 
