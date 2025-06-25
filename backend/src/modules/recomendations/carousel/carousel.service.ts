@@ -1,9 +1,9 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { Carousel } from "src/entidades/carousel.entity";
+import { Carousel } from "../../../entidades/carousel.entity";
 import { CarouselDTO } from "./carousel.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { SettingsService } from "src/settings.service";
+import { SettingsService } from "../../../settings/settings.service";
 
 
 /**

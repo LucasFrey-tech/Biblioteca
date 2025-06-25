@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Delete, Param, ParseIntPipe } from '@nestjs/common';
 import { GenresService } from './genre.service';
-import { Genre } from 'src/entidades/genre.entity';
+import { Genre } from '../../../src/entidades/genre.entity';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 /**

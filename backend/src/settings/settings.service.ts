@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
-const myapp_config = require('../private/app.config.json');
+import ISettingsService from './settings.service.interface'
+const myapp_config = require('../../private/app.config.json');
 
 @Injectable()
-export class SettingsService {
+export class SettingsService implements ISettingsService {
   getHostUrl = (): string => myapp_config.host.url;
   getFrontUrl = (): string => myapp_config.front_url;
 
@@ -14,7 +14,7 @@ export class SettingsService {
   
 
   getDatabaseHost = ():string => myapp_config.database_connection.host;
-  getDatabasePost = ():string => myapp_config.database_connection.port;
+  getDatabasePort = ():string => myapp_config.database_connection.port;
   getDatabaseUsername = ():string => myapp_config.database_connection.username;
   getDatabasePasswords = ():string => myapp_config.database_connection.password;
   getDatabaseName = ():string => myapp_config.database_connection.database;

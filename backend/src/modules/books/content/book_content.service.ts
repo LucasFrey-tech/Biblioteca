@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { VirtualBookContent } from 'src/entidades/virtual_book_content.entity';
+import { VirtualBookContent } from '../../../entidades/virtual_book_content.entity';
 import { BookContentDTO } from './book_content.dto';
-import { log } from 'console';
 
 @Injectable()
 export class BookContentService {

@@ -16,3 +16,8 @@ export const mockGenre3:Genre = {
 };
 
 export const mockGenres = [mockGenre1, mockGenre2, mockGenre3];
+
+
+export const mockGenresRepository = {
+find: jest.fn().mockResolvedValue(mockGenres),
+};

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, Req } from '@nestjs/common';
 import { BookReviewsService } from './book_reviews.service';
-import { Review } from 'src/entidades/review.entity';
+import { Review } from '../../../../src/entidades/review.entity';
 import { ReviewI } from './dto/review.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 import { CreateReviewDto } from './dto/createReview.dto';

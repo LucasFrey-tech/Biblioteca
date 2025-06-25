@@ -1,5 +1,5 @@
-import { mockUser1, mockUser2, mockUser3 } from "../entities/user.mock";
-import { mockBook1, mockBook2, mockBook3 } from "../entities/books.mock";
+import { mockUser1, mockUser2, mockUser3 } from "../repositories/users.repository.mock";
+import { mockBook1, mockBook2, mockBook3 } from "../repositories/books.repository.mock";
 import { BookCartDTO } from "../../../src/modules/shopping_cart/book_cart.dto";
 import { ShoppingCartBook } from "../../../src/entidades/shopping_cart_book.entity";
 
