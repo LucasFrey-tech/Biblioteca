@@ -148,7 +148,7 @@ export default function LogIn() {
     <div className={styles.pageContainer}>
       <Card className={styles.cardHeader}>
         <CardHeader className={styles.registroTitulo}>
-          <CardTitle className={styles.titulo}>Iniciar Sesión</CardTitle>
+          <CardTitle className={styles.titulo}>Inicio de Sesión</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -181,11 +181,14 @@ export default function LogIn() {
               />
               <div className={styles.botonContainer}>
                 <Button className={styles.botonEnviar} type="submit">
-                  Enviar
+                  Iniciar Sesión
                 </Button>
+                <div className={styles.divider}>
+                  <p>¿No tienes cuenta?</p>
+                </div>
                 <Button asChild className={styles.botonEnviar}>
                   <Link href="/registro" className={styles.linkSinEstilo}>
-                    Registrarse
+                    Regístrate
                   </Link>
                 </Button>
               </div>
