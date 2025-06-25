@@ -27,7 +27,7 @@ import { BookFile } from '@/API/types/bookFile';
 import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
 
-export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void }) {
+export default function AddBookDialog({ onAuthorAdded, onGenreAdded, onAdded }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void, onAdded?: () => void}) {
   const [open, setOpen] = useState(false);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -91,6 +91,8 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
 
     try {
       await API.books.createBookFile(newBook, formGenresNumber);
+      if (onAdded) onAdded();
+      setOpen(false);
       Swal.fire({
         icon: 'success',
         title: 'Éxito',

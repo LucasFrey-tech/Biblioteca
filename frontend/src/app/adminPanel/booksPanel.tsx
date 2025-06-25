@@ -135,7 +135,7 @@ export default function BooksPanel(): React.JSX.Element {
   const saveChanges = async (bookId: number) => {
     const bookState = booksEditState[bookId];
     if (!bookState) {
-      Swal.fire("error","No hay estado de edicion para este libro","error")
+      Swal.fire("error", "No hay estado de edicion para este libro", "error")
       return;
     }
 
@@ -207,17 +207,20 @@ export default function BooksPanel(): React.JSX.Element {
     );
   };
 
-  // Filtrar libros por busqueda
-  const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const sortedAndFilteredBooks = books
+    .filter(book =>
+      book.title.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => b.id - a.id); // Orden descendente por ID
 
-  // Paginación calculo
-  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
-  const currentBooks = filteredBooks.slice(
+  const currentBooks = sortedAndFilteredBooks.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  // Paginación calculo
+  const totalPages = Math.ceil(sortedAndFilteredBooks.length / itemsPerPage);
+
 
   return (
     <>
@@ -235,6 +238,7 @@ export default function BooksPanel(): React.JSX.Element {
         <AddBookDialog
           onAuthorAdded={(author) => setAuthors(prev => [...prev, author])}
           onGenreAdded={(genre) => setGenres(prev => [...prev, genre])}
+          onAdded={() => apiRef.current.books.getAll().then(setBooks)}
         />
       </div>
 
@@ -427,33 +431,33 @@ export default function BooksPanel(): React.JSX.Element {
         );
       })}
 
-            {/* PAGINACIÓN */}
-            <Pagination className="pt-4">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                    aria-disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, idx) => (
-                  <PaginationItem key={idx + 1}>
-                    <PaginationLink
-                      isActive={currentPage === idx + 1}
-                      onClick={() => setCurrentPage(idx + 1)}
-                    >
-                      {idx + 1}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                    aria-disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </>
-        );
-      }
+      {/* PAGINACIÓN */}
+      <Pagination className="pt-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              aria-disabled={currentPage === 1}
+            />
+          </PaginationItem>
+          {Array.from({ length: totalPages }, (_, idx) => (
+            <PaginationItem key={idx + 1}>
+              <PaginationLink
+                isActive={currentPage === idx + 1}
+                onClick={() => setCurrentPage(idx + 1)}
+              >
+                {idx + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              aria-disabled={currentPage === totalPages}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </>
+  );
+}
