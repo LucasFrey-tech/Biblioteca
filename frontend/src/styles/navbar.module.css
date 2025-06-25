@@ -77,7 +77,81 @@
     color: black;
 }
 
-/* NUEVO: Wrapper para nombreUsuario + carrito */
+/* ======================================================= */
+
+/* Contenedor del botón */
+.Subscription {
+    position: relative;
+    margin-left: 20px;
+}
+
+/* Botón base */
+.crownButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Estilos para el SVG */
+.crownIcon {
+    width: 38px;
+    height: 38px;
+    transition: all 0.15s ease;
+}
+
+/* Efecto neón en el contorno */
+.crownIcon path {
+    stroke-width: 1.5px;
+    stroke: #00ffff;
+    fill: transparent;
+    animation: neonOutline 10s infinite alternate;
+    /* control de velociodad */
+    stroke-dasharray: 100;
+    stroke-dashoffset: 1000;
+}
+
+/* Animación del trazo */
+@keyframes neonOutline {
+    0% {
+        stroke: #00ffff;
+        stroke-dashoffset: 1000;
+    }
+
+    25% {
+        stroke: #ff00ff;
+    }
+
+    50% {
+        stroke: #ff0505;
+    }
+
+    75% {
+        stroke: #ff00ff;
+    }
+
+    100% {
+        stroke: #00ffff;
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Efecto al pasar el mouse */
+.crownButton:hover .crownIcon {
+    transform: scale(1.1);
+}
+
+.crownButton:hover .crownIcon path {
+    stroke-width: 2px;
+    animation-delay: 10s;
+}
+
+
+
+/*================================================================================*/
 .menuDesplegableConCarrito {
     display: flex;
     align-items: center;
@@ -287,16 +361,20 @@
     font-weight: bold;
     padding: 0.6rem;
     transition: background-color 0.2s ease;
-    margin: 0 auto; /* Esto centrará el elemento */
-    width: fit-content; /* Asegura que solo ocupe el espacio necesario */
+    margin: 0 auto;
+    /* Esto centrará el elemento */
+    width: fit-content;
+    /* Asegura que solo ocupe el espacio necesario */
 }
 
 .sidebarList li {
     padding: 1rem;
     border-bottom: 1px solid #eee;
     text-align: center;
-    display: flex; /* Añade esto */
-    justify-content: center; /* Añade esto */
+    display: flex;
+    /* Añade esto */
+    justify-content: center;
+    /* Añade esto */
 }
 
 .cartButtonSidebar:hover {
@@ -322,5 +400,9 @@
 
     .TituloPagina {
         margin-left: 0;
+    }
+
+    .hideOnMobile {
+        display: none;
     }
 }

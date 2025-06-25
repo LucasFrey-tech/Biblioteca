@@ -7,7 +7,8 @@ import { useState } from "react";
 import styles from '../../styles/navbar.module.css';
 import { useUser } from "@/app/context/UserContext";
 import SubscriptionDialog from "./subscriptionPanel";
-import SubscriptionHandler from "./estadoSubscripcion";
+import { CrownIcon, GemIcon } from "lucide-react";
+import { useSubscriptionHandler } from "./useSubscriptionHandler";
 
 export default function Navbar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,6 +18,7 @@ export default function Navbar() {
 
   const { user, setUser } = useUser();
   const router = useRouter();
+  const { handleSubscription } = useSubscriptionHandler();
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const closeSidebar = () => setIsSidebarOpen(false);
@@ -42,6 +44,10 @@ export default function Navbar() {
     setSubscriptionData({ startDate, endDate });
   };
 
+  const handleGemClick = () => {
+    handleSubscription(onSubscriptionConfirmed);
+  };
+
   return (
     <>
       <header className={styles.Header}>
@@ -63,6 +69,15 @@ export default function Navbar() {
           </ul>
         </nav>
 
+        <div className={styles.Subscription}>
+          <button
+            className={`${styles.crownButton} ${styles.hideOnMobile}`}
+            onClick={handleGemClick}
+          >
+            <GemIcon className={styles.crownIcon} />
+          </button>
+        </div>
+
         <div className={styles.Usuario}>
           {user ? (
             <div className={styles.menuDesplegableConCarrito}>
@@ -73,7 +88,6 @@ export default function Navbar() {
                   {user.admin && (
                     <button onClick={() => router.push('/adminPanel')}>Panel de Admin</button>
                   )}
-                  <SubscriptionHandler onSubscriptionConfirmed={onSubscriptionConfirmed} />
                   <button onClick={closeSession}>Cerrar Sesión</button>
                 </div>
               )}
@@ -118,9 +132,7 @@ export default function Navbar() {
               {user.admin && (
                 <li><button onClick={() => { closeSidebar(); router.push('/adminPanel'); }}>Panel de Admin</button></li>
               )}
-              <li>
-                <SubscriptionHandler onSubscriptionConfirmed={onSubscriptionConfirmed} />
-              </li>
+              <li><button onClick={() => handleSubscription(onSubscriptionConfirmed)}>Suscripción</button></li>
               <li><button onClick={closeSession}>Cerrar Sesión</button></li>
             </>
           ) : (
