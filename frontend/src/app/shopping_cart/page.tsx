@@ -65,8 +65,8 @@ export default function ShoppingCartPage() {
                         }
                     } catch (discountError) {
                         console.warn(discountError)
-                        Swal.fire("error","No se pudo cargar el descuento para subscriptores","error")
-                       
+                        Swal.fire("error", "No se pudo cargar el descuento para subscriptores", "error")
+
                     }
                 }
 
@@ -211,7 +211,11 @@ export default function ShoppingCartPage() {
                                     <div key={`${item.id}-${item.virtual}`} className={styles.cartItem}>
                                         <div className={styles.itemImage}>
                                             <Image
-                                                src={item.image}
+                                                src={
+                                                    typeof item.image === 'string' && item.image.trim() !== ''
+                                                        ? item.image
+                                                        : '/libros/placeholder.png'
+                                                }
                                                 alt={item.title}
                                                 className={item.virtual ? styles.ebookImage : ''}
                                                 width={100}
