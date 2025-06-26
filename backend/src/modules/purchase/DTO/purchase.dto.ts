@@ -32,13 +32,6 @@ export class PurchaseDTO {
    */
   @IsArray()
   purchaseItems: PurchaseItemDTO[]
-  
-  /**
-   * Valor del descuento
-   * @type {number}
-   */
-  @IsNumber()
-  subscriptionDiscount: number;
 
   /**
    * Fecha de compra
@@ -92,6 +85,9 @@ export class PurchaseItemDTO {
   @IsNumber()
   amount: number;
 
+  @IsNumber()
+  subscriptionDiscount: number;
+
   constructor (
     id_book: number,
     title: string,
@@ -100,6 +96,7 @@ export class PurchaseItemDTO {
     price: number,
     virtual: boolean,
     amount: number,
+    subscriptionDiscount: number,
   ) {
     this.id_book = id_book;
     this.title = title;
@@ -108,5 +105,6 @@ export class PurchaseItemDTO {
     this.price = price;
     this.virtual = virtual;
     this.amount = amount;
+    this.subscriptionDiscount = subscriptionDiscount
   }
 }

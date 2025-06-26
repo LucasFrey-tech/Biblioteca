@@ -135,7 +135,7 @@ export class PurchasesService {
       relations: ['book', 'user', 'book.author'],
       order: { purchaseDate: 'DESC' }
     });
-    
+
     if (typeof purchases === 'undefined' || !purchases.length) {
       this.logger.log('Historial Vacío');
       return null;
@@ -151,53 +151,41 @@ export class PurchasesService {
 
     for (const purchase of purchases) {
       const dateTime = purchase.purchaseDate.toLocaleDateString('es-AR');
+      let resDiscount = 0;
+
+      if (purchase.user.userSubscriptions && purchase.user.userSubscriptions.length > 0) {
+        const discount = await this.discountRepository.findOne({ where: { id: 1 } });
+        if (discount) {
+          resDiscount = discount.discount;
+        }
+      }
+
+      const purchaseItem = new PurchaseItemDTO(
+        purchase.book.id,
+        purchase.book.title,
+        purchase.book.author.name,
+        purchase.book.image,
+        purchase.book.price,
+        purchase.virtual,
+        purchase.amount,
+        resDiscount
+      );
 
       if (!acc[dateTime]) {
         acc[dateTime] = new PurchaseDTO(
           purchase.id,
           purchase.user.id,
           purchase.user.username,
-          [
-            new PurchaseItemDTO(
-              purchase.book.id,
-              purchase.book.title,
-              purchase.book.author.name,
-              purchase.book.image,
-              purchase.book.price,
-              purchase.virtual,
-              purchase.amount,
-            ),
-          ],
+          [purchaseItem],
           new Date(purchase.purchaseDate),
           purchase.price * purchase.amount,
         );
-        
-        if (purchase.user.userSubscriptions && purchase.user.userSubscriptions.length > 0) {
-          const discount = await this.discountRepository.findOne({where: {id: 1 } });
-
-          if (discount) {
-            acc[dateTime].subscriptionDiscount = discount?.discount;
-          }
-        } else {
-          acc[dateTime].subscriptionDiscount = 0;
-        }
       } else {
-        acc[dateTime].purchaseItems.push(
-          new PurchaseItemDTO(
-            purchase.book.id,
-            purchase.book.title,
-            purchase.book.author.name,
-            purchase.book.image,
-            purchase.book.price,
-            purchase.virtual,
-            purchase.amount,
-          ),
-        );
+        acc[dateTime].purchaseItems.push(purchaseItem);
         acc[dateTime].total += purchase.price * purchase.amount;
       }
     }
 
     return Object.values(acc);
   }
-
 }
