@@ -1,0 +1,99 @@
+@startwbs
+* Proyecto: Aplicación Web de Gestión de Libros (Enfoque Funcionalidad)
+** Preparación Inicial
+*** Front-end
+*** Back-end
+** Sistema de Autenticación
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Gestión de Perfil de Usuario
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Consultar Catálogo de Libros
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Reservar Libros y Marcarlos como Favoritos
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Carrito de Compras
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Selección Tipo de Libro
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Calificar Libros y Reseñar
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Comentar
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Suscripción a Planes
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Administración de Libros (Admin)
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Visualización y Actualización de Reservas (Admin)
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Reclamos por Daños y Bloqueo de Usuarios (Admin)
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Publicación de Novedades (Admin)
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Gestión de Roles y Permisos
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Rol Bibliotecario (Opcional)
+*** Front-end
+*** Back-end
+*** Documentación
+*** Tests
+** Base de Datos
+*** Modelo ER
+*** Migraciones y Seeds
+*** Documentación
+** Documentación Técnica y Presentación
+*** Manuales
+*** Documentación API
+*** Arquitectura y decisiones
+*** Demo funcional
+** Testing Global
+*** Front-end
+*** Back-end
+*** Cobertura 80%
+** Infraestructura y Deploy
+*** Deploy Front-end
+*** Deploy Back-end
+*** Deploy Base de Datos
+*** Validación de build
+@endwbs

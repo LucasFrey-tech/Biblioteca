@@ -1,0 +1,326 @@
+.Header {
+    display: flex;
+    font-family: var(--font-SF-Fedora), sans-serif;
+    border-bottom: solid 1px rgb(168, 168, 168);
+    width: 100%;
+    height: auto;
+    min-height: 4vw;
+    background-color: white;
+    align-items: center;
+    padding: 0 1vw;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.TituloPagina {
+    margin-left: 10px;
+    min-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.TituloPagina h1 {
+    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.TituloPagina h2 {
+    background: linear-gradient(to bottom, #ff2100, #ff9e00, #ffda00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-left: 2vw;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.Navegacion {
+    display: flex;
+    flex: 1;
+    align-self: center;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.navList {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.navList li {
+    position: relative;
+    padding: 0 1vw;
+    color: black;
+}
+
+.navList li:not(:last-child)::after {
+    content: '|';
+    position: absolute;
+    right: -2px;
+    color: rgb(54, 54, 54);
+}
+
+.Usuario {
+    display: flex;
+    align-self: center;
+    margin-left: auto;
+    color: black;
+}
+
+/* NUEVO: Wrapper para nombreUsuario + carrito */
+.menuDesplegableConCarrito {
+    display: flex;
+    align-items: center;
+    gap: var(--espacio-usuario-carrito);
+    position: relative;
+}
+
+.menuDesplegable {
+    position: relative;
+    display: inline-block;
+}
+
+.nombreUsuario {
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.dropDownMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.dropDownMenu a,
+.dropDownMenu button {
+    margin: 4px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.Usuario p {
+    align-self: center;
+    padding-right: 3vw;
+    margin: 0;
+}
+
+/* Botones generales */
+
+.buttonGroup {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.boton {
+    text-transform: capitalize;
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.boton:hover {
+    background-color: #ffc400;
+    color: black;
+}
+
+/* Botón hamburguesa */
+
+.menuButton {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    padding: 0.5rem;
+}
+
+.menuButton img {
+    width: 32px;
+    height: 32px;
+}
+
+/* Sidebar */
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100vh;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: right 0.3s ease;
+    padding-top: 20px;
+    font-family: var(--font-SF-Fedora), sans-serif;
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+.sidebarList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebarList li {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+}
+
+.sidebarList a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    font-size: 1rem;
+}
+
+.sidebarList .boton {
+    text-transform: capitalize;
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    width: auto;
+    display: inline-block;
+    margin: 0.5rem auto;
+    font-family: var(--font-SF-Fedora), sans-serif;
+}
+
+.sidebarList .boton:hover {
+    background-color: #ffc400;
+    color: black;
+}
+
+.sidebarBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.sidebarBackdrop.active {
+    display: block;
+}
+
+.cartButton {
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.cartButton:hover {
+    transform: scale(1.1);
+}
+
+.cartIconContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.cartBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.cartButtonSidebar .cartIconContainer {
+    margin: 0 auto;
+}
+
+.cartButtonSidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    padding: 0.6rem;
+    transition: background-color 0.2s ease;
+    margin: 0 auto; /* Esto centrará el elemento */
+    width: fit-content; /* Asegura que solo ocupe el espacio necesario */
+}
+
+.sidebarList li {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    display: flex; /* Añade esto */
+    justify-content: center; /* Añade esto */
+}
+
+.cartButtonSidebar:hover {
+    background-color: #f0f0f0;
+    border-radius: 6px;
+}
+
+/* Responsive celular */
+
+@media (max-width: 768px) {
+    .menuButton {
+        display: block;
+    }
+
+    .Navegacion,
+    .Usuario {
+        display: none;
+    }
+
+    .Header {
+        justify-content: space-between;
+    }
+
+    .TituloPagina {
+        margin-left: 0;
+    }
+}
