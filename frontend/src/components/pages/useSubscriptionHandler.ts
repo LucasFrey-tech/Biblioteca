@@ -41,7 +41,7 @@ export function useSubscriptionHandler() {
       }
 
       const result = await Swal.fire({
-        title: 'No tienes suscripción 🥲',
+        title: '¡No tienes suscripción!',
         icon: 'question',
         html: `<h1>¡Hola ${user.username}, deseas comprar una por 1 mes al valor de $ ${price}</h1>`,
         showCloseButton: true,
