@@ -1,18 +1,16 @@
 import { BookContentController } from "../../src/modules/books/content/book_content.controller";
 import { BookContentService } from "../../src/modules/books/content/book_content.service";
 import { BookContentDTO } from "../../src/modules/books/content/book_content.dto";
+import { mockDtoContent1, mockDtoNewContent, mockDtoUpdatedContent1 } from "../mocks/dtos/contentDTOs.mock";
+import { mockTextFile } from "../mocks/files/textFile.mock";
+import { mockBookContentService } from "../mocks/services/bookContent.service.mock";
 
 describe('BookContentController', () => {
   let controller: BookContentController;
   let service: jest.Mocked<BookContentService>;
 
   beforeEach(() => {
-    service = {
-      get: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    } as any;
+    service = mockBookContentService
     controller = new BookContentController(service);
   });
 
@@ -48,17 +46,18 @@ describe('BookContentController', () => {
     const dto: BookContentDTO = { content: 'abc' } as any;
     const created: BookContentDTO = { id: 2, ...dto } as any;
     service.create.mockResolvedValue(created);
-    const result = await controller.post(dto);
+    const result = await controller.post(dto,mockTextFile);
     expect(service.create).toHaveBeenCalledWith(dto);
     expect(result).toBe(created);
   });
 
   it('should call service.update with correct params', async () => {
-    const dto: BookContentDTO = { content: 'updated' } as any;
-    service.update.mockResolvedValue(undefined);
-    const result = await controller.update(1, dto);
-    expect(service.update).toHaveBeenCalledWith(1, dto);
-    expect(result).toBeUndefined();
+        const mockUpdateBookContentdto = { ...mockDtoContent1, existingImage: "" };
+    const bookContentToUpdateId = 1
+    service.update.mockResolvedValue({ affected: 1 } as any);
+    const result = await controller.update(bookContentToUpdateId, mockUpdateBookContentdto,mockTextFile);
+    expect(service.update).toHaveBeenCalledWith(bookContentToUpdateId, mockUpdateBookContentdto);
+    expect(result).toEqual({ affected: 1 });
   });
 
   // it('should call service.delete with correct id', () => {
@@ -75,12 +74,13 @@ describe('BookContentController', () => {
 
   it('post should throw if service.create throws', async () => {
     service.create.mockRejectedValue(new Error('Create error'));
-    await expect(controller.post({ content: '' } as any)).rejects.toThrow('Create error');
+    await expect(controller.post(mockDtoNewContent, mockTextFile)).rejects.toThrow('Create error');
   });
 
-  it('update should throw if service.update throws', () => {
-    service.update.mockImplementation(() => { throw new Error('Update error'); });
-    expect(() => controller.update(1, { content: '' } as any)).toThrow('Update error');
+  it('update should throw if service.update throws', async () => {
+    const contentToUpdateid = 1
+    service.update.mockRejectedValue(new Error('Update error'));
+    await expect(controller.update(contentToUpdateid, mockDtoUpdatedContent1,mockTextFile)).rejects.toThrow('Update error');
   });
 
   it('delete should throw if service.delete throws', () => {
