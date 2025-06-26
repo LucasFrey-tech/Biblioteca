@@ -1,18 +1,16 @@
 import { PurchasesController } from '../../src/modules/purchase/purchase.controller';
 import { PurchasesService } from '../../src/modules/purchase/purchase.service';
 import { PurchaseDTO } from '../../src/modules/purchase/DTO/purchase.dto';
+import { mockDtoNewPurchase} from '../mocks/dtos/purchaseDTOs.mock';
+import { mockPurchasesService } from '../mocks/services/purchases.service.mock';
 
 describe('PurchasesController', () => {
   let controller: PurchasesController;
   let service: jest.Mocked<PurchasesService>;
 
   beforeEach(() => {
-    service = {
-      getAllPurchases: jest.fn().mockResolvedValue([]),
-      processPurchase: jest.fn().mockResolvedValue(undefined),
-      getPurchaseHistory: jest.fn().mockResolvedValue([]),
-    } as any;
-    controller = new PurchasesController(service);
+    service = mockPurchasesService
+    controller = new PurchasesController(mockPurchasesService);
   });
 
   it('should be defined', () => {
@@ -28,21 +26,17 @@ describe('PurchasesController', () => {
 
   it('should have a method processPurchase()', async () => {
     expect(typeof controller.processPurchase).toBe('function');
-    const body = {
-      idUser: 1,
-      items: [{ cartItemId: 1, amount: 2, virtual: false }],
-      price: 100,
-    };
-    const result = await controller.processPurchase(body);
+    
+    const result = await controller.processPurchase(mockDtoNewPurchase);
     expect(result).toEqual({ message: 'Compra procesada exitosamente' });
-    expect(service.processPurchase).toHaveBeenCalledWith(1, body.items);
   });
 
   it('should have a method getPurchaseHistory()', async () => {
-    expect(typeof controller.getPurchaseHistory).toBe('function');
-    const result = await controller.getPurchaseHistory(1);
+    expect(typeof controller.getUserPurchaseHistory).toBe('function');
+    const userID = 1
+    const result = await controller.getUserPurchaseHistory(userID);
     expect(Array.isArray(result)).toBe(true);
-    expect(service.getPurchaseHistory).toHaveBeenCalledWith(1);
+    expect(service.getUserPurchaseHistory).toHaveBeenCalledWith(1);
   });
 
   it('getAllPurchases() should return an array of PurchaseDTO', async () => {
@@ -56,18 +50,13 @@ describe('PurchasesController', () => {
   });
 
   it('getPurchaseHistory() should return null if service returns null', async () => {
-    service.getPurchaseHistory.mockResolvedValueOnce(null);
-    const result = await controller.getPurchaseHistory(999);
+    service.getUserPurchaseHistory.mockResolvedValueOnce(null);
+    const result = await controller.getUserPurchaseHistory(999);
     expect(result).toBeNull();
   });
 
   it('processPurchase() should call service with correct arguments', async () => {
-    const body = {
-      idUser: 5,
-      items: [{ cartItemId: 10, amount: 1, virtual: true }],
-      price: 50,
-    };
-    await controller.processPurchase(body);
-    expect(service.processPurchase).toHaveBeenCalledWith(5, body.items);
+    await controller.processPurchase(mockDtoNewPurchase);
+    expect(service.processPurchase).toHaveBeenCalledWith(mockDtoNewPurchase.idUser, mockDtoNewPurchase.items);
   });
 });

@@ -10,6 +10,10 @@ import { mockPurchasesRepository } from '../mocks/repositories/purchases.resposi
 import { mockShoppingCartBookRepository } from '../mocks/repositories/shopping_cart_book.repository.mock';
 import { mockBooksRepository } from '../mocks/repositories/books.repository.mock';
 import { mockUsersRepository } from '../mocks/repositories/users.repository.mock';
+import { Subscription } from '../../src/entidades/subscription.entity';
+import { mockSubscriptionRepository } from '../mocks/repositories/subscription.repository.mock';
+import { UserSubscriptionDiscount } from '../../src/entidades/user_subscription_discount.entity';
+import { mockUserSubscriptionDiscountRepository } from '../mocks/repositories/user_subscription_discount.repository.mock';
 
 describe('PurchasesService', () => {
   let service: PurchasesService;
@@ -32,8 +36,16 @@ describe('PurchasesService', () => {
           useValue: mockBooksRepository,
         },
         {
+          provide: getRepositoryToken(Subscription),
+          useValue: mockSubscriptionRepository,
+        },
+        {
           provide: getRepositoryToken(User),
           useValue: mockUsersRepository,
+        },
+        {
+          provide: getRepositoryToken(UserSubscriptionDiscount),
+          useValue: mockUserSubscriptionDiscountRepository,
         },
       ],
     }).compile();
@@ -55,6 +67,6 @@ describe('PurchasesService', () => {
   });
 
   it('should have a method getPurchaseHistory()', async () => {
-    expect(service.getPurchaseHistory).toBeTruthy();
+    expect(service.getUserPurchaseHistory).toBeTruthy();
   });
 });

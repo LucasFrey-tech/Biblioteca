@@ -19,4 +19,10 @@ export const mockVirtualBookContent3:VirtualBookContent = {
     book: mockBook3
 };
 
+export const mockUpdatedVirtualContent:VirtualBookContent = {
+    id: 1,
+    content: "url",
+    book: mockBook1
+};
+
 export const mockVirtualBookContents = [mockVirtualBookContent1, mockVirtualBookContent2, mockVirtualBookContent3];
