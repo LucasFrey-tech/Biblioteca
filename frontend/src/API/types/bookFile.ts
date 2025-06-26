@@ -10,6 +10,7 @@ export interface BookFile {
     stock: number;
     subscriber_exclusive: boolean;
     price: number;
+    content: File | string;
 }
 
 export interface BookFileUpdate {
@@ -25,4 +26,5 @@ export interface BookFileUpdate {
     stock: number;
     subscriber_exclusive: boolean;
     price: number;
+    content: File | string;
 }

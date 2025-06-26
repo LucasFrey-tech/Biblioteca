@@ -29,6 +29,8 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 
+import DragAndDropFile from "@/components/pages/dropFile";
+
 export default function BooksPanel(): React.JSX.Element {
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -44,6 +46,7 @@ export default function BooksPanel(): React.JSX.Element {
       tempImages?: File;
     };
   }>({});
+
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -156,8 +159,16 @@ export default function BooksPanel(): React.JSX.Element {
         },
         genreIds
       );
+      
+      await apiRef.current.bookContent.update(bookId,{idBook:bookId, content: bookState.formData.content})
 
-      setBooks(prevBooks => prevBooks.map(b => b.id === bookId ? updatedBook : b));
+      setBooks(prevBooks =>
+        prevBooks.map(b =>
+          b.id === bookId
+            ? { ...b, ...updatedBook, content: bookState.formData.content }
+            : b
+        )
+      );
       setBooksEditState(prev => ({
         ...prev,
         [bookId]: { ...prev[bookId], editMode: false, tempImages: undefined }
@@ -193,6 +204,10 @@ export default function BooksPanel(): React.JSX.Element {
         setGenres(genresData);
 
         const booksData = await apiRef.current.books.getAll();
+        booksData.forEach(async bookData => {
+          const contentData = await apiRef.current.bookContent.getOne(bookData.id);
+          bookData.content = typeof contentData.content === "string" ? contentData.content : "";
+        })
         setBooks(booksData);
       } catch (error) {
         console.error("Error al obtener datos:", error);
@@ -250,6 +265,20 @@ export default function BooksPanel(): React.JSX.Element {
           editMode: false,
           formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
         };
+
+        async function handleUpdateBookContent(bookId: number, file: File): Promise<void> {
+          setBooksEditState(prev => ({
+            ...prev,
+            [bookId]: { 
+              ...prev[bookId], 
+              formData: { 
+                ...prev[bookId].formData, 
+                content: file 
+              } 
+            }
+          }));
+        }
+
         return (
           <div key={book.id} className={styles.bookCard}>
             <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
@@ -399,6 +428,8 @@ export default function BooksPanel(): React.JSX.Element {
                         }
                       }));
                     }} />
+                    <label>Contenido:</label>
+                    <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x:File)=>handleUpdateBookContent(book.id,x)} validFormats={['.txt']} />
 
                     <div className={styles.editButtons}>
                       <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>

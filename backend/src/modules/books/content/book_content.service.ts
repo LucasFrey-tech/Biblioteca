@@ -3,11 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VirtualBookContent } from '../../../entidades/virtual_book_content.entity';
 import { BookContentDTO } from './book_content.dto';
+import { SettingsService } from '../../../settings/settings.service';
 
 @Injectable()
 export class BookContentService {
   private readonly logger = new Logger(BookContentService.name);
   constructor(
+    private settingsService: SettingsService,
+        
     @InjectRepository(VirtualBookContent)
     private bookContentRepository: Repository<VirtualBookContent>,
   ) { }
@@ -46,11 +49,8 @@ export class BookContentService {
   }
 
   async update(id: number, bookContentDto: BookContentDTO) {
-    await this.bookContentRepository.update(id, {
-      book: { id: bookContentDto.idBook },
-      content: bookContentDto.content,
-    });
     this.logger.log('Contenido Actualizado');
+    return this.bookContentRepository.update(id,bookContentDto)
   }
 
   delete(id: number) {
@@ -58,4 +58,7 @@ export class BookContentService {
     return this.bookContentRepository.delete(id);
   }
 
+  bookContentUrl = (fileName:string):string=>{
+    return this.settingsService.getHostUrl()+this.settingsService.getBooksImagesPrefix()+"/"+fileName;
+  }
 }
