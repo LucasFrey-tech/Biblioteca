@@ -50,7 +50,7 @@ export class BookContentService {
 
   async update(id: number, bookContentDto: BookContentDTO) {
     this.logger.log('Contenido Actualizado');
-    return this.bookContentRepository.update(id,bookContentDto)
+    return this.bookContentRepository.update(id, {content: bookContentDto.content})
   }
 
   delete(id: number) {
