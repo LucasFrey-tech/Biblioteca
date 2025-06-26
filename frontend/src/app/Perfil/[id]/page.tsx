@@ -269,7 +269,7 @@ export default function ProfilePage() {
                         <td>{item.author}</td>
                         <td>{item.amount}</td>
                         <td>{item.virtual ? 'Digital' : 'Físico'}</td>
-                        <td>{item.price.toLocaleString('es-AR')}</td>
+                        <td>{((item.subscriptionDiscount/100) * item.price).toLocaleString('es-AR')}</td>
                         <td>{formatDate(new Date(purchase.purchaseDate))}</td>
                         <td>
                           <AddBookReview id_user={purchase.id_user} id_book={item.id_book} />

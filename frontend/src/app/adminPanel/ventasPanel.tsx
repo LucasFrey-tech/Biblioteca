@@ -103,11 +103,6 @@ export default function VentasPanel(): React.JSX.Element {
                     <span className={styles.total}>
                       Total: ${purchase.total.toFixed(2)}
                     </span>
-                    {purchase.subscriptionDiscount > 0 && (
-                      <span className={styles.discount}>
-                        Descuento aplicado: <span className={styles.greenNumber}>{purchase.subscriptionDiscount}%</span>
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -128,13 +123,12 @@ export default function VentasPanel(): React.JSX.Element {
                       </div>
                       <div className={styles.itemDetails}>
                         <h4>{item.title} - {item.author}</h4>
-                        {/* <p>Autor: {item.author}</p> */}
                         <p>Formato: {item.virtual ? 'Digital' : 'Físico'}</p>
                         <p>Precio unitario: ${item.price.toFixed(2)}</p>
                         <p>Cantidad: {item.amount}</p>
                         <p>Subtotal: ${(item.price * item.amount).toFixed(2)}</p>
-                        <p>Descuento: $ 1500</p>
-                        <p>Total NETO: ${(item.price * item.amount - purchase.subscriptionDiscount).toFixed(2)}</p>
+                        <p>Descuento: %$({item.subscriptionDiscount})</p>
+                        <p>Total Neto: ${((item.price * item.amount) * (item.subscriptionDiscount/100)).toFixed(2)}</p>
                       </div>
                     </div>
                   ))}

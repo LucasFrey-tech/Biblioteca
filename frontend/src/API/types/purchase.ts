@@ -4,7 +4,6 @@ export interface Purchase {
   username: string;
   purchaseItems: PurchaseItemDTO[];
   purchaseDate: Date;
-  subscriptionDiscount: number;
   total:number;
 }
 
@@ -16,6 +15,7 @@ export interface PurchaseItemDTO {
   price: number;
   virtual: boolean;
   amount: number;
+  subscriptionDiscount: number;
 }
 
 export interface PurchaseItem {
