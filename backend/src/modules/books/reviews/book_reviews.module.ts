@@ -10,7 +10,6 @@ import { BookReviewsService } from './book_reviews.service';
  * - Controlador
  * - Servicio
  * - Repositorios TypeORM
- * - Soporte para subir imágenes con Multer
  */
 @Module({
   imports: [TypeOrmModule.forFeature([Review, User])],

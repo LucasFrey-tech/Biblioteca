@@ -11,7 +11,6 @@ import { UsersModule } from '../users/user.module';
  * - Controlador
  * - Servicio
  * - Repositorios TypeORM
- * - Soporte para subir imágenes con Multer
  */
 @Module({
   imports: [

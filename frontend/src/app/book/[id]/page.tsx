@@ -213,7 +213,11 @@ export default function BookDetail() {
             <span className={styles.exclusiveBadge}>Suscriptores exclusivo</span>
           )}
           <Image
-            src={book.image}
+            src={
+              typeof book.image === 'string' && book.image.trim() !== ''
+                ? book.image
+                : '/libros/placeholder.png'
+            }
             alt={book.title}
             width={350}
             height={500}

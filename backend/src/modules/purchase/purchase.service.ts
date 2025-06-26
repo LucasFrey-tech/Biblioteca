@@ -2,15 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from '../../entidades/purchase.entity';
+import { UserSubscriptionDiscount } from 'src/entidades/user_subscription_discount.entity';
 import { ShoppingCartBook } from '../../entidades/shopping_cart_book.entity';
 import { Book } from '../../entidades/book.entity';
 import { User } from '../../entidades/user.entity';
-import { PurchaseDTO } from './DTO/purchase.dto';
+import { PurchaseDTO, PurchaseItemDTO } from './DTO/purchase.dto';
 
 interface PurchaseItem {
   cartItemId: number;
   amount: number;
   virtual: boolean;
+  discount: number;
 }
 
 /**
@@ -29,7 +31,10 @@ export class PurchasesService {
     private booksRepository: Repository<Book>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+    @InjectRepository(UserSubscriptionDiscount)
+    private discountRepository: Repository<UserSubscriptionDiscount>,
+  ) { }
+
 
   /**
    * Obtener todas las compras
@@ -40,7 +45,7 @@ export class PurchasesService {
     this.logger.log('Obteniendo todas las compras del sistema');
 
     const purchases = await this.purchaseRepository.find({
-      relations: ['book', 'book.author', 'user'],
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions'],
       order: { purchaseDate: 'DESC' }
     });
 
@@ -49,19 +54,9 @@ export class PurchasesService {
       return [];
     }
 
-    return purchases.map(purchase => new PurchaseDTO(
-      purchase.id,
-      purchase.user.id,
-      purchase.user.username,
-      purchase.book.id,
-      purchase.book.title,
-      purchase.book.author?.name || 'Autor desconocido',
-      purchase.book.image,
-      purchase.price,
-      purchase.virtual,
-      purchase.amount,
-      purchase.purchaseDate
-    ));
+    const groupedPurchases = this.getGroupPurchases(purchases);
+
+    return groupedPurchases
   }
 
   /**
@@ -110,7 +105,7 @@ export class PurchasesService {
         user,
         book,
         amount: item.amount,
-        price: book.price * item.amount,
+        price: book.price * item.amount - item.discount,
         virtual: item.virtual,
         purchaseDate: new Date(),
       });
@@ -128,7 +123,7 @@ export class PurchasesService {
    * @param {number} idUser - ID del usaurio a buscar
    * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
    */
-  async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
+  async getUserPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) {
       this.logger.log('Usuario No Encontrado');
@@ -136,28 +131,73 @@ export class PurchasesService {
     }
 
     const purchases = await this.purchaseRepository.find({
-      where: { user: {id: idUser } },
+      where: { user: { id: idUser } },
       relations: ['book', 'user', 'book.author'],
       order: { purchaseDate: 'DESC' }
     });
-
-    if (!purchases.length) {
+    
+    if (typeof purchases === 'undefined' || !purchases.length) {
       this.logger.log('Historial Vacío');
       return null;
     }
 
-    return purchases.map(purchase => new PurchaseDTO(
-      purchase.id,
-      purchase.user.id,
-      purchase.user.username,
-      purchase.book.id,
-      purchase.book.title,
-      purchase.book.author?.name || '',
-      purchase.book.image,
-      purchase.price,
-      purchase.virtual,
-      purchase.amount,
-      purchase.purchaseDate
-    ));
+    const groupedPurchases = this.getGroupPurchases(purchases);
+
+    return groupedPurchases
   }
+
+  private async getGroupPurchases(purchases: Purchase[]): Promise<PurchaseDTO[]> {
+    const acc: { [key: string]: PurchaseDTO } = {};
+
+    for (const purchase of purchases) {
+      const dateTime = purchase.purchaseDate.toLocaleDateString('es-AR');
+
+      if (!acc[dateTime]) {
+        acc[dateTime] = new PurchaseDTO(
+          purchase.id,
+          purchase.user.id,
+          purchase.user.username,
+          [
+            new PurchaseItemDTO(
+              purchase.book.id,
+              purchase.book.title,
+              purchase.book.author.name,
+              purchase.book.image,
+              purchase.book.price,
+              purchase.virtual,
+              purchase.amount,
+            ),
+          ],
+          new Date(purchase.purchaseDate),
+          purchase.price * purchase.amount,
+        );
+        
+        if (purchase.user.userSubscriptions && purchase.user.userSubscriptions.length > 0) {
+          const discount = await this.discountRepository.findOne({where: {id: 1 } });
+
+          if (discount) {
+            acc[dateTime].subscriptionDiscount = discount?.discount;
+          }
+        } else {
+          acc[dateTime].subscriptionDiscount = 0;
+        }
+      } else {
+        acc[dateTime].purchaseItems.push(
+          new PurchaseItemDTO(
+            purchase.book.id,
+            purchase.book.title,
+            purchase.book.author.name,
+            purchase.book.image,
+            purchase.book.price,
+            purchase.virtual,
+            purchase.amount,
+          ),
+        );
+        acc[dateTime].total += purchase.price * purchase.amount;
+      }
+    }
+
+    return Object.values(acc);
+  }
+
 }

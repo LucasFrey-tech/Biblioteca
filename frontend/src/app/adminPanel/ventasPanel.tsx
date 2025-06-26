@@ -62,34 +62,8 @@ export default function VentasPanel(): React.JSX.Element {
     });
   };
 
-  const groupedPurchases = purchases.reduce((acc, purchase) => {
-    const key = `${purchase.id_user}-${purchase.purchaseDate.toString()}`;
-    if (!acc[key]) {
-      acc[key] = {
-        id_user: purchase.id_user,
-        username: purchase.username,
-        purchaseDate: purchase.purchaseDate,
-        items: [purchase],
-        total: purchase.price * purchase.amount
-      };
-    } else {
-      acc[key].items.push(purchase);
-      acc[key].total += purchase.price * purchase.amount;
-    }
-    return acc;
-  }, {} as Record<string, {
-    id_user: number;
-    username: string;
-    purchaseDate: Date;
-    items: Purchase[];
-    total: number;
-  }>);
-
-  const purchaseGroups = Object.values(groupedPurchases);
-
-  // Paginación
-  const totalPages = Math.ceil(purchaseGroups.length / itemsPerPage);
-  const currentGroups = purchaseGroups.slice(
+  const totalPages = Math.ceil(purchases.length / itemsPerPage);
+  const currentGroups = purchases.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -115,23 +89,25 @@ export default function VentasPanel(): React.JSX.Element {
     <div className={styles.panelContainer}>
       <h2 className={styles.title}>Historial de Ventas</h2>
 
-      {purchaseGroups.length === 0 ? (
+      {purchases.length === 0 ? (
         <p className={styles.emptyMessage}>No hay ventas registradas</p>
       ) : (
         <>
           <div className={styles.purchasesContainer}>
-            {currentGroups.map((group, index) => (
+            {currentGroups.map((purchase, index) => (
               <div key={index} className={styles.purchaseGroup}>
                 <div className={styles.purchaseHeader}>
-                  <h3>Compra del usuario: {group.username}</h3>
+                  <h3>Compra del usuario: {purchase.username}</h3>
                   <div className={styles.purchaseMeta}>
-                    <span>Fecha: {formatDate(group.purchaseDate)}</span>
-                    <span className={styles.total}>Total: ${group.total.toFixed(2)}</span>
+                    <span>Fecha: {formatDate(purchase.purchaseDate)}</span>
+                    <span className={styles.total}>
+                      Total: ${purchase.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
 
                 <div className={styles.itemsGrid}>
-                  {group.items.map((item, itemIndex) => (
+                  {purchase.purchaseItems.map((item, itemIndex) => (
                     <div key={itemIndex} className={styles.itemCard}>
                       <div className={styles.itemImage}>
                         <Image

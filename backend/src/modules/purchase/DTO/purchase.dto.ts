@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
 
 /**
  * Data Transfer Object (DOT) para Purchase.
@@ -26,61 +26,29 @@ export class PurchaseDTO {
   @IsString()
   username: string;
 
- /**
-  * ID del libro
-  * @type {number}
-  */
-  @IsInt()
-  id_book: number;
-  
   /**
-   * Título del libro
-   * @type {string}
+   * Array de iems de la compra
+   * @type {PurchaseItemDTO}
    */
-  @IsString()
-  title: string;
+  @IsArray()
+  purchaseItems: PurchaseItemDTO[]
   
   /**
-   * Autor del libro
-   * @type {string}
-   */
-  @IsString()
-  author: string;
-  
-  /**
-   * Imagen del libro
-   * @type {string}
-   */
-  @IsString()
-  image: string;
-  
-  /**
-   * Precio de la compra
+   * Valor del descuento
    * @type {number}
    */
   @IsNumber()
-  price: number;
-  
-  /**
-   * Formato del libro
-   * @type {boolean}
-   */
-  @IsBoolean()
-  virtual: boolean;
-  
-  /**
-   * Cantidad de libros comprados
-   * @type {number}
-   */
-  @IsInt()
-  amount: number;
-  
+  subscriptionDiscount: number;
+
   /**
    * Fecha de compra
    * @type {Date}
    */
   @IsDate()
   purchaseDate: Date;
+
+  @IsNumber()
+  total: number;
 
   /**
    * Constructor del DTO.
@@ -89,6 +57,42 @@ export class PurchaseDTO {
     id: number,
     id_user: number,
     username: string,
+    purchaseItems: PurchaseItemDTO[],
+    purchaseDate: Date,
+    total:number
+  ) {
+    this.id = id;
+    this.id_user = id_user,
+    this.username = username,
+    this.purchaseItems = purchaseItems;
+    this.purchaseDate = purchaseDate;
+    this.total = total;
+  }
+}
+
+export class PurchaseItemDTO {
+  @IsNumber()
+  id_book: number;
+
+  @IsString()
+  title: string;
+  
+  @IsString()
+  author: string;
+  
+  @IsString()
+  image: string;
+  
+  @IsNumber()
+  price: number;
+  
+  @IsBoolean()
+  virtual: boolean;
+  
+  @IsNumber()
+  amount: number;
+
+  constructor (
     id_book: number,
     title: string,
     author: string,
@@ -96,18 +100,13 @@ export class PurchaseDTO {
     price: number,
     virtual: boolean,
     amount: number,
-    purchaseDate: Date,
   ) {
-    this.id = id;
-    this.id_user = id_user,
-    this.username = username,
-    this.id_book = id_book,
+    this.id_book = id_book;
     this.title = title;
     this.author = author;
     this.image = image;
     this.price = price;
     this.virtual = virtual;
     this.amount = amount;
-    this.purchaseDate = purchaseDate;
   }
 }

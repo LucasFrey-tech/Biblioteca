@@ -153,6 +153,7 @@ export default function ShoppingCartPage() {
                 cartItemId: item.id,
                 amount: item.amount,
                 virtual: item.virtual,
+                discount: descuentoSubscriptor(calculateSubtotal())
             }));
 
             await apiRef.current.purchase.processPurchase(userId, itemsToPurchase);

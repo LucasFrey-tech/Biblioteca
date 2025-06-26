@@ -47,7 +47,7 @@ export class Purchases extends Crud<Purchase> {
         }
     }
 
-    async getPurchaseHistory(idUser: number): Promise<Purchase[] | null> {
+    async getUserPurchaseHistory(idUser: number): Promise<Purchase[] | null> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${idUser}`, {
             method: 'GET',
             headers: this.getHeaders(),
