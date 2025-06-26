@@ -30,6 +30,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	17,
 	27000
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'INFINITY BLADE - LA ESPADA INFINITA: EL DESPERTAR',
 	6,
@@ -40,6 +41,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	33,
 	39200
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'INFINITY BLADE - LA ESPADA INFINITA: REDENCION',
 	6,
@@ -50,6 +52,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	33,
 	39200
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'El Codigo Da Vinci',
 	2,
@@ -60,6 +63,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	33,
 	36500
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'Asesino de Bujas I - La Bruja Blanca',
 	7,
@@ -74,6 +78,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	33,
 	29000
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'Asesino de Bujas II - Los Hijos Del Rey',
 	7,
@@ -84,6 +89,7 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	13,
 	29000
 );
+
 insert into books(title,author_id,description,anio,isbn,image,stock,price ) values (
 	'Asesino de Bujas III - Dioses Y Monstruos',
 	7,
@@ -94,3 +100,4 @@ insert into books(title,author_id,description,anio,isbn,image,stock,price ) valu
 	15,
 	18000
 );
+
