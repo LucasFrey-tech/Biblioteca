@@ -17,7 +17,6 @@ export default function ProfilePage() {
   const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & { pass?: string } }>({});
   const [purchases, setPurchases] = useState<Purchase[] | null>(null);
 
-
   const apiRef = useRef<BaseApi | null>(null);
 
   useEffect(() => {
@@ -53,21 +52,18 @@ export default function ProfilePage() {
     try {
       const response = await apiRef.current.users.update(id, datos);
 
-      const result = response;
-
       if (!response) {
         alert(`Error al actualizar datos`);
         return;
       }
 
-      setUser(result);
+      setUser(response);
       setEditMode(prev => ({ ...prev, [id]: false }));
     } catch (error) {
       console.error('Error al guardar producto: ', error);
       alert('Error de red al guardar el producto');
     }
-
-  }
+  };
 
   useEffect(() => {
     const getProfile = async () => {
@@ -81,27 +77,23 @@ export default function ProfilePage() {
       }
       try {
         const response = await apiRef.current.users.getOne(Number(id));
-
         if (!response) {
           throw new Error('Error al obtener el perfil del usuario');
         }
-
-        const data = response;
-        setUser(data);
+        setUser(response);
       } catch (error) {
         console.error('Hubo un error al cargar el perfil: ', error);
       }
-    }
+    };
     getProfile();
   }, [id]);
-
 
   useEffect(() => {
     if (!user?.id) return;
 
     const fetchPurchaseHistory = async () => {
       try {
-        const purchaseData = await apiRef.current?.purchase.getUserPurchaseHistory(user?.id);
+        const purchaseData = await apiRef.current?.purchase.getUserPurchaseHistory(user.id);
         if (!purchaseData) return;
         setPurchases(purchaseData);
       } catch (error) {
@@ -254,8 +246,7 @@ export default function ProfilePage() {
                   <th>Título</th>
                   <th>Autor</th>
                   <th>Cantidad</th>
-                  <th>Formato</th>
-                  <th>Precio</th>
+                  <th>Total</th>
                   <th>Fecha</th>
                   <th>Review</th>
                 </tr>
@@ -263,23 +254,30 @@ export default function ProfilePage() {
               <tbody>
                 {purchases && purchases.length > 0 ? (
                   purchases.flatMap((purchase) =>
-                    purchase.purchaseItems.map((item, index) => (
-                      <tr key={`${purchase.id}-${item.id_book}-${index}`}>
-                        <td>{item.title}</td>
-                        <td>{item.author}</td>
-                        <td>{item.amount}</td>
-                        <td>{item.virtual ? 'Digital' : 'Físico'}</td>
-                        <td>{((item.subscriptionDiscount/100) * item.price).toLocaleString('es-AR')}</td>
-                        <td>{formatDate(new Date(purchase.purchaseDate))}</td>
-                        <td>
-                          <AddBookReview id_user={purchase.id_user} id_book={item.id_book} />
-                        </td>
-                      </tr>
-                    ))
+                    purchase.purchaseItems.map((item, index) => {
+                      const precioU = item.price;
+                      const cantidad = item.amount;
+                      const descuento = item.subscriptionDiscount / 100;
+                      const total = precioU * cantidad;
+                      const totalN = total - (total * descuento);
+
+                      return (
+                        <tr key={`${purchase.id}-${item.id_book}-${index}`}>
+                          <td>{item.title}</td>
+                          <td>{item.author}</td>
+                          <td>{cantidad}</td>
+                          <td>{totalN.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</td>
+                          <td>{formatDate(new Date(purchase.purchaseDate))}</td>
+                          <td>
+                            <AddBookReview id_user={purchase.id_user} id_book={item.id_book} />
+                          </td>
+                        </tr>
+                      );
+                    })
                   )
                 ) : (
                   <tr>
-                    <td colSpan={7} className={styles.noPurchases}>No hay compras realizadas</td>
+                    <td colSpan={8} className={styles.noPurchases}>No hay compras realizadas</td>
                   </tr>
                 )}
               </tbody>
@@ -289,5 +287,4 @@ export default function ProfilePage() {
       </div>
     </div>
   );
-
 }

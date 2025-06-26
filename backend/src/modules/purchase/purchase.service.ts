@@ -45,7 +45,7 @@ export class PurchasesService {
     this.logger.log('Obteniendo todas las compras del sistema');
 
     const purchases = await this.purchaseRepository.find({
-      relations: ['book', 'book.author', 'user', 'user.userSubscriptions'],
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription',],
       order: { purchaseDate: 'DESC' }
     });
 
@@ -132,7 +132,13 @@ export class PurchasesService {
 
     const purchases = await this.purchaseRepository.find({
       where: { user: { id: idUser } },
-      relations: ['book', 'user', 'book.author'],
+      relations: [
+        'book',
+        'book.author',
+        'user',
+        'user.userSubscriptions',
+        'user.userSubscriptions.subscription',
+      ],
       order: { purchaseDate: 'DESC' }
     });
 
@@ -151,10 +157,16 @@ export class PurchasesService {
 
     for (const purchase of purchases) {
       const dateTime = purchase.purchaseDate.toLocaleDateString('es-AR');
+
       let resDiscount = 0;
 
-      if (purchase.user.userSubscriptions && purchase.user.userSubscriptions.length > 0) {
-        const discount = await this.discountRepository.findOne({ where: { id: 1 } });
+      const activeSubscription = purchase.user.userSubscriptions.find(sub => sub.ongoing);
+
+      if (activeSubscription?.subscription?.id) {
+        const discount = await this.discountRepository.findOne({
+          where: { subscription: { id: activeSubscription.subscription.id } },
+        });
+
         if (discount) {
           resDiscount = discount.discount;
         }
@@ -171,18 +183,46 @@ export class PurchasesService {
         resDiscount
       );
 
+      const totalItem = purchase.book.price * purchase.amount * (1 - resDiscount / 100);
+
+      console.log(`Libro: ${purchase.book.title} | Precio unitario: ${purchase.book.price} | Cantidad: ${purchase.amount} | Descuento: ${resDiscount}% | Total item neto: ${totalItem}`);
+
       if (!acc[dateTime]) {
         acc[dateTime] = new PurchaseDTO(
           purchase.id,
           purchase.user.id,
           purchase.user.username,
-          [purchaseItem],
+          [
+            new PurchaseItemDTO(
+              purchase.book.id,
+              purchase.book.title,
+              purchase.book.author.name,
+              purchase.book.image,
+              purchase.book.price,
+              purchase.virtual,
+              purchase.amount,
+              resDiscount,
+            ),
+          ],
           new Date(purchase.purchaseDate),
-          purchase.price * purchase.amount,
+          totalItem, // total inicial
         );
+        console.log(`Total inicial para fecha ${dateTime}: ${totalItem}`);
       } else {
-        acc[dateTime].purchaseItems.push(purchaseItem);
-        acc[dateTime].total += purchase.price * purchase.amount;
+        acc[dateTime].purchaseItems.push(
+          new PurchaseItemDTO(
+            purchase.book.id,
+            purchase.book.title,
+            purchase.book.author.name,
+            purchase.book.image,
+            purchase.book.price,
+            purchase.virtual,
+            purchase.amount,
+            resDiscount,
+          )
+        );
+        acc[dateTime].total += totalItem;
+        console.log(`Total actualizado para fecha ${dateTime}: ${acc[dateTime].total}`);
       }
     }
 

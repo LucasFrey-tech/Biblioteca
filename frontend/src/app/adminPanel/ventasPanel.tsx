@@ -127,8 +127,9 @@ export default function VentasPanel(): React.JSX.Element {
                         <p>Precio unitario: ${item.price.toFixed(2)}</p>
                         <p>Cantidad: {item.amount}</p>
                         <p>Subtotal: ${(item.price * item.amount).toFixed(2)}</p>
-                        <p>Descuento: %$({item.subscriptionDiscount})</p>
-                        <p>Total Neto: ${((item.price * item.amount) * (item.subscriptionDiscount/100)).toFixed(2)}</p>
+                        <p>Descuento: {(item.subscriptionDiscount || 0).toFixed(0)}%</p>
+                        <p>Total Neto: ${(item.price * item.amount * (1 - (item.subscriptionDiscount || 0) / 100)).toFixed(2)}</p>
+
                       </div>
                     </div>
                   ))}
