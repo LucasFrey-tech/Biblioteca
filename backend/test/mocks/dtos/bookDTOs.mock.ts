@@ -63,7 +63,8 @@ export const mockDtoBook1:BookDTO = {
             id: 2,
             name:  "Aventura"
         },
-    ]
+    ],
+    is_active: true
 };
 
 export const mockDtoBook2:BookDTO = {
@@ -87,7 +88,8 @@ export const mockDtoBook2:BookDTO = {
             id: 3,
             name:  "Misterio"
         },
-    ]
+    ],
+    is_active: true
 };
 
 export const mockDtoBook3:BookDTO = {
@@ -105,9 +107,10 @@ export const mockDtoBook3:BookDTO = {
     genre: [
         {
             id: 3,
-            name:  "Misterio"
+            name: "Misterio"
         }
-    ]
+    ],
+    is_active: true
 };
 
 export const mockDtoBooks = [mockDtoBook1, mockDtoBook2, mockDtoBook3];

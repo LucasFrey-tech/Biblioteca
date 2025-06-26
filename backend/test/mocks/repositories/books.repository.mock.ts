@@ -25,7 +25,8 @@ export const mockNewBook: Book = {
             id: 3,
             name: "Misterio"
         },
-    ]
+    ],
+    is_active: true
 };
 
 export const mockUpdatedBook = {
@@ -50,6 +51,7 @@ export const mockUpdatedBook = {
     price: 272990,
     stock: 10,
     subscriber_exclusive: false,
+    is_active: true
 };
 
 export const mockBook1: Book = {
@@ -72,7 +74,8 @@ export const mockBook1: Book = {
             id: 2,
             name: "Aventura"
         },
-    ]
+    ],
+    is_active: true
 };
 
 export const mockBook2: Book = {
@@ -95,7 +98,8 @@ export const mockBook2: Book = {
             id: 3,
             name: "Misterio"
         },
-    ]
+    ],
+    is_active: true
 };
 
 export const mockBook3: Book = {
@@ -114,7 +118,8 @@ export const mockBook3: Book = {
             id: 3,
             name: "Misterio"
         }
-    ]
+    ],
+    is_active: true
 };
 
 export const mockBooks = [mockBook1, mockBook2, mockBook3];

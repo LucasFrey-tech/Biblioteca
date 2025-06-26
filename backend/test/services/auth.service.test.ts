@@ -8,7 +8,6 @@ import { UsersService } from '../../src/modules/users/user.service';
 import { mockUsersService } from '../mocks/services/users.service.mock';
 import { JwtService } from '@nestjs/jwt';
 import { mockJwtService } from '../mocks/services/jwtservice.service.mock';
-import { mockDtoLogin, mockDtoRegister } from '../mocks/dtos/authDTOs.mock';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(async () => true),

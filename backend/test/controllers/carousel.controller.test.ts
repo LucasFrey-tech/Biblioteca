@@ -1,19 +1,14 @@
 import { CarouselController } from '../../src/modules/recomendations/carousel/carousel.controller';
 import { CarouselService } from '../../src/modules/recomendations/carousel/carousel.service';
 import { CarouselDTO } from '../../src/modules/recomendations/carousel/carousel.dto';
+import { mockCarouselService } from '../mocks/services/carousel.service.mock';
 
 describe('CarouselController', () => {
   let controller: CarouselController;
   let carouselService: jest.Mocked<CarouselService>;
 
   beforeEach(() => {
-    carouselService = {
-      findAll: jest.fn().mockResolvedValue([]),
-      create: jest.fn().mockResolvedValue({} as CarouselDTO),
-      update: jest.fn().mockResolvedValue({} as CarouselDTO),
-      remove: jest.fn().mockResolvedValue(undefined),
-      bookImageUrl: jest.fn().mockReturnValue('http://image.url/test.jpg'),
-    } as any;
+    carouselService = mockCarouselService;
     controller = new CarouselController(carouselService);
   });
 
@@ -40,7 +35,7 @@ describe('CarouselController', () => {
 
   it('should have a method update()', async () => {
     expect(typeof controller.update).toBe('function');
-    const mockUpdate: Partial<CarouselDTO> = { image: 'updated-image.jpg' };
+    const mockUpdate: Partial<CarouselDTO> = { id:1,idBook: NaN, image: 'updated-image.jpg' };
     const result = await controller.update(1, mockUpdate);
     expect(result).toBeDefined();
     expect(carouselService.update).toHaveBeenCalledWith(1, mockUpdate);
@@ -61,7 +56,7 @@ describe('CarouselController', () => {
   });
 
   it('should call update() with correct parameters', async () => {
-    const updateData: Partial<CarouselDTO> = { image: 'updated-image.jpg' };
+    const updateData: Partial<CarouselDTO> = { id:5,idBook: NaN,image: 'updated-image.jpg' };
     await controller.update(5, updateData);
     expect(carouselService.update).toHaveBeenCalledWith(5, updateData);
   });

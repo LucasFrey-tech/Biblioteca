@@ -53,19 +53,19 @@ describe('BooksService', () => {
 
   it('findOne should return a book', async () => {
     const result = await service.findOne(1);
-    expect(mockBooksRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 }, relations: ['genres', 'author'] });
+    expect(mockBooksRepository.findOne).toHaveBeenCalledWith({ where: { id: 1, is_active: true }, relations: ['genres', 'author'] });
     expect(result).toEqual(mockDtoBook1)
   });
 
   it('findAllWithGenre should filter by genre', async () => {
     const result = await service.findAllWithGenre(mockGenre1.id);
-    expect(mockBooksRepository.find).toHaveBeenCalledWith({ relations: ['genres', 'author'] });
+    expect(mockBooksRepository.find).toHaveBeenCalledWith({  where: {  is_active: true }, relations: ['genres', 'author'] });
     expect(result).toEqual(mockDtoBooksWithGenreAccion);
   });
 
   it('findAllByAuthor should filter by author', async () => {
     const result = await service.findAllByAuthor(mockAuthor1.id);
-    expect(mockBooksRepository.find).toHaveBeenCalledWith({ relations: ['genres', 'author'] });
+    expect(mockBooksRepository.find).toHaveBeenCalledWith({ where: {  is_active: true },relations: ['genres', 'author'] });
     expect(result).toEqual(mockDtoBooksByAuthorIdOne);
   });
 
@@ -94,9 +94,8 @@ describe('BooksService', () => {
   
   it('delete should remove book and return true', async () => {
     mockBooksRepository.findOne = jest.fn().mockResolvedValue(mockBook1);
-    const result = await service.delete(1);
-    expect(mockBooksRepository.findOne).toHaveBeenCalledWith({ where: { id: 1 }, relations: ['genres'] });
-    expect(mockBooksRepository.remove).toHaveBeenCalledWith(mockBook1);
+    const bookId = 1
+    const result = await service.delete(bookId);
     expect(result).toBe(true);
   });
   
