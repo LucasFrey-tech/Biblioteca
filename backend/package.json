@@ -111,7 +111,9 @@
       "app.controller.ts",
       "app.service.ts",
       "main.ts",
-      "index.ts"
+      "index.ts",
+      ".entity.ts",
+      ".dto.ts"
     ],
     "testEnvironment": "node"
   }
