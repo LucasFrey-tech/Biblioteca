@@ -86,6 +86,10 @@ export class Book {
   @Column('float')
   price!: number;
 
+  @ApiProperty({ description: 'Estado del Libro' })
+  @Column({type: 'boolean', default: true})
+  is_active: boolean
+
   /** 
    * Autor del libro
    * @type {Author} 

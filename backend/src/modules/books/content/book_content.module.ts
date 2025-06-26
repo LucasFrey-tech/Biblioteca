@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { VirtualBookContent } from 'src/entidades/virtual_book_content.entity';
 import { BookContentService } from './book_content.service';
 import { BookContentController } from './book_content.controller';
-import { SettingsService } from 'src/settings.service';
+import { SettingsService } from 'src/settings/settings.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([VirtualBookContent])],

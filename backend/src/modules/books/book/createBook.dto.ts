@@ -1,5 +1,5 @@
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength } from 'class-validator';
+import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength, IsOptional } from 'class-validator';
 
 /**
  * DTO para la creación de un nuevo libro.
@@ -43,6 +43,10 @@ export class CreateBookDTO {
   @Type(() => Number)
   @Min(0)
   price: number;
+  
+  @IsOptional()
+  @IsBoolean()
+  isActive?: boolean;
 
   /** Arreglo de IDs de géneros */
   @Transform(({ value }) => JSON.parse(value))
@@ -63,6 +67,7 @@ export class CreateBookDTO {
     stock: number,
     subscriber_exclusive: boolean,
     price: number,
+    isActive: boolean,
     genre: number[]
   ) {
     this.title = title;
@@ -74,6 +79,7 @@ export class CreateBookDTO {
     this.stock = stock;
     this.subscriber_exclusive = subscriber_exclusive;
     this.price = price;
+    this.isActive = isActive;
     this.genre = genre;
   }
 }

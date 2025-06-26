@@ -97,6 +97,8 @@ export class BookDTO {
   @Min(0)
   price: number;
 
+  @IsBoolean()
+  is_active!: boolean;
 
   /**
    * Constructor del DTO.
@@ -114,6 +116,7 @@ export class BookDTO {
     stock: number,
     subscriber_exclusive: boolean,
     price: number,
+    is_active: boolean,
   ) {
     this.id = id;
     this.title = title;
@@ -127,6 +130,7 @@ export class BookDTO {
     this.stock = stock;
     this.subscriber_exclusive = subscriber_exclusive;
     this.price = price;
+    this.is_active = is_active;
   }
 
   /**
@@ -145,6 +149,7 @@ export class BookDTO {
       stock: bookDTO.stock,
       subscriber_exclusive: bookDTO.subscriber_exclusive,
       price: bookDTO.price,
+      is_active: bookDTO.is_active,
       author: bookDTO.author ? { id: bookDTO.author_id, name: bookDTO.author } as Author : { id: 1, name: "" } as Author,
     }
   };
@@ -167,7 +172,8 @@ export class BookDTO {
       book.image,
       book.stock,
       book.subscriber_exclusive,
-      book.price
+      book.price,
+      book.is_active,
     );
   }
 }

@@ -1,5 +1,10 @@
 export interface CarouselItemDTO {
     id: number;
     idBook: number;
-    image: string|File;
+    image: File | string;
+}
+
+export interface CarouselCreateDTO {
+    idBook: number;
+    image: File;
 }

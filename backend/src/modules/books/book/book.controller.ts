@@ -103,11 +103,8 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  async update(
-    @Param('id', ParseIntPipe) id: number, 
-    @Body() bookDTO: CreateBookDTO & { existingImage?: string }, 
-    @UploadedFile() file: Express.Multer.File
-  ) {
+  async update( @Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
+    
     if (typeof bookDTO.subscriber_exclusive === 'string') {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }

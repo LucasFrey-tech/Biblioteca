@@ -31,7 +31,10 @@ export class BooksService {
    * 
    */
   async findAll(): Promise<BookDTO[]> {
-    const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
+    const books = await this.booksRepository.find({
+      where: { is_active: true },
+      relations: ['genres', 'author']
+    });
 
     const result = books.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
@@ -49,7 +52,10 @@ export class BooksService {
    * 
    */
   async findAllWithGenre(genreId: number): Promise<BookDTO[]> {
-    const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
+    const books = await this.booksRepository.find({
+      where: { is_active: true },
+      relations: ['genres', 'author']
+    });
     const filteredBooks = books.filter(x => x.genres?.some(genre => genre.id === genreId));
     const result = filteredBooks.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
@@ -68,7 +74,10 @@ export class BooksService {
    * 
    */
   async findAllByAuthor(authorId: number): Promise<BookDTO[]> {
-    const books = await this.booksRepository.find({ relations: ['genres', 'author'] });
+    const books = await this.booksRepository.find({
+      where: { is_active: true },
+      relations: ['genres', 'author']
+    });
     const filteredBooks = books.filter(x => x.author?.id === authorId);
     const result = filteredBooks.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
@@ -87,7 +96,10 @@ export class BooksService {
    * 
    */
   async findOne(id: number): Promise<BookDTO | null> {
-    const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres', 'author'] });
+    const book = await this.booksRepository.findOne({
+      where: { id, is_active: true },
+      relations: ['genres', 'author']
+    });
 
     if (!book) {
       throw new NotFoundException(`Book with ID ${id} not found`)
@@ -195,17 +207,26 @@ export class BooksService {
    *
    */
   async delete(id: number): Promise<boolean> {
-    const book = await this.booksRepository.findOne({
-      where: { id },
-      relations: ['genres'],
-    });
-
+    const book = await this.booksRepository.findOne({ where: { id } });
     if (!book) return false;
 
-    await this.booksRepository.remove(book);
-
+    book.is_active = false;
+    await this.booksRepository.save(book);
     return true;
   }
+
+  // async delete(id: number): Promise<boolean> {
+  //   const book = await this.booksRepository.findOne({
+  //     where: { id },
+  //     relations: ['genres'],
+  //   });
+
+  //   if (!book) return false;
+
+  //   await this.booksRepository.remove(book);
+
+  //   return true;
+  // }
 
   /**
    * Genera la URL completa para acceder a la imagen de un libro.

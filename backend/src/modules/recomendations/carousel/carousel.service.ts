@@ -28,13 +28,24 @@ export class CarouselService {
         return this.carouselRepository.find({});
     }
 
+    async findOne(id: number): Promise<CarouselDTO | null> {
+        const carousel = await this.carouselRepository.findOne({ where: { id } });
+    
+        if (!carousel) {
+          throw new NotFoundException(`Carousel with ID ${id} not found`)
+        }
+    
+        this.logger.log('Carousel Recibido');
+        return carousel;
+    }
+
     /**
      * Crea un nuevo carousel en el sistema.
      * 
      * @param {CarouselDTO} body - Objeto de transferencia de datos con la información del carousel a crear. 
      * @returns {Promise<CarouselDTO>} - Promesa que resuelve con la entidad del carousel recién creada.
      */
-    async create(body: CarouselDTO): Promise<CarouselDTO> {
+    async create(body: Partial<CarouselDTO>): Promise<CarouselDTO> {
         const author = this.carouselRepository.create(body);
         return this.carouselRepository.save(author);
     }
@@ -46,8 +57,17 @@ export class CarouselService {
      * @param {Partial<CarouselDTO>} updateData - DTO con los nuevos datos para el carousel.
      * @returns {Promise<CarouselEntity[]>} - Promesa que resuelve con un arreglo del elemento actualizado
      */
-    async update(id: number, updateData: Partial<CarouselDTO>) {
-        await this.carouselRepository.update(id, updateData);
+    async update(id: number, updateData: CarouselDTO) {
+        
+        const carousel = await this.carouselRepository.findOne({ where: {id} });
+
+        if(!carousel) return null;
+
+        carousel.idBook = updateData.idBook;
+        carousel.image = updateData.image
+        
+        await this.carouselRepository.save(carousel);
+        
         this.logger.log('Carrito Actualizado');
         return this.carouselRepository.find({ where: { id: updateData.id } });
     }

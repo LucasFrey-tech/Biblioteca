@@ -39,3 +39,6 @@ drop table users cascade;
 
 -- BORRAR TABLA VIRTUAL_BOOK_CONTENT
 drop table virtual_book_content cascade;
+
+-- BORRAR TABLA USER_SUBSCRIPTION_DISCOUNT
+drop table user_subscription_discount;
