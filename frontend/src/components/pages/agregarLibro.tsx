@@ -97,8 +97,11 @@ export default function AddBookDialog({
     };
 
     try {
-      await API.books.createBookFile(newBook, formGenresNumber);
-
+      const newBookBack = await API.books.createBookFile(newBook, formGenresNumber);
+      if (newBook.content) {
+        await API.bookContent.create({ idBook: newBookBack.id, content: newBook.content });
+      }
+      
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -211,8 +214,7 @@ async function handleDragAndDropChange(bookId: number, file: File): Promise<void
             }} />
 
             <label>Contenido:</label>
-            <DragAndDropFile id={1} onFileDrop={handleDragAndDropChange} validFormats={['.txt']} />
-
+            <DragAndDropFile defaultFile={null} onSetCurrentFile={(x:File)=>handleDragAndDropChange(1,x)} validFormats={['.txt']} />
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />

@@ -19,32 +19,39 @@ export class BookContent extends Crud<BookContentDTO>{
                 'Content-Type': 'application/json',
             },
         });
-        return resBook.json();
+        const text = await resBook.text();
+        if (!text) {
+            return { id: 0, idBook: 0, content: "" } as BookContentDTO;
+        }
+        return JSON.parse(text);
     }
     
     async create(data: Partial<BookContentDTO>): Promise<BookContentDTO> {
         const formData = new FormData();
+        formData.append("idBook", data.idBook + '');
         if (data.content instanceof File) {
             formData.append("content", data.content)
         }
-
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
-            // headers: {'Content-Type': 'multipart/form'},
             body: formData,
         });
 
         const content = await res.json();
-        console.log('Content uploaded.');
-
         return content;
     }
 
     async update(id: number, data: Partial<BookContentDTO>): Promise<BookContentDTO> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
+        const formData = new FormData();
+        formData.append("idBook", data.idBook + '');
+        if (data.content instanceof File) {
+            formData.append("content", data.content);
+        } else if (typeof data.content === 'string') {
+            formData.append("existingImage", data.content)
+        }
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'PUT',
-            headers: this.getHeaders(),
-            body: JSON.stringify(data),
+            body: formData
         });
         return res.json();
     }

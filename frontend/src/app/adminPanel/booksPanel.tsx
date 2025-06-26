@@ -159,8 +159,8 @@ export default function BooksPanel(): React.JSX.Element {
         },
         genreIds
       );
-
-      await apiRef.current.bookContent.update(1,{idBook:bookId, content: bookState.formData.content})
+      
+      await apiRef.current.bookContent.update(bookId,{idBook:bookId, content: bookState.formData.content})
 
       setBooks(prevBooks =>
         prevBooks.map(b =>
@@ -204,6 +204,10 @@ export default function BooksPanel(): React.JSX.Element {
         setGenres(genresData);
 
         const booksData = await apiRef.current.books.getAll();
+        booksData.forEach(async bookData => {
+          const contentData = await apiRef.current.bookContent.getOne(bookData.id);
+          bookData.content = typeof contentData.content === "string" ? contentData.content : "";
+        })
         setBooks(booksData);
       } catch (error) {
         console.error("Error al obtener datos:", error);
@@ -414,7 +418,7 @@ export default function BooksPanel(): React.JSX.Element {
                       }));
                     }} />
                     <label>Contenido:</label>
-                    <DragAndDropFile id={book.id} onFileDrop={handleUpdateBookContent} validFormats={['.txt']} />
+                    <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x:File)=>handleUpdateBookContent(book.id,x)} validFormats={['.txt']} />
 
                     <div className={styles.editButtons}>
                       <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>

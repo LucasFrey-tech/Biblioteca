@@ -38,7 +38,7 @@ export class BookContentService {
 
   update(id:number, bookContent: BookContentDTO){
     this.logger.log('Contenido Actualizado');
-    this.bookContentRepository.update(id,bookContent)
+    return this.bookContentRepository.update(id,bookContent)
   }
 
   delete(id: number) {

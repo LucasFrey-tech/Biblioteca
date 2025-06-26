@@ -21,9 +21,9 @@ export class BookContentController {
     @ApiBody({ type: BookContentDTO })
     @ApiResponse({ status: 201, description: 'Contenido creado.', type: BookContentDTO })
     @UseInterceptors(FileInterceptor('content'))
-    async post(@Body() bookContent: BookContentDTO, @UploadedFile() file: Express.Multer.File): Promise<BookContentDTO> {
+    async post(@Body() bookContent: Partial<BookContentDTO>, @UploadedFile() file: Express.Multer.File): Promise<BookContentDTO> {
         if (file) {
-            bookContent.content = this.bookContentService.bookContentUrl(file.filename);
+            bookContent.content = this.bookContentService.bookContentUrl(file.originalname);
         }
 
         return await this.bookContentService.create(bookContent);
@@ -36,14 +36,13 @@ export class BookContentController {
     @ApiResponse({ status: 200, description: 'Contenido de un libro virtual editado', type: BookContentDTO })
     @UseInterceptors(FileInterceptor('content'))
     update(@Param('id', ParseIntPipe) id: number, @Body() bookContent: BookContentDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
-
-    if (file && file.filename) {
-        bookContent.content = this.bookContentService.bookContentUrl(file.filename);
-    } else if (bookContent.existingImage) {
-      bookContent.content = bookContent.existingImage;
-    } else {
-      bookContent.content = '';
-    }
+        if (file && file.originalname) {
+            bookContent.content = this.bookContentService.bookContentUrl(file.originalname);
+        } else if (bookContent.existingImage) {
+            bookContent.content = bookContent.existingImage;
+        } else {
+            bookContent.content = '';
+        }
         return this.bookContentService.update(id, bookContent);
     }
 
