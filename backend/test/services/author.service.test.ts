@@ -3,22 +3,12 @@ import { NotFoundException } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Author } from '../../src/entidades/author.entity';
-import { mockAuthor1, mockAuthors, mockDeleteAuthors, mockNewAuthor, mockUpdatedAuthor } from '../mocks/entities/authors.mock';
+import { mockAuthor1, mockAuthors, mockAuthorsRepository } from '../mocks/repositories/authors.repository.mock';
 import { AuthorService } from '../../src/modules/authors/author.service';
 
 describe('AuthorService', () => {
   let service: AuthorService;
   let repo: jest.Mocked<Repository<Author>>;
-
-  const mockAuthorsRepository = {
-    find: jest.fn().mockResolvedValue(mockAuthors),
-    findOne: jest.fn().mockResolvedValue(mockAuthor1),
-    create: jest.fn().mockResolvedValue(mockNewAuthor),
-    update: jest.fn().mockResolvedValue(mockUpdatedAuthor),
-    delete: jest.fn().mockResolvedValue(mockDeleteAuthors),
-    save: jest.fn().mockResolvedValue(mockNewAuthor),    
-    remove: jest.fn().mockResolvedValue(mockAuthor1),  
-  }
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

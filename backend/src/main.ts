@@ -1,4 +1,3 @@
-import * as winston from 'winston';
 import * as express from 'express';
 import { existsSync, mkdirSync } from 'fs';
 import { NestFactory } from '@nestjs/core';
@@ -6,7 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { WinstonModule } from 'nest-winston';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-
+import { Log } from './logger/logger';
 /**
  * Archivo principal que arranca la aplicación NestJS.
  * 
@@ -37,9 +36,9 @@ import { AppModule } from './app.module';
  * Inicia el servidor en el puerto 3001.
  */
 
-const myapp_config = require('../private/app.config.json');
-
 async function bootstrap() {
+  const logger = Log.getLogger();
+  const myapp_config = require('../private/app.config.json');
 
   // Setup users image directory
   if (!existsSync(myapp_config.static_resources.users_images.path)) {
@@ -50,26 +49,8 @@ async function bootstrap() {
     mkdirSync(myapp_config.static_resources.books_images.path);
   }
 
-  const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger({
-      transports: [
-        new winston.transports.Console({
-          format: winston.format.combine(
-            winston.format.colorize({ all: myapp_config.logger.colorize_logs })
-            , winston.format.simple()
-          )
-          , level: myapp_config.logger.console_details_level
-        }),
-        new winston.transports.File({
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.simple())
-          , filename: myapp_config.logger.log_file
-          , level: myapp_config.logger.file_details_level
-        })
-      ],
-    })
-  });
+  const rootLogger = logger;   
+  const app = await NestFactory.create(AppModule, {logger: WinstonModule.createLogger({ instance: rootLogger})});
 
 
   app.useGlobalPipes(
@@ -100,5 +81,6 @@ async function bootstrap() {
   });
 
   await app.listen(myapp_config.host.port);
+  rootLogger.info('Servidor backend iniciado en http://localhost:3001', { context: 'Bootstrap' });
 }
 bootstrap();

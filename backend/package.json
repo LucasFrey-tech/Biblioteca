@@ -16,6 +16,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
+    "test:cov2": "jest --coverage --coverageReporters=\"text-summary\"",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "build-docs": "typedoc --plugin typedoc-plugin-rename-defaults --entryPointStrategy expand src/"
@@ -110,7 +111,9 @@
       "app.controller.ts",
       "app.service.ts",
       "main.ts",
-      "index.ts"
+      "index.ts",
+      ".entity.ts",
+      ".dto.ts"
     ],
     "testEnvironment": "node"
   }

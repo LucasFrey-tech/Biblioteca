@@ -2,17 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Purchase } from '../../entidades/purchase.entity';
+import { UserSubscriptionDiscount } from '../../entidades/user_subscription_discount.entity';
 import { ShoppingCartBook } from '../../entidades/shopping_cart_book.entity';
 import { Book } from '../../entidades/book.entity';
 import { User } from '../../entidades/user.entity';
-import { PurchaseDTO } from './DTO/purchase.dto';
+import { PurchaseDTO, PurchaseItemDTO } from './DTO/purchase.dto';
 
 interface PurchaseItem {
   cartItemId: number;
   amount: number;
   virtual: boolean;
+  discount: number;
 }
 
+/**
+ * Servicio que maneja la lógica de negocio para las compras.
+ */
 @Injectable()
 export class PurchasesService {
   private readonly logger = new Logger(PurchasesService.name);
@@ -26,13 +31,21 @@ export class PurchasesService {
     private booksRepository: Repository<Book>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+    @InjectRepository(UserSubscriptionDiscount)
+    private discountRepository: Repository<UserSubscriptionDiscount>,
+  ) { }
 
+
+  /**
+   * Obtener todas las compras
+   * 
+   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arrelgo de DTOs de compras.
+   */
   async getAllPurchases(): Promise<PurchaseDTO[]> {
     this.logger.log('Obteniendo todas las compras del sistema');
 
     const purchases = await this.purchaseRepository.find({
-      relations: ['book', 'book.author', 'user'],
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription',],
       order: { purchaseDate: 'DESC' }
     });
 
@@ -41,21 +54,17 @@ export class PurchasesService {
       return [];
     }
 
-    return purchases.map(purchase => new PurchaseDTO(
-      purchase.id,
-      purchase.user.id,
-      purchase.user.username,
-      purchase.book.id,
-      purchase.book.title,
-      purchase.book.author?.name || 'Autor desconocido',
-      purchase.book.image,
-      purchase.price,
-      purchase.virtual,
-      purchase.amount,
-      purchase.purchaseDate
-    ));
+    const groupedPurchases = this.getGroupPurchases(purchases);
+
+    return groupedPurchases
   }
 
+  /**
+   * Obtiene
+   * 
+   * @param {number} idUser 
+   * @param {PurchaseItem[]} cartItems 
+   */
   async processPurchase(idUser: number, cartItems: PurchaseItem[]): Promise<void> {
     if (!cartItems.length) {
       this.logger.log('Carrito Vacío');
@@ -96,7 +105,7 @@ export class PurchasesService {
         user,
         book,
         amount: item.amount,
-        price: book.price * item.amount,
+        price: book.price * item.amount - item.discount,
         virtual: item.virtual,
         purchaseDate: new Date(),
       });
@@ -108,7 +117,13 @@ export class PurchasesService {
     this.logger.log('Compra Procesada');
   }
 
-  async getPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
+  /**
+   * Obtiene el historial de compras del usuario específico
+   * 
+   * @param {number} idUser - ID del usaurio a buscar
+   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
+   */
+  async getUserPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) {
       this.logger.log('Usuario No Encontrado');
@@ -116,28 +131,101 @@ export class PurchasesService {
     }
 
     const purchases = await this.purchaseRepository.find({
-      where: { user: {id: idUser } },
-      relations: ['book', 'user', 'book.author'],
+      where: { user: { id: idUser } },
+      relations: [
+        'book',
+        'book.author',
+        'user',
+        'user.userSubscriptions',
+        'user.userSubscriptions.subscription',
+      ],
       order: { purchaseDate: 'DESC' }
     });
 
-    if (!purchases.length) {
+    if (typeof purchases === 'undefined' || !purchases.length) {
       this.logger.log('Historial Vacío');
       return null;
     }
 
-    return purchases.map(purchase => new PurchaseDTO(
-      purchase.id,
-      purchase.user.id,
-      purchase.user.username,
-      purchase.book.id,
-      purchase.book.title,
-      purchase.book.author?.name || '',
-      purchase.book.image,
-      purchase.price,
-      purchase.virtual,
-      purchase.amount,
-      purchase.purchaseDate
-    ));
+    const groupedPurchases = this.getGroupPurchases(purchases);
+
+    return groupedPurchases
+  }
+
+  private async getGroupPurchases(purchases: Purchase[]): Promise<PurchaseDTO[]> {
+    const acc: { [key: string]: PurchaseDTO } = {};
+
+    for (const purchase of purchases) {
+      const dateTime = purchase.purchaseDate.toLocaleDateString('es-AR');
+
+      let resDiscount = 0;
+
+      const activeSubscription = purchase.user.userSubscriptions.find(sub => sub.ongoing);
+
+      if (activeSubscription?.subscription?.id) {
+        const discount = await this.discountRepository.findOne({
+          where: { subscription: { id: activeSubscription.subscription.id } },
+        });
+
+        if (discount) {
+          resDiscount = discount.discount;
+        }
+      }
+
+      const purchaseItem = new PurchaseItemDTO(
+        purchase.book.id,
+        purchase.book.title,
+        purchase.book.author.name,
+        purchase.book.image,
+        purchase.book.price,
+        purchase.virtual,
+        purchase.amount,
+        resDiscount
+      );
+
+      const totalItem = purchase.book.price * purchase.amount * (1 - resDiscount / 100);
+
+      console.log(`Libro: ${purchase.book.title} | Precio unitario: ${purchase.book.price} | Cantidad: ${purchase.amount} | Descuento: ${resDiscount}% | Total item neto: ${totalItem}`);
+
+      if (!acc[dateTime]) {
+        acc[dateTime] = new PurchaseDTO(
+          purchase.id,
+          purchase.user.id,
+          purchase.user.username,
+          [
+            new PurchaseItemDTO(
+              purchase.book.id,
+              purchase.book.title,
+              purchase.book.author.name,
+              purchase.book.image,
+              purchase.book.price,
+              purchase.virtual,
+              purchase.amount,
+              resDiscount,
+            ),
+          ],
+          new Date(purchase.purchaseDate),
+          totalItem, // total inicial
+        );
+        console.log(`Total inicial para fecha ${dateTime}: ${totalItem}`);
+      } else {
+        acc[dateTime].purchaseItems.push(
+          new PurchaseItemDTO(
+            purchase.book.id,
+            purchase.book.title,
+            purchase.book.author.name,
+            purchase.book.image,
+            purchase.book.price,
+            purchase.virtual,
+            purchase.amount,
+            resDiscount,
+          )
+        );
+        acc[dateTime].total += totalItem;
+        console.log(`Total actualizado para fecha ${dateTime}: ${acc[dateTime].total}`);
+      }
+    }
+
+    return Object.values(acc);
   }
 }

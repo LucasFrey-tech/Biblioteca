@@ -1,18 +1,72 @@
-import { IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
 
+/**
+ * Data Transfer Object (DOT) para Purchase.
+ * Se usa para validar y transformar datos entre el cliente y el servidor.
+ */
 export class PurchaseDTO {
+  /**
+   * ID de la compra
+   * @type {number}
+   */
   @IsInt()
   id: number;
   
+  /**
+   * ID del usuario
+   * @type {number}
+   */
   @IsInt()
   id_user: number;
   
+  /**
+   * Alias del usuario
+   * @type {string}
+   */
   @IsString()
   username: string;
 
-  @IsInt()
+  /**
+   * Array de iems de la compra
+   * @type {PurchaseItemDTO}
+   */
+  @IsArray()
+  purchaseItems: PurchaseItemDTO[]
+
+  /**
+   * Fecha de compra
+   * @type {Date}
+   */
+  @IsDate()
+  purchaseDate: Date;
+
+  @IsNumber()
+  total: number;
+
+  /**
+   * Constructor del DTO.
+   */
+  constructor(
+    id: number,
+    id_user: number,
+    username: string,
+    purchaseItems: PurchaseItemDTO[],
+    purchaseDate: Date,
+    total:number
+  ) {
+    this.id = id;
+    this.id_user = id_user,
+    this.username = username,
+    this.purchaseItems = purchaseItems;
+    this.purchaseDate = purchaseDate;
+    this.total = total;
+  }
+}
+
+export class PurchaseItemDTO {
+  @IsNumber()
   id_book: number;
-  
+
   @IsString()
   title: string;
   
@@ -28,16 +82,13 @@ export class PurchaseDTO {
   @IsBoolean()
   virtual: boolean;
   
-  @IsInt()
+  @IsNumber()
   amount: number;
-  
-  @IsDate()
-  purchaseDate: Date;
 
-  constructor(
-    id: number,
-    id_user: number,
-    username: string,
+  @IsNumber()
+  subscriptionDiscount: number;
+
+  constructor (
     id_book: number,
     title: string,
     author: string,
@@ -45,18 +96,15 @@ export class PurchaseDTO {
     price: number,
     virtual: boolean,
     amount: number,
-    purchaseDate: Date,
+    subscriptionDiscount: number,
   ) {
-    this.id = id;
-    this.id_user = id_user,
-    this.username = username,
-    this.id_book = id_book,
+    this.id_book = id_book;
     this.title = title;
     this.author = author;
     this.image = image;
     this.price = price;
     this.virtual = virtual;
     this.amount = amount;
-    this.purchaseDate = purchaseDate;
+    this.subscriptionDiscount = subscriptionDiscount
   }
 }

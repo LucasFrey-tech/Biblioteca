@@ -1,210 +1,233 @@
-.container{
-  min-height: 70vh; 
-  width: 100%;        
+.container {
+  min-height: 70vh;
+  width: 100%;
   background-color: #1e2836;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .name {
-    font-family: var(--font-SF-Fedora), sans-serif;
-    font-size: 25px;
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  font-size: 25px;
+  background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;               
 }
 
 .background {
-    background-color: #1e2836;
-    padding-top: 2vw;
+  background-color: #1e2836;
+  padding-top: 2vw;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .background h2 {
-    font-family: var(--font-SF-Fedora), sans-serif;
-    font-size: 25px;
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-    text-align: center;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  font-size: 25px;
+  background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 .info {
-    font-family: var(--font-SF-Fedora), sans-serif;
-    width: 50%;
-    border: solid 2px;
-    border-color: white;
-    height: 50%;
-    border-radius: 10px;
-    margin-top: 20px;
-    margin-bottom: 30px;
-    justify-self: center;
-    background-color: #272f3c;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  width: 100%;
+  border: 2px solid white;
+  border-radius: 10px;
+  margin-bottom: 30px;
+  padding: 1rem;
+  background-color: #272f3c;
+  box-sizing: border-box;
 }
 
-.info form {
-    display: grid;
-    grid-template-columns: 50% 50%;
+.usernameCentered {
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
-.info label {
-    margin-left: 10px;
-    color: white;
-    font-size: 15px;
+.usernameCentered .name {
+  font-size: 28px;
+  background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.info input {
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-    border: solid 2px;
-    border-color: white;
-    border-radius: 10px;
-    padding-left: 10px;
-    margin: 5px 10px;
-    font-size: 14px;
+.row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
-
-.user {
-    display: grid;
-    grid-template-columns: 50% 50%;
+.field {
+  flex: 1 1 45%;
+  min-width: 220px;
+  text-align: left;
 }
 
-.user label {
-    margin-left: 10px;
-    color: white;
-    font-size: 15px;
+.field label {
+  color: white;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 0.3rem;
 }
 
-.user span {
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-    border: solid 2px;
-    border-color: white;
-    border-radius: 10px;
-    padding-left: 10px;
-    margin: 5px 10px;
-    font-size: 14px;
+.field span, .field input {
+  color: white;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 0.3rem 0.6rem;
+  font-size: 14px;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  user-select: none;
+  background: transparent;
+  text-shadow: none;
+  -webkit-text-fill-color: white;
 }
 
-.campoNombre {
-    grid-column: 1/2;
-    grid-row: 1/2;
+.field input {
+  background: none;
 }
 
-.inputNombre {
-    grid-column: 1/2;
-    grid-row: 2/3;
+/* Botones en fila */
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.campoApellido {
-    grid-column: 2/2;
-    grid-row: 1/2;
+.saveChanges, .cancel, .edit {
+  cursor: pointer;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  background: none;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  text-align: center;
+  min-width: 120px;
 }
 
-.inputApellido {
-    grid-column: 2/3;
-    grid-row: 2/3;
+.saveChanges:hover, .cancel:hover, .edit:hover {
+  border-color: #ff7500;
+  background: linear-gradient(to right, #ff2100, #ff7500, #ffda00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.campoUsuario {
-    grid-column: 1/2;
-    grid-row: 3/4;
+/* Historial de compras */
+.history {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  border: 2px solid white;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background: transparent;
 }
 
-.inputUName{
-    grid-column: 1/2;
-    grid-row: 4/5;
+.history h2 {
+  font-family: var(--font-SF-Fedora), sans-serif;
+  font-size: 22px;
+  background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.campoEmail {
-    grid-column: 2/3;
-    grid-row: 3/4;
+.purchaseTableWrapper {
+  overflow-x: auto;
 }
 
-.inputEmail{
-    grid-column: 2/3;
-    grid-row: 4/5;
-}
-
-.campoContraseña {
-    grid-column: 1/2;
-    grid-row: 5/6;
-}
-
-.inputContraseña {
-    grid-column: 1/2;
-    grid-row: 6/7;
-}
-
-.campoTel {
-    grid-column: 2/3;
-    grid-row: 5/6;
-}
-
-.inputTel {
-    grid-column: 2/3;
-    grid-row: 6/7;
-}
-
-.saveChanges {
-    cursor: pointer;
-    color: white;
-    grid-column: 1/2;
-    grid-row: 7/8;
-}
-
-.saveChanges:hover {
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-}
-
-.cancel {
-    cursor: pointer;
-    color: white;
-    grid-column: 2/3;
-    grid-row: 7/8;
-}
-
-.cancel:hover {
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-}
-
-.edit {
-    cursor: pointer;
-    color: white;
-    grid-column: 1/3;
-    grid-row: 7/8;
-}
-
-.edit:hover {
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-}
-
+/* Tabla limpia y espaciosa */
 .purchases {
-    border: solid 2px white;
-    margin: 15px;
-    width: 93%;
-    justify-self: center;
-    text-align: center;
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  font-size: 16px;
+  color: white;
 }
 
-.header {
-    color: white;
+.purchases thead tr {
+  border-bottom: 2px solid white;
 }
 
-.details {
-    color: black;
-    padding: 20px;
-    border: 1px solid rgb(62, 62, 62); 
-    background-color: rgb(150, 149, 149); 
-    font-family: var(--font-SF-Fedora), sans-serif;
-    background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
-    background-clip: text;
-    color: transparent;
-    text-align: center;
+.purchases th, .purchases td {
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.purchases tbody tr:hover {
+  background-color: rgba(255, 117, 0, 0.2);
+}
+
+.noPurchases {
+  color: white;
+  text-align: center;
+  padding: 2rem 0;
+  font-size: 18px;
+  font-family: var(--font-SF-Fedora), sans-serif;
+}
+
+/* Botón dentro del historial - fondo negro y letras blancas */
+.purchases button {
+  font-size: 1rem;
+  padding: 8px 14px;
+  cursor: pointer;
+  background-color: black;
+  border: 2px solid white;
+  border-radius: 8px;
+  color: white;
+  font-family: var(--font-SF-Fedora), sans-serif;
+  transition: all 0.3s ease;
+}
+
+.purchases button:hover {
+  background-color: #ff7500;
+  border-color: #ff7500;
+  color: black;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .info {
+    width: 100%;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field {
+    min-width: 100%;
+  }
+
+  .purchases th, .purchases td {
+    padding: 10px 8px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 400px) {
+  .purchases th, .purchases td {
+    font-size: 12px;
+    padding: 8px 6px;
+  }
 }

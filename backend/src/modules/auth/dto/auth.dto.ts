@@ -1,12 +1,30 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
+/**
+ * Data Transfer Object (DTO) para Register y Login.
+ * Se usa para validar y transformar datos entre el cliente y el servidor.
+ */
+
 export class LoginRequestBody {
+
+  /**
+   * Email del usuario
+   * @type {string}
+   */
   @IsEmail()
   email: string;
 
+  /**
+   * Contraseña del usuario
+   * @type {string}
+   */
   @IsString()
   @MinLength(6)
   password: string;
+
+  /**
+   * Constructor del DTO. 
+   */
   constructor(
     email: string,
     password: string
@@ -17,22 +35,46 @@ export class LoginRequestBody {
 }
 
 export class RegisterRequestBody {
+
+  /**
+   * Alias del usuario
+   * @type {string}
+   */
   @IsString()
   username: string;
 
+  /**
+   * Nombre del usuario
+   * @type {string}
+   */
   @IsString()
   firstname: string;
   
+  /**
+   * Apellido del usuario
+   * @type {string}
+   */
   @IsString()
   lastname: string;
   
+  /**
+   * Email del usuario
+   * @type {string}
+   */
   @IsEmail()
   email: string;
 
+  /**
+   * Contraseña del usuario
+   * @type {string}
+   */
   @IsString()
   @MinLength(6)
   password: string;
 
+  /**
+   * Constructor del DTO.
+   */
   constructor(
     username: string,
     firstname: string,

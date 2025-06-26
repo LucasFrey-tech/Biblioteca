@@ -7,6 +7,7 @@ class PurchaseItemDTO {
   cartItemId: number;
   amount: number;
   virtual: boolean;
+  discount: number;
 }
 
 class ProcessPurchaseDTO {
@@ -15,12 +16,18 @@ class ProcessPurchaseDTO {
   price: number;
 }
 
+/**
+ * Servicio que maneja la lógica de negocio para los compras.
+ */
 @ApiTags('Purchases')
 @ApiBearerAuth()
 @Controller('purchases')
 export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) { }
 
+  /**
+   * 
+   */
   @Get()
   @ApiOperation({ summary: 'Obtener todas las compras del sistema' })
   @ApiResponse({ status: 200, description: 'Listado completo de compras', type: [PurchaseDTO] })
@@ -42,7 +49,7 @@ export class PurchasesController {
   @ApiOperation({ summary: 'Obtener historial de compras de un usuario' })
   @ApiParam({ name: 'idUser', type: Number })
   @ApiResponse({ status: 200, description: 'Historial de compras encontrado', type: [PurchaseDTO] })
-  async getPurchaseHistory(@Param('idUser', ParseIntPipe) idUser: number): Promise<PurchaseDTO[] | null> {
-    return await this.purchasesService.getPurchaseHistory(idUser);
+  async getUserPurchaseHistory(@Param('idUser', ParseIntPipe) idUser: number): Promise<PurchaseDTO[] | null> {
+    return await this.purchasesService.getUserPurchaseHistory(idUser);
   }
 }

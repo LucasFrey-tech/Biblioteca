@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, NotFoundException, } from '@nestjs/common';
 import { ShoppingCartService } from './shopping_cart.service';
-import { ShoppingCartBook } from 'src/entidades/shopping_cart_book.entity';
+import { ShoppingCartBook } from '../../../src/entidades/shopping_cart_book.entity';
 import { BookCartDTO } from './book_cart.dto'
 import { ShoppingCartCreateDTO } from './shopping_cart_create.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';

@@ -23,11 +23,12 @@ import { DeleteAuthorDialog } from './DeleteAuthorDialog';
 import { DeleteGenreDialog } from './DeleteCategoria';
 import DragAndDrop from './dropImage';
 import { BaseApi } from '@/API/baseApi';
-import { BookFile } from '@/API/types/bookFile';
+import { BookFile, BookFileUpdate } from '@/API/types/bookFile';
 import { Genre } from '@/API/types/genre';
 import { Author } from '@/API/types/author';
+import DragAndDropFile from './dropFile';
 
-export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void }) {
+export default function AddBookDialog({ onAuthorAdded, onGenreAdded, onBookCreated }: { onAuthorAdded?: (author: Author) => void, onGenreAdded?: (genre: Genre) => void, onBookCreated?: (book: BookFileUpdate) => void}) {
   const [open, setOpen] = useState(false);
   const [authors, setAuthors] = useState<Author[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -49,6 +50,7 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
     price: '',
     authorId: '',
     genres: '',
+    content: null as File | null
   });
 
   useEffect(() => {
@@ -87,10 +89,20 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
       subscriber_exclusive: form.subscriber_exclusive === 'true',
       price: Number(form.price),
       author_id: Number(form.authorId),
+      content: form.content ?? undefined
     };
 
     try {
-      await API.books.createBookFile(newBook, formGenresNumber);
+      const createdId = (await API.books.createBookFile(newBook, formGenresNumber)).id;
+      const createdBook = await API.books.getOne(createdId);
+
+      if (createdBook) {
+        await API.bookContent.create({ idBook: createdBook.id, content: newBook.content });
+      }
+      
+      if (onBookCreated) onBookCreated(createdBook); 
+      setOpen(false);
+      
       Swal.fire({
         icon: 'success',
         title: 'Éxito',
@@ -111,6 +123,7 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
         price: '',
         authorId: '',
         genres: '',
+        content: null
       });
     } catch (error) {
       console.error('Error al guardar el libro:', error);
@@ -184,6 +197,13 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
     });
   };
 
+async function handleDragAndDropChange(bookId: number, file: File): Promise<void> {
+          setForm(prev => ({
+            ...prev,
+            content: file
+          }));
+        }
+
   return (
     <>
       <AlertDialog open={open} onOpenChange={setOpen}>
@@ -210,6 +230,9 @@ export default function AddBookDialog({ onAuthorAdded, onGenreAdded }: { onAutho
 
             <Label>Imagen</Label>
             <DragAndDrop onFileDrop={file => handleImage('image', file)} />
+
+            <label>Contenido:</label>
+            <DragAndDropFile defaultFile={null} onSetCurrentFile={(x:File)=>handleDragAndDropChange(1,x)} validFormats={['.txt']} />
 
             <Label>Stock</Label>
             <Input type="number" value={form.stock} onChange={e => handleChange('stock', e.target.value)} />

@@ -20,10 +20,10 @@ import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BaseApi } from '@/API/baseApi';
 
-////////////////////////////////////////////////////////////
+
 import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../context/UserContext';
-////////////////////////////////////////////////////////////
+
 
 // Validación
 const userSchema = z.object({
@@ -95,11 +95,11 @@ export default function LogIn() {
       // Verificar si la respuesta contiene el token
       if (data.success) {
         localStorage.setItem('token', data.data.access_token);
-        ////////////////////////////////////////////////////////////
+
         type JwtPayload = { sub: string;[key: string]: unknown };
         const decoded: JwtPayload = jwtDecode<JwtPayload>(data.data.access_token);
         localStorage.setItem('userId', decoded.sub);
-        ////////////////////////////////////////////////////////////
+
 
         refreshUser();
         Swal.fire({
@@ -148,7 +148,7 @@ export default function LogIn() {
     <div className={styles.pageContainer}>
       <Card className={styles.cardHeader}>
         <CardHeader className={styles.registroTitulo}>
-          <CardTitle className={styles.titulo}>Iniciar Sesión</CardTitle>
+          <CardTitle className={styles.titulo}>Inicio de Sesión</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -181,11 +181,14 @@ export default function LogIn() {
               />
               <div className={styles.botonContainer}>
                 <Button className={styles.botonEnviar} type="submit">
-                  Enviar
+                  Iniciar Sesión
                 </Button>
+                <div className={styles.divider}>
+                  <p>¿No tienes cuenta?</p>
+                </div>
                 <Button asChild className={styles.botonEnviar}>
                   <Link href="/registro" className={styles.linkSinEstilo}>
-                    Registrarse
+                    Regístrate
                   </Link>
                 </Button>
               </div>

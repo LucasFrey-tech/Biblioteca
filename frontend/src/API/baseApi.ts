@@ -13,6 +13,7 @@ import { Subscription } from "./class/subscription";
 import { CarouselAPI } from "./class/carousel.api";
 import { BookRecomendationsAPI } from "./class/bookRecomendations.api";
 import { UserSubscriptionDiscount } from "./class/userSubscriptionDiscount";
+import { RegisterService } from "./class/registro"; 
 
 export class BaseApi {
     public readonly log: Login;
@@ -30,9 +31,11 @@ export class BaseApi {
     public readonly carousel: CarouselAPI;
     public readonly bookRecomendations: BookRecomendationsAPI;
     public readonly userSubscriptionDiscount: UserSubscriptionDiscount;
+    public readonly register: RegisterService;
 
     constructor(private token?:string){
         this.log = new Login();
+        this.register = new RegisterService();
         this.users = new Users(token);
         this.books = new Books(token);
         this.catalogo = new Catalogo(token);

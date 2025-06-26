@@ -14,4 +14,6 @@ export interface Book {
     subscriber_exclusive: boolean;
     price: number;
     virtual:boolean;
+    content: string;
+    is_active:boolean;
 }

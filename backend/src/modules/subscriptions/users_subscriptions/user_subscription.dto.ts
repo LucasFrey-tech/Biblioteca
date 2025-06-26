@@ -5,5 +5,5 @@ export class UserSubscriptionDTO {
   startDate: string;
   endDate: string;
   ongoing: boolean;
-  subscription: SubscriptionDTO | null; // nullable por si no tiene
+  subscription: SubscriptionDTO | null; 
 }

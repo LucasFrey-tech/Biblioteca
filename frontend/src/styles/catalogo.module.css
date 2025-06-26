@@ -28,7 +28,7 @@
     background-color: #f0f0f0;
     padding: 15px;
     border-radius: 8px;
-    color: #2D2B2E; /* Changed from red to a darker color for better readability */
+    color: #2D2B2E; 
 }
 
 .searchForm {
@@ -111,20 +111,20 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    max-height: 100px; /* Show ~3-4 items by default */
+    max-height: 100px; 
     overflow: hidden;
     transition: max-height 0.3s ease;
 }
 
 .genreFilter ul.expanded,
 .authorFilter ul.expanded {
-    max-height: none; /* Expand to show all items */
+    max-height: none; 
 }
 
 .genreFilter li,
 .authorFilter li {
     margin-bottom: 0.5rem;
-    padding-left: 1.5rem; /* Indentation to simulate bullet points */
+    padding-left: 1.5rem; 
     display: flex;
     align-items: center;
 }
@@ -158,31 +158,6 @@
     color: #005bb5;
 }
 
-.exclusiveWrapper {
-    position: relative;
-    border-radius: 8px;
-    padding: 5px;
-    margin-bottom: 10px;
-}
-
-.exclusiveLabel {
-    position: absolute;
-    top: -10px;
-    left: 10px;
-    background-color: #d4af37;
-    color: white;
-    padding: 2px 8px;
-    font-size: 0.7rem;
-    font-weight: bold;
-    border-radius: 4px;
-    z-index: 10;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-}
-
-
-
-
-
 /* Formato responsive */
 @media (max-width: 1200px) {
     .grid {
@@ -205,7 +180,7 @@
 
     .genreFilter ul,
     .authorFilter ul {
-        max-height: 86px; /* Slightly smaller for smaller screens */
+        max-height: 86px; 
     }
 }
 
@@ -220,7 +195,7 @@
 
     .genreFilter ul,
     .authorFilter ul {
-        max-height: 60px; /* Even smaller for mobile */
+        max-height: 60px; 
     }
 }
 

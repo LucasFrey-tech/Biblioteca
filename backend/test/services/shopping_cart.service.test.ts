@@ -1,48 +1,18 @@
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
-import {mockDeletedShoppingCarts, mockNewShoppingCart, mockShoppingCart1, mockShoppingCarts, mockShoppingCartsByUser1, mockUpdatedhoppingCart} from '../mocks/entities/shopping_cart_book.mock';
+import {mockShoppingCart1, mockShoppingCartBookRepository, mockShoppingCartsByUser1, mockUpdatedhoppingCart} from '../mocks/repositories/shopping_cart_book.repository.mock';
 import { ShoppingCartBook } from '../../src/entidades/shopping_cart_book.entity';
 import { ShoppingCartService } from '../../src/modules/shopping_cart/shopping_cart.service';
 import { User } from '../../src/entidades/user.entity';
 import { Book } from '../../src/entidades/book.entity';
-import { mockNewUser, mockUpdatedUser, mockUser1, mockUsers } from '../mocks/entities/user.mock';
-import { mockBook1, mockBooks, mockDeletedBooks, mockNewBook, mockUpdateBook } from '../mocks/entities/books.mock';
+import { mockUsersRepository } from '../mocks/repositories/users.repository.mock';
 import { mockDtoShoppingCartsByUser1, mockDtoUpdatedhoppingCart } from '../mocks/dtos/shopping_cart_bookDTOs.mock';
+import { mockBooksRepository } from '../mocks/repositories/books.repository.mock';
 
 describe('ShoppingCartService', () => {
   let service: ShoppingCartService;
   let repo: jest.Mocked<Repository<ShoppingCartBook>>;
-
-  const mockShoppingCartBookRepository = {
-    find: jest.fn().mockResolvedValue(mockShoppingCarts),
-    findOne: jest.fn().mockResolvedValue(mockShoppingCart1),
-    create: jest.fn().mockResolvedValue(mockNewShoppingCart),
-    delete: jest.fn().mockResolvedValue(mockDeletedShoppingCarts),
-    save: jest.fn().mockResolvedValue(mockNewShoppingCart),    
-    remove: jest.fn().mockResolvedValue({affected: 1}),
-    update: jest.fn().mockResolvedValue(mockUpdatedhoppingCart),
-  };
-
-  const mockUsersRepository = {
-    find: jest.fn().mockResolvedValue(mockUsers),
-    findOne: jest.fn().mockResolvedValue(mockUser1),
-    create: jest.fn().mockResolvedValue(mockNewUser),
-    update: jest.fn().mockResolvedValue(mockUpdatedUser), 
-    save: jest.fn().mockResolvedValue(mockNewUser),
-    delete: jest.fn().mockResolvedValue({raw: {}, affected: 1 }) ,
-  }
-
-  const mockBooksRepository = {
-    find: jest.fn().mockResolvedValue(mockBooks),
-    findOne: jest.fn().mockResolvedValue(mockBook1),
-    create: jest.fn().mockResolvedValue(mockNewBook),
-    update: jest.fn().mockResolvedValue(mockUpdateBook),
-    delete: jest.fn().mockResolvedValue(mockDeletedBooks),
-    save: jest.fn().mockResolvedValue(mockNewBook),    
-    remove: jest.fn().mockResolvedValue(mockBook1),    
-  };
-
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({

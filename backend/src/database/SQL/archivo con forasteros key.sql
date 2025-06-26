@@ -29,7 +29,8 @@ create table books (
     image text default(''),
 	stock integer not null check(stock >= 0),
 	subscriber_exclusive boolean default(false),
-	price float not null check(price >= 0)
+	price float not null check(price >= 0),
+	is_active boolean default(true)
 );
 
 -- CREAR TABLA GENRES

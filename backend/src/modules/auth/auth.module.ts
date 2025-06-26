@@ -6,6 +6,12 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/user.module';
 
+/**
+ * Módulo de NestJS que agrupa los componentes relacionados a la Autenticación:
+ * - Controlador
+ * - Servicio
+ * - Repositorios TypeORM
+ */
 @Module({
   imports: [
     UsersModule,

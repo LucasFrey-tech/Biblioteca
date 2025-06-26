@@ -17,14 +17,14 @@ export class LibraryBooksService {
     private userRepository: Repository<User>,
     @InjectRepository(Book)
     private bookRepository: Repository<Book>,
-  ) {}
+  ) { }
 
   async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) throw new Error('Usuario no encontrado');
 
     const userVirtualBooks = await this.userVirtualBooksRepository.find({
-      where: { user },
+      where: { user: { id: idUser } },
       relations: ['book', 'book.author', 'book.genres'],
     });
 
@@ -50,7 +50,10 @@ export class LibraryBooksService {
     if (!book) throw new Error('Libro no encontrado');
 
     const existing = await this.userVirtualBooksRepository.findOne({
-      where: { user, book }
+      where: {
+        user: { id: input.idUser },
+        book: { id: input.idBook }
+      }
     });
 
     if (existing) {
@@ -62,4 +65,5 @@ export class LibraryBooksService {
     this.logger.log('Libro de Librería Creado');
     return await this.userVirtualBooksRepository.save(newRecord);
   }
+
 }

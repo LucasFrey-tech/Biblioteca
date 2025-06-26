@@ -1,10 +1,5 @@
-
--- AÑADIR DATOS DE PRUEBA A USERS
-insert into users(username,firstname ,lastname, email,password) values ('pepito','pepito','armando','pepito@gmail.com','1234');
-insert into users(username,firstname ,lastname, email,password) values ('armando','armando','paredes','armando@gmail.com','1234');
-insert into users(username,firstname ,lastname, email,password) values ('paredes','paredes','pepito','paredes@gmail.com','1234');
-insert into users(username,firstname ,lastname, email,password,admin) values ('adm','administrador','pagina','adm@gmail.com','adm',true);
-
+-- AÑADIR DATOS A SUBSCRIPCION
+insert into subscription(price) values (1);
 
 
 -- AÑADIR DATOS DE PRUEBA A GENRES
@@ -24,13 +19,6 @@ insert into authors(name) values ('Juan Polaco'); --4
 insert into authors(name) values ('Alice Hoffman'); --5
 insert into authors(name) values ('Brandon Sanderson'); --6
 insert into authors(name) values ('Shelby Mahurin'); --7
-
--- AÑADIR DATOS DE PRUEBA A BOOK_GENRES
-insert into book_genres (id_book,id_genre) values (1,1);
-insert into book_genres (id_book,id_genre) values (1,2);
-insert into book_genres (id_book,id_genre) values (2,3);
-insert into book_genres (id_book,id_genre) values (3,1);
-insert into book_genres (id_book,id_genre) values (3,3);
 
 -- AÑADIR DATOS DE PRUEBA A REVIEWS
 insert into reviews(id_user,id_book,rating,comment) values (

@@ -30,7 +30,6 @@ export default function HomePage() {
   return (
     <div className={Styles.pageContainer}>
       <NovedadesCarousel />
-      {/* <BooksDisplayerFlex title='Recientemente Agregados' books={LibrosRecientementeAgregados}/> */}
       <BooksDisplayerFlexGrid title='Recomendados' rows={2} books={booksRecomended}/>
       <GenresBooks />
       <AuthorBooks />

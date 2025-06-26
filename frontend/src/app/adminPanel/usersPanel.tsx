@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import styles from '../../styles/panelAdmin.module.css';
 import Swal from "sweetalert2";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -226,7 +225,7 @@ export default function UsersPanel(): React.JSX.Element {
         </div>
       ))}
 
-      {/* Paginación con estilo Shad y botón activo en gris */}
+      {/* Paginación*/}
       {totalPages > 1 && (
         <Pagination className="pt-4">
           <PaginationContent>

@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Get, Param, Delete, ParseIntPipe } from "@nestjs/common";
+import { Controller, Post, Body, Get, Param, Delete, Put, ParseIntPipe } from "@nestjs/common";
 import { UserSubscriptionService } from "./subscription_user.service";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { UserSubscriptionDTO } from "./user_subscription.dto";
-import { UserSubscription } from "src/entidades/subscription_user.entity";
+import { UserSubscription } from "../../../../src/entidades/subscription_user.entity";
 
 @ApiTags('Suscripciones de Usuarios')
 @ApiBearerAuth()
@@ -32,16 +32,26 @@ export class UserSubscriptionController {
   @Get(':userId')
   @ApiOperation({ summary: 'Obtener Suscripción del Usuario' })
   @ApiParam({ name: 'userId', type: Number })
-  @ApiResponse({ status: 200, description: 'Suscripción Encontrada', type: UserSubscriptionDTO, isArray: true })
+  @ApiResponse({ status: 200, description: 'Suscripción Encontrada', type: UserSubscriptionDTO })
   async getUserSubscription(@Param('userId', ParseIntPipe) userId: number): Promise<UserSubscriptionDTO> {
     return this.userSubscriptionService.getUserSubscription(userId);
   }
+
   @Get()
   @ApiOperation({ summary: 'Obtener Suscripciones de usuarios' })
-  @ApiParam({ name: 'userId', type: Number })
-  @ApiResponse({ status: 200, description: 'Suscripción Encontrada', type: UserSubscriptionDTO, isArray: true })
-  async getUserSubscriptions() : Promise<UserSubscriptionDTO[]> {
+  @ApiResponse({ status: 200, description: 'Suscripciones encontradas', type: UserSubscriptionDTO, isArray: true })
+  async getUserSubscriptions(): Promise<UserSubscriptionDTO[]> {
     return this.userSubscriptionService.getUserSubscriptions();
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar una suscripción de usuario' })
+  @ApiParam({ name: 'id', type: Number })
+  async updateSubscription(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: Partial<UserSubscription>
+  ): Promise<UserSubscription> {
+    return this.userSubscriptionService.updateSubscription(id, data);
   }
 
   @Delete(':id')

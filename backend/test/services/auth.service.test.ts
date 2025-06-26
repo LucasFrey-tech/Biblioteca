@@ -1,60 +1,56 @@
-import { Test } from '@nestjs/testing';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../../src/modules/auth/auth.service';
-import { AuthController } from '../../src/modules/auth/auth.controller';
+import { Repository } from 'typeorm';
+import { User } from '../../src/entidades/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { mockNewUser, mockUser1, mockUsersRepository } from '../mocks/repositories/users.repository.mock';
 import { UsersService } from '../../src/modules/users/user.service';
+import { mockUsersService } from '../mocks/services/users.service.mock';
+import { JwtService } from '@nestjs/jwt';
+import { mockJwtService } from '../mocks/services/jwtservice.service.mock';
 
+jest.mock('bcrypt', () => ({
+  compare: jest.fn(async () => true),
+  hash: jest.fn(async (pw: string) => `hashed_${pw}`),
+}));
 
 describe('AuthService', () => {
-  let instance;
+  let service: AuthService;
+  let repo: jest.Mocked<Repository<User>>;
 
   beforeEach(async () => {
-    const mockUsersService = {
-      // mock methods as needed
-      findOne: jest.fn(),
-      create: jest.fn(),
-    };
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AuthService,
+        {
+          provide: getRepositoryToken(User),
+          useValue: mockUsersRepository,
+        },
+        {
+          provide: UsersService,
+          useValue: mockUsersService,
+        },
+        {
+          provide: JwtService,
+          useValue: mockJwtService,
+        },
+      ],
+    }).compile();
 
-    const mockConfigService = {
-      get: jest.fn((key) => {
-        if (key === 'JWT_SECRET') return 'test_secret';
-        return null;
-      }),
-    };
-
-    const moduleRef = await Test.createTestingModule({
-        imports: [
-            PassportModule,
-            JwtModule.register({
-              secret: 'test_secret',
-              signOptions: { expiresIn: '2h' },
-            }),
-          ],
-          controllers: [AuthController],
-          providers: [
-            AuthService,
-            { provide: UsersService, useValue: mockUsersService },
-            { provide: ConfigService, useValue: mockConfigService },
-          ],
-      }).compile();
-
-    instance =  moduleRef.get(AuthService);
+    service = module.get<AuthService>(AuthService);
+    repo = module.get(getRepositoryToken(User));
+    
+    });
+  
+    it('test method register()', async () => {
+      expect(service.register).toBeTruthy()
+    });
+  
+    it('test method login()', async () => {
+      expect(service.login).toBeTruthy()
+    });
+  
+    it('test method validateUser()', async () => {
+      expect(service.validateUser).toBeTruthy()
+    });
   });
-  it('instance should be an instanceof AuthService', () => {
-    expect(instance instanceof AuthService).toBeTruthy();
-  });
-
-  it('should have a method register()', async () => {
-    expect(instance.register).toBeTruthy();
-  });
-
-  it('should have a method login()', async () => {
-    expect(instance.login).toBeTruthy();
-  });
-
-  it('should have a method validateUser()', async () => {
-    expect(instance.validateUser).toBeTruthy();
-  });
-});

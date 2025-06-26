@@ -1,95 +1,104 @@
-'use client';
+/**
+ * NO TIENE USO
+ */
 
-import { useUser } from '@/app/context/UserContext';
-import { UserSubscriptionAPI } from '@/API/class/userSubscription';
-import Swal from 'sweetalert2';
-import { Subscription } from '@/API/class/subscription';
+// 'use client';
 
-interface Props {
-    onSubscriptionConfirmed: (startDate: string, endDate: string) => void;
-}
+// import { useUser } from '@/app/context/UserContext';
+// import { UserSubscriptionAPI } from '@/API/class/userSubscription';
+// import Swal from 'sweetalert2';
+// import { Subscription } from '@/API/class/subscription';
+// import { UserSubscriptionDTO } from '@/API/types/userSubscription';
 
-export default function SubscriptionHandler({ onSubscriptionConfirmed }: Props) {
-    const { user, refreshUser } = useUser();
+// interface Props {
+//   onSubscriptionConfirmed: (startDate: string, endDate: string) => void;
+// }
 
-    const handleSubscription = async () => {
-        try {
-            if (!user) return;
+// export default function SubscriptionHandler({ onSubscriptionConfirmed }: Props) {
+//   const { user, refreshUser } = useUser();
 
-            const api = new UserSubscriptionAPI(localStorage.getItem('token') || '');
-            const subApi = new Subscription(localStorage.getItem('token') || '');
-            const userId = user.sub;
+//   const handleSubscription = async () => {
+//     try {
+//       if (!user) return;
 
-            const resSub = await subApi.getOne();
+//       const api = new UserSubscriptionAPI(localStorage.getItem('token') || '');
+//       const subApi = new Subscription(localStorage.getItem('token') || '');
+//       const userId = user.sub;
 
-            const res = await api.getOneByUser(userId);
-            const subscription = Array.isArray(res) ? res[0] : res;
+//       const resSub = await subApi.getOne();
+//       const price = resSub.price;
 
-            const price = resSub.price;
+//       let subscription: UserSubscriptionDTO | null = null;
 
-            if (subscription?.ongoing) {
-                const startDate = new Date(subscription.startDate).toLocaleDateString('es-AR');
-                const endDate = new Date(subscription.endDate).toLocaleDateString('es-AR');
-                onSubscriptionConfirmed(startDate, endDate);
-            } else {
-                const result = await Swal.fire({
-                    title: 'No tienes suscripción 🥲',
-                    icon: 'question',
-                    html: `<h1>¡Hola ${user.username}, deseas comprar una por 1 mes al valor de $ ${price}</h1>`,
-                    showCloseButton: true,
-                    showCancelButton: true,
-                    confirmButtonText: 'Comprar',
-                    cancelButtonText: 'Cancelar',
-                });
+//       try {
+//         subscription = await api.getOneByUser(userId);
+//       } catch {
+//         subscription = null; // No existe aún
+//       }
 
-                if (result.isConfirmed) {
-                    const now = new Date();
-                    const oneMonthLater = new Date(now);
-                    oneMonthLater.setMonth(now.getMonth() + 1);
+//       const isActive =
+//         subscription &&
+//         subscription.ongoing &&
+//         new Date(subscription.endDate) > new Date();
 
-                    // Fechas para la API
-                    const startDateISO = now.toISOString();
-                    const endDateISO = oneMonthLater.toISOString();
+//       if (isActive && subscription) {
+//         const startDate = new Date(subscription.startDate).toLocaleDateString('es-AR');
+//         const endDate = new Date(subscription.endDate).toLocaleDateString('es-AR');
+//         onSubscriptionConfirmed(startDate, endDate);
+//         return;
+//       }
 
-                    if (subscription?.id) {
-                        await api.update(subscription.id, {
-                            ongoing: true,
-                            startDate: startDateISO,
-                            endDate: endDateISO,
-                        });
-                    } else {
-                        await api.create({
-                            user: userId,
-                            subscription: subscription?.subscription,
-                            ongoing: true,
-                            startDate: startDateISO,
-                            endDate: endDateISO,
-                        });
-                    }
+//       // ✅ Si no está activa o no existe
+//       const result = await Swal.fire({
+//         title: 'No tienes suscripción 🥲',
+//         icon: 'question',
+//         html: `<h1>¡Hola ${user.username}, deseas comprar una por 1 mes al valor de $ ${price}</h1>`,
+//         showCloseButton: true,
+//         showCancelButton: true,
+//         confirmButtonText: 'Comprar',
+//         cancelButtonText: 'Cancelar',
+//       });
 
-                    await Swal.fire({
-                        title: '¡Suscripción creada!',
-                        icon: 'success',
-                        timer: 1000,
-                        showConfirmButton: false,
-                    });
+//       if (!result.isConfirmed) return;
 
-                    refreshUser();
+//       const now = new Date();
+//       const oneMonthLater = new Date();
+//       oneMonthLater.setMonth(now.getMonth() + 1);
 
-                    // Fechas para mostrar
-                    const startDate = now.toLocaleDateString('es-AR');
-                    const endDate = oneMonthLater.toLocaleDateString('es-AR');
+//       const startDateISO = now.toISOString();
+//       const endDateISO = oneMonthLater.toISOString();
 
-                    onSubscriptionConfirmed(startDate, endDate);
-                }
-            }
-        } catch (error) {
-            console.error('Error al manejar suscripción:', error);
-            Swal.fire('Error', 'Ocurrió un error al verificar tu suscripción.', 'error');
-        }
-    };
+//       if (subscription?.id) {
+//         await api.update(subscription.id, {
+//           ongoing: true,
+//           startDate: startDateISO,
+//           endDate: endDateISO,
+//         });
+//       } else {
+//         await api.create({
+//         userId: userId, 
+//         startDate: startDateISO,
+//         endDate: endDateISO,
+//         });
+//       }
 
-    return (
-        <button onClick={handleSubscription}>Administrar suscripción</button>
-    );
-}
+//       await Swal.fire({
+//         title: '¡Suscripción creada!',
+//         icon: 'success',
+//         timer: 1000,
+//         showConfirmButton: false,
+//       });
+
+//       refreshUser();
+
+//       const startDate = now.toLocaleDateString('es-AR');
+//       const endDate = oneMonthLater.toLocaleDateString('es-AR');
+//       onSubscriptionConfirmed(startDate, endDate);
+//     } catch (error) {
+//       console.error('Error al manejar suscripción:', error);
+//       Swal.fire('Error', 'Ocurrió un error al verificar tu suscripción.', 'error');
+//     }
+//   };
+
+//   return <button onClick={handleSubscription}>Administrar suscripción</button>;
+// }

@@ -10,7 +10,7 @@ import VentasPanel from "./ventasPanel";
 
 
 export default function PanelAdmin() {
-  const [activeTab, setActiveTab] = useState<'users' | 'books'|'novedades'|'subscription'|'ventas'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'books'|'novedades'|'subscription'|'ventas'>('novedades');
 
   return (
     <div className={styles.pageContainer}>
