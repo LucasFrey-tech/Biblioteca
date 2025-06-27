@@ -13,6 +13,15 @@
 # testing
 /coverage
 
+# SonarQube / Análisis estático
+.scannerwork/
+.sonarqube/
+.sonar/
+report-task.txt
+sonar-report.json
+*.lcov
+sonar-project*.properties
+
 # next.js
 /.next/
 /out/
