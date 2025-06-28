@@ -19,6 +19,15 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 
+# SonarQube / Análisis estático
+.scannerwork/
+.sonarqube/
+.sonar/
+report-task.txt
+sonar-report.json
+*.lcov
+sonar-project*.properties
+
 # IDEs and editors
 /.idea
 .project
