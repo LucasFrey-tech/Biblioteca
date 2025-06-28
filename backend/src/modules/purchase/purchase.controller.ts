@@ -83,7 +83,7 @@ export class PurchasesController {
   @Post()
   @ApiOperation({ summary: 'Procesar compra de un usuario' })
   @ApiBody({ type: ProcessPurchaseDTO })
-  @ApiResponse({ status: 200, description: 'Compra procesada exitosamente' })
+  @ApiResponse({ status: 201, description: 'Compra procesada exitosamente' })
   async processPurchase(@Body() body: ProcessPurchaseDTO) {
     await this.purchasesService.processPurchase(body.idUser, body.items);
     return { message: 'Compra procesada exitosamente' };

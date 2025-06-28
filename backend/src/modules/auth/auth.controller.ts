@@ -19,7 +19,7 @@ export class AuthController {
    * @returns Un objeto con el token de acceso.
    */
   @Post('login')
-  @HttpCode(200)
+  @HttpCode(202)
   @ApiOperation({ summary: 'Iniciar Sesión' })
   @ApiBody({ type: LoginRequestBody })
   @ApiResponse({ status: 200, description: 'Login Exitoso', type: LoginRequestBody })
@@ -37,7 +37,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Registro de Usuario' })
   @ApiParam({ name: 'requestBody', type: RegisterRequestBody })
   @ApiBody({ type: RegisterRequestBody })
-  @ApiResponse({ status: 200, description: 'Registro Exitoso', type: RegisterRequestBody })
+  @ApiResponse({ status: 201, description: 'Registro Exitoso', type: RegisterRequestBody })
   async registerUser(@Body() requestBody: RegisterRequestBody) {
     return this.authService.register(requestBody);
   }

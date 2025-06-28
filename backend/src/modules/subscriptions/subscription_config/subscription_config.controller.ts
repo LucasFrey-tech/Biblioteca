@@ -28,7 +28,7 @@ export class SubscriptionController {
     }
 
   @Post()
-  @ApiResponse({ status: 200, description: 'Subscripcion Creada', type: SubscriptionDTO })
+  @ApiResponse({ status: 201, description: 'Subscripcion Creada', type: SubscriptionDTO })
   async create(@Body() data: SubscriptionDTO) {
     return this.subscriptionService.create(data);
     }
