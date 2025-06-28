@@ -7,17 +7,18 @@ import { BookCardProps } from "../bookCard/bookCardWithinInfo/book_card_within_i
 type BooksGenreScrollerProps = {
     genreId: number
     name: string
+    booksAmount: number
 }
 
-export default function BooksGenreScroller({genreId,name}:BooksGenreScrollerProps): React.JSX.Element {
+export default function BooksGenreScroller({genreId,name,booksAmount: maxAmmount}:BooksGenreScrollerProps): React.JSX.Element {
 
     const [books, setBooks] = useState<BookCardProps[]>([]);
     const apiRef = useRef(new BaseApi());
 
     useEffect(() => {
         async function getCarouselItems() {
-            const books = await apiRef.current.books.getBooksWithGenre(genreId);
-            const formatedBooks = books.map(x => {return { bookId: x.id, title: x.title, writer: x.author, img: x.image }})
+            const books = await apiRef.current.books.getBooksWithGenrePaginated(genreId,1,maxAmmount);
+            const formatedBooks = Array.isArray(books)? books.map(x => {return { bookId: x.id, title: x.title, writer: x.author, img: x.image }}) : []
             setBooks(formatedBooks);
         }
         getCarouselItems()
