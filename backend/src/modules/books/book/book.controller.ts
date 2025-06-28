@@ -23,7 +23,7 @@ export class BooksController {
    */
   @Get()
   @ApiOperation({ summary: 'Listar Todos los Libros' })
-  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros', type: [BookDTO] })
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros', type: BookDTO, isArray: true })
   async findAll(): Promise<BookDTO[]> {
     return await this.booksService.findAll();
   }

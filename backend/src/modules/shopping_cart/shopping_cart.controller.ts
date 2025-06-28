@@ -14,15 +14,16 @@ export class ShoppingCartController {
   @Get(':idUser')
   @ApiOperation({ summary: 'Buscar Changuito por Usuario' })
   @ApiParam({ name: 'idUser', type: Number })
-  @ApiResponse({ status: 200, description: 'Changuito Encontrado' })
+  @ApiResponse({ status: 200, description: 'Changuito Encontrado', type: BookCartDTO })
   async findByUser(@Param('idUser', ParseIntPipe) idUser: number): Promise<BookCartDTO[] | null> {
     return await this.shoppingCartService.findByUser(idUser);
   }
 
+
   @Post()
   @ApiOperation({ summary: 'Crear Changuito' })
   @ApiBody({ type: ShoppingCartCreateDTO })
-  @ApiResponse({ status: 201, description: 'Changuito Creado' })
+  @ApiResponse({ status: 201, description: 'Changuito Creado', type: ShoppingCartCreateDTO })
   create(@Body() bookDto: ShoppingCartCreateDTO) {
     return this.shoppingCartService.create(bookDto);
   }

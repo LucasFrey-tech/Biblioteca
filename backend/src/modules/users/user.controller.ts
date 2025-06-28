@@ -15,7 +15,26 @@ export class UsersController {
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Número de página', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Límite de usuarios por página', example: 10 })
   @ApiQuery({ name: 'search', type: String, required: false, description: 'Término de búsqueda', example: '' })
-  @ApiResponse({ status: 200, description: 'Lista de Usuarios Paginada', type: Object })
+  @ApiResponse({ status: 200, description: 'Lista de Usuarios Paginada', schema: {
+    example: {
+      items: [
+        {
+          id: 1,
+          firstname: 'Lucas',
+          lastname: 'Frey',
+          username: 'Tukson',
+          email: 'correonofalso@gmail.com',
+          password: 'asdasd',
+          tel: '1234567890',
+          admin: true,
+          disabled: false,
+          registrationDate: '2025-06-05T00:00:00.000Z',
+        },
+      ],
+      total: 1,
+    },
+  }, })
+
   async getAllPaginated(
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('limit', ParseIntPipe) limit: number = 10,
@@ -26,7 +45,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener Todos los Usuarios' })
-  @ApiResponse({ status: 200, description: 'Lista de Usuarios', type: [User] })
+  @ApiResponse({ status: 200, description: 'Lista de Usuarios', type: User, isArray: true })
   async getAllUsers(@Query('search') search: string = ''): Promise<User[]> {
     return this.usersService.findAll(search);
   }
@@ -41,8 +60,28 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo usuario' })
-  @ApiResponse({ status: 201, description: 'Usuario creado', type: User })
-  @ApiBody({ type: User })
+  @ApiResponse({ status: 201, description: 'Usuario creado', schema: {
+    example: {
+      items: {
+        firstname: 'Lucas',
+        lastname: 'Frey',
+        username: 'Tukson',
+        email: 'sarasa@gmail',
+        password: '123456'
+      }
+    }
+  } })
+  @ApiBody({ schema: {
+    example: {
+      items: {
+        firstname: 'Lucas',
+        lastname: 'Frey',
+        username: 'Tukson',
+        email: 'sarasa@gmail',
+        password: '123456'
+      }
+    }
+  } })
   create(@Body() user: Partial<User>) {
     return this.usersService.create(user);
   }

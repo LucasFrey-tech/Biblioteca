@@ -20,7 +20,7 @@ export class GenresController {
    */
   @Get()
   @ApiOperation({ summary: 'Listar Todos los Géneros' })
-  @ApiResponse({ status: 200, description: 'Lista de Géneros', type: [Genre] })
+  @ApiResponse({ status: 200, description: 'Lista de Géneros', type: Genre, isArray: true })
   findAll(): Promise<Genre[]> {
     return this.genresService.findAll();
   }

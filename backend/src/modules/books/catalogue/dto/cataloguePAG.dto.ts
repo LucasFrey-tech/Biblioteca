@@ -10,7 +10,7 @@ export class PaginatedCatalogueBooksDTO {
    * Lista de libros del catálogo
    * @type {CatalogueBookDTO[]}
    */
-  @ApiProperty({ type: [CatalogueBookDTO], description: 'Lista de libros del catálogo' })
+  @ApiProperty({ type: CatalogueBookDTO, isArray: true, description: 'Lista de libros del catálogo' })
   books: CatalogueBookDTO[];
 
   /**

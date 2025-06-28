@@ -23,7 +23,7 @@ export class BookReviewsController {
      */
     @Get()
     @ApiOperation({ summary: 'Listar Todas las Críticas' })
-    @ApiResponse({ status: 200, description: 'Lista de Críticas', type: [ReviewI] })
+    @ApiResponse({ status: 200, description: 'Lista de Críticas', type: ReviewI, isArray: true})
     async findAll(): Promise<ReviewI[]> {
         return this.reviewService.findAll();
     }
@@ -84,7 +84,7 @@ export class BookReviewsController {
     @Post()
     @ApiOperation({ summary: 'Crear Crítica' })
     @ApiBody({ type: CreateReviewDto })
-    @ApiResponse({ status: 201, description: 'Crítica creada' })
+    @ApiResponse({ status: 201, description: 'Crítica creada', type: ReviewI })
     async create(@Body() reviewData: CreateReviewDto): Promise<ReviewI> {
         return this.reviewService.create(reviewData);
     }

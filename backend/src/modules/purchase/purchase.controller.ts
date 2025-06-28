@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Param, ParseIntPipe, Body, Query } from '@nestjs/common';
 import { PurchasesService } from './purchase.service';
 import { PurchaseDTO, PaginatedPurchaseDTO } from './DTO/purchase.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery, ApiProperty } from '@nestjs/swagger';
 
 class PurchaseItemDTO {
   cartItemId: number;
@@ -11,8 +11,34 @@ class PurchaseItemDTO {
 }
 
 class ProcessPurchaseDTO {
+  @ApiProperty({example: 1, description: "ID Único del Usuario"})
   idUser: number;
+  @ApiProperty({
+    description: 'Lista de ítems a procesar en la compra',
+    type: [PurchaseItemDTO],
+    example: [
+      {
+        idBook: 15,
+        title: 'El Hobbit',
+        amount: 2,
+        price: 499.99,
+        virtual: false,
+      },
+      {
+        idBook: 18,
+        title: 'El Señor de los Anillos',
+        amount: 1,
+        price: 899.99,
+        virtual: true,
+      },
+    ],
+  })
   items: PurchaseItemDTO[];
+
+  @ApiProperty({
+    example: 1899.97,
+    description: 'Total de la compra (suma de todos los ítems)',
+  })
   price: number;
 }
 
@@ -30,7 +56,7 @@ export class PurchasesController {
    */
   @Get()
   @ApiOperation({ summary: 'Obtener todas las compras del sistema' })
-  @ApiResponse({ status: 200, description: 'Listado completo de compras', type: [PurchaseDTO] })
+  @ApiResponse({ status: 200, description: 'Listado completo de compras', type: PurchaseDTO, isArray: true })
   @ApiResponse({ status: 404, description: 'No se encontraron compras' })
   async getAllPurchases(): Promise<PurchaseDTO[]> {
     return this.purchasesService.getAllPurchases();
