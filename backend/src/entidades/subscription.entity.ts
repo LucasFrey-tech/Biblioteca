@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 import { UserSubscription } from "./subscription_user.entity";
-import { ApiOperation, ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 
 @Entity('subscription')
 export class Subscription {
