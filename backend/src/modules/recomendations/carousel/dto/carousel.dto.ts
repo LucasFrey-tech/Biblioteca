@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsString } from "class-validator";
 
 /**
@@ -9,6 +10,7 @@ export class CarouselDTO {
      * ID del carousel
      * @type {number}
      */
+    @ApiProperty({example: 1, description: "ID Único del Carousel"})
     @IsNumber()
     id: number;
 
@@ -16,6 +18,7 @@ export class CarouselDTO {
      * ID del libro
      * @type {number}
      */
+    @ApiProperty({example: 1, description: "ID Único del Libro"})
     @IsNumber()
     idBook: number;
 
@@ -23,6 +26,7 @@ export class CarouselDTO {
      * Imágen del carousel
      * @type {string}
      */
+    @ApiProperty({example: "imagen.png", description: "Imagen"})
     @IsString()
     image!: string;
 }

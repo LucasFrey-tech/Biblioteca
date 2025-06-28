@@ -21,7 +21,7 @@ export class CarouselController {
      */
     @Get()
     @ApiOperation({ summary: 'Listar Carousel' })
-    @ApiResponse({ status: 200, description: 'Lista de items en el Carousel.', type: [CarouselDTO] })
+    @ApiResponse({ status: 200, description: 'Lista de items en el Carousel.', type: CarouselDTO, isArray: true })
     findAll(): Promise<CarouselDTO[]> {
         return this.carouselService.findAll();
     }
@@ -67,6 +67,7 @@ export class CarouselController {
     @Put(':id')
     @UseInterceptors(FileInterceptor('image'))
     @ApiOperation({ summary: 'Actualizar CarouselItem' })
+    @ApiBody({type: CarouselDTO})
     @ApiParam({ name: 'id', type: Number })
     @ApiConsumes('multipart/form-data')
     @ApiResponse({ status: 200, description: 'CarouselItem Actualizado', type: CarouselDTO })
