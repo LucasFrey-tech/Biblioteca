@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
 /**
@@ -11,6 +12,7 @@ export class LoginRequestBody {
    * Email del usuario
    * @type {string}
    */
+  @ApiProperty({example: "sarasa@gmail.com"})
   @IsEmail()
   email: string;
 
@@ -18,6 +20,7 @@ export class LoginRequestBody {
    * Contraseña del usuario
    * @type {string}
    */
+  @ApiProperty({example: "123456"})
   @IsString()
   @MinLength(6)
   password: string;
@@ -40,6 +43,7 @@ export class RegisterRequestBody {
    * Alias del usuario
    * @type {string}
    */
+  @ApiProperty({example: "Tukson"})
   @IsString()
   username: string;
 
@@ -47,6 +51,7 @@ export class RegisterRequestBody {
    * Nombre del usuario
    * @type {string}
    */
+  @ApiProperty({example: "Lucas"})
   @IsString()
   firstname: string;
   
@@ -54,6 +59,7 @@ export class RegisterRequestBody {
    * Apellido del usuario
    * @type {string}
    */
+  @ApiProperty({example: "Frey"})
   @IsString()
   lastname: string;
   
@@ -61,6 +67,7 @@ export class RegisterRequestBody {
    * Email del usuario
    * @type {string}
    */
+  @ApiProperty({example: "sarasa@gmail.com"})
   @IsEmail()
   email: string;
 
@@ -68,6 +75,7 @@ export class RegisterRequestBody {
    * Contraseña del usuario
    * @type {string}
    */
+  @ApiProperty({example: "123456"})
   @IsString()
   @MinLength(6)
   password: string;

@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { LoginRequestBody, RegisterRequestBody } from './dto/auth.dto';
 import { AuthService } from './auth.service';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/swagger';
 
 /**
  * Controlador para gestionar las operaciones de de Autenticación.
@@ -21,7 +21,6 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @ApiOperation({ summary: 'Iniciar Sesión' })
-  @ApiParam({ name: 'login', type: LoginRequestBody })
   @ApiBody({ type: LoginRequestBody })
   @ApiResponse({ status: 200, description: 'Login Exitoso', type: LoginRequestBody })
   async login(@Body() LoginRequestBody: LoginRequestBody) {

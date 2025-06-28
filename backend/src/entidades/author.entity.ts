@@ -21,7 +21,7 @@ export class Author {
    * nombre del autor
    * @type {string}
    */
-  @ApiProperty({ example: 'Roberto Kafka'})
+  @ApiProperty({ example: 'Roberto Kafka', description: "Nombre del Autor"})
   @Column({ length: 100 })
   name: string;
 }

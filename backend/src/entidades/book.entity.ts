@@ -94,6 +94,7 @@ export class Book {
    * Autor del libro
    * @type {Author} 
   */
+  @ApiProperty({type: () => Author, description: "Autor Asoaciado"})
   @ManyToOne(() => Author)
   @JoinColumn({ name: "author_id", referencedColumnName: "id" })
   author: Author;
@@ -102,6 +103,7 @@ export class Book {
    * Géneros relacionados al libro
    * @type {Genre} 
    */
+  @ApiProperty({type: () => Genre, description: "Genero Asociado"})
   @ManyToMany(type => Genre)
   @JoinTable({
     name: "book_genres", // tabla intermedia

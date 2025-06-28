@@ -17,10 +17,12 @@ export class ShoppingCartBook {
     @Column({ default: false })
     virtual!: boolean;
 
+    @ApiProperty({type: () => User, description: "Usuario Asociado"})
     @ManyToOne(() => User)
     @JoinColumn({ name: "id_user", referencedColumnName: "id" })
     user: User;
 
+    @ApiProperty({type: () => Book, description: "Libro Asociado"})
     @ManyToOne(() => Book)
     @JoinColumn({ name: "id_book", referencedColumnName: "id" })
     book: Book;

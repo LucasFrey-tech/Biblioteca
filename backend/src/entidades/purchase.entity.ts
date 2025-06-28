@@ -56,6 +56,7 @@ export class Purchase {
    * Usuarios relacionados con la compra
    * @type {User}
    */
+  @ApiProperty({type: () => User, description: "Usuario Asociado"})
   @ManyToOne(() => User)
   @JoinColumn({ name: "id_user", referencedColumnName: "id" })
   user: User;
@@ -64,6 +65,7 @@ export class Purchase {
    * Libros relacionados con la compra
    * @type {Book}
    */
+  @ApiProperty({type: () => Book, description: "Libro Asociado"})
   @ManyToOne(() => Book)
   @JoinColumn({ name: "id_book", referencedColumnName: "id" })
   book: Book;
