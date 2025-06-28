@@ -61,8 +61,14 @@ export class BooksController {
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
-  getBooksWithGenre(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
-    return this.booksService.findAllWithGenre(id, page, limit);
+  getBooksWithGenre(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string
+  ): Promise<BookDTO[]> {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    return this.booksService.findAllWithGenre(id, pageNum, limitNum);
   }
 
   /**
@@ -79,8 +85,14 @@ export class BooksController {
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
-  getBooksByAuthor(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
-    return this.booksService.findAllByAuthor(id, page, limit);
+  getBooksByAuthor(
+    @Param('id', ParseIntPipe) id: number, 
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number, 
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number
+  ): Promise<BookDTO[]> {
+    const pageNum = page ?? 1;
+    const limitNum = limit ?? 10;
+    return this.booksService.findAllByAuthor(id, pageNum, limitNum);
   }
 
   /**
