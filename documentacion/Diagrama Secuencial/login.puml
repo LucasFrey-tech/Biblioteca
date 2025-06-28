@@ -1,12 +1,4 @@
 @startuml login
-
-actor Usuario
-participant "Next.js (LoginForm)" as Next
-participant "AuthService (NestJS)" as AuthService
-participant "UsersService (NestJS)" as UsersService
-participant "bcrypt"
-participant "JWTService" as JWT
-
 actor Usuario
 participant "Next.js (LoginForm)" as Next
 participant "AuthService (NestJS)" as AuthService
@@ -18,29 +10,22 @@ Usuario -> Next: Ingresar email y contraseña
 Next -> AuthService: POST /auth/login { email, password }
 
 AuthService -> UsersService: findByEmail(email)
-UsersService --> AuthService: usuario (incluye password hasheado)
+UsersService --> AuthService: usuario (password hasheado)
 
 AuthService -> bcrypt: compare(password, usuario.password)
 bcrypt --> AuthService: true/false
 
-' Validación de credenciales
-note right of AuthService
-  Si el usuario no existe o la contraseña es incorrecta:
-  - lanzar UnauthorizedException (401)
-end note
-
-' Verificación de bloqueo
-note right of AuthService
-  Si user.disabled === true:
-  - lanzar ForbiddenException (403)
-end note
-
-AuthService -> JWT: sign({ email, sub: id, username, admin })
-JWT --> AuthService: access_token
-
-AuthService --> Next: 200 OK + { access_token }
-Next -> Next: Guardar token (localStorage/cookie)
-Next --> Usuario: Acceso concedido
-
-
+alt Credenciales inválidas
+    AuthService --> Next: 401 Unauthorized
+    Next --> Usuario: Error de credenciales
+else Usuario deshabilitado
+    AuthService --> Next: 403 Forbidden
+    Next --> Usuario: Cuenta bloqueada
+else Autenticación correcta
+    AuthService -> JWT: sign({ email, sub: id, username, admin })
+    JWT --> AuthService: access_token
+    AuthService --> Next: 200 OK + { access_token }
+    Next -> Next: Guardar token (localStorage/cookie)
+    Next --> Usuario: Acceso concedido
+end
 @enduml
