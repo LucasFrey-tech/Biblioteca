@@ -27,7 +27,11 @@ const myapp_config = require('../../../../private/app.config.json');
           filename: (req, file, cb) => {
           cb(null, file.originalname);
         },
-      })
+      }),
+      limits: {
+        // 12 MB → 12 × 1 024 × 1 024  bytes
+        fileSize: 12 * 1024 * 1024,
+      },
     }),
   ],
   controllers: [BooksController],
