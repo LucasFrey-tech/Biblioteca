@@ -1,7 +1,10 @@
-import { Crud } from "../service";
+import { Crud, PaginatedResponse } from "../service";
 import { UserSubscriptionDiscountDTO } from "../types/userSubscriptionDiscount";
 
 export class UserSubscriptionDiscount extends Crud<UserSubscriptionDiscountDTO> {
+  getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<UserSubscriptionDiscountDTO>> {
+    throw new Error("Method not implemented.");
+  }
   private endPoint: string;
 
   constructor(token?: string) {

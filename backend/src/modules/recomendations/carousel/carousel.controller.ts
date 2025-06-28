@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CarouselService } from "./carousel.service";
-import { CarouselDTO } from "./carousel.dto";
+import { CarouselDTO } from "./dto/carousel.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 /**
@@ -21,7 +21,7 @@ export class CarouselController {
      */
     @Get()
     @ApiOperation({ summary: 'Listar Carousel' })
-    @ApiResponse({ status: 200, description: 'Lista de items en el Carousel.', type: [CarouselDTO] })
+    @ApiResponse({ status: 200, description: 'Lista de items en el Carousel.', type: CarouselDTO, isArray: true })
     findAll(): Promise<CarouselDTO[]> {
         return this.carouselService.findAll();
     }
@@ -67,6 +67,7 @@ export class CarouselController {
     @Put(':id')
     @UseInterceptors(FileInterceptor('image'))
     @ApiOperation({ summary: 'Actualizar CarouselItem' })
+    @ApiBody({type: CarouselDTO})
     @ApiParam({ name: 'id', type: Number })
     @ApiConsumes('multipart/form-data')
     @ApiResponse({ status: 200, description: 'CarouselItem Actualizado', type: CarouselDTO })

@@ -1,14 +1,46 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { LibraryBooksService } from './library_books.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
 import { UserVirtualBooks } from '../../../entidades/user_virtual_books.entity';
 import { CreateUserVirtualBookDto } from './dto/library_book_create.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Libros de Biblioteca')
 @Controller('library_books')
 export class LibraryBooksController {
     constructor(private readonly libraryBooksService: LibraryBooksService) { }
+
+    @Get(':idUser/paginated')
+    @ApiOperation({ summary: 'Listar Libros de Biblioteca Paginados por Usuario' })
+    @ApiParam({ name: 'idUser', type: Number, description: 'ID del usuario' })
+    @ApiQuery({ name: 'page', type: Number, required: false, description: 'Número de página', example: 1 })
+    @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Límite de libros por página', example: 10 })
+    @ApiResponse({ status: 200, description: 'Lista de Libros de Biblioteca Paginada', schema: {
+        example: {
+            items: [
+                {
+                    id: 42,
+                    title: 'El Hobbit',
+                    author_id: 7,
+                    description: 'Una aventura épica de fantasía en la Tierra Media.',
+                    genre: [
+                        { id: 1, name: 'Fantasía' },
+                        { id: 3, name: 'Aventura' }
+                    ],
+                    isbn: '978-84-450-7255-5',
+                    image: 'hobbit.jpg',
+                }
+            ],
+            total: 1,
+        }
+    } })
+    async findAllByUserPaginated(
+        @Param('idUser', ParseIntPipe) idUser: number,
+        @Query('page', ParseIntPipe) page: number = 1,
+        @Query('limit', ParseIntPipe) limit: number = 10,
+    ): Promise<{ items: LibraryBookDTO[]; total: number }> {
+        return this.libraryBooksService.findAllByUserPaginated(idUser, page, limit);
+    }
 
     @Get(':idUser')
     @ApiOperation({ summary: 'Listar Todos los Libros de Biblioteca' })

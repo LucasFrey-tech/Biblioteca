@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber } from "class-validator";
 
 /**
@@ -9,6 +10,7 @@ export class CreateRecommendationDTO {
      *  ID del libro recomendado
      * @type {number} 
      */
+    @ApiProperty({example: 1, description: "ID Único del Libro"})
     @IsNumber()
     idBook: number;
 

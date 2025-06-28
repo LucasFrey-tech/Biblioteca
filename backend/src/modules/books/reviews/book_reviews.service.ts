@@ -5,10 +5,11 @@ import { User } from "../../../entidades/user.entity";
 import { Book } from "src/entidades/book.entity";
 import { Review } from "../../../entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
+import { PaginatedReviewDTO } from "./dto/reviewPAG.dto";
 import { CreateReviewDto } from "./dto/createReview.dto";
 
 /**
- * Servcio que maneja la lógica de negocio para las reseñas.
+ * Servicio que maneja la lógica de negocio para las reseñas.
  */
 @Injectable()
 export class BookReviewsService {
@@ -24,7 +25,7 @@ export class BookReviewsService {
   /**
    * Crea una nueva reseña en el sistema.
    * 
-   * @param {CreateReviewDto} reviewData - Objeto de transferencia de datos con la informacion de la reseña a crear.
+   * @param {CreateReviewDto} reviewData - Objeto de transferencia de datos con la información de la reseña a crear.
    * @returns {Promise<ReviewI>} - Una promesa que resuelve a un objeto con los detalles de la reseña creada
    * @throws {NotFoundException} Si el usuario especificado no existe.
    */
@@ -52,7 +53,7 @@ export class BookReviewsService {
 
     const username = fullReview?.user?.username || '';
 
-    this.logger.log('Critica Creada');
+    this.logger.log('Crítica Creada');
 
     return new ReviewI(
       savedReview.id,
@@ -68,19 +69,63 @@ export class BookReviewsService {
   /**
    * Obtiene todas las reseñas disponibles
    * 
-   * @returns {Promise<Review[]>} - Una promesa que resuelve con un arreglo de DTOs de reseñas.
+   * @returns {Promise<ReviewI[]>} - Una promesa que resuelve con un arreglo de DTOs de reseñas.
    */
-  async findAll(): Promise<Review[]> {
-    this.logger.log('Lista de Criticas Obtenida');
-    return this.reviewRepository.find({ relations: ['user'] });
+  async findAll(): Promise<ReviewI[]> {
+    this.logger.log('Lista de Críticas Obtenida (sin paginación)');
+
+    const reviews = await this.reviewRepository.find({ relations: ['user'] });
+
+    const result = reviews.map((r) => new ReviewI(
+      r.id,
+      r.user.id,
+      r.book.id,
+      r.user ? r.user.username : '',
+      r.comment,
+      r.rating,
+      r.reviewDate.toLocaleString('es-AR'),
+    ));
+
+    return result;
+  }
+
+  /**
+   * Obtiene todas las reseñas disponibles con paginación
+   * 
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de reseñas por página
+   * @returns {Promise<PaginatedReviewDTO>} - Una promesa que resuelve con un objeto que contiene la lista de reseñas y el total
+   */
+  async findAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedReviewDTO> {
+    this.logger.log(`Lista de Críticas Obtenida (paginada, página: ${page}, límite: ${limit})`);
+
+    const skip = (page - 1) * limit;
+    const [reviews, total] = await this.reviewRepository.findAndCount({
+      relations: ['user'],
+      order: { reviewDate: 'DESC' },
+      skip,
+      take: limit
+    });
+
+    const items = reviews.map((r) => new ReviewI(
+      r.id,
+      r.user.id,
+      r.book.id,
+      r.user ? r.user.username : '',
+      r.comment,
+      r.rating,
+      r.reviewDate.toLocaleString('es-AR'),
+    ));
+
+    return new PaginatedReviewDTO(items, total);
   }
 
   /**
    * Busca una reseña específica por su ID.
    * 
-   * @param {number} id - El id de la resña a buscar.
-   * @returns {Promise<Review>} - Promesa que resuelve con la reseña espacífica encontrada.
-   * @throws {NotFoundException} Si no encuenta ninguna reseña con el ID especificado.
+   * @param {number} id - El id de la reseña a buscar.
+   * @returns {Promise<Review>} - Promesa que resuelve con la reseña específica encontrada.
+   * @throws {NotFoundException} Si no encuentra ninguna reseña con el ID especificado.
    */
   async findOne(id: number): Promise<Review> {
     const review = await this.reviewRepository.findOne({
@@ -89,16 +134,16 @@ export class BookReviewsService {
     });
 
     if (!review) {
-      this.logger.log('Critica No Encontrada');
+      this.logger.log('Crítica No Encontrada');
       throw new NotFoundException(`Review with ID ${id} not found`);
     }
 
-    this.logger.log('Critica Obtenida');
+    this.logger.log('Crítica Obtenida');
     return review;
   }
 
   /**
-   * Busca una reseña por ID de un libro específico.
+   * Busca reseñas por ID de un libro específico.
    * 
    * @param {number} bookId - ID del libro a buscar.
    * @returns {Promise<ReviewI[]>} - Promesa que resuelve con un DTO de las reseñas dentro del libro especificado.
@@ -109,19 +154,17 @@ export class BookReviewsService {
       relations: ['user'],
     });
 
-    const result = reviews.map((r) => {
-      return new ReviewI(
-        r.id,
-        r.user.id,
-        r.book.id,
-        r.user ? r.user.username : '',
-        r.comment,
-        r.rating,
-        r.reviewDate.toLocaleString('es-AR'),
-      );
-    });
+    const result = reviews.map((r) => new ReviewI(
+      r.id,
+      r.user.id,
+      r.book.id,
+      r.user ? r.user.username : '',
+      r.comment,
+      r.rating,
+      r.reviewDate.toLocaleString('es-AR'),
+    ));
 
-    this.logger.log('Lista de Criticas por ID Libro Obtenida');
+    this.logger.log('Lista de Críticas por ID Libro Obtenida');
     return result;
   }
 
@@ -134,7 +177,7 @@ export class BookReviewsService {
    */
   async update(id: number, reviewData: ReviewI) {
     await this.reviewRepository.update(id, reviewData);
-    this.logger.log('Critica Actualizada');
+    this.logger.log('Crítica Actualizada');
     return this.reviewRepository.findOne({ where: { id: id } });
   }
 
@@ -146,9 +189,9 @@ export class BookReviewsService {
    */
   async remove(id: number): Promise<void> {
     const result = await this.reviewRepository.delete(id);
-    this.logger.log('Critica Eliminada');
+    this.logger.log('Crítica Eliminada');
     if (result.affected === 0) {
-      this.logger.log('Critica No Encontrada');
+      this.logger.log('Crítica No Encontrada');
       throw new NotFoundException(`Review with ID ${id} not found`);
     }
   }

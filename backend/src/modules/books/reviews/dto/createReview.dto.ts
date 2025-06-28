@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsString, IsNumber } from "class-validator";
 
 /**
@@ -10,6 +11,7 @@ export class CreateReviewDto {
    * ID del usuario la reseña.
    * @type {number}
    */
+  @ApiProperty({ example: 7, description: 'ID del usuario que crea la reseña' })
   @IsInt()
   id_user: number;
 
@@ -18,6 +20,7 @@ export class CreateReviewDto {
    * ID del libro de la reseña.
    * @type {number}
    */
+  @ApiProperty({ example: 15, description: 'ID del libro al que pertenece la reseña' })
   @IsInt()
   id_book: number;
 
@@ -25,6 +28,10 @@ export class CreateReviewDto {
    * Contenido de la reseña.
    * @type {string}
    */
+  @ApiProperty({
+    example: 'Una historia atrapante; me encantó la narrativa.',
+    description: 'Texto de la reseña',
+  })
   @IsString()
   comment: string;
 
@@ -32,6 +39,10 @@ export class CreateReviewDto {
    * Calificación de la reseña.
    * @type {number}
    */
+  @ApiProperty({
+    example: 4.5,
+    description: 'Calificación otorgada al libro (rango 0‑5)',
+  })
   @IsNumber()
   rating: number;
 

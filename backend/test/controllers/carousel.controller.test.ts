@@ -1,6 +1,6 @@
 import { CarouselController } from '../../src/modules/recomendations/carousel/carousel.controller';
 import { CarouselService } from '../../src/modules/recomendations/carousel/carousel.service';
-import { CarouselDTO } from '../../src/modules/recomendations/carousel/carousel.dto';
+import { CarouselDTO } from '../../src/modules/recomendations/carousel/dto/carousel.dto';
 import { mockCarouselService } from '../mocks/services/carousel.service.mock';
 
 describe('CarouselController', () => {

@@ -1,7 +1,10 @@
-import { Crud } from '../service';
+import { Crud, PaginatedResponse } from '../service';
 import { CarouselItemDTO } from '../types/carousel.dto';
 
 export class CarouselAPI extends Crud<CarouselItemDTO> {
+    getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<CarouselItemDTO>> {
+        throw new Error('Method not implemented.');
+    }
     private endPoint: string;
 
     constructor(token?: string) {

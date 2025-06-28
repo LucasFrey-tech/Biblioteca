@@ -1,4 +1,4 @@
-import { CreateAuthorDto } from "src/modules/authors/crear-autor.dto";
+import { CreateAuthorDto } from "src/modules/authors/dto/crear-autor.dto";
 
 
 export const mockNewAuthor: CreateAuthorDto = {

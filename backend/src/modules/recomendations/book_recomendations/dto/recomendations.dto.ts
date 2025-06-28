@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNumber, IsString } from "class-validator";
 import { BookRecommendation } from "src/entidades/book_recommendations.entity";
 
@@ -11,6 +12,7 @@ export class RecommendationDTO {
      * ID de la recomendación
      * @type {number} 
     */
+    @ApiProperty({example: 1, description: "ID Único de la Recomendación"})
     @IsNumber()
     id: number
 
@@ -18,6 +20,7 @@ export class RecommendationDTO {
      * ID del libro recomendado
      *  @type {number} 
      */
+    @ApiProperty({example: 1, description: "ID Único del Libro"})
     @IsNumber()
     idBook: number;
     
@@ -25,6 +28,7 @@ export class RecommendationDTO {
      * Título del libro recomendado
      * @type {string} 
     */
+    @ApiProperty({example: "Harry Potter", description: "Titulo del Libro"})
     @IsString()
     title: string;
     
@@ -32,6 +36,7 @@ export class RecommendationDTO {
      * Nombre del autor del libro recomendado
      * @type {string} 
      */
+    @ApiProperty({example: "J.K Rowling", description: "Nombre del Autor"})
     @IsString()
     author: string;
     
@@ -39,6 +44,7 @@ export class RecommendationDTO {
      * Imagen del libro recomendado
      * @type {string} 
      */
+    @ApiProperty({example: "imagen.png", description: "Imagen del Libro"})
     @IsString()
     image: string;
 

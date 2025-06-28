@@ -1,4 +1,4 @@
-import { Crud } from '../service';
+import { Crud, PaginatedResponse } from '../service';
 import { Purchase, PurchaseItem } from '../types/purchase';
 
 export class Purchases extends Crud<Purchase> {
@@ -9,27 +9,56 @@ export class Purchases extends Crud<Purchase> {
         this.endPoint = 'purchases';
     }
 
+    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Purchase>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener compras paginadas (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        return {
+            items: data.items.map((item: Purchase) => ({
+                ...item,
+                purchaseDate: new Date(item.purchaseDate),
+            })),
+            total: data.total
+        };
+    }
+
     async getAll(): Promise<Purchase[]> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
         if (!res.ok) {
-            throw new Error(`Error fetching purchases: ${res.statusText}`);
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener compras (${res.status}): ${errorDetails}`);
         }
         const data = await res.json();
-        return data as Purchase[];
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta no es un arreglo de compras');
+        }
+        return data.map((item: Purchase) => ({
+            ...item,
+            purchaseDate: new Date(item.purchaseDate),
+        }));
     }
 
     getOne(_id: number): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
+
     create(_data: Partial<Purchase>): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
+
     update(_id: number, _data: Partial<Purchase>): Promise<Purchase> {
         throw new Error('Method not implemented.');
     }
+
     delete(_id: number): Promise<void> {
         throw new Error('Method not implemented.');
     }
@@ -42,8 +71,8 @@ export class Purchases extends Crud<Purchase> {
         });
 
         if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(`Error al procesar la compra: ${errorData.message || res.statusText}`);
+            const errorData = await res.json().catch(() => ({ message: res.statusText }));
+            throw new Error(`Error al procesar la compra (${res.status}): ${errorData.message}`);
         }
     }
 
@@ -55,7 +84,8 @@ export class Purchases extends Crud<Purchase> {
 
         if (!res.ok) {
             if (res.status === 404) return null;
-            throw new Error(`Error al obtener el historial de compras: ${res.statusText}`);
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener el historial de compras (${res.status}): ${errorDetails}`);
         }
 
         const text = await res.text();
@@ -64,10 +94,9 @@ export class Purchases extends Crud<Purchase> {
         const data = JSON.parse(text);
         if (!data || !Array.isArray(data) || data.length === 0) return null;
 
-        // Convertir purchaseDate a objeto Date
         return data.map((item: Purchase) => ({
             ...item,
             purchaseDate: new Date(item.purchaseDate),
-        })) as Purchase[];
+        }));
     }
 }

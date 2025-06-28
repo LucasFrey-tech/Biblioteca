@@ -8,7 +8,7 @@ import { Author } from '@/API/types/author';
 import { Genre } from '@/API/types/genre';
 
 import LibraryCard from '@/components/pages/LibraryCard';
-import styles from '../../styles/catalogo.module.css';
+import styles from '../../styles/library.module.css';
 
 export default function Libreria() {
   const [books, setBooks] = useState<BookLibreria[]>([]);
@@ -21,7 +21,12 @@ export default function Libreria() {
   const [showMoreGenres, setShowMoreGenres] = useState(false);
   const [showMoreAuthors, setShowMoreAuthors] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null); 
+  const [userId, setUserId] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalBooks, setTotalBooks] = useState(0);
+  const limit = 6;
+
+  const apiRef = useRef<BaseApi | null>(null);
 
   // userId desde localStorage
   useEffect(() => {
@@ -33,8 +38,6 @@ export default function Libreria() {
       setLoading(false);
     }
   }, []);
-
-  const apiRef = useRef<BaseApi | null>(null);
 
   // Cargar datos de la API
   useEffect(() => {
@@ -52,22 +55,24 @@ export default function Libreria() {
       try {
         apiRef.current = new BaseApi(token);
 
-        const resBooks = await apiRef.current?.libreria.findAllByUser(userId);
+        const resBooks = await apiRef.current?.libreria.getAllPaginated(userId, currentPage, limit);
         const resAuthors = await apiRef.current?.authors.getAll();
         const resGenres = await apiRef.current?.genre.getAll();
 
-        // Validar 
-        if (Array.isArray(resBooks)) {
-          const sortedBooks = resBooks
+        // Validar respuesta de libros
+        if (resBooks && Array.isArray(resBooks.items)) {
+          const sortedBooks = resBooks.items
             .map((book) => ({
               ...book,
-              genre: Array.isArray(book.genre) ? book.genre : [], // Asegura que genre sea un arreglo
+              genre: Array.isArray(book.genre) ? book.genre : [],
             }))
             .sort((a, b) => a.id - b.id);
           setBooks(sortedBooks);
+          setTotalBooks(resBooks.total);
         } else {
-          console.warn('resBooks no es un arreglo:', resBooks);
+          console.warn('resBooks no es un arreglo válido:', resBooks);
           setBooks([]);
+          setTotalBooks(0);
         }
 
         setAuthors(Array.isArray(resAuthors) ? resAuthors : []);
@@ -78,48 +83,51 @@ export default function Libreria() {
         setBooks([]);
         setAuthors([]);
         setGenres([]);
+        setTotalBooks(0);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId, currentPage]);
 
-    const handleGenreToggle = (genreId: number) => {
-        setSelectedGenres((prev) =>
-            prev.includes(genreId)
-                ? prev.filter((id) => id !== genreId)
-                : [...prev, genreId]
-        );
-    };
+  const handleGenreToggle = (genreId: number) => {
+    setSelectedGenres((prev) =>
+      prev.includes(genreId)
+        ? prev.filter((id) => id !== genreId)
+        : [...prev, genreId]
+    );
+    setCurrentPage(1);
+  };
 
-    const handleAuthorToggle = (authorId: number) => {
-        setSelectedAuthors((prev) =>
-            prev.includes(authorId)
-                ? prev.filter((id) => id !== authorId)
-                : [...prev, authorId]
-        );
-    };
-    
-    const filteredBooks = books.filter((book) => {
-        const lowerTitle = book.title.toLowerCase();
-        const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
+  const handleAuthorToggle = (authorId: number) => {
+    setSelectedAuthors((prev) =>
+      prev.includes(authorId)
+        ? prev.filter((id) => id !== authorId)
+        : [...prev, authorId]
+    );
+    setCurrentPage(1);
+  };
 
+  const filteredBooks = books.filter((book) => {
+    const lowerTitle = book.title.toLowerCase();
+    const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
     const matchesGenres =
-        selectedGenres.length === 0 ||
-        book.genre.some((g) => selectedGenres.includes(g.id));
-
-        const matchesAuthors =
-            selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
-
-        return matchesSearch && matchesGenres && matchesAuthors;
-    });
+      selectedGenres.length === 0 ||
+      book.genre.some((g) => selectedGenres.includes(g.id));
+    const matchesAuthors =
+      selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
+    return matchesSearch && matchesGenres && matchesAuthors;
+  });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSearchQuery(searchTerm);
+    setCurrentPage(1);
   };
+
+  const totalPages = Math.ceil(totalBooks / limit);
 
   if (loading) return <p>Cargando librería...</p>;
 
@@ -228,6 +236,25 @@ export default function Libreria() {
           )}
         </div>
       </div>
+      {filteredBooks.length > 0 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={styles.pageButton}
+          >
+            Anterior
+          </button>
+          <span>Página {currentPage} de {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={styles.pageButton}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
     </>
   );
 }

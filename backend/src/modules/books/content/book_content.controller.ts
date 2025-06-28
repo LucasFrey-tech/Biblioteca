@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { BookContentService } from './book_content.service';
-import { BookContentDTO } from './book_content.dto';
+import { BookContentDTO } from './dto/book_content.dto';
 import { ApiBody, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 

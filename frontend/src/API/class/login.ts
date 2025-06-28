@@ -1,7 +1,10 @@
-import { Crud } from "../service";
+import { Crud, PaginatedResponse } from "../service";
 import { LoginRequestBody, AuthResponse } from "../types/auth";
 
 export class Login extends Crud<LoginRequestBody>{
+    getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<LoginRequestBody>> {
+        throw new Error("Method not implemented.");
+    }
     private endPoint: string;
     constructor(token?: string){
         super(token);

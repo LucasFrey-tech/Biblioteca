@@ -22,6 +22,7 @@ export class BookRecommendation {
      * Libros relacionados con la recomendación
      * @type {Book}
     */
+    @ApiProperty({type: () => Book, description: "Libro Asociado"})
     @ManyToOne(() => Book)
     @JoinColumn({ name: "book_id", referencedColumnName: "id" })
     book: Book;

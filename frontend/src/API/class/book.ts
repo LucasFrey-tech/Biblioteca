@@ -1,7 +1,6 @@
-import { Crud } from '../service';
+import { Crud, PaginatedResponse } from '../service';
 import { Book } from '../types/book';
 import { BookFile } from '../types/bookFile';
-
 
 export class Books extends Crud<Book> {
     private endPoint: string;
@@ -15,6 +14,26 @@ export class Books extends Crud<Book> {
             method: 'GET',
             headers: this.getHeaders(),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta no es un arreglo de libros');
+        }
+        return data;
+    }
+
+    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros paginados (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
@@ -23,22 +42,67 @@ export class Books extends Crud<Book> {
             method: 'GET',
             headers: this.getHeaders(),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros por género (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta no es un arreglo de libros');
+        }
+        return data;
+    }
+
+    async getBooksWithGenrePaginated(idGenre: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idGenre}?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
+
     async getBooksByAuthor(idAuthor: number): Promise<Book[]> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros por autor (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta no es un arreglo de libros');
+        }
+        return data;
+    }
+
+    async getBooksByAuthorPaginated(idAuthor: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros paginados por autor (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
     async getOne(id: number): Promise<Book> {
-        const response = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
-        return response.json();
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libro (${res.status}): ${errorDetails}`);
+        }
+        return res.json();
     }
 
     async create(data: Partial<Book>): Promise<Book> {
@@ -47,6 +111,10 @@ export class Books extends Crud<Book> {
             headers: this.getHeaders(),
             body: JSON.stringify(data),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al crear libro (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
@@ -70,22 +138,25 @@ export class Books extends Crud<Book> {
 
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {
             method: 'POST',
-            // headers: {'Content-Type': 'multipart/form'},
             body: formData,
         });
-
-        const book = await res.json();
-
-        return book;
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al crear libro (${res.status}): ${errorDetails}`);
+        }
+        return res.json();
     }
 
     async update(id: number, data: Partial<Book>): Promise<Book> {
-
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'PUT',
             headers: this.getHeaders(),
             body: JSON.stringify(data),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al actualizar libro (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
@@ -109,22 +180,17 @@ export class Books extends Crud<Book> {
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');
 
-
         formData.append("genre", JSON.stringify(bookGenres));
 
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
             method: 'PUT',
             body: formData
         });
-
         if (!res.ok) {
-            const error = await res.json();
-            console.error("Update failed", error);
-            throw new Error("Failed to update book");
+            const errorDetails = await res.text();
+            throw new Error(`Error al actualizar libro (${res.status}): ${errorDetails}`);
         }
-
-        const book = await res.json();
-        return book;
+        return res.json();
     }
 
     async delete(id: number): Promise<void> {
@@ -132,11 +198,20 @@ export class Books extends Crud<Book> {
             method: 'DELETE',
             headers: this.getHeaders(),
         });
-
         if (!res.ok) {
-            const error = await res.json().catch(() => ({ message: 'Error desconocido' }));
-            throw new Error(error.message || 'Error al eliminar');
+            const errorDetails = await res.text();
+            throw new Error(`Error al eliminar libro (${res.status}): ${errorDetails}`);
         }
     }
 
+    async deleteSQL(id: number): Promise<void> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/hard/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al eliminar libro (${res.status}): ${errorDetails}`);
+        }
+    }
 }

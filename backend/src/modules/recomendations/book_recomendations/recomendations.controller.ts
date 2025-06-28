@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RecomendationsService } from "./recomendations.service";
-import { RecommendationDTO } from "./recomendations.dto";
-import { CreateRecommendationDTO } from "./create_recomendations.dto";
+import { RecommendationDTO } from "./dto/recomendations.dto";
+import { CreateRecommendationDTO } from "./dto/create_recomendations.dto";
 
 /**
  * Controlador para gestionar las operaciones de las recomendaciones de los libros.

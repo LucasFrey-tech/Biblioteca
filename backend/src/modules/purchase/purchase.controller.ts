@@ -1,7 +1,7 @@
-import { Controller, Post, Get, Param, ParseIntPipe, Body } from '@nestjs/common';
+import { Controller, Post, Get, Param, ParseIntPipe, Body, Query } from '@nestjs/common';
 import { PurchasesService } from './purchase.service';
-import { PurchaseDTO } from './DTO/purchase.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { PurchaseDTO, PaginatedPurchaseDTO } from './DTO/purchase.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery, ApiProperty } from '@nestjs/swagger';
 
 class PurchaseItemDTO {
   cartItemId: number;
@@ -11,13 +11,39 @@ class PurchaseItemDTO {
 }
 
 class ProcessPurchaseDTO {
+  @ApiProperty({example: 1, description: "ID Único del Usuario"})
   idUser: number;
+  @ApiProperty({
+    description: 'Lista de ítems a procesar en la compra',
+    type: [PurchaseItemDTO],
+    example: [
+      {
+        idBook: 15,
+        title: 'El Hobbit',
+        amount: 2,
+        price: 499.99,
+        virtual: false,
+      },
+      {
+        idBook: 18,
+        title: 'El Señor de los Anillos',
+        amount: 1,
+        price: 899.99,
+        virtual: true,
+      },
+    ],
+  })
   items: PurchaseItemDTO[];
+
+  @ApiProperty({
+    example: 1899.97,
+    description: 'Total de la compra (suma de todos los ítems)',
+  })
   price: number;
 }
 
 /**
- * Servicio que maneja la lógica de negocio para los compras.
+ * Controlador que maneja las operaciones relacionadas con las compras.
  */
 @ApiTags('Purchases')
 @ApiBearerAuth()
@@ -26,25 +52,46 @@ export class PurchasesController {
   constructor(private readonly purchasesService: PurchasesService) { }
 
   /**
-   * 
+   * Obtiene todas las compras del sistema
    */
   @Get()
   @ApiOperation({ summary: 'Obtener todas las compras del sistema' })
-  @ApiResponse({ status: 200, description: 'Listado completo de compras', type: [PurchaseDTO] })
+  @ApiResponse({ status: 200, description: 'Listado completo de compras', type: PurchaseDTO, isArray: true })
   @ApiResponse({ status: 404, description: 'No se encontraron compras' })
   async getAllPurchases(): Promise<PurchaseDTO[]> {
     return this.purchasesService.getAllPurchases();
   }
 
+  /**
+   * Obtiene todas las compras del sistema con paginación
+   */
+  @Get('paginated')
+  @ApiOperation({ summary: 'Obtener compras paginadas del sistema' })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de compras por página', example: 10 })
+  @ApiResponse({ status: 200, description: 'Lista de compras paginada', type: PaginatedPurchaseDTO })
+  async getAllPurchasesPaginated(
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10
+  ): Promise<PaginatedPurchaseDTO> {
+    return this.purchasesService.getAllPurchasesPaginated(page, limit);
+  }
+
+  /**
+   * Procesa una compra
+   */
   @Post()
   @ApiOperation({ summary: 'Procesar compra de un usuario' })
   @ApiBody({ type: ProcessPurchaseDTO })
-  @ApiResponse({ status: 200, description: 'Compra procesada exitosamente' })
+  @ApiResponse({ status: 201, description: 'Compra procesada exitosamente' })
   async processPurchase(@Body() body: ProcessPurchaseDTO) {
     await this.purchasesService.processPurchase(body.idUser, body.items);
     return { message: 'Compra procesada exitosamente' };
   }
 
+  /**
+   * Obtiene el historial de compras de un usuario
+   */
   @Get(':idUser')
   @ApiOperation({ summary: 'Obtener historial de compras de un usuario' })
   @ApiParam({ name: 'idUser', type: Number })

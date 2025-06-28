@@ -6,7 +6,7 @@ import { UserSubscriptionDiscount } from '../../entidades/user_subscription_disc
 import { ShoppingCartBook } from '../../entidades/shopping_cart_book.entity';
 import { Book } from '../../entidades/book.entity';
 import { User } from '../../entidades/user.entity';
-import { PurchaseDTO, PurchaseItemDTO } from './DTO/purchase.dto';
+import { PurchaseDTO, PurchaseItemDTO, PaginatedPurchaseDTO } from './DTO/purchase.dto';
 
 interface PurchaseItem {
   cartItemId: number;
@@ -35,17 +35,16 @@ export class PurchasesService {
     private discountRepository: Repository<UserSubscriptionDiscount>,
   ) { }
 
-
   /**
    * Obtener todas las compras
    * 
-   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arrelgo de DTOs de compras.
+   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de compras.
    */
   async getAllPurchases(): Promise<PurchaseDTO[]> {
-    this.logger.log('Obteniendo todas las compras del sistema');
+    this.logger.log('Obteniendo todas las compras del sistema (sin paginación)');
 
     const purchases = await this.purchaseRepository.find({
-      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription',],
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
       order: { purchaseDate: 'DESC' }
     });
 
@@ -54,13 +53,41 @@ export class PurchasesService {
       return [];
     }
 
-    const groupedPurchases = this.getGroupPurchases(purchases);
+    const groupedPurchases = await this.getGroupPurchases(purchases);
 
-    return groupedPurchases
+    return groupedPurchases;
   }
 
   /**
-   * Obtiene
+   * Obtener todas las compras con paginación
+   * 
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de compras por página
+   * @returns {Promise<PaginatedPurchaseDTO>} - Una promesa que resuelve con un objeto que contiene la lista de compras y el total
+   */
+  async getAllPurchasesPaginated(page: number = 1, limit: number = 10): Promise<PaginatedPurchaseDTO> {
+    this.logger.log(`Obteniendo compras paginadas (página: ${page}, límite: ${limit})`);
+
+    const skip = (page - 1) * limit;
+    const [purchases, total] = await this.purchaseRepository.findAndCount({
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
+      order: { purchaseDate: 'DESC' },
+      skip,
+      take: limit
+    });
+
+    if (!purchases.length) {
+      this.logger.log('No se encontraron compras en el sistema');
+      return new PaginatedPurchaseDTO([], 0);
+    }
+
+    const groupedPurchases = await this.getGroupPurchases(purchases);
+
+    return new PaginatedPurchaseDTO(groupedPurchases, total);
+  }
+
+  /**
+   * Procesa una compra
    * 
    * @param {number} idUser 
    * @param {PurchaseItem[]} cartItems 
@@ -118,10 +145,10 @@ export class PurchasesService {
   }
 
   /**
-   * Obtiene el historial de compras del usuario específico
+   * Obtiene el historial de compras de un usuario específico
    * 
-   * @param {number} idUser - ID del usaurio a buscar
-   * @returns {Promise<PurchaseDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
+   * @param {number} idUser - ID del usuario a buscar
+   * @returns {Promise<PurchaseDTO[] | null>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
    */
   async getUserPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
@@ -147,9 +174,9 @@ export class PurchasesService {
       return null;
     }
 
-    const groupedPurchases = this.getGroupPurchases(purchases);
+    const groupedPurchases = await this.getGroupPurchases(purchases);
 
-    return groupedPurchases
+    return groupedPurchases;
   }
 
   private async getGroupPurchases(purchases: Purchase[]): Promise<PurchaseDTO[]> {

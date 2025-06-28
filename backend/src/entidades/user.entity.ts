@@ -44,6 +44,7 @@ export class User {
   @CreateDateColumn({ name: 'registration_date' })
   registrationDate: Date;
 
+  @ApiProperty({ type: () => UserSubscription, description: "Suscripcion asociada"})
   @OneToMany(() => UserSubscription, userSub => userSub.user)
   userSubscriptions: UserSubscription[];
 }

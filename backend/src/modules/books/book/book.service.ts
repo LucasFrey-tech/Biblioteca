@@ -1,10 +1,10 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { BookDTO } from './book.dto';
+import { BookDTO } from './dto/book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings/settings.service';
-import { CreateBookDTO } from './createBook.dto';
+import { CreateBookDTO } from './dto/createBook.dto';
 import { Genre } from '../../../entidades/genre.entity';
 import { Author } from '../../../entidades/author.entity';
 
@@ -27,64 +27,100 @@ export class BooksService {
   /**
    * Obtiene todos los libros disponibles.
    * 
-   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con un arrelgo de DTOs de libros.
-   * 
+   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con la lista de todos los libros activos
    */
   async findAll(): Promise<BookDTO[]> {
     const books = await this.booksRepository.find({
       where: { is_active: true },
-      relations: ['genres', 'author']
+      relations: ['genres', 'author'],
     });
 
     const result = books.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
     });
 
-    this.logger.log('Lista de libros Recibidos');
+    this.logger.log('Lista de libros Recibidos (sin paginación)');
     return result;
   }
 
   /**
-   * Obtiene libros filtrados por un género específico.
+   * Obtiene todos los libros disponibles con paginación.
    * 
-   * @param {number} genreId - El id del género a buscar.
-   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese género encontrado.
-   * 
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllWithGenre(genreId: number): Promise<BookDTO[]> {
-    const books = await this.booksRepository.find({
+  async findAllPaginated(page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    const skip = (page - 1) * limit;
+    const [books, total] = await this.booksRepository.findAndCount({
       where: { is_active: true },
-      relations: ['genres', 'author']
+      relations: ['genres', 'author'],
+      skip,
+      take: limit,
     });
-    const filteredBooks = books.filter(x => x.genres?.some(genre => genre.id === genreId));
-    const result = filteredBooks.map((book) => {
+
+    const result = books.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
     });
 
-    this.logger.log('Lista de libros Recibidos');
-    return result;
+    this.logger.log('Lista de libros Recibidos (paginada)');
+    return { books: result, total };
   }
 
-
   /**
-   * Obtiene libros filtrados por un autor específico.
+   * Obtiene libros filtrados por un género específico con paginación.
    * 
-   * @param {number} authorId - El id del autor a buscar.
-   * @returns {Promise<BookDTO[]>} Una promesa que resuelve con el DTO de los libros con ese autor encontrada.
-   * 
+   * @param {number} genreId - El id del género a buscar
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllByAuthor(authorId: number): Promise<BookDTO[]> {
-    const books = await this.booksRepository.find({
-      where: { is_active: true },
-      relations: ['genres', 'author']
-    });
-    const filteredBooks = books.filter(x => x.author?.id === authorId);
-    const result = filteredBooks.map((book) => {
+  async findAllWithGenre(genreId: number, page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    const skip = (page - 1) * limit;
+    const [books, total] = await this.booksRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.genres', 'genres')
+      .leftJoinAndSelect('book.author', 'author')
+      .where('book.is_active = :isActive', { isActive: true })
+      .andWhere('genres.id = :genreId', { genreId })
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    const result = books.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
     });
 
     this.logger.log('Lista de libros Recibidos');
-    return result;
+    return { books: result, total };
+  }
+
+  /**
+   * Obtiene libros filtrados por un autor específico con paginación.
+   * 
+   * @param {number} authorId - El id del autor a buscar
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
+   */
+  async findAllByAuthor(authorId: number, page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    const skip = (page - 1) * limit;
+    const [books, total] = await this.booksRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.genres', 'genres')
+      .leftJoinAndSelect('book.author', 'author')
+      .where('book.is_active = :isActive', { isActive: true })
+      .andWhere('author.id = :authorId', { authorId })
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    const result = books.map((book) => {
+      return BookDTO.BookEntity2BookDTO(book);
+    });
+
+    this.logger.log('Lista de libros Recibidos');
+    return { books: result, total };
   }
 
   /**
@@ -92,8 +128,7 @@ export class BooksService {
    * 
    * @param {number} id - El id del libro a buscar.
    * @returns {Promise<BookDTO | null>} Una promesa que resuelve con el DTO del libro encontrado.
-   * @throws {NotFoundException} Si no encuenta ningún libro con el ID especificado.
-   * 
+   * @throws {NotFoundException} Si no encuentra ningún libro con el ID especificado.
    */
   async findOne(id: number): Promise<BookDTO | null> {
     const book = await this.booksRepository.findOne({
@@ -120,7 +155,6 @@ export class BooksService {
   async create(bookDTO: CreateBookDTO): Promise<Book> {
     this.logger.log('Libro Creado');
 
-    // 1. Buscar las entidades de género por nombre (bookDTO.genre)
     const genres = await this.genreRepository.find({
       where: { id: In(bookDTO.genre) },
     });
@@ -129,14 +163,12 @@ export class BooksService {
       throw new Error('Algunos géneros no existen en la base de datos');
     }
 
-    // 2. Crear la entidad de libro
     const book = this.booksRepository.create({
       ...bookDTO,
       genres,
       author: { id: bookDTO.author_id }
     });
 
-    // 3. Guardar el libro
     const bookEntity = await this.booksRepository.save(book);
     return bookEntity;
   }
@@ -151,15 +183,11 @@ export class BooksService {
    * @throws {Error} Cuando alguno de los géneros proporcionados no existe en la base de datos.
    */
   async update(id: number, bookDTO: CreateBookDTO) {
-    // 1. Buscar el libro con relaciones
     const book = await this.booksRepository.findOne({ where: { id }, relations: ['genres'] });
     if (!book) return null;
 
-    // 2. Buscar los géneros
     const genres = await this.genreRepository.find();
 
-
-    // 3. Asignar los campos del DTO al libro
     book.title = bookDTO.title;
     book.description = bookDTO.description;
     book.anio = bookDTO.anio;
@@ -172,7 +200,6 @@ export class BooksService {
     book.price = bookDTO.price;
     book.author = { id: bookDTO.author_id } as Author;
 
-    // Actualizar Generos:
     const newGenres = bookDTO.genre.filter(x => !book.genres?.some(g => g.id == x)) || [];
     const genresToRemove = book.genres?.filter(x => !bookDTO.genre.some(g => x.id == g)) || [];
 
@@ -190,7 +217,6 @@ export class BooksService {
       }
     })
 
-    // 4. Guardar
     await this.booksRepository.save(book);
 
     this.logger.log('Libro Actualizado');
@@ -198,13 +224,12 @@ export class BooksService {
   }
 
   /**
-   * Elimina un libro específico de la base de datos.
+   * Elimina un libro específico de la base de datos (soft delete).
    * 
    * @param {number} id - ID del libro a eliminar
    * @returns {Promise<boolean>} Promesa que resuelve con:
    * - `true` si el libro existía y fue eliminado correctamente
    * - `false` si el libro no existía
-   *
    */
   async delete(id: number): Promise<boolean> {
     const book = await this.booksRepository.findOne({ where: { id } });
@@ -215,18 +240,21 @@ export class BooksService {
     return true;
   }
 
-  // async delete(id: number): Promise<boolean> {
-  //   const book = await this.booksRepository.findOne({
-  //     where: { id },
-  //     relations: ['genres'],
-  //   });
+  /**
+   * Elimina un libro específico de la base de datos (hard delete).
+   * 
+   * @param {number} id - ID del libro a eliminar
+   * @returns {Promise<boolean>} Promesa que resuelve con:
+   * - `true` si el libro existía y fue eliminado correctamente
+   * - `false` si el libro no existía
+   */
+  async deleteSQL(id: number): Promise<boolean> {
+    const book = await this.booksRepository.findOne({ where: { id } });
+    if (!book) return false;
 
-  //   if (!book) return false;
-
-  //   await this.booksRepository.remove(book);
-
-  //   return true;
-  // }
+    await this.booksRepository.remove(book);
+    return true;
+  }
 
   /**
    * Genera la URL completa para acceder a la imagen de un libro.

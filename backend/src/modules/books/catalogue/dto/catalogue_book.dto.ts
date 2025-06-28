@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsBoolean, IsInt, IsNumber, IsString, IsOptional } from "class-validator";
 import { Genre } from "src/entidades/genre.entity";
 
@@ -10,6 +11,7 @@ export class CatalogueBookDTO {
    * ID del libro en el catálogo
    * @type {number}
    */
+  @ApiProperty({ example: 15, description: 'ID del libro en el catálogo' })
   @IsInt()
   id: number;
   
@@ -17,6 +19,7 @@ export class CatalogueBookDTO {
    * Título del libro
    * @type {number}
    */
+  @ApiProperty({ example: 'El Hobbit', description: 'Título del libro' })
   @IsString()
   title: string;
 
@@ -24,6 +27,8 @@ export class CatalogueBookDTO {
    * Nombre del autor del libro
    * @type {number}
    */
+  @ApiProperty({ example: 'J.R.R. Tolkien', description: 'Nombre del autor del libro' })
+  @ApiProperty({ example: 'J.R.R. Tolkien', description: 'Nombre del autor del libro' })
   @IsString()
   author: string;
   
@@ -31,6 +36,7 @@ export class CatalogueBookDTO {
    * ID del Autor del libro
    * @type {number}
    */
+  @ApiProperty({ example: 7, description: 'ID del autor del libro (opcional)' })
   @IsOptional()
   @IsInt()
   author_id?: number;
@@ -39,6 +45,7 @@ export class CatalogueBookDTO {
    * Descripción del libro
    * @type {string}
    */
+  @ApiProperty({ example: 'Una aventura fantástica llena de magia y héroes.', description: 'Descripción del libro' })
   @IsString()
   description: string;
 
@@ -46,6 +53,14 @@ export class CatalogueBookDTO {
    * Géneros del libro
    * @type {Genre}
    */
+  @ApiProperty({
+    type: [Genre],
+    description: 'Lista de géneros asociados al libro',
+    example: [
+      { id: 1, name: 'Fantasía' },
+      { id: 3, name: 'Aventura' },
+    ],
+  })
   @IsArray()
   genre: Genre[];
 
@@ -53,6 +68,7 @@ export class CatalogueBookDTO {
    * Anio de publicación del libro
    * @type {number}
    */
+  @ApiProperty({ example: 1937, description: 'Año de publicación del libro' })
   @IsInt()
   anio: number;
 
@@ -60,6 +76,7 @@ export class CatalogueBookDTO {
    * Imagen del libro
    * @type {string}
    */
+  @ApiProperty({ example: 'hobbit.jpg', description: 'Nombre o URL de la imagen del libro' })
   @IsString()
   image: string;
 
@@ -67,6 +84,7 @@ export class CatalogueBookDTO {
    * Cantidad del libro disponible
    * @type {number}
    */
+  @ApiProperty({ example: 20, description: 'Cantidad disponible en stock' })
   @IsInt()
   stock: number;
 
@@ -74,6 +92,7 @@ export class CatalogueBookDTO {
    * Exclusividad del libro
    * @type {boolean}
    */
+  @ApiProperty({ example: true, description: 'Indica si el libro es exclusivo para suscriptores' })
   @IsBoolean()
   subscriber_exclusive: boolean;
   
@@ -81,6 +100,7 @@ export class CatalogueBookDTO {
    * Precio del libro
    * @type {number}
    */
+  @ApiProperty({ example: 450.75, description: 'Precio del libro' })
   @IsNumber()
   price: number;
 

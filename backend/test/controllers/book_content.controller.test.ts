@@ -1,6 +1,6 @@
 import { BookContentController } from "../../src/modules/books/content/book_content.controller";
 import { BookContentService } from "../../src/modules/books/content/book_content.service";
-import { BookContentDTO } from "../../src/modules/books/content/book_content.dto";
+import { BookContentDTO } from "../../src/modules/books/content/dto/book_content.dto";
 import { mockDtoContent1, mockDtoNewContent, mockDtoUpdatedContent1 } from "../mocks/dtos/contentDTOs.mock";
 import { mockTextFile } from "../mocks/files/textFile.mock";
 import { mockBookContentService } from "../mocks/services/bookContent.service.mock";

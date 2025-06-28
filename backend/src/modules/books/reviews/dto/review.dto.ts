@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsNumber, IsString } from "class-validator";
 
 /**
@@ -10,6 +11,7 @@ export class ReviewI {
      * ID de la reseña.
      * @type {number}
      */
+    @ApiProperty({ example: 42, description: 'ID único de la reseña' })
     @IsInt()
     id: number;
 
@@ -17,6 +19,7 @@ export class ReviewI {
      * ID del usuario de la reseña.
      * @type {number}
      */
+    @ApiProperty({ example: 7, description: 'ID del usuario que hizo la reseña' })
     @IsInt()
     id_user: number;
 
@@ -24,6 +27,7 @@ export class ReviewI {
      * ID del libro de la reseña.
      * @type {number}
      */
+    @ApiProperty({ example: 15, description: 'ID del libro al que pertenece la reseña' })
     @IsInt()
     id_book: number;
 
@@ -31,6 +35,7 @@ export class ReviewI {
      * Alias del usuario de la reseña
      * @type {number}
      */
+    @ApiProperty({ example: 'Tukson', description: 'Alias (username) del usuario que reseñó' })
     @IsString()
     username: string;
 
@@ -38,6 +43,10 @@ export class ReviewI {
      * Contenido de la reseña.
      * @type {number}
      */
+    @ApiProperty({
+        example: 'Un relato atrapante de principio a fin.',
+        description: 'Contenido escrito de la reseña',
+    })
     @IsString()
     comment: string;
 
@@ -45,6 +54,7 @@ export class ReviewI {
      * Calificación de la reseña
      * @type {number}
      */
+    @ApiProperty({ example: 4.5, description: 'Calificación otorgada al libro (1‑5 o 0‑5)' })
     @IsNumber()
     rating: number;
 
@@ -52,6 +62,10 @@ export class ReviewI {
      * Fecha de creación de la reseña.
      * @type {number}
      */
+    @ApiProperty({
+        example: '2025-06-28T19:00:00.000Z',
+        description: 'Fecha de creación de la reseña en formato ISO',
+    })
     @IsString()
     reviewDate: string;
 

@@ -47,6 +47,7 @@ export class Review {
      * Usuarios relacionados a la reseña
      * @type {User}
      */
+    @ApiProperty({type: () => User, description: "Usuario Asociado"})
     @ManyToOne(() => User)
     @JoinColumn({ name: "id_user", referencedColumnName: "id" })
     user: User;
@@ -55,7 +56,7 @@ export class Review {
      * Librs relacionados a la reseña
      * @type {Libro}
      */
-    @ApiProperty({ description: 'Libro al que pertenece la crítica' })
+    @ApiProperty({ type: () => Book, description: 'Libro Asociado' })
     @ManyToOne(() => Book, { eager: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_book' })
     book: Book;

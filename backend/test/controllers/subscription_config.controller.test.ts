@@ -1,6 +1,6 @@
 import { SubscriptionController } from '../../src/modules/subscriptions/subscription_config/subscription_config.controller';
 import { SubscriptionService } from '../../src/modules/subscriptions/subscription_config/subscription_config.service';
-import { SubscriptionDTO } from '../../src/modules/subscriptions/subscription_config/subscription.dto';
+import { SubscriptionDTO } from '../../src/modules/subscriptions/subscription_config/dto/subscription.dto';
 
 describe('SubscriptionController', () => {
   let controller: SubscriptionController;

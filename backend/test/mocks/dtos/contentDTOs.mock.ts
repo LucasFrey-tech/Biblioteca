@@ -1,4 +1,4 @@
-import { BookContentDTO } from "../../../src/modules/books/content/book_content.dto";
+import { BookContentDTO } from "../../../src/modules/books/content/dto/book_content.dto";
 
 
 export const mockDtoContent1: BookContentDTO = {

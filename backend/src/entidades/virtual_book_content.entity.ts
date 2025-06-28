@@ -7,7 +7,7 @@ export class VirtualBookContent {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty({ example: 1, description: 'ID del libro asociado' })
+    @ApiProperty({ type: () => Book })
     @ManyToOne(() => Book, { eager: true, onDelete: 'CASCADE' })
     @JoinColumn({ name: 'id_book' })
     book: Book;

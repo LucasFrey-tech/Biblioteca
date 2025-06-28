@@ -20,15 +20,6 @@ import { Author } from '@/API/types/author';
 import { Genre } from "@/API/types/genre";
 
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationLink,
-} from "@/components/ui/pagination";
-
 import DragAndDropFile from "@/components/pages/dropFile";
 
 export default function BooksPanel(): React.JSX.Element {
@@ -47,10 +38,10 @@ export default function BooksPanel(): React.JSX.Element {
     };
   }>({});
 
-
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const limit = 5;
+  const [totalBooks, setTotalBooks] = useState(0);
 
   const startEdit = (book: BookFileUpdate) => {
     setBooksEditState(prev => ({
@@ -99,9 +90,7 @@ export default function BooksPanel(): React.JSX.Element {
         });
 
         // Refresca lista después de borrar
-        const booksData = await apiRef.current.books.getAll();
-        setBooks(booksData);
-
+        await fetchBooks();
       } catch (error) {
         console.error('Error al borrar libro:', error);
         Swal.fire({
@@ -138,7 +127,7 @@ export default function BooksPanel(): React.JSX.Element {
   const saveChanges = async (bookId: number) => {
     const bookState = booksEditState[bookId];
     if (!bookState) {
-      Swal.fire("error", "No hay estado de edicion para este libro", "error")
+      Swal.fire("error", "No hay estado de edición para este libro", "error")
       return;
     }
 
@@ -160,7 +149,7 @@ export default function BooksPanel(): React.JSX.Element {
         genreIds
       );
       
-      await apiRef.current.bookContent.update(bookId,{idBook:bookId, content: bookState.formData.content})
+      await apiRef.current.bookContent.update(bookId, { idBook: bookId, content: bookState.formData.content })
 
       setBooks(prevBooks =>
         prevBooks.map(b =>
@@ -194,6 +183,28 @@ export default function BooksPanel(): React.JSX.Element {
     }));
   };
 
+  const fetchBooks = async () => {
+    try {
+      const booksData = await apiRef.current.books.getAllPaginated(currentPage, limit);
+      if (!booksData || !Array.isArray(booksData.items)) {
+        console.error('Respuesta inválida de la API:', booksData);
+        throw new Error('Libros inválidos');
+      }
+
+      for (const bookData of booksData.items) {
+        const contentData = await apiRef.current.bookContent.getOne(bookData.id);
+        bookData.content = typeof contentData.content === "string" ? contentData.content : "";
+      }
+
+      setBooks(booksData.items.sort((a, b) => b.id - a.id));
+      setTotalBooks(booksData.total);
+    } catch (error) {
+      console.error("Error al obtener libros:", error, { currentPage, limit });
+      setBooks([]);
+      setTotalBooks(0);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -203,18 +214,20 @@ export default function BooksPanel(): React.JSX.Element {
         const genresData = await apiRef.current.genre.getAll();
         setGenres(genresData);
 
-        const booksData = await apiRef.current.books.getAll();
-        booksData.forEach(async bookData => {
-          const contentData = await apiRef.current.bookContent.getOne(bookData.id);
-          bookData.content = typeof contentData.content === "string" ? contentData.content : "";
-        })
-        setBooks(booksData);
+        await fetchBooks();
       } catch (error) {
         console.error("Error al obtener datos:", error);
+        setBooks([]);
+        setAuthors([]);
+        setGenres([]);
       }
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    fetchBooks();
+  }, [currentPage]);
 
   const toggleBookOpen = (id: number) => {
     setBookOpenIds((prev) =>
@@ -222,20 +235,11 @@ export default function BooksPanel(): React.JSX.Element {
     );
   };
 
-  const sortedAndFilteredBooks = books
-    .filter(book =>
-      book.title.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => b.id - a.id); // Orden descendente por ID
-
-  const currentBooks = sortedAndFilteredBooks.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  const filteredBooks = books.filter(book =>
+    book.title.toLowerCase().includes(search.toLowerCase())
   );
 
-  // Paginación calculo
-  const totalPages = Math.ceil(sortedAndFilteredBooks.length / itemsPerPage);
-
+  const totalPages = Math.ceil(totalBooks / limit);
 
   return (
     <>
@@ -260,238 +264,235 @@ export default function BooksPanel(): React.JSX.Element {
         />
       </div>
 
-      {currentBooks.map((book) => {
-        const editState = booksEditState[book.id] || {
-          editMode: false,
-          formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
-        };
+      <div className={styles.bookList}>
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => {
+            const editState = booksEditState[book.id] || {
+              editMode: false,
+              formData: { ...book, genre: genres.filter(g => book.genre.includes(g)) }
+            };
 
-        async function handleUpdateBookContent(bookId: number, file: File): Promise<void> {
-          setBooksEditState(prev => ({
-            ...prev,
-            [bookId]: { 
-              ...prev[bookId], 
-              formData: { 
-                ...prev[bookId].formData, 
-                content: file 
-              } 
+            async function handleUpdateBookContent(bookId: number, file: File): Promise<void> {
+              setBooksEditState(prev => ({
+                ...prev,
+                [bookId]: { 
+                  ...prev[bookId], 
+                  formData: { 
+                    ...prev[bookId].formData,
+                    content: file 
+                  } 
+                }
+              }));
             }
-          }));
-        }
 
-        return (
-          <div key={book.id} className={styles.bookCard}>
-            <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
-              <span className={styles.bookName}>{book.title}</span>
-              {bookOpenIds.includes(book.id) ? <ChevronUp /> : <ChevronDown />}
-            </div>
+            return (
+              <div key={book.id} className={styles.bookCard}>
+                <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
+                  <span className={styles.bookName}>{book.title}</span>
+                  {bookOpenIds.includes(book.id) ? <ChevronUp /> : <ChevronDown />}
+                </div>
 
-            {bookOpenIds.includes(book.id) && (
-              <div className={styles.bookDetails}>
-                {editState.editMode ? (
-                  <>
-                    <Label>Título:</Label>
-                    <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
+                {bookOpenIds.includes(book.id) && (
+                  <div className={styles.bookDetails}>
+                    {editState.editMode ? (
+                      <>
+                        <Label>Título:</Label>
+                        <Input name="title" value={editState.formData.title} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <Label>Descripción:</Label>
-                    <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
+                        <Label>Descripción:</Label>
+                        <textarea name="description" value={editState.formData.description} onChange={(e) => handleBookChange(book.id, e)} rows={3} />
 
-                    <Label>Año:</Label>
-                    <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
+                        <Label>Año:</Label>
+                        <Input type="number" name="anio" value={editState.formData.anio} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <Label>ISBN:</Label>
-                    <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
+                        <Label>ISBN:</Label>
+                        <Input name="isbn" value={editState.formData.isbn} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <Label>Stock:</Label>
-                    <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
+                        <Label>Stock:</Label>
+                        <Input type="number" name="stock" value={editState.formData.stock} onChange={(e) => handleBookChange(book.id, e)} />
 
-                    <Label>Exclusivo suscriptores</Label>
-                    <Select
-                      value={editState.formData.subscriber_exclusive ? "true" : "false"}
-                      onValueChange={(value) => {
-                        setBooksEditState(prev => ({
-                          ...prev,
-                          [book.id]: {
-                            ...prev[book.id],
-                            formData: {
-                              ...prev[book.id].formData,
-                              subscriber_exclusive: value === "true"
-                            }
-                          }
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="bg-white border border-gray-300">
-                        <SelectValue placeholder="Seleccionar opción" className="text-black" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="true">Sí</SelectItem>
-                        <SelectItem value="false">No</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <Label>Precio:</Label>
-                    <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
-
-                    <Label>Autor</Label>
-                    <Select
-                      onValueChange={value => {
-                        const selectedAuthor = authors.find(a => a.id === Number(value));
-                        setBooksEditState(prev => ({
-                          ...prev,
-                          [book.id]: {
-                            ...prev[book.id],
-                            formData: {
-                              ...prev[book.id].formData,
-                              author_id: Number(value),
-                              author: selectedAuthor ? selectedAuthor.name : ''
-                            }
-                          }
-                        }));
-                      }}
-                      value={String(booksEditState[book.id]?.formData.author_id ?? '')}
-                    >
-                      <SelectTrigger className="bg-white border border-gray-300">
-                        <SelectValue placeholder="Seleccionar autor" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {authors.map(author => (
-                          <SelectItem key={author.id} value={String(author.id)}>
-                            {author.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Label>Categorías</Label>
-                    <div className="flex flex-col gap-1 max-h-40 overflow-y-auto border rounded p-2">
-                      {genres.map((genre) => (
-                        <label
-                          key={genre.id}
-                          className="flex items-center px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+                        <Label>Exclusivo suscriptores</Label>
+                        <Select
+                          value={editState.formData.subscriber_exclusive ? "true" : "false"}
+                          onValueChange={(value) => {
+                            setBooksEditState(prev => ({
+                              ...prev,
+                              [book.id]: {
+                                ...prev[book.id],
+                                formData: {
+                                  ...prev[book.id].formData,
+                                  subscriber_exclusive: value === "true"
+                                }
+                              }
+                            }));
+                          }}
                         >
-                          <span className="w-40 text-sm truncate">{genre.name}</span>
-                          <input
-                            type="checkbox"
-                            value={genre.id}
-                            checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
-                            onChange={(e) => {
-                              const checked = e.target.checked;
-                              setBooksEditState((prev) => {
-                                const bookState = prev[book.id];
-                                if (!bookState) return prev;
+                          <SelectTrigger className="bg-white border border-gray-300">
+                            <SelectValue placeholder="Seleccionar opción" className="text-black" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="true">Sí</SelectItem>
+                            <SelectItem value="false">No</SelectItem>
+                          </SelectContent>
+                        </Select>
 
-                                const currentGenres = bookState.formData.genre as Genre[];
-                                const newGenres = checked
-                                  ? [...currentGenres, genre]
-                                  : currentGenres.filter((g) => g.id !== genre.id);
+                        <Label>Precio:</Label>
+                        <Input type="number" name="price" value={editState.formData.price} onChange={(e) => handleBookChange(book.id, e)} />
 
-                                return {
-                                  ...prev,
-                                  [book.id]: {
-                                    ...bookState,
-                                    formData: {
-                                      ...bookState.formData,
-                                      genre: newGenres,
-                                    },
-                                  },
-                                };
-                              });
-                            }}
-                            className="ml-auto"
-                          />
-                        </label>
-                      ))}
-                    </div>
+                        <Label>Autor</Label>
+                        <Select
+                          onValueChange={value => {
+                            const selectedAuthor = authors.find(a => a.id === Number(value));
+                            setBooksEditState(prev => ({
+                              ...prev,
+                              [book.id]: {
+                                ...prev[book.id],
+                                formData: {
+                                  ...prev[book.id].formData,
+                                  author_id: Number(value),
+                                  author: selectedAuthor ? selectedAuthor.name : ''
+                                }
+                              }
+                            }));
+                          }}
+                          value={String(booksEditState[book.id]?.formData.author_id ?? '')}
+                        >
+                          <SelectTrigger className="bg-white border border-gray-300">
+                            <SelectValue placeholder="Seleccionar autor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {authors.map(author => (
+                              <SelectItem key={author.id} value={String(author.id)}>
+                                {author.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
 
-                    <Label>Imagen:</Label>
-                    <Image
-                      src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
-                        ? editState.formData.image
-                        : '/libros/placeholder.png'
-                      }
-                      alt="Imagen del libro"
-                      width={100}
-                      height={150}
-                      unoptimized
-                    />
-                    <DragAndDrop onFileDrop={file => {
-                      setTempImages(prev => ({ ...prev, [book.id]: file }));
-                      setBooksEditState(prev => ({
-                        ...prev,
-                        [book.id]: {
-                          ...prev[book.id],
-                          tempImages: file,
-                          formData: {
-                            ...prev[book.id].formData,
+                        <Label>Categorías</Label>
+                        <div className="flex flex-col gap-1 max-h-40 overflow-y-auto border rounded p-2">
+                          {genres.map((genre) => (
+                            <label
+                              key={genre.id}
+                              className="flex items-center px-2 py-1 rounded hover:bg-gray-100 cursor-pointer"
+                            >
+                              <span className="w-40 text-sm truncate">{genre.name}</span>
+                              <input
+                                type="checkbox"
+                                value={genre.id}
+                                checked={editState.formData.genre.some((g: Genre) => g.id === genre.id)}
+                                onChange={(e) => {
+                                  const checked = e.target.checked;
+                                  setBooksEditState((prev) => {
+                                    const bookState = prev[book.id];
+                                    if (!bookState) return prev;
+
+                                    const currentGenres = bookState.formData.genre as Genre[];
+                                    const newGenres = checked
+                                      ? [...currentGenres, genre]
+                                      : currentGenres.filter((g) => g.id !== genre.id);
+
+                                    return {
+                                      ...prev,
+                                      [book.id]: {
+                                        ...bookState,
+                                        formData: {
+                                          ...bookState.formData,
+                                          genre: newGenres,
+                                        },
+                                      },
+                                    };
+                                  });
+                                }}
+                                className="ml-auto"
+                              />
+                            </label>
+                          ))}
+                        </div>
+
+                        <Label>Imagen:</Label>
+                        <Image
+                          src={typeof editState.formData.image === "string" && editState.formData.image.trim() !== ""
+                            ? editState.formData.image
+                            : '/libros/placeholder.png'
                           }
-                        }
-                      }));
-                    }} />
-                    <label>Contenido:</label>
-                    <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x:File)=>handleUpdateBookContent(book.id,x)} validFormats={['.txt']} />
+                          alt="Imagen del libro"
+                          width={100}
+                          height={150}
+                          unoptimized
+                        />
+                        <DragAndDrop onFileDrop={file => {
+                          setTempImages(prev => ({ ...prev, [book.id]: file }));
+                          setBooksEditState(prev => ({
+                            ...prev,
+                            [book.id]: {
+                              ...prev[book.id],
+                              tempImages: file,
+                              formData: {
+                                ...prev[book.id].formData,
+                              }
+                            }
+                          }));
+                        }} />
+                        <Label>Contenido:</Label>
+                        <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x:File)=>handleUpdateBookContent(book.id,x)} validFormats={['.txt']} />
 
-                    <div className={styles.editButtons}>
-                      <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
-                      <Button className={styles.botonEditar} onClick={() => cancelEdit(book.id)}>Cancelar</Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p><strong>Autor:</strong> {book.author}</p>
-                    <p><strong>Precio:</strong> ${book.price}</p>
-                    <p><strong>Año:</strong> {book.anio}</p>
-                    <p><strong>Descripción:</strong> {book.description}</p>
-                    <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={() => startEdit(book)}
-                        className="flex-1 bg-blue-600 text-white"
-                      >
-                        Editar ✏️
-                      </Button>
-                      <Button
-                        onClick={() => eliminarLibro(book.id)}
-                        className="flex-1 bg-red-600 text-white"
-                      >
-                        Borrar
-                      </Button>
-                    </div>
-                  </>
+                        <div className={styles.editButtons}>
+                          <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>
+                          <Button className={styles.botonEditar} onClick={() => cancelEdit(book.id)}>Cancelar</Button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p><strong>Autor:</strong> {book.author}</p>
+                        <p><strong>Precio:</strong> ${book.price}</p>
+                        <p><strong>Año:</strong> {book.anio}</p>
+                        <p><strong>Descripción:</strong> {book.description}</p>
+                        <p><strong>Exclusivo suscriptores:</strong> {book.subscriber_exclusive ? 'Sí' : 'No'}</p>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => startEdit(book)}
+                            className="flex-1 bg-blue-600 text-white"
+                          >
+                            Editar ✏️
+                          </Button>
+                          <Button
+                            onClick={() => eliminarLibro(book.id)}
+                            className="flex-1 bg-red-600 text-white"
+                          >
+                            Borrar
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        );
-      })}
-
-      {/* PAGINACIÓN */}
-      <Pagination className="pt-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              aria-disabled={currentPage === 1}
-            />
-          </PaginationItem>
-          {Array.from({ length: totalPages }, (_, idx) => (
-            <PaginationItem key={idx + 1}>
-              <PaginationLink
-                isActive={currentPage === idx + 1}
-                onClick={() => setCurrentPage(idx + 1)}
-              >
-                {idx + 1}
-              </PaginationLink>
-            </PaginationItem>
-          ))}
-          <PaginationItem>
-            <PaginationNext
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              aria-disabled={currentPage === totalPages}
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            );
+          })
+        ) : (
+          <p>No se encontraron libros.</p>
+        )}
+      </div>
+      {filteredBooks.length > 0 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className={styles.pageButton}
+          >
+            Anterior
+          </button>
+          <span>Página {currentPage} de {totalPages}</span>
+          <button
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className={styles.pageButton}
+          >
+            Siguiente
+          </button>
+        </div>
+      )}
     </>
   );
 }

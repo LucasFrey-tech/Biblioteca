@@ -1,4 +1,4 @@
-import { CarouselDTO } from "../../../src/modules/recomendations/carousel/carousel.dto"
+import { CarouselDTO } from "../../../src/modules/recomendations/carousel/dto/carousel.dto"
 
 
 export const mockDtoCarouselItem1: CarouselDTO = {

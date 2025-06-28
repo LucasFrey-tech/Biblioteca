@@ -2,7 +2,8 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { Author } from "../../entidades/author.entity";
-import { CreateAuthorDto } from "./crear-autor.dto";
+import { CreateAuthorDto } from "./dto/crear-autor.dto";
+import { PaginatedAuthorsDTO } from "./dto/authorPAG.dto";
 
 /**
  * Servicio que maneja la lógica de negocio para los autores de un libro.
@@ -15,15 +16,33 @@ export class AuthorService {
         private authorRepository: Repository<Author>,
     ) { }
 
-
     /**
-     * Obtiene todods los autores disponibles.
+     * Obtiene todos los autores disponibles.
      * 
-     * @returns {Promise<Author[]>} Una promesa que resuelve con un arreglo de DTOs de autores 
+     * @returns {Promise<Author[]>} Una promesa que resuelve con la lista de todos los autores
      */
     async findAll(): Promise<Author[]> {
-        this.logger.log('Lista de Autores Obtenida');
-        return this.authorRepository.find({});
+        const authors = await this.authorRepository.find();
+        this.logger.log('Lista de Autores Obtenida (sin paginación)');
+        return authors;
+    }
+
+    /**
+     * Obtiene todos los autores disponibles con paginación.
+     * 
+     * @param {number} page - Página solicitada (basada en 1)
+     * @param {number} limit - Cantidad de autores por página
+     * @returns {Promise<PaginatedAuthorsDTO>} Una promesa que resuelve con un objeto que contiene la lista de autores y el total
+     */
+    async findAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedAuthorsDTO> {
+        const skip = (page - 1) * limit;
+        const [authors, total] = await this.authorRepository.findAndCount({
+            skip,
+            take: limit,
+        });
+
+        this.logger.log('Lista de Autores Obtenida (paginada)');
+        return { authors, total };
     }
 
     /**
@@ -31,7 +50,7 @@ export class AuthorService {
      * 
      * @param {number} id - El ID del autor a buscar.
      * @returns {Promise<Author>} Una promesa que resuelve con el autor encontrado.
-     * @throws {NotFoundException} Si no encuentra ningun autor con el ID específicado.
+     * @throws {NotFoundException} Si no encuentra ningún autor con el ID especificado.
      */
     async findOne(id: number): Promise<Author> {
         const author = await this.authorRepository.findOne({

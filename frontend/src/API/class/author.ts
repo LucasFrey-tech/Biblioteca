@@ -1,4 +1,4 @@
-import { Crud } from "../service";
+import { Crud, PaginatedResponse } from "../service";
 import { Author } from "../types/author";
 
 export class Authors extends Crud<Author> {
@@ -13,6 +13,26 @@ export class Authors extends Crud<Author> {
             method: 'GET',
             headers: this.getHeaders(),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener autores (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        if (!Array.isArray(data)) {
+            throw new Error('Respuesta no es un arreglo de autores');
+        }
+        return data;
+    }
+
+    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Author>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener autores paginados (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
@@ -22,6 +42,10 @@ export class Authors extends Crud<Author> {
             headers: this.getHeaders(),
             body: JSON.stringify(data),
         });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al crear autor (${res.status}): ${errorDetails}`);
+        }
         return res.json();
     }
 
@@ -34,7 +58,13 @@ export class Authors extends Crud<Author> {
     }
 
     async delete(id: number): Promise<void> {
-        await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {method: 'DELETE', headers: this.getHeaders(),});
-        
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al eliminar autor (${res.status}): ${errorDetails}`);
+        }
     }
 }
