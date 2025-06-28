@@ -1,7 +1,10 @@
 import { RegisterRequestBody, AuthResponse } from "@/API/types/register";
-import { Crud } from "../service";
+import { Crud, PaginatedResponse } from "../service";
 
 export class RegisterService extends Crud<RegisterRequestBody> {
+  getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<RegisterRequestBody>> {
+    throw new Error("Method not implemented.");
+  }
 
     getAll(): Promise<RegisterRequestBody[]> {
         throw new Error("Method not implemented.");

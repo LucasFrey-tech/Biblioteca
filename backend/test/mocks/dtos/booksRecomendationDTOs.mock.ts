@@ -1,4 +1,4 @@
-import { RecommendationDTO } from "../../../src/modules/recomendations/book_recomendations/recomendations.dto";
+import { RecommendationDTO } from "../../../src/modules/recomendations/book_recomendations/dto/recomendations.dto";
 
 
 export const mockDtoBookRecomendation1: RecommendationDTO = {

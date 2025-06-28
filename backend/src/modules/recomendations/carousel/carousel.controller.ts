@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { CarouselService } from "./carousel.service";
-import { CarouselDTO } from "./carousel.dto";
+import { CarouselDTO } from "./dto/carousel.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 
 /**

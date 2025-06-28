@@ -1,4 +1,4 @@
-import { CatalogueBookDTO } from "src/modules/books/catalogue/catalogue_book.dto";
+import { CatalogueBookDTO } from "src/modules/books/catalogue/dto/catalogue_book.dto";
 
 
 export const mockDtoCatalogueBook1:CatalogueBookDTO = {

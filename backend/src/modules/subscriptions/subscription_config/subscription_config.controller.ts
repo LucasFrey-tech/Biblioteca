@@ -1,7 +1,7 @@
 import { Controller, Body, Get, Param, Put, ParseIntPipe, Post } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
 import { SubscriptionService } from "./subscription_config.service";
-import { SubscriptionDTO } from "./subscription.dto";
+import { SubscriptionDTO } from "./dto/subscription.dto";
 
 @ApiTags('Configuracion de Subscripcion')
 @ApiBearerAuth()

@@ -19,6 +19,31 @@ export class LibraryBooksService {
     private bookRepository: Repository<Book>,
   ) { }
 
+  async findAllByUserPaginated(idUser: number, page: number = 1, limit: number = 10): Promise<{ items: LibraryBookDTO[]; total: number }> {
+    const user = await this.userRepository.findOne({ where: { id: idUser } });
+    if (!user) throw new Error('Usuario no encontrado');
+
+    const [userVirtualBooks, total] = await this.userVirtualBooksRepository.findAndCount({
+      where: { user: { id: idUser } },
+      relations: ['book', 'book.author', 'book.genres'],
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    const items = userVirtualBooks.map(vb => new LibraryBookDTO(
+      vb.book.id,
+      vb.book.title,
+      vb.book.author?.id,
+      vb.book.description,
+      vb.book.genres ?? [],
+      vb.book.isbn,
+      vb.book.image
+    ));
+
+    this.logger.log(`Lista de Libros de Librería del Usuario Obtenida (paginada, usuario: ${idUser}, página: ${page}, límite: ${limit})`);
+    return { items, total };
+  }
+
   async findAllByUser(idUser: number): Promise<LibraryBookDTO[]> {
     const user = await this.userRepository.findOne({ where: { id: idUser } });
     if (!user) throw new Error('Usuario no encontrado');
@@ -65,5 +90,4 @@ export class LibraryBooksService {
     this.logger.log('Libro de Librería Creado');
     return await this.userVirtualBooksRepository.save(newRecord);
   }
-
 }

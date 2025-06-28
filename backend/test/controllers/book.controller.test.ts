@@ -1,6 +1,6 @@
 import { BooksController } from '../../src/modules/books/book/book.controller';
 import { BooksService } from '../../src/modules/books/book/book.service';
-import { CreateBookDTO } from '../../src/modules/books/book/createBook.dto';
+import { CreateBookDTO } from '../../src/modules/books/book/dto/createBook.dto';
 import { mockBooksService } from '../mocks/services/book.service.mock';
 
 describe('BooksController', () => {

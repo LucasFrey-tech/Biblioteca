@@ -1,8 +1,9 @@
-import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe } from "@nestjs/common";
+import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe, Query } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { Author } from "../../entidades/author.entity";
-import { CreateAuthorDto } from "../../modules/authors/crear-autor.dto";
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
+import { CreateAuthorDto } from "./dto/crear-autor.dto";
+import { PaginatedAuthorsDTO } from "./dto/authorPAG.dto";
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 /**
  * Controlador para gestionar las operaciones de los autores.
@@ -14,14 +15,34 @@ export class AuthorController {
     constructor(private readonly authorService: AuthorService) {}
 
     /**
-     * Obtiene todos los autores disponibles
-     * @returns {Promise<Author[]>} - lista de autores en formato DTO
+     * Obtiene todos los autores disponibles.
+     * 
+     * @returns {Promise<Author[]>} Lista de todos los autores
      */
     @Get()
     @ApiOperation({ summary: 'Listar Todos los Autores' })
     @ApiResponse({ status: 200, description: 'Lista de Autores', type: [Author] })
     findAll(): Promise<Author[]> {
         return this.authorService.findAll();
+    }
+
+    /**
+     * Obtiene todos los autores disponibles con paginación.
+     * 
+     * @param {number} page - Página solicitada (basada en 1)
+     * @param {number} limit - Cantidad de autores por página
+     * @returns {Promise<PaginatedAuthorsDTO>} Lista de autores paginados y total de registros
+     */
+    @Get('paginated')
+    @ApiOperation({ summary: 'Listar Autores Paginados' })
+    @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+    @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de autores por página', example: 10 })
+    @ApiResponse({ status: 200, description: 'Lista de Autores Paginada', type: PaginatedAuthorsDTO })
+    findAllPaginated(
+        @Query('page', ParseIntPipe) page: number = 1,
+        @Query('limit', ParseIntPipe) limit: number = 10
+    ): Promise<PaginatedAuthorsDTO> {
+        return this.authorService.findAllPaginated(page, limit);
     }
 
     /**
@@ -33,7 +54,7 @@ export class AuthorController {
     @Get(':id')
     @ApiOperation({ summary: 'Obtener Autor por ID' })
     @ApiParam({ name: 'id', type: Number })
-    @ApiResponse({ status: 200, description: 'Autor Encontrado', type: Author})
+    @ApiResponse({ status: 200, description: 'Autor Encontrado', type: Author })
     findOne(@Param('id', ParseIntPipe) id: number): Promise<Author> {
         return this.authorService.findOne(id);
     }

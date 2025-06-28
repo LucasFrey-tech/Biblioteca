@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BookRecommendation } from "../../../../src/entidades/book_recommendations.entity";
 import { Repository } from "typeorm";
-import { RecommendationDTO } from "./recomendations.dto";
-import { CreateRecommendationDTO } from "./create_recomendations.dto";
+import { RecommendationDTO } from "./dto/recomendations.dto";
+import { CreateRecommendationDTO } from "./dto/create_recomendations.dto";
 
 /**
  * Servicio que maneja la lógica de negocio para las recomendaciones de libros.

@@ -1,7 +1,7 @@
 import { IsArray, IsBoolean, IsDate, IsInt, IsNumber, IsString } from "class-validator";
 
 /**
- * Data Transfer Object (DOT) para Purchase.
+ * Data Transfer Object (DTO) para Purchase.
  * Se usa para validar y transformar datos entre el cliente y el servidor.
  */
 export class PurchaseDTO {
@@ -27,11 +27,11 @@ export class PurchaseDTO {
   username: string;
 
   /**
-   * Array de iems de la compra
-   * @type {PurchaseItemDTO}
+   * Array de ítems de la compra
+   * @type {PurchaseItemDTO[]}
    */
   @IsArray()
-  purchaseItems: PurchaseItemDTO[]
+  purchaseItems: PurchaseItemDTO[];
 
   /**
    * Fecha de compra
@@ -40,6 +40,10 @@ export class PurchaseDTO {
   @IsDate()
   purchaseDate: Date;
 
+  /**
+   * Total de la compra
+   * @type {number}
+   */
   @IsNumber()
   total: number;
 
@@ -52,11 +56,11 @@ export class PurchaseDTO {
     username: string,
     purchaseItems: PurchaseItemDTO[],
     purchaseDate: Date,
-    total:number
+    total: number
   ) {
     this.id = id;
-    this.id_user = id_user,
-    this.username = username,
+    this.id_user = id_user;
+    this.username = username;
     this.purchaseItems = purchaseItems;
     this.purchaseDate = purchaseDate;
     this.total = total;
@@ -88,7 +92,7 @@ export class PurchaseItemDTO {
   @IsNumber()
   subscriptionDiscount: number;
 
-  constructor (
+  constructor(
     id_book: number,
     title: string,
     author: string,
@@ -96,7 +100,7 @@ export class PurchaseItemDTO {
     price: number,
     virtual: boolean,
     amount: number,
-    subscriptionDiscount: number,
+    subscriptionDiscount: number
   ) {
     this.id_book = id_book;
     this.title = title;
@@ -105,6 +109,30 @@ export class PurchaseItemDTO {
     this.price = price;
     this.virtual = virtual;
     this.amount = amount;
-    this.subscriptionDiscount = subscriptionDiscount
+    this.subscriptionDiscount = subscriptionDiscount;
+  }
+}
+
+/**
+ * DTO para respuesta paginada de compras
+ */
+export class PaginatedPurchaseDTO {
+  /**
+   * Lista de compras
+   * @type {PurchaseDTO[]}
+   */
+  @IsArray()
+  items: PurchaseDTO[];
+
+  /**
+   * Total de compras
+   * @type {number}
+   */
+  @IsInt()
+  total: number;
+
+  constructor(items: PurchaseDTO[], total: number) {
+    this.items = items;
+    this.total = total;
   }
 }

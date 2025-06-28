@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BooksService } from './book.service';
-import { BookDTO } from './book.dto';
+import { BookDTO } from './dto/book.dto';
 import { ParseIntPipe } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody } from '@nestjs/swagger';
-import { CreateBookDTO } from './createBook.dto';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { CreateBookDTO } from './dto/createBook.dto';
 
 /**
  * Controlador para gestionar las operaciones de los libros.
@@ -17,41 +17,70 @@ export class BooksController {
   constructor(private readonly booksService: BooksService) { }
 
   /**
-   * Obtiene todos los libros disponibles en el sistema.
+   * Obtiene todos los libros disponibles.
    * 
-   * @returns {Promise<BookDTO[]>} Lista de libros en formato DTO
+   * @returns {Promise<BookDTO[]>} Lista de todos los libros activos
    */
   @Get()
   @ApiOperation({ summary: 'Listar Todos los Libros' })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros', type: [BookDTO] })
   async findAll(): Promise<BookDTO[]> {
-    return (await this.booksService.findAll());
-  }
-  
-  /**
-   * Obtiene todos los libros pertenecientes a un género específico.
-   * 
-   * @param {number} id - ID del género a filtrar
-   * @returns {Promise<BookDTO[]>} Lista de libros del género especificado
-   */
-  @Get('/with_genre/:id')
-  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
-  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
-  getBooksWithGenre(@Param('id', ParseIntPipe) id: number): Promise<BookDTO[]> {
-    return this.booksService.findAllWithGenre(id);
+    return await this.booksService.findAll();
   }
 
   /**
-   * Obtiene todos los libros escritos por un autor específico.
+   * Obtiene todos los libros disponibles con paginación.
+   * 
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
+   */
+  @Get('paginated')
+  @ApiOperation({ summary: 'Listar Libros Paginados' })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
+  @ApiResponse({ status: 200, description: 'Lista de Libros Paginada', type: [BookDTO] })
+  async findAllPaginated(
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('limit', ParseIntPipe) limit: number = 10
+  ): Promise<{ books: BookDTO[], total: number }> {
+    return await this.booksService.findAllPaginated(page, limit);
+  }
+
+  /**
+   * Obtiene todos los libros pertenecientes a un género específico con paginación.
+   * 
+   * @param {number} id - ID del género a filtrar
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
+   */
+  @Get('/with_genre/:id')
+  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
+  getBooksWithGenre(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    return this.booksService.findAllWithGenre(id, page, limit);
+  }
+
+  /**
+   * Obtiene todos los libros escritos por un autor específico con paginación.
    * 
    * @param {number} id - ID del autor a filtrar
-   * @returns {Promise<BookDTO[]>} Lista de libros del autor especificado
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
   @Get('/with_author/:id')
   @ApiOperation({ summary: 'Listar Todos los Libros de un mismo autor.' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
-  getBooksByAuthor(@Param('id', ParseIntPipe) id: number): Promise<BookDTO[]> {
-    return this.booksService.findAllByAuthor(id);
+  getBooksByAuthor(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    return this.booksService.findAllByAuthor(id, page, limit);
   }
 
   /**
@@ -129,7 +158,7 @@ export class BooksController {
   }
 
   /**
-   * Elimina un libro del sistema.
+   * Elimina un libro del sistema (soft delete).
    * 
    * @param {number} id - ID del libro a eliminar
    * @returns {Promise<boolean>} Resultado de la operación:
@@ -137,10 +166,26 @@ export class BooksController {
    * - false si el libro no existía
    */
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar Libro' })
+  @ApiOperation({ summary: 'Eliminar Libro (Soft Delete)' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Libro Eliminado' })
+  @ApiResponse({ status: 200, description: 'Libro Eliminado (Soft Delete)' })
   delete(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
     return this.booksService.delete(id);
+  }
+
+  /**
+   * Elimina un libro del sistema (hard delete).
+   * 
+   * @param {number} id - ID del libro a eliminar
+   * @returns {Promise<boolean>} Resultado de la operación:
+   * - true si el libro fue eliminado
+   * - false si el libro no existía
+   */
+  @Delete('/hard/:id')
+  @ApiOperation({ summary: 'Eliminar Libro (Hard Delete)' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Libro Eliminado (Hard Delete)' })
+  deleteSQL(@Param('id', ParseIntPipe) id: number): Promise<boolean> {
+    return this.booksService.deleteSQL(id);
   }
 }

@@ -1,7 +1,7 @@
 import { RecomendationsController } from '../../src/modules/recomendations/book_recomendations/recomendations.controller';
 import { RecomendationsService } from '../../src/modules/recomendations/book_recomendations/recomendations.service';
-import { RecommendationDTO } from '../../src/modules/recomendations/book_recomendations/recomendations.dto';
-import { CreateRecommendationDTO } from '../../src/modules/recomendations/book_recomendations/create_recomendations.dto';
+import { RecommendationDTO } from '../../src/modules/recomendations/book_recomendations/dto/recomendations.dto';
+import { CreateRecommendationDTO } from '../../src/modules/recomendations/book_recomendations/dto/create_recomendations.dto';
 
 describe('RecomendationsController', () => {
   let controller: RecomendationsController;

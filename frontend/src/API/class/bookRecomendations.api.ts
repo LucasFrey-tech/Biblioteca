@@ -1,7 +1,10 @@
-import { Crud } from '../service';
+import { Crud, PaginatedResponse } from '../service';
 import { BookRecommendationDTO } from '../types/bookRecomendation.dto';
 
 export class BookRecomendationsAPI extends Crud<BookRecommendationDTO> {
+    getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<BookRecommendationDTO>> {
+        throw new Error('Method not implemented.');
+    }
     private endPoint: string;
 
     constructor(token?: string) {

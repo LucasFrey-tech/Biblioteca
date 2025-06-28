@@ -1,4 +1,4 @@
-import { SubscriptionDTO } from "../../../src/modules/subscriptions/subscription_config/subscription.dto";
+import { SubscriptionDTO } from "../../../src/modules/subscriptions/subscription_config/dto/subscription.dto";
 
 
 export const mockDtoSubscription1: SubscriptionDTO = {

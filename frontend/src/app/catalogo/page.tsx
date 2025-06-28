@@ -6,9 +6,9 @@ import { BaseApi } from '@/API/baseApi';
 import { BookCatalogo } from '@/API/types/bookCatalogo';
 import { Author } from '@/API/types/author';
 import { Genre } from '@/API/types/genre';
+import { PaginatedResponse } from '@/API/service';
 import BookCard from '../../components/pages/Bookcard';
 import styles from '../../styles/catalogo.module.css';
-
 
 export default function BookPage() {
     const [books, setBooks] = useState<BookCatalogo[]>([]);
@@ -20,12 +20,15 @@ export default function BookPage() {
     const [selectedAuthors, setSelectedAuthors] = useState<number[]>([]);
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
+    const [page, setPage] = useState(1);
+    const [limit] = useState(10);
+    const [totalBooks, setTotalBooks] = useState(0);
 
     const apiRef = useRef<BaseApi | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            apiRef.current = new BaseApi(); 
+            apiRef.current = new BaseApi();
 
             const token = localStorage.getItem('token');
             if (token) {
@@ -33,59 +36,91 @@ export default function BookPage() {
             }
 
             try {
-                const resBooks = await apiRef.current?.catalogo.getAll();
-                const resAuthors = await apiRef.current?.authors.getAll();
-                const resGenres = await apiRef.current?.genre.getAll();
+                // Cargar géneros y autores (paginados, pero solo tomamos la primera página)
+                const resGenres = await apiRef.current?.genre.getAllPaginated(1, 100);
+                const resAuthors = await apiRef.current?.authors.getAllPaginated(1, 100);
 
-                if (!resBooks || !Array.isArray(resBooks)) {
-                    throw new Error('Libros inválidos');
-                }
+                // Mapear 'genres' y 'authors' a 'items'
+                setGenres(resGenres ? (resGenres as any).genres || resGenres.items || [] : []);
+                setAuthors(resAuthors ? (resAuthors as any).authors || resAuthors.items || [] : []);
 
-                setBooks(resBooks.sort((a, b) => a.id - b.id));
-                setAuthors(resAuthors || []);
-                setGenres(resGenres || []);
-
+                // Cargar libros con filtros
+                await fetchBooks();
             } catch (error) {
                 console.error('Error al obtener datos:', error);
                 setBooks([]);
+                setGenres([]);
+                setAuthors([]);
             }
-
         };
+
         fetchData();
     }, []);
+
+    const fetchBooks = async () => {
+        try {
+            let resBooks: PaginatedResponse<BookCatalogo> | undefined;
+
+            if (selectedGenres.length > 0) {
+                // Filtrar por género (usamos el primer género seleccionado)
+                const genreResponse = await apiRef.current?.books.getBooksWithGenrePaginated(selectedGenres[0], page, limit);
+                resBooks = genreResponse ? { items: (genreResponse as any).books || genreResponse.items, total: genreResponse.total } : undefined;
+            } else if (selectedAuthors.length > 0) {
+                // Filtrar por autor (usamos el primer autor seleccionado)
+                const authorResponse = await apiRef.current?.books.getBooksByAuthorPaginated(selectedAuthors[0], page, limit);
+                resBooks = authorResponse ? { items: (authorResponse as any).books || authorResponse.items, total: authorResponse.total } : undefined;
+            } else {
+                // Obtener todos los libros del catálogo
+                const catalogResponse = await apiRef.current?.catalogo.getAllPaginated(page, limit);
+                resBooks = catalogResponse ? { items: (catalogResponse as any).books || catalogResponse.items, total: catalogResponse.total } : undefined;
+            }
+
+            if (!resBooks || !Array.isArray(resBooks.items)) {
+                console.error('Respuesta inválida de la API:', resBooks);
+                throw new Error('Libros inválidos');
+            }
+
+            setBooks(resBooks.items.sort((a, b) => a.id - b.id));
+            setTotalBooks(resBooks.total);
+        } catch (error) {
+            console.error('Error al obtener libros:', error, { selectedGenres, selectedAuthors, page, limit });
+            setBooks([]);
+            setTotalBooks(0);
+        }
+    };
+
+    useEffect(() => {
+        fetchBooks();
+    }, [page, selectedGenres, selectedAuthors]);
 
     const handleGenreToggle = (genreId: number) => {
         setSelectedGenres((prev) =>
             prev.includes(genreId)
                 ? prev.filter((id) => id !== genreId)
-                : [...prev, genreId]
+                : [genreId] // Solo permitimos un género a la vez para simplificar
         );
+        setPage(1); // Reiniciar a la primera página al cambiar filtros
     };
 
     const handleAuthorToggle = (authorId: number) => {
         setSelectedAuthors((prev) =>
             prev.includes(authorId)
                 ? prev.filter((id) => id !== authorId)
-                : [...prev, authorId]
+                : [authorId] // Solo permitimos un autor a la vez para simplificar
         );
+        setPage(1); // Reiniciar a la primera página al cambiar filtros
     };
-    
-    const filteredBooks = books.filter((book) => {
-        const lowerTitle = book.title.toLowerCase();
-        const matchesSearch = lowerTitle.includes(searchQuery.toLowerCase());
-
-    const matchesGenres =
-        selectedGenres.length === 0 ||
-        book.genre.some((g) => selectedGenres.includes(g.id));
-
-        const matchesAuthors = selectedAuthors.length === 0 || selectedAuthors.includes(book.author_id);
-
-        return matchesSearch && matchesGenres && matchesAuthors;
-    });
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         setSearchQuery(searchTerm);
+        setPage(1); // Reiniciar a la primera página al buscar
+    };
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= Math.ceil(totalBooks / limit)) {
+            setPage(newPage);
+        }
     };
 
     return (
@@ -179,35 +214,57 @@ export default function BookPage() {
                     </div>
                 </aside>
 
-                <div className={styles.mainGrid}>
-                    {filteredBooks.length > 0 ? (
-                        filteredBooks.map((book) => (
-                            <div
-                                key={book.id}
-                                className={book.subscriber_exclusive ? styles.exclusiveWrapper : undefined}
+                <section className={styles.contentArea}>
+                    <div className={styles.mainGrid}>
+                        {books.length > 0 ? (
+                            books.map((book) => (
+                                <div
+                                    key={book.id}
+                                    className={book.subscriber_exclusive ? styles.exclusiveWrapper : undefined}
+                                >
+                                    <BookCard
+                                        book={{
+                                            id: book.id,
+                                            title: book.title,
+                                            image: book.image,
+                                            price: book.price,
+                                            author: {
+                                                id: book.author_id ?? -1,
+                                                name: book.author,
+                                            },
+                                            subscriber_exclusive: book.subscriber_exclusive,
+                                        }}
+                                    />
+                                </div>
+                            ))
+                        ) : (
+                            <p>No se encontraron libros.</p>
+                        )}
+                    </div>
+
+                    {books.length > 0 && (
+                        <div className={styles.pagination}>
+                            <button
+                                onClick={() => handlePageChange(page - 1)}
+                                disabled={page === 1}
+                                className={styles.pageButton}
                             >
-                                <BookCard
-                                    book={{
-                                        id: book.id,
-                                        title: book.title,
-                                        image: book.image,
-                                        price: book.price,
-                                        author: {
-                                            id: book.author_id ?? -1,
-                                            name: book.author
-                                        },
-                                        subscriber_exclusive: book.subscriber_exclusive,
-                                    }}
-                                />
-                            </div>
-                        ))
-                    ) : (
-                        <p>No se encontraron libros.</p>
+                                Anterior
+                            </button>
+                            <span>
+                                Página {page} de {Math.ceil(totalBooks / limit)}
+                            </span>
+                            <button
+                                onClick={() => handlePageChange(page + 1)}
+                                disabled={page >= Math.ceil(totalBooks / limit)}
+                                className={styles.pageButton}
+                            >
+                                Siguiente
+                            </button>
+                        </div>
                     )}
-                </div>
+                </section>
             </div>
-
         </>
-
     );
 }

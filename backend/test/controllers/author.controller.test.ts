@@ -1,7 +1,7 @@
 import { AuthorController } from "../../src/modules/authors/author.controller";
 import { AuthorService } from "../../src/modules/authors/author.service";
 import { Author } from "../../src/entidades/author.entity";
-import { CreateAuthorDto } from "../../src/modules/authors/crear-autor.dto";
+import { CreateAuthorDto } from "../../src/modules/authors/dto/crear-autor.dto";
 
 describe('AuthorController', () => {
   let controller: AuthorController;

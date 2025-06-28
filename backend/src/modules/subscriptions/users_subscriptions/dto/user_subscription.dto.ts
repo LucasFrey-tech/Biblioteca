@@ -1,4 +1,4 @@
-import { SubscriptionDTO } from '../subscription_config/subscription.dto';
+import { SubscriptionDTO } from "../../subscription_config/dto/subscription.dto";
 
 export class UserSubscriptionDTO {
   id: number;

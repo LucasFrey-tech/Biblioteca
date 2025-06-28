@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody } from '@nestjs/s
 @ApiTags('Descuentos de Suscripción por Usuario')
 @Controller('user-subscription-discount')
 export class UserSubscriptionDiscountController {
-  constructor(private readonly discountService: UserSubscriptionDiscountService) {}
+  constructor(private readonly discountService: UserSubscriptionDiscountService) { }
 
   @Post()
   @ApiOperation({ summary: 'Crear descuento para suscripción' })

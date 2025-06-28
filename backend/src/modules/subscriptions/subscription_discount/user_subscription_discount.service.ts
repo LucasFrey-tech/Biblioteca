@@ -12,7 +12,7 @@ export class UserSubscriptionDiscountService {
 
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
-  ) {}
+  ) { }
 
   async create(data: { id_subscription: number; discount: number }): Promise<UserSubscriptionDiscount> {
     const subscription = await this.subscriptionRepo.findOne({ where: { id: data.id_subscription } });

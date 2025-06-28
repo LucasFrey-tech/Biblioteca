@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { VirtualBookContent } from '../../../entidades/virtual_book_content.entity';
-import { BookContentDTO } from './book_content.dto';
+import { BookContentDTO } from './dto/book_content.dto';
 import { SettingsService } from '../../../settings/settings.service';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { CatalogueBooksController } from '../../src/modules/books/catalogue/catalogue_books.controller';
 import { CatalogueBooksService } from '../../src/modules/books/catalogue/catalogue_books.service';
-import { CatalogueBookDTO } from '../../src/modules/books/catalogue/catalogue_book.dto';
+import { CatalogueBookDTO } from '../../src/modules/books/catalogue/dto/catalogue_book.dto';
 
 describe('CatalogueBooksController', () => {
   let controller: CatalogueBooksController;

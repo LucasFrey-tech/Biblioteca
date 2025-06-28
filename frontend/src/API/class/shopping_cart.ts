@@ -1,7 +1,10 @@
-import { Crud } from '../service';
+import { Crud, PaginatedResponse } from '../service';
 import { ShoppingCartBook } from '../types/shopping_cart';
 
 export class ShoppingCart extends Crud<ShoppingCartBook> {
+    getAllPaginated(page?: number, limit?: number): Promise<PaginatedResponse<ShoppingCartBook>> {
+        throw new Error('Method not implemented.');
+    }
     private endPoint: string;
     constructor(token?: string) {
         super(token);
