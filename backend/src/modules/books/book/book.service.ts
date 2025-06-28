@@ -18,10 +18,10 @@ export class BooksService {
     private readonly settingsService: SettingsService,
 
     @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
+    private readonly booksRepository: Repository<Book>,
 
     @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
+    private readonly genreRepository: Repository<Genre>,
   ) { }
 
   /**
@@ -77,7 +77,7 @@ export class BooksService {
    */
   async findAllWithGenre(genreId: number, page: number = 1, limit: number = 10): Promise<BookDTO[]> {
     const skip = (page - 1) * limit;
-    const [books, total] = await this.booksRepository
+    const [books] = await this.booksRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.genres', 'genres')
       .leftJoinAndSelect('book.author', 'author')
@@ -105,7 +105,7 @@ export class BooksService {
    */
   async findAllByAuthor(authorId: number, page: number = 1, limit: number = 10): Promise<BookDTO[]> {
     const skip = (page - 1) * limit;
-    const [books, total] = await this.booksRepository
+    const [books] = await this.booksRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.genres', 'genres')
       .leftJoinAndSelect('book.author', 'author')
