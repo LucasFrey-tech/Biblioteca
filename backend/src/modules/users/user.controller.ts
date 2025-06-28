@@ -24,7 +24,7 @@ export class UsersController {
           lastname: 'Frey',
           username: 'Tukson',
           email: 'correonofalso@gmail.com',
-          password: '<PASSWORD>',
+          password: '<PASSWORD>', // NOSONAR
           tel: '1234567890',
           admin: true,
           disabled: false,
@@ -67,7 +67,7 @@ export class UsersController {
         lastname: 'Frey',
         username: 'Tukson',
         email: 'sarasa@gmail',
-        password: '<PASSWORD>'
+        password: '<PASSWORD>' // NOSONAR
       }
     }
   } })
@@ -78,7 +78,7 @@ export class UsersController {
         lastname: 'Frey',
         username: 'Tukson',
         email: 'sarasa@gmail',
-        password: '<PASSWORD>'
+        password: '<PASSWORD>' // NOSONAR
       }
     }
   } })
