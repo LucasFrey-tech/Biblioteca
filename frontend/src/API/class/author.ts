@@ -25,16 +25,22 @@ export class Authors extends Crud<Author> {
     }
 
     async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Author>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
-            method: 'GET',
-            headers: this.getHeaders(),
-        });
-        if (!res.ok) {
-            const errorDetails = await res.text();
-            throw new Error(`Error al obtener autores paginados (${res.status}): ${errorDetails}`);
-        }
-        return res.json();
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+    });
+    if (!res.ok) {
+        const errorDetails = await res.text();
+        throw new Error(`Error al obtener autores paginados (${res.status}): ${errorDetails}`);
     }
+    const data = await res.json();
+
+    return {
+        items: data.authors || [],
+        total: data.total || 0
+    };
+}
+
 
     async create(data: Partial<Author>): Promise<Author> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}`, {

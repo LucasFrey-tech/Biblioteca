@@ -6,7 +6,7 @@ import BooksGenreScroller from "./bookGenreScroller";
 
 export default function GenresBooks(): React.JSX.Element {
     const [genres, setGenres] = useState<Genre[]>([]);
-    const [booksAmmount] = useState<number>(20)
+    const [booksAmount] = useState<number>(20);
 
     const apiRef = useRef(new BaseApi());
 
@@ -21,9 +21,15 @@ export default function GenresBooks(): React.JSX.Element {
 
             try {
                 const resGenres = await apiRef.current?.genre.getAllPaginated(1, 100);
-                setGenres(resGenres ? (resGenres as any).genres || resGenres.items || [] : []);
+                setGenres(
+                    resGenres
+                        ? (resGenres as { genres?: Genre[]; items?: Genre[] }).genres ||
+                          (resGenres as { genres?: Genre[]; items?: Genre[] }).items ||
+                          []
+                        : []
+                );
             } catch (error) {
-                console.error('Error al obtener generos:', error);
+                console.error('Error al obtener géneros:', error);
                 setGenres([]);
             }
         };
@@ -31,23 +37,25 @@ export default function GenresBooks(): React.JSX.Element {
         fetchData();
     }, []);
 
-
     return (
         <div className={Styles.genre_books}>
             <div className={Styles.title}>
-                <h2>Novedades por Genero</h2>
-                <hr></hr>
+                <h2>Novedades por Género</h2>
+                <hr />
             </div>
             <div className={Styles.content}>
                 {
                     genres.length <= 0 ? <div></div> :
-                        genres.map((genre) => {
-                            return (
-                                <BooksGenreScroller key={genre.id} genreId={genre.id} name={genre.name} booksAmount={booksAmmount}/>
-                            );
-                        })
+                        genres.map((genre) => (
+                            <BooksGenreScroller 
+                                key={genre.id} 
+                                genreId={genre.id} 
+                                name={genre.name} 
+                                booksAmount={booksAmount} 
+                            />
+                        ))
                 }
             </div>
         </div>
-    )
+    );
 }

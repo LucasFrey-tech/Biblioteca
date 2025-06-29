@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
 import NovedadesCarousel from './novedadesCarousel/novedades_carousel';
 import Styles from './styles.module.css';
 import BooksDisplayerFlexGrid from './booksDisplayers/booksDisplayersFlexGrid/books_displayer_flexgrid';
