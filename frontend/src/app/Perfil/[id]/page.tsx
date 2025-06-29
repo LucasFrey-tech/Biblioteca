@@ -244,6 +244,7 @@ export default function ProfilePage() {
               <thead>
                 <tr>
                   <th>Título</th>
+                  <th>Tipo</th>
                   <th>Autor</th>
                   <th>Cantidad</th>
                   <th>Total</th>
@@ -260,10 +261,11 @@ export default function ProfilePage() {
                       const descuento = item.subscriptionDiscount / 100;
                       const total = precioU * cantidad;
                       const totalN = total - (total * descuento);
-
+                      
                       return (
                         <tr key={`${purchase.id}-${item.id_book}-${index}`}>
                           <td>{item.title}</td>
+                          <td>{item.virtual ? "Virtual" : "Fisico"}</td>
                           <td>{item.author}</td>
                           <td>{cantidad}</td>
                           <td>{totalN.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</td>
