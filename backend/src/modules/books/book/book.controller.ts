@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException, Query, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BooksService } from './book.service';
 import { BookDTO } from './dto/book.dto';
-import { ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { CreateBookDTO } from './dto/createBook.dto';
 
@@ -61,8 +60,14 @@ export class BooksController {
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
-  getBooksWithGenre(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
-    return this.booksService.findAllWithGenre(id, page, limit);
+  getBooksWithGenre(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string
+  ): Promise<BookDTO[]> {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    return this.booksService.findAllWithGenre(id, pageNum, limitNum);
   }
 
   /**
@@ -79,8 +84,14 @@ export class BooksController {
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
   @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
-  getBooksByAuthor(@Param('id', ParseIntPipe) id: number, @Query('page', ParseIntPipe) page: number = 1, @Query('limit', ParseIntPipe) limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
-    return this.booksService.findAllByAuthor(id, page, limit);
+  getBooksByAuthor(
+    @Param('id', ParseIntPipe) id: number, 
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number, 
+    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number
+  ): Promise<BookDTO[]> {
+    const pageNum = page ?? 1;
+    const limitNum = limit ?? 10;
+    return this.booksService.findAllByAuthor(id, pageNum, limitNum);
   }
 
   /**
@@ -138,7 +149,7 @@ export class BooksController {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
 
-    if (file && file.filename) {
+    if (file?.filename) {
       bookDTO.image = this.booksService.bookImageUrl(file.filename);
     } else if (bookDTO.existingImage) {
       bookDTO.image = bookDTO.existingImage;

@@ -9,10 +9,10 @@ import { SettingsService } from '../../../settings/settings.service';
 export class BookContentService {
   private readonly logger = new Logger(BookContentService.name);
   constructor(
-    private settingsService: SettingsService,
+    private readonly settingsService: SettingsService,
         
     @InjectRepository(VirtualBookContent)
-    private bookContentRepository: Repository<VirtualBookContent>,
+    private readonly bookContentRepository: Repository<VirtualBookContent>,
   ) { }
 
   async get(id: number): Promise<BookContentDTO | null> {

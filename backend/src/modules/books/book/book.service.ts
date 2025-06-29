@@ -18,10 +18,10 @@ export class BooksService {
     private readonly settingsService: SettingsService,
 
     @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
+    private readonly booksRepository: Repository<Book>,
 
     @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
+    private readonly genreRepository: Repository<Genre>,
   ) { }
 
   /**
@@ -75,9 +75,9 @@ export class BooksService {
    * @param {number} limit - Cantidad de libros por página
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllWithGenre(genreId: number, page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+  async findAllWithGenre(genreId: number, page: number = 1, limit: number = 10): Promise<BookDTO[]> {
     const skip = (page - 1) * limit;
-    const [books, total] = await this.booksRepository
+    const [books] = await this.booksRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.genres', 'genres')
       .leftJoinAndSelect('book.author', 'author')
@@ -86,13 +86,13 @@ export class BooksService {
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
+      
     const result = books.map((book) => {
       return BookDTO.BookEntity2BookDTO(book);
     });
 
     this.logger.log('Lista de libros Recibidos');
-    return { books: result, total };
+    return result;
   }
 
   /**
@@ -103,9 +103,9 @@ export class BooksService {
    * @param {number} limit - Cantidad de libros por página
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllByAuthor(authorId: number, page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+  async findAllByAuthor(authorId: number, page: number = 1, limit: number = 10): Promise<BookDTO[]> {
     const skip = (page - 1) * limit;
-    const [books, total] = await this.booksRepository
+    const [books] = await this.booksRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.genres', 'genres')
       .leftJoinAndSelect('book.author', 'author')
@@ -120,7 +120,7 @@ export class BooksService {
     });
 
     this.logger.log('Lista de libros Recibidos');
-    return { books: result, total };
+    return result;
   }
 
   /**

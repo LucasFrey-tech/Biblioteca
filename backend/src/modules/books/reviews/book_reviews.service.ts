@@ -2,7 +2,6 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable, NotFoundException, Logger } from "@nestjs/common";
 import { User } from "../../../entidades/user.entity";
-import { Book } from "src/entidades/book.entity";
 import { Review } from "../../../entidades/review.entity";
 import { ReviewI } from "./dto/review.dto";
 import { PaginatedReviewDTO } from "./dto/reviewPAG.dto";
@@ -17,9 +16,9 @@ export class BookReviewsService {
 
   constructor(
     @InjectRepository(Review)
-    private reviewRepository: Repository<Review>,
+    private readonly reviewRepository: Repository<Review>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) { }
 
   /**
@@ -51,7 +50,7 @@ export class BookReviewsService {
       relations: ['user'],
     });
 
-    const username = fullReview?.user?.username || '';
+    const username = fullReview?.user?.username ?? '';
 
     this.logger.log('Crítica Creada');
 

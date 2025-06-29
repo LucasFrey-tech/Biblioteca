@@ -24,15 +24,15 @@ export class PurchasesService {
 
   constructor(
     @InjectRepository(Purchase)
-    private purchaseRepository: Repository<Purchase>,
+    private readonly purchaseRepository: Repository<Purchase>,
     @InjectRepository(ShoppingCartBook)
-    private cartRepository: Repository<ShoppingCartBook>,
+    private readonly cartRepository: Repository<ShoppingCartBook>,
     @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
+    private readonly booksRepository: Repository<Book>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserSubscriptionDiscount)
-    private discountRepository: Repository<UserSubscriptionDiscount>,
+    private readonly discountRepository: Repository<UserSubscriptionDiscount>,
   ) { }
 
   /**
@@ -169,7 +169,7 @@ export class PurchasesService {
       order: { purchaseDate: 'DESC' }
     });
 
-    if (typeof purchases === 'undefined' || !purchases.length) {
+    if (!purchases?.length) {
       this.logger.log('Historial Vacío');
       return null;
     }
@@ -199,16 +199,6 @@ export class PurchasesService {
         }
       }
 
-      const purchaseItem = new PurchaseItemDTO(
-        purchase.book.id,
-        purchase.book.title,
-        purchase.book.author.name,
-        purchase.book.image,
-        purchase.book.price,
-        purchase.virtual,
-        purchase.amount,
-        resDiscount
-      );
 
       const totalItem = purchase.book.price * purchase.amount * (1 - resDiscount / 100);
 
@@ -221,14 +211,16 @@ export class PurchasesService {
           purchase.user.username,
           [
             new PurchaseItemDTO(
-              purchase.book.id,
-              purchase.book.title,
-              purchase.book.author.name,
-              purchase.book.image,
-              purchase.book.price,
-              purchase.virtual,
-              purchase.amount,
-              resDiscount,
+              {
+                id_book: purchase.book.id,
+                title: purchase.book.title,
+                author: purchase.book.author.name,
+                image: purchase.book.image,
+                price: purchase.book.price,
+                virtual: purchase.virtual,
+                amount: purchase.amount,
+                subscriptionDiscount: resDiscount,
+              },
             ),
           ],
           new Date(purchase.purchaseDate),
@@ -237,16 +229,16 @@ export class PurchasesService {
         console.log(`Total inicial para fecha ${dateTime}: ${totalItem}`);
       } else {
         acc[dateTime].purchaseItems.push(
-          new PurchaseItemDTO(
-            purchase.book.id,
-            purchase.book.title,
-            purchase.book.author.name,
-            purchase.book.image,
-            purchase.book.price,
-            purchase.virtual,
-            purchase.amount,
-            resDiscount,
-          )
+          new PurchaseItemDTO({
+            id_book: purchase.book.id,
+            title: purchase.book.title,
+            author: purchase.book.author.name,
+            image: purchase.book.image,
+            price: purchase.book.price,
+            virtual: purchase.virtual,
+            amount: purchase.amount,
+            subscriptionDiscount: resDiscount,
+          })
         );
         acc[dateTime].total += totalItem;
         console.log(`Total actualizado para fecha ${dateTime}: ${acc[dateTime].total}`);
