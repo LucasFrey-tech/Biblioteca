@@ -54,16 +54,18 @@ export class Books extends Crud<Book> {
     }
 
     async getBooksWithGenrePaginated(idGenre: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idGenre}?page=${page}&limit=${limit}`, {
-            method: 'GET',
-            headers: this.getHeaders(),
-        });
-        if (!res.ok) {
-            const errorDetails = await res.text();
-            throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
-        }
-        return res.json();
+    const idStr = idGenre.toString();
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idStr}?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+    });
+    if (!res.ok) {
+        const errorDetails = await res.text();
+        throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
     }
+    return res.json();
+}
+
 
     async getBooksByAuthor(idAuthor: number): Promise<Book[]> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}`, {
@@ -82,16 +84,18 @@ export class Books extends Crud<Book> {
     }
 
     async getBooksByAuthorPaginated(idAuthor: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}?page=${page}&limit=${limit}`, {
-            method: 'GET',
-            headers: this.getHeaders(),
-        });
-        if (!res.ok) {
-            const errorDetails = await res.text();
-            throw new Error(`Error al obtener libros paginados por autor (${res.status}): ${errorDetails}`);
-        }
-        return res.json();
+    const idStr = idAuthor.toString(); // convertir a string
+    const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idStr}?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: this.getHeaders(),
+    });
+    if (!res.ok) {
+        const errorDetails = await res.text();
+        throw new Error(`Error al obtener libros paginados por autor (${res.status}): ${errorDetails}`);
     }
+    return res.json();
+}
+
 
     async getOne(id: number): Promise<Book> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {
