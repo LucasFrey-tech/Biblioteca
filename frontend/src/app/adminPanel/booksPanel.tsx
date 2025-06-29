@@ -22,6 +22,8 @@ import { Genre } from "@/API/types/genre";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import DragAndDropFile from "@/components/pages/dropFile";
 
+// Interfaz temporal para la respuesta del backend
+
 export default function BooksPanel(): React.JSX.Element {
   const [books, setBooks] = useState<BookFileUpdate[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
@@ -148,7 +150,7 @@ export default function BooksPanel(): React.JSX.Element {
         },
         genreIds
       );
-      
+
       await apiRef.current.bookContent.update(bookId, { idBook: bookId, content: bookState.formData.content })
 
       setBooks(prevBooks =>
@@ -186,22 +188,37 @@ export default function BooksPanel(): React.JSX.Element {
   const fetchBooks = async () => {
     try {
       const booksData = await apiRef.current.books.getAllPaginated(currentPage, limit);
-      if (!booksData || !Array.isArray(booksData.items)) {
+      if (!booksData || typeof booksData !== 'object' || !Array.isArray(booksData.items) || typeof booksData.total !== 'number') {
         console.error('Respuesta inválida de la API:', booksData);
-        throw new Error('Libros inválidos');
+        throw new Error('Respuesta de la API no tiene el formato esperado: { items: Book[], total: number }');
       }
 
-      for (const bookData of booksData.items) {
-        const contentData = await apiRef.current.bookContent.getOne(bookData.id);
-        bookData.content = typeof contentData.content === "string" ? contentData.content : "";
-      }
+      const items = await Promise.all(booksData.items.map(async (bookData: any) => {
+        let content = '';
+        try {
+          const contentData = await apiRef.current.bookContent.getOne(bookData.id);
+          content = typeof contentData.content === 'string' ? contentData.content : '';
+        } catch (error) {
+          console.warn(`No se pudo obtener contenido para el libro ID ${bookData.id}:`, error);
+        }
+        return {
+          ...bookData,
+          genre: bookData.genre || [], // Asegurar que genre sea un array
+          content // Agregar el campo content
+        } as BookFileUpdate;
+      }));
 
-      setBooks(booksData.items.sort((a, b) => b.id - a.id));
+      setBooks(items.sort((a: BookFileUpdate, b: BookFileUpdate) => b.id - a.id));
       setTotalBooks(booksData.total);
     } catch (error) {
       console.error("Error al obtener libros:", error, { currentPage, limit });
       setBooks([]);
       setTotalBooks(0);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudieron cargar los libros. Por favor, intenta de nuevo.',
+      });
     }
   };
 
@@ -220,6 +237,11 @@ export default function BooksPanel(): React.JSX.Element {
         setBooks([]);
         setAuthors([]);
         setGenres([]);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos iniciales.',
+        });
       }
     };
     fetchData();
@@ -229,9 +251,9 @@ export default function BooksPanel(): React.JSX.Element {
     fetchBooks();
   }, [currentPage]);
 
-  const toggleBookOpen = (id: number) => {
+  const toggleBookOpen = (bookId: number) => {
     setBookOpenIds((prev) =>
-      prev.includes(id) ? prev.filter(bid => bid !== id) : [...prev, id]
+      prev.includes(bookId) ? prev.filter(bid => bid !== bookId) : [...prev, bookId]
     );
   };
 
@@ -275,12 +297,12 @@ export default function BooksPanel(): React.JSX.Element {
             async function handleUpdateBookContent(bookId: number, file: File): Promise<void> {
               setBooksEditState(prev => ({
                 ...prev,
-                [bookId]: { 
-                  ...prev[bookId], 
-                  formData: { 
+                [bookId]: {
+                  ...prev[bookId],
+                  formData: {
                     ...prev[bookId].formData,
-                    content: file 
-                  } 
+                    content: file
+                  }
                 }
               }));
             }
@@ -435,7 +457,7 @@ export default function BooksPanel(): React.JSX.Element {
                           }));
                         }} />
                         <Label>Contenido:</Label>
-                        <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x:File)=>handleUpdateBookContent(book.id,x)} validFormats={['.txt']} />
+                        <DragAndDropFile defaultFile={book.content} onSetCurrentFile={(x: File) => handleUpdateBookContent(book.id, x)} validFormats={['.txt']} />
 
                         <div className={styles.editButtons}>
                           <Button className={styles.botonEditar} onClick={() => saveChanges(book.id)}>Guardar</Button>

@@ -62,22 +62,18 @@ export default function BookPage() {
             let resBooks: PaginatedResponse<BookCatalogo> | undefined;
 
             if (selectedGenres.length > 0) {
-                // Filtrar por género (usamos el primer género seleccionado)
-                const genreResponse = await apiRef.current?.books.getBooksWithGenrePaginated(selectedGenres[0], page, limit);
-                resBooks = genreResponse ? { items: (genreResponse as any).books || genreResponse.items, total: genreResponse.total } : undefined;
+                resBooks = await apiRef.current?.books.getBooksWithGenrePaginated(selectedGenres[0], page, limit);
             } else if (selectedAuthors.length > 0) {
-                // Filtrar por autor (usamos el primer autor seleccionado)
-                const authorResponse = await apiRef.current?.books.getBooksByAuthorPaginated(selectedAuthors[0], page, limit);
-                resBooks = authorResponse ? { items: (authorResponse as any).books || authorResponse.items, total: authorResponse.total } : undefined;
+                resBooks = await apiRef.current?.books.getBooksByAuthorPaginated(selectedAuthors[0], page, limit);
             } else {
-                // Obtener todos los libros del catálogo
-                const catalogResponse = await apiRef.current?.catalogo.getAllPaginated(page, limit);
-                resBooks = catalogResponse ? { items: (catalogResponse as any).books || catalogResponse.items, total: catalogResponse.total } : undefined;
+                resBooks = await apiRef.current?.catalogo.getAllPaginated(page, limit);
             }
 
             if (!resBooks || !Array.isArray(resBooks.items)) {
                 console.error('Respuesta inválida de la API:', resBooks);
-                throw new Error('Libros inválidos');
+                setBooks([]);
+                setTotalBooks(0);
+                return;
             }
 
             setBooks(resBooks.items.sort((a, b) => a.id - b.id));

@@ -8,7 +8,7 @@ import { Author } from '@/API/types/author';
 import { Genre } from '@/API/types/genre';
 
 import LibraryCard from '@/components/pages/LibraryCard';
-import styles from '../../styles/library.module.css';
+import styles from '../../styles/catalogo.module.css';
 
 export default function Libreria() {
   const [books, setBooks] = useState<BookLibreria[]>([]);

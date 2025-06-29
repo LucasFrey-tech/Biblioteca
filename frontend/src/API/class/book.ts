@@ -30,11 +30,19 @@ export class Books extends Crud<Book> {
             method: 'GET',
             headers: this.getHeaders(),
         });
+
         if (!res.ok) {
             const errorDetails = await res.text();
             throw new Error(`Error al obtener libros paginados (${res.status}): ${errorDetails}`);
         }
-        return res.json();
+
+        const data = await res.json();
+
+        // Adaptador para compatibilidad
+        return {
+            items: data.books || [], // Mapea books a items
+            total: data.total
+        };
     }
 
     async getBooksWithGenre(idGenre: number): Promise<Book[]> {
@@ -54,18 +62,21 @@ export class Books extends Crud<Book> {
     }
 
     async getBooksWithGenrePaginated(idGenre: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-    const idStr = idGenre.toString();
-    const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idStr}?page=${page}&limit=${limit}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-    });
-    if (!res.ok) {
-        const errorDetails = await res.text();
-        throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
+        const idStr = idGenre.toString();
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idStr}?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        return {
+            items: data.books || data.items || [], // Mapear 'books' o 'items' a 'items'
+            total: data.total || 0
+        };
     }
-    return res.json();
-}
-
 
     async getBooksByAuthor(idAuthor: number): Promise<Book[]> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idAuthor}`, {
@@ -84,17 +95,21 @@ export class Books extends Crud<Book> {
     }
 
     async getBooksByAuthorPaginated(idAuthor: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-    const idStr = idAuthor.toString(); // convertir a string
-    const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idStr}?page=${page}&limit=${limit}`, {
-        method: 'GET',
-        headers: this.getHeaders(),
-    });
-    if (!res.ok) {
-        const errorDetails = await res.text();
-        throw new Error(`Error al obtener libros paginados por autor (${res.status}): ${errorDetails}`);
+        const idStr = idAuthor.toString();
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_author/${idStr}?page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al obtener libros paginados por autor (${res.status}): ${errorDetails}`);
+        }
+        const data = await res.json();
+        return {
+            items: data.books || data.items || [], // Mapear 'books' o 'items' a 'items'
+            total: data.total || 0
+        };
     }
-    return res.json();
-}
 
 
     async getOne(id: number): Promise<Book> {
@@ -133,7 +148,7 @@ export class Books extends Crud<Book> {
         if (data.image instanceof File) {
             formData.append("image", data.image);
         }
-        
+
         formData.append("stock", data.stock + '');
         formData.append("subscriber_exclusive", data.subscriber_exclusive + '');
         formData.append("price", data.price + '');

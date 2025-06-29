@@ -29,13 +29,23 @@ export class Catalogo extends Crud<BookCatalogo> {
             method: 'GET',
             headers: this.getHeaders(),
         });
+
         if (!res.ok) {
             const errorDetails = await res.text();
             throw new Error(`Error al obtener libros del catálogo paginados (${res.status}): ${errorDetails}`);
         }
-        return res.json();
+
+        const data = await res.json();
+
+        // Transformar la respuesta del backend al formato esperado
+        return {
+            items: data.books || [], // Mapear 'books' a 'items'
+            total: data.total || 0
+        };
     }
-    
+
+
+
     getOne(_id: number): Promise<BookCatalogo> {
         throw new Error("Method not implemented.");
     }

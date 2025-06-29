@@ -55,19 +55,17 @@ export class BooksController {
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
   @Get('/with_genre/:id')
-  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo genero.' })
+  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo género.' })
   @ApiParam({ name: 'id', type: Number })
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
-  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo genero.', type: [BookDTO] })
-  getBooksWithGenre(
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo género.', type: Object })
+  async getBooksWithGenre(
     @Param('id', ParseIntPipe) id: number,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string
-  ): Promise<BookDTO[]> {
-    const pageNum = page ? parseInt(page, 10) : 1;
-    const limitNum = limit ? parseInt(limit, 10) : 10;
-    return this.booksService.findAllWithGenre(id, pageNum, limitNum);
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10
+  ): Promise<{ books: BookDTO[], total: number }> {
+    return this.booksService.findAllWithGenre(id, page, limit);
   }
 
   /**
@@ -83,15 +81,13 @@ export class BooksController {
   @ApiParam({ name: 'id', type: Number })
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
-  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: [BookDTO] })
-  getBooksByAuthor(
-    @Param('id', ParseIntPipe) id: number, 
-    @Query('page', new ParseIntPipe({ optional: true })) page?: number, 
-    @Query('limit', new ParseIntPipe({ optional: true })) limit?: number
-  ): Promise<BookDTO[]> {
-    const pageNum = page ?? 1;
-    const limitNum = limit ?? 10;
-    return this.booksService.findAllByAuthor(id, pageNum, limitNum);
+  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo autor.', type: Object })
+  async getBooksByAuthor(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10
+  ): Promise<{ books: BookDTO[], total: number }> {
+    return this.booksService.findAllByAuthor(id, page, limit);
   }
 
   /**
@@ -143,8 +139,8 @@ export class BooksController {
   @ApiBody({ type: BookDTO })
   @ApiResponse({ status: 200, description: 'Libro Editado', type: CreateBookDTO })
   @UseInterceptors(FileInterceptor('image'))
-  async update( @Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
-    
+  async update(@Param('id', ParseIntPipe) id: number, @Body() bookDTO: CreateBookDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
+
     if (typeof bookDTO.subscriber_exclusive === 'string') {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
