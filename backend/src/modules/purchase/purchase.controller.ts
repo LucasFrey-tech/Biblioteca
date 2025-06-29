@@ -94,11 +94,18 @@ export class PurchasesController {
   /**
    * Obtiene el historial de compras de un usuario
    */
-  @Get(':idUser')
-  @ApiOperation({ summary: 'Obtener historial de compras de un usuario' })
+  @Get(':idUser/paginated')
+  @ApiOperation({ summary: 'Obtener historial de compras paginado de un usuario' })
   @ApiParam({ name: 'idUser', type: Number })
-  @ApiResponse({ status: 200, description: 'Historial de compras encontrado', type: [PurchaseDTO] })
-  async getUserPurchaseHistory(@Param('idUser', ParseIntPipe) idUser: number): Promise<PurchaseDTO[] | null> {
-    return await this.purchasesService.getUserPurchaseHistory(idUser);
+  @ApiQuery({ name: 'page', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @ApiResponse({ status: 200, description: 'Historial de compras paginado', type: Object })
+  async getUserPurchaseHistoryPaginated(
+    @Param('idUser', ParseIntPipe) idUser: number,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ): Promise<{ items: PurchaseDTO[], total: number, page: number, limit: number }> {
+    const [items, total] = await this.purchasesService.getUserPurchaseHistoryPaginated(idUser, page, limit);
+    return { items, total, page, limit };
   }
 }

@@ -13,9 +13,12 @@ import { BaseApi } from '@/API/baseApi';
 export default function ProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState<User>();
-  const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
+  const [editMode, setEditMode] = useState<{ [key: number]: boolean }>({});
   const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & { pass?: string } }>({});
   const [purchases, setPurchases] = useState<Purchase[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 5; // o 10, lo que prefieras
 
   const apiRef = useRef<BaseApi | null>(null);
 
@@ -25,7 +28,6 @@ export default function ProfilePage() {
       apiRef.current = new BaseApi(token);
     } else {
       console.error("Falla validacion token");
-      return;
     }
   }, []);
 
@@ -89,22 +91,30 @@ export default function ProfilePage() {
   }, [id]);
 
   useEffect(() => {
-    if (!user?.id) return;
+  if (!user?.id) return;
 
-    const fetchPurchaseHistory = async () => {
-      try {
-        const purchaseData = await apiRef.current?.purchase.getUserPurchaseHistory(user.id);
-        if (!purchaseData) return;
-        setPurchases(purchaseData);
-      } catch (error) {
-        console.error('Error listado de compras: ', error);
-      }
-    };
+  const maxPage = Math.ceil(totalItems / itemsPerPage);
+  if (currentPage > maxPage && maxPage > 0) {
+    setCurrentPage(maxPage);
+    return;
+  }
+  
+  const fetchPurchaseHistory = async () => {
+    try {
+      const res = await apiRef.current?.purchase.getUserPurchaseHistoryPaginated(user.id, currentPage, itemsPerPage);
+      if (!res) return;
+      setPurchases(res.items);
+      setTotalItems(res.total);
+    } catch (error) {
+      console.error('Error listado de compras: ', error);
+    }
+  };
 
-    fetchPurchaseHistory();
-  }, [user]);
+  fetchPurchaseHistory();
+}, [user, currentPage, totalItems]);
 
-  if (!user) return;
+
+  if (!user) return <p>Cargando Perfil...</p>;
 
   const formatDate = (fecha: Date): string => {
     if (!fecha) return '';
@@ -284,6 +294,11 @@ export default function ProfilePage() {
                 )}
               </tbody>
             </table>
+            <div className={styles.pagination}>
+              <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)}>Anterior</button>
+                <span>Página {currentPage} de {Math.ceil(totalItems / itemsPerPage)}</span>
+              <button disabled={currentPage >= Math.ceil(totalItems / itemsPerPage)} onClick={() => setCurrentPage(p => p + 1)}>Siguiente</button>
+            </div>
           </div>
         </div>
       </div>

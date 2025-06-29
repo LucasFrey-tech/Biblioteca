@@ -154,33 +154,18 @@ export class PurchasesService {
    * @param {number} idUser - ID del usuario a buscar
    * @returns {Promise<PurchaseDTO[] | null>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
    */
-  async getUserPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
-    const user = await this.userRepository.findOne({ where: { id: idUser } });
-    if (!user) {
-      this.logger.log('Usuario No Encontrado');
-      return null;
-    }
-
-    const purchases = await this.purchaseRepository.find({
-      where: { user: { id: idUser } },
-      relations: [
-        'book',
-        'book.author',
-        'user',
-        'user.userSubscriptions',
-        'user.userSubscriptions.subscription',
-      ],
+  async getUserPurchaseHistoryPaginated(userId: number, page: number, limit: number): Promise<[PurchaseDTO[], number]> {
+    const [items, total] = await this.purchaseRepository.findAndCount({
+      where: { user: { id: userId } },
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
+      skip: (page - 1) * limit,
+      take: limit,
       order: { purchaseDate: 'DESC' }
     });
 
-    if (!purchases?.length) {
-      this.logger.log('Historial Vacío');
-      return null;
-    }
-
-    const groupedPurchases = await this.getGroupPurchases(purchases);
-
-    return groupedPurchases;
+    // Map Purchase entities to PurchaseDTOs
+    const purchaseDTOs: PurchaseDTO[] = await this.getGroupPurchases(items);
+    return [purchaseDTOs, total];
   }
 
   private async getGroupPurchases(purchases: Purchase[]): Promise<PurchaseDTO[]> {
