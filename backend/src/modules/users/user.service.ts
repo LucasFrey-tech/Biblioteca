@@ -1,6 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { Injectable, Logger } from '@nestjs/common';
-import { BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { User } from '../../entidades/user.entity';
@@ -11,7 +10,7 @@ export class UsersService {
   private readonly logger = Log.getLogger(UsersService.name);
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    private readonly usersRepository: Repository<User>,
   ) { }
 
   async findAllPaginated(page: number = 1, limit: number = 10, search: string = ''): Promise<{ items: User[]; total: number }> {

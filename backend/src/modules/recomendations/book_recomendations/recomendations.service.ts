@@ -12,7 +12,7 @@ import { CreateRecommendationDTO } from "./dto/create_recomendations.dto";
 export class RecomendationsService {
     constructor(
         @InjectRepository(BookRecommendation)
-        private recomendationsRepository: Repository<BookRecommendation>,
+        private readonly recomendationsRepository: Repository<BookRecommendation>,
     ) { }
 
     /**
@@ -23,7 +23,6 @@ export class RecomendationsService {
      * 
      */
     async findAll(): Promise<RecommendationDTO[]> {
-        // TODO: Implementar logger para registrar la consulta
         const bookRecomendation = await this.recomendationsRepository.find({ relations: ['book', 'book.author'] });
         const formatedBookRecomendation = bookRecomendation
             .map(x => new RecommendationDTO(x))
@@ -41,7 +40,6 @@ export class RecomendationsService {
      *
      */
     async findOne(id: number): Promise<RecommendationDTO> {
-        // TODO: Implementar logger para registrar la búsqueda
         const bookRecomendation = await this.recomendationsRepository.findOne({
             where: { id }
         });
@@ -63,7 +61,6 @@ export class RecomendationsService {
      *
      */
     async create(body: CreateRecommendationDTO): Promise<RecommendationDTO> {
-        // TODO: Implementar logger para registrar la creación
         const newBookRecomendation = this.recomendationsRepository.create({ book: { id: body.idBook } });
         const bookRecomendationEntity = await this.recomendationsRepository.save(newBookRecomendation);
 
@@ -89,7 +86,6 @@ export class RecomendationsService {
      *
      */
     async update(id: number, body: CreateRecommendationDTO): Promise<RecommendationDTO> {
-        // TODO: Implementar logger para registrar la actualización
         await this.recomendationsRepository.update(id, {book: { id: body.idBook } });
         const updatedBookRecomendation = await this.recomendationsRepository.findOne({
             where: { id },
@@ -110,7 +106,6 @@ export class RecomendationsService {
      *
      */
     async remove(id: number): Promise<void> {
-        // TODO: Implementar logger para registrar la actualización
         const result = await this.recomendationsRepository.delete(id);
         if (result.affected === 0) {
             throw new NotFoundException(`Recomendation with ID ${id} not found`);

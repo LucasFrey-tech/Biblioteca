@@ -36,7 +36,7 @@ export class BookContentController {
     @ApiResponse({ status: 200, description: 'Contenido de un libro virtual editado', type: BookContentDTO })
     @UseInterceptors(FileInterceptor('content'))
     update(@Param('id', ParseIntPipe) id: number, @Body() bookContent: BookContentDTO & { existingImage?: string }, @UploadedFile() file: Express.Multer.File) {
-        if (file && file.originalname) {
+        if (file?.originalname) {
             bookContent.content = this.bookContentService.bookContentUrl(file.originalname);
         } else if (bookContent.existingImage) {
             bookContent.content = bookContent.existingImage;

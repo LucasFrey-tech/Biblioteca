@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe, Query } from "@nestjs/common";
+import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, Query } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { Author } from "../../entidades/author.entity";
 import { CreateAuthorDto } from "./dto/crear-autor.dto";
@@ -12,7 +12,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from 
 @ApiTags('Autores')
 @Controller('authors')
 export class AuthorController {
-    constructor(private readonly authorService: AuthorService) {}
+    constructor(private  readonly authorService: AuthorService) {}
 
     /**
      * Obtiene todos los autores disponibles.

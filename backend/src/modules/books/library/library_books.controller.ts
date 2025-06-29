@@ -3,7 +3,7 @@ import { LibraryBooksService } from './library_books.service';
 import { LibraryBookDTO } from './dto/library_book.dto';
 import { UserVirtualBooks } from '../../../entidades/user_virtual_books.entity';
 import { CreateUserVirtualBookDto } from './dto/library_book_create.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Libros de Biblioteca')
 @Controller('library_books')

@@ -80,5 +80,13 @@ export class ReviewI {
         comment: string,
         rating: number,
         reviewDate: string,
-    ) { this.id = id, this.id_user = id_user, this.id_book = id_book, this.username = username, this.comment = comment, this.rating = rating, this.reviewDate = reviewDate }
+    ) {
+        this.id = id;
+        this.id_user = id_user;
+        this.id_book = id_book;
+        this.username = username;
+        this.comment = comment;
+        this.rating = rating;
+        this.reviewDate = reviewDate;
+    }
 };

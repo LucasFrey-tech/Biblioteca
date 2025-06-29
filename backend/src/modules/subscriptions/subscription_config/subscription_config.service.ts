@@ -9,7 +9,7 @@ import { Subscription } from "../../../../src/entidades/subscription.entity";
 export class SubscriptionService {
     constructor(
         @InjectRepository(Subscription)
-        private subscriptionConfigRepository: Repository<Subscription>,
+        private readonly subscriptionConfigRepository: Repository<Subscription>,
     ) { }
 
     async get(): Promise<SubscriptionDTO> {

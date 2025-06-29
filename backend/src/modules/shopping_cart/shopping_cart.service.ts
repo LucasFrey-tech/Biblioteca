@@ -12,9 +12,9 @@ export class ShoppingCartService {
 
   constructor(
     @InjectRepository(ShoppingCartBook)
-    private cartBookShopingRepository: Repository<ShoppingCartBook>,
+    private readonly cartBookShopingRepository: Repository<ShoppingCartBook>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) { }
 
   async findByUser(idUser: number): Promise<BookCartDTO[] | null> {
@@ -34,16 +34,16 @@ export class ShoppingCartService {
       return null;
     }
 
-    const results = cartItems.map(cart => new BookCartDTO(
-      cart.id,
-      cart.book.id,
-      cart.book.title,
-      cart.book.author?.name || '',
-      cart.book.image,
-      cart.book.price,
-      cart.virtual,
-      cart.amount,
-    ));
+    const results = cartItems.map(cart => new BookCartDTO({
+      id: cart.id,
+      idBook: cart.book.id,
+      title: cart.book.title,
+      author: cart.book.author?.name || '',
+      image: cart.book.image,
+      price: cart.book.price,
+      virtual: cart.virtual,
+      amount: cart.amount,
+    }));
 
     this.logger.log('Carrito Obtenido');
     return results;

@@ -13,7 +13,7 @@ export class AuthorService {
     private readonly logger = new Logger(AuthorService.name);
     constructor(
         @InjectRepository(Author)
-        private authorRepository: Repository<Author>,
+        private readonly authorRepository: Repository<Author>,
     ) { }
 
     /**
