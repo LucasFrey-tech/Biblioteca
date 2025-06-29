@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
 import styles from '../../styles/ventasPanel.module.css';
 import { BaseApi } from "@/API/baseApi";
 import { Purchase } from "@/API/types/purchase";
@@ -14,14 +15,15 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 10; // Ajustado a un valor razonable y consistente con el backend
+const ITEMS_PER_PAGE = 10; // Consistente con el backend
 
 export default function VentasPanel(): React.JSX.Element {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalItems, setTotalItems] = useState(0); // Nuevo estado para el total de compras
+  const [totalItems, setTotalItems] = useState(0);
+  const [search, setSearch] = useState(''); // Nuevo estado para búsqueda
 
   const apiRef = useRef<BaseApi | null>(null);
 
@@ -32,7 +34,8 @@ export default function VentasPanel(): React.JSX.Element {
         if (token) apiRef.current = new BaseApi(token);
 
         if (apiRef.current) {
-          const response = await apiRef.current.purchase.getAllPaginated(currentPage, ITEMS_PER_PAGE);
+          const response = await apiRef.current.purchase.getAllPaginated(currentPage, ITEMS_PER_PAGE, search);
+          console.log('Respuesta de compras paginadas:', response);
           if (!response || !Array.isArray(response.items)) {
             console.error('Respuesta inválida de la API:', response);
             setPurchases([]);
@@ -58,7 +61,7 @@ export default function VentasPanel(): React.JSX.Element {
     };
 
     fetchPurchases();
-  }, [currentPage]); // Dependencia en currentPage para recargar al cambiar de página
+  }, [currentPage, search]); // Dependencias: currentPage y search
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -76,6 +79,15 @@ export default function VentasPanel(): React.JSX.Element {
   return (
     <div className={styles.panelContainer}>
       <h2 className={styles.title}>Historial de Ventas</h2>
+      <Input
+        placeholder='Buscar por nombre de usuario'
+        className={styles.inputSearch}
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setCurrentPage(1); // Reiniciar a la primera página al buscar
+        }}
+      />
 
       {loading ? (
         <div className={styles.panelContainer}>
