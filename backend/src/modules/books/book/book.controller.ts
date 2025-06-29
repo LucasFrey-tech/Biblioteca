@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseInterceptors, UploadedFile, BadRequestException, Query, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BooksService } from './book.service';
 import { BookDTO } from './dto/book.dto';
-import { ParseIntPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { CreateBookDTO } from './dto/createBook.dto';
 
@@ -150,7 +149,7 @@ export class BooksController {
       bookDTO.subscriber_exclusive = bookDTO.subscriber_exclusive === 'true';
     }
 
-    if (file && file.filename) {
+    if (file?.filename) {
       bookDTO.image = this.booksService.bookImageUrl(file.filename);
     } else if (bookDTO.existingImage) {
       bookDTO.image = bookDTO.existingImage;

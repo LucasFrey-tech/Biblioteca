@@ -16,7 +16,7 @@ export class CarouselService {
         private readonly settingsService: SettingsService,
 
         @InjectRepository(Carousel)
-        private carouselRepository: Repository<Carousel>,
+        private readonly carouselRepository: Repository<Carousel>,
     ) { }
 
     /**

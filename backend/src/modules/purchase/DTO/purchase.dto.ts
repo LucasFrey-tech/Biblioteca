@@ -27,7 +27,7 @@ export class PurchaseItemDTO {
   @IsNumber()
   subscriptionDiscount: number;
 
-  constructor(
+  constructor(data: {
     id_book: number,
     title: string,
     author: string,
@@ -36,15 +36,15 @@ export class PurchaseItemDTO {
     virtual: boolean,
     amount: number,
     subscriptionDiscount: number
-  ) {
-    this.id_book = id_book;
-    this.title = title;
-    this.author = author;
-    this.image = image;
-    this.price = price;
-    this.virtual = virtual;
-    this.amount = amount;
-    this.subscriptionDiscount = subscriptionDiscount;
+  }) {
+    this.id_book = data.id_book;
+    this.title = data.title;
+    this.author = data.author;
+    this.image = data.image;
+    this.price = data.price;
+    this.virtual = data.virtual;
+    this.amount = data.amount;
+    this.subscriptionDiscount = data.subscriptionDiscount;
   }
 }
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, ValidationPipe, Query } from "@nestjs/common";
+import { Controller, Get, Param, Delete, Post, Body, ParseIntPipe, Query } from "@nestjs/common";
 import { AuthorService } from "./author.service";
 import { Author } from "../../entidades/author.entity";
 import { CreateAuthorDto } from "./dto/crear-autor.dto";

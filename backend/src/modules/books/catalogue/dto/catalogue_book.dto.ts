@@ -107,19 +107,31 @@ export class CatalogueBookDTO {
   /**
    * Constructor del DTO.
    */
-  constructor(
-    id: number,
-    title: string,
-    author: string,
-    author_id: number | undefined,
-    description: string,
-    genre: Genre[],
-    anio: number,
-    image: string,
-    stock: number,
-    subscriber_exclusive: boolean,
-    price: number,
-  ) {
+  constructor({
+    id,
+    title,
+    author,
+    author_id,
+    description,
+    genre,
+    anio,
+    image,
+    stock,
+    subscriber_exclusive,
+    price,
+  }: {
+    id: number;
+    title: string;
+    author: string;
+    author_id?: number;
+    description: string;
+    genre: Genre[];
+    anio: number;
+    image: string;
+    stock: number;
+    subscriber_exclusive: boolean;
+    price: number;
+  }) {
     this.id = id;
     this.title = title;
     this.author = author;
