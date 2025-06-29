@@ -208,34 +208,34 @@ export default function ProfilePage() {
             <div>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Nombre</label>
-                  <span>{user.firstname}</span>
+                  <label htmlFor="profile-firstname">Nombre</label>
+                  <span id="profile-firstname">{user.firstname}</span>
                 </div>
                 <div className={styles.field}>
-                  <label>Apellido</label>
-                  <span>{user.lastname}</span>
-                </div>
-              </div>
-
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label>Nombre de Usuario</label>
-                  <span>{user.username}</span>
-                </div>
-                <div className={styles.field}>
-                  <label>Correo Electrónico</label>
-                  <span>{user.email}</span>
+                  <label htmlFor="profile-lastname">Apellido</label>
+                  <span id="profile-lastname">{user.lastname}</span>
                 </div>
               </div>
 
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Contraseña</label>
-                  <span>******</span>
+                  <label htmlFor="profile-username">Nombre de Usuario</label>
+                  <span id="profile-username">{user.username}</span>
                 </div>
                 <div className={styles.field}>
-                  <label>Número de teléfono</label>
-                  <span>{user.tel}</span>
+                  <label htmlFor="profile-email">Correo Electrónico</label>
+                  <span id="profile-email">{user.email}</span>
+                </div>
+              </div>
+
+              <div className={styles.row}>
+                <div className={styles.field}>
+                  <label htmlFor="profile-password">Contraseña</label>
+                  <span id="profile-password" aria-label="Contraseña">******</span>
+                </div>
+                <div className={styles.field}>
+                  <label htmlFor="profile-tel">Número de teléfono</label>
+                  <span id="profile-tel">{user.tel}</span>
                 </div>
               </div>
 
