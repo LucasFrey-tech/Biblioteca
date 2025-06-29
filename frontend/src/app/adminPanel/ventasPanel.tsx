@@ -14,12 +14,14 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 
+const ITEMS_PER_PAGE = 10; // Ajustado a un valor razonable y consistente con el backend
+
 export default function VentasPanel(): React.JSX.Element {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [totalItems, setTotalItems] = useState(0); // Nuevo estado para el total de compras
 
   const apiRef = useRef<BaseApi | null>(null);
 
@@ -30,8 +32,15 @@ export default function VentasPanel(): React.JSX.Element {
         if (token) apiRef.current = new BaseApi(token);
 
         if (apiRef.current) {
-          const purchasesData = await apiRef.current.purchase.getAll();
-          setPurchases(purchasesData || []);
+          const response = await apiRef.current.purchase.getAllPaginated(currentPage, ITEMS_PER_PAGE);
+          if (!response || !Array.isArray(response.items)) {
+            console.error('Respuesta inválida de la API:', response);
+            setPurchases([]);
+            setTotalItems(0);
+            throw new Error('Respuesta inválida de la API');
+          }
+          setPurchases(response.items);
+          setTotalItems(response.total);
         } else {
           throw new Error('API client not initialized');
         }
@@ -49,7 +58,7 @@ export default function VentasPanel(): React.JSX.Element {
     };
 
     fetchPurchases();
-  }, []);
+  }, [currentPage]); // Dependencia en currentPage para recargar al cambiar de página
 
   const formatDate = (dateString: string | Date) => {
     const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
@@ -62,39 +71,27 @@ export default function VentasPanel(): React.JSX.Element {
     });
   };
 
-  const totalPages = Math.ceil(purchases.length / itemsPerPage);
-  const currentGroups = purchases.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  if (loading) {
-    return (
-      <div className={styles.panelContainer}>
-        <h2>Cargando ventas...</h2>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className={styles.panelContainer}>
-        <h2>Error</h2>
-        <p>{error}</p>
-      </div>
-    );
-  }
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
   return (
     <div className={styles.panelContainer}>
       <h2 className={styles.title}>Historial de Ventas</h2>
 
-      {purchases.length === 0 ? (
+      {loading ? (
+        <div className={styles.panelContainer}>
+          <h2>Cargando ventas...</h2>
+        </div>
+      ) : error ? (
+        <div className={styles.panelContainer}>
+          <h2>Error</h2>
+          <p>{error}</p>
+        </div>
+      ) : purchases.length === 0 ? (
         <p className={styles.emptyMessage}>No hay ventas registradas</p>
       ) : (
         <>
           <div className={styles.purchasesContainer}>
-            {currentGroups.map((purchase, index) => (
+            {purchases.map((purchase, index) => (
               <div key={index} className={styles.purchaseGroup}>
                 <div className={styles.purchaseHeader}>
                   <h3>Compra del usuario: {purchase.username}</h3>
@@ -129,7 +126,6 @@ export default function VentasPanel(): React.JSX.Element {
                         <p>Subtotal: ${(item.price * item.amount).toFixed(2)}</p>
                         <p>Descuento: {(item.subscriptionDiscount || 0).toFixed(0)}%</p>
                         <p>Total Neto: ${(item.price * item.amount * (1 - (item.subscriptionDiscount || 0) / 100)).toFixed(2)}</p>
-
                       </div>
                     </div>
                   ))}
@@ -138,32 +134,36 @@ export default function VentasPanel(): React.JSX.Element {
             ))}
           </div>
 
-          <Pagination className="pt-4">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={page === currentPage}
-                    onClick={() => setCurrentPage(page)}
-                  >
-                    {page}
-                  </PaginationLink>
+          {totalPages > 0 && (
+            <Pagination className="pt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                  />
                 </PaginationItem>
-              ))}
 
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === currentPage}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
         </>
       )}
     </div>

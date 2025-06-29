@@ -65,22 +65,26 @@ export class PurchasesService {
    * @param {number} limit - Cantidad de compras por página
    * @returns {Promise<PaginatedPurchaseDTO>} - Una promesa que resuelve con un objeto que contiene la lista de compras y el total
    */
-  async getAllPurchasesPaginated(page: number = 1, limit: number = 10): Promise<PaginatedPurchaseDTO> {
-    this.logger.log(`Obteniendo compras paginadas (página: ${page}, límite: ${limit})`);
+  async getAllPurchasesPaginated(page: number = 1, limit: number = 10, search: string = ''): Promise<PaginatedPurchaseDTO> {
+    this.logger.log(`Obteniendo compras paginadas (página: ${page}, límite: ${limit}, búsqueda: ${search})`);
 
     const skip = (page - 1) * limit;
-    const [purchases, total] = await this.purchaseRepository.findAndCount({
-      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
-      order: { purchaseDate: 'DESC' },
-      skip,
-      take: limit
-    });
+    const query = this.purchaseRepository.createQueryBuilder('purchase')
+      .leftJoinAndSelect('purchase.book', 'book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('purchase.user', 'user')
+      .leftJoinAndSelect('user.userSubscriptions', 'userSubscriptions')
+      .leftJoinAndSelect('userSubscriptions.subscription', 'subscription')
+      .where('purchase.purchaseDate IS NOT NULL')
+      .orderBy('purchase.purchaseDate', 'DESC')
+      .skip(skip)
+      .take(limit);
 
-    if (!purchases.length) {
-      this.logger.log('No se encontraron compras en el sistema');
-      return new PaginatedPurchaseDTO([], 0);
+    if (search) {
+      query.andWhere('user.username ILIKE :search', { search: `%${search}%` });
     }
 
+    const [purchases, total] = await query.getManyAndCount();
     const groupedPurchases = await this.getGroupPurchases(purchases);
 
     return new PaginatedPurchaseDTO(groupedPurchases, total);
