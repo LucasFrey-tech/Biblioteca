@@ -261,7 +261,7 @@ export default function ProfilePage() {
                       const descuento = item.subscriptionDiscount / 100;
                       const total = precioU * cantidad;
                       const totalN = total - (total * descuento);
-                      console.log("AHHHHHHHHHHHHHHHHHHH: ", item.virtual);
+                      
                       return (
                         <tr key={`${purchase.id}-${item.id_book}-${index}`}>
                           <td>{item.title}</td>
