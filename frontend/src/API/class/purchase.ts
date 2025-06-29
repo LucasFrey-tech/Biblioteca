@@ -9,8 +9,8 @@ export class Purchases extends Crud<Purchase> {
         this.endPoint = 'purchases';
     }
 
-    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Purchase>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+    async getAllPaginated(page: number = 1, limit: number = 10, search: string = ''): Promise<PaginatedResponse<Purchase>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}&search=${search}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
