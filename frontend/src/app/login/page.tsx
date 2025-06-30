@@ -14,38 +14,19 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import { BaseApi } from '@/API/baseApi';
-
-
 import { jwtDecode } from 'jwt-decode';
 import { useUser } from '../context/UserContext';
-
-
-// Validación
-const userSchema = z.object({
-  email: z.string({
-    required_error: "Email es requerido",
-  })
-    .email("Formato de email invalido")
-    .refine(val => val.includes("@") && val.includes(".com"), {
-      message: "Tu email debe contener '@' y '.com'",
-    }),
-  password: z.string({
-    required_error: "La contraseña es requerida",
-  }).min(6, "Tu contraseña tiene que tener al menos 6 caracteres"),
-});
-
-type UserType = z.infer<typeof userSchema>;
+import { loginSchema, UserType } from '@/validations/loginSchema';
 
 export default function LogIn() {
   const router = useRouter();
   const api = new BaseApi();
   const form = useForm<UserType>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -53,9 +34,8 @@ export default function LogIn() {
   });
 
   const { refreshUser } = useUser();
-  // ENVIAR FORM
-  const onSubmit = form.handleSubmit(async (values: UserType) => {
 
+  const onSubmit = form.handleSubmit(async (values: UserType) => {
     try {
       const res = await api.log.login(values);
 
@@ -74,7 +54,6 @@ export default function LogIn() {
           return;
         }
         if (res.status === 403) {
-
           Swal.fire({
             icon: 'error',
             title: 'Login fallido',
@@ -92,14 +71,12 @@ export default function LogIn() {
       }
 
       const data = res;
-      // Verificar si la respuesta contiene el token
       if (data.success) {
         localStorage.setItem('token', data.data.access_token);
 
-        type JwtPayload = { sub: string;[key: string]: unknown };
+        type JwtPayload = { sub: string; [key: string]: unknown };
         const decoded: JwtPayload = jwtDecode<JwtPayload>(data.data.access_token);
         localStorage.setItem('userId', decoded.sub);
-
 
         refreshUser();
         Swal.fire({
@@ -114,7 +91,6 @@ export default function LogIn() {
         setTimeout(() => {
           router.push('/inicio');
         }, 3000);
-
       } else {
         Swal.fire({
           icon: 'error',
@@ -123,7 +99,6 @@ export default function LogIn() {
         });
         console.error('Error en la respuesta:', data);
       }
-
     } catch (error) {
       if (error instanceof Error) {
         console.error('Error de red:', error.message);
@@ -141,7 +116,6 @@ export default function LogIn() {
         });
       }
     }
-
   });
 
   return (

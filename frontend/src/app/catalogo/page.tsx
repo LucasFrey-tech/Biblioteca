@@ -36,15 +36,12 @@ export default function BookPage() {
             }
 
             try {
-                // Cargar géneros y autores (paginados, pero solo tomamos la primera página)
                 const resGenres = await apiRef.current?.genre.getAllPaginated(1, 100);
                 const resAuthors = await apiRef.current?.authors.getAllPaginated(1, 100);
 
-                // Mapear 'genres' y 'authors' a 'items'
-                setGenres(resGenres ? (resGenres as any).genres || resGenres.items || [] : []);
-                setAuthors(resAuthors ? (resAuthors as any).authors || resAuthors.items || [] : []);
+                setGenres(resGenres?.items ?? []);
+                setAuthors(resAuthors?.items ?? []);
 
-                // Cargar libros con filtros
                 await fetchBooks();
             } catch (error) {
                 console.error('Error al obtener datos:', error);

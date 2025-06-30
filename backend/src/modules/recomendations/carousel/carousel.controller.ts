@@ -61,22 +61,26 @@ export class CarouselController {
      * Actualiza un carousel existente
      * 
      * @param {number} id - ID del carousel a actualizar
-     * @param {Partial<CarouselDTO>} updateData - Datos actualizados del carousel
-     * @returns {Promise<Carousel>} - Carousel actualizado
+     * @param {Partial<CarouselDTO>} body - Datos actualizados del carousel
+     * @param {Express.Multer.File} file - Imágen opcional del carousel
+     * @returns {Promise<CarouselDTO>} - Carousel actualizado
      */
     @Put(':id')
     @UseInterceptors(FileInterceptor('image'))
     @ApiOperation({ summary: 'Actualizar CarouselItem' })
-    @ApiBody({type: CarouselDTO})
+    @ApiBody({ type: CarouselDTO })
     @ApiParam({ name: 'id', type: Number })
     @ApiConsumes('multipart/form-data')
     @ApiResponse({ status: 200, description: 'CarouselItem Actualizado', type: CarouselDTO })
-    async update( @Param('id', ParseIntPipe) id: number, @Body() body: any, @UploadedFile() file?: Express.Multer.File) {
-        
+    async update(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() body: Partial<CarouselDTO>,
+        @UploadedFile() file?: Express.Multer.File
+    ): Promise<CarouselDTO> {
         const updateData: CarouselDTO = {
-            id: id,
-            idBook: Number(body.idBook),
-            image: file ? file.filename : body.image,
+            id,
+            idBook: body.idBook ?? 0, // Valor por defecto si no se proporciona
+            image: file ? this.carouselService.bookImageUrl(file.originalname) : body.image ?? '',
         };
 
         return this.carouselService.update(id, updateData);
