@@ -2,77 +2,81 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import AddBookReview from '@/components/pages/agregarReview';
-import styles from '../../../styles/profile.module.css'
-
+import styles from '../../../styles/profile.module.css';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import Swal from 'sweetalert2';
 import { User } from '@/API/types/user';
 import { Purchase } from '@/API/types/purchase';
-
 import { BaseApi } from '@/API/baseApi';
+import { profileSchema, ProfileType } from '@/validations/profileSchema';
 
 export default function ProfilePage() {
   const { id } = useParams();
-  const [user, setUser] = useState<User>();
-  const [editMode, setEditMode] = useState<{ [key: number]: boolean }>([]);
-  const [editedProduct, setEditedProduct] = useState<{ [key: number]: Partial<User> & { pass?: string } }>({});
+  const [user, setUser] = useState<User | null>(null);
+  const [editMode, setEditMode] = useState(false);
   const [purchases, setPurchases] = useState<Purchase[] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 5;
 
   const apiRef = useRef<BaseApi | null>(null);
+
+  const form = useForm<ProfileType>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstname: '',
+      lastname: '',
+      username: '',
+      email: '',
+      tel: undefined,
+      pass: undefined, // Changed from '' to undefined
+    },
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       apiRef.current = new BaseApi(token);
     } else {
-      console.error("Falla validacion token");
-      return;
+      console.error('Falla validación token');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de autenticación',
+        text: 'No se encontró un token válido. Por favor, inicia sesión nuevamente.',
+      });
     }
   }, []);
-
-  const editActivate = (u: User) => {
-    setEditMode(prev => ({ ...prev, [u.id]: true }));
-    setEditedProduct(prev => ({
-      ...prev,
-      [u.id]: {
-        email: u.email,
-        username: u.username,
-        firstname: u.firstname,
-        lastname: u.lastname,
-        tel: u.tel,
-      },
-    }));
-  };
-
-  const saveChanges = async (id: number) => {
-    if (!apiRef.current) {
-      console.error("API no inicializada");
-      return;
-    }
-    const datos = editedProduct[id];
-    try {
-      const response = await apiRef.current.users.update(id, datos);
-
-      if (!response) {
-        alert(`Error al actualizar datos`);
-        return;
-      }
-
-      setUser(response);
-      setEditMode(prev => ({ ...prev, [id]: false }));
-    } catch (error) {
-      console.error('Error al guardar producto: ', error);
-      alert('Error de red al guardar el producto');
-    }
-  };
 
   useEffect(() => {
     const getProfile = async () => {
       if (!id) {
         console.error('No se proporcionó un Id de usuario');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se proporcionó un ID de usuario',
+        });
         return;
       }
       if (!apiRef.current) {
         console.error('API aún no inicializada');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'API no inicializada',
+        });
         return;
       }
       try {
@@ -81,30 +85,105 @@ export default function ProfilePage() {
           throw new Error('Error al obtener el perfil del usuario');
         }
         setUser(response);
+        form.reset({
+          firstname: response.firstname,
+          lastname: response.lastname,
+          username: response.username,
+          email: response.email,
+          tel: response.tel,
+          pass: undefined, // Changed from '' to undefined
+        });
       } catch (error) {
         console.error('Hubo un error al cargar el perfil: ', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un error al cargar el perfil',
+        });
       }
     };
     getProfile();
-  }, [id]);
+  }, [id, form]);
 
   useEffect(() => {
     if (!user?.id) return;
 
+    const maxPage = Math.ceil(totalItems / itemsPerPage);
+    if (currentPage > maxPage && maxPage > 0) {
+      setCurrentPage(maxPage);
+      return;
+    }
+
     const fetchPurchaseHistory = async () => {
       try {
-        const purchaseData = await apiRef.current?.purchase.getUserPurchaseHistory(user.id);
-        if (!purchaseData) return;
-        setPurchases(purchaseData);
+        const res = await apiRef.current?.purchase.getUserPurchaseHistoryPaginated(
+          user.id,
+          currentPage,
+          itemsPerPage
+        );
+        if (!res) return;
+        setPurchases(res.items);
+        setTotalItems(res.total);
       } catch (error) {
         console.error('Error listado de compras: ', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al cargar el historial de compras',
+        });
       }
     };
 
     fetchPurchaseHistory();
-  }, [user]);
+  }, [user, currentPage, totalItems]);
 
-  if (!user) return;
+  const onSubmit = form.handleSubmit(async (values: ProfileType) => {
+    if (!apiRef.current || !user) {
+      console.error('API no inicializada o usuario no disponible');
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'API no inicializada o usuario no disponible',
+      });
+      return;
+    }
+    try {
+      const response = await apiRef.current.users.update(user.id, {
+        firstname: values.firstname,
+        lastname: values.lastname,
+        username: values.username,
+        email: values.email,
+        tel: values.tel,
+        ...(values.pass && { pass: values.pass }), // Only include pass if provided
+      });
+
+      if (!response) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al actualizar datos',
+        });
+        return;
+      }
+
+      setUser(response);
+      setEditMode(false);
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Perfil actualizado con éxito',
+      });
+    } catch (error) {
+      console.error('Error al guardar producto: ', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de red',
+        text: 'Error de red al guardar el producto',
+      });
+    }
+  });
+
+  if (!user) return <p>Cargando Perfil...</p>;
 
   const formatDate = (fecha: Date): string => {
     if (!fecha) return '';
@@ -124,113 +203,161 @@ export default function ProfilePage() {
             <span className={styles.name}>{user.username}</span>
           </div>
 
-          {editMode[user.id] ? (
-            <form>
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label htmlFor='fname'>Nombre</label><br />
-                  <input
-                    type='text'
-                    id='fname'
-                    value={editedProduct[user.id]?.firstname}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], firstname: e.target.value } }))}
+          {editMode ? (
+            <Form {...form}>
+              <form onSubmit={onSubmit} className={styles.form}>
+                <div className={styles.row}>
+                  <FormField
+                    control={form.control}
+                    name="firstname"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Nombre</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ingresa tu nombre" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastname"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Apellido</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ingresa tu apellido" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor='lname'>Apellido</label><br />
-                  <input
-                    type='text'
-                    id='lname'
-                    value={editedProduct[user.id]?.lastname}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], lastname: e.target.value } }))}
+                <div className={styles.row}>
+                  <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Nombre de Usuario</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Ingresa tu nombre de usuario" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Correo Electrónico</FormLabel>
+                        <FormControl>
+                          <Input type="email" {...field} placeholder="Ingresa tu email" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-              </div>
-
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label htmlFor='uname'>Nombre de Usuario</label><br />
-                  <input
-                    type='text'
-                    id='uname'
-                    value={editedProduct[user.id]?.username}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], username: e.target.value } }))}
+                <div className={styles.row}>
+                  <FormField
+                    control={form.control}
+                    name="pass"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Contraseña</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="password"
+                            {...field}
+                            placeholder="Ingresa nueva contraseña (opcional)"
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(e.target.value || undefined)} // Convert empty string to undefined
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="tel"
+                    render={({ field }) => (
+                      <FormItem className={styles.field}>
+                        <FormLabel>Número de teléfono</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            {...field}
+                            placeholder="Ingresa tu número de teléfono"
+                            value={field.value || ''}
+                            onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor='email'>Correo Electrónico</label><br />
-                  <input
-                    type='email'
-                    id='email'
-                    value={editedProduct[user.id]?.email}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], email: e.target.value } }))}
-                  />
+                <div className={styles.buttonRow}>
+                  <Button type="submit" className={styles.saveChanges}>
+                    Guardar
+                  </Button>
+                  <Button
+                    type="button"
+                    className={styles.cancel}
+                    onClick={() => setEditMode(false)}
+                  >
+                    Cancelar
+                  </Button>
                 </div>
-              </div>
-
-              <div className={styles.row}>
-                <div className={styles.field}>
-                  <label htmlFor='pass'>Contraseña</label><br />
-                  <input
-                    type='password'
-                    id='pass'
-                    value={editedProduct[user.id]?.pass ?? ''}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], pass: e.target.value } }))}
-                  />
-                </div>
-                <div className={styles.field}>
-                  <label htmlFor='tel'>Número de teléfono</label><br />
-                  <input
-                    type='tel'
-                    id='tel'
-                    value={editedProduct[user.id]?.tel ?? ''}
-                    onChange={(e) => setEditedProduct((prev) => ({ ...prev, [user.id]: { ...prev[user.id], tel: Number(e.target.value) } }))}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.buttonRow}>
-                <button type="button" className={styles.saveChanges} onClick={() => saveChanges(user.id)}>Guardar</button>
-                <button type="button" className={styles.cancel} onClick={() => setEditMode(prev => ({ ...prev, [user.id]: false }))}>Cancelar</button>
-              </div>
-            </form>
+              </form>
+            </Form>
           ) : (
             <div>
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Nombre</label>
-                  <span>{user.firstname}</span>
+                  <label htmlFor="profile-firstname">Nombre</label>
+                  <span id="profile-firstname">{user.firstname}</span>
                 </div>
                 <div className={styles.field}>
-                  <label>Apellido</label>
-                  <span>{user.lastname}</span>
+                  <label htmlFor="profile-lastname">Apellido</label>
+                  <span id="profile-lastname">{user.lastname}</span>
                 </div>
               </div>
-
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Nombre de Usuario</label>
-                  <span>{user.username}</span>
+                  <label htmlFor="profile-username">Nombre de Usuario</label>
+                  <span id="profile-username">{user.username}</span>
                 </div>
                 <div className={styles.field}>
-                  <label>Correo Electrónico</label>
-                  <span>{user.email}</span>
+                  <label htmlFor="profile-email">Correo Electrónico</label>
+                  <span id="profile-email">{user.email}</span>
                 </div>
               </div>
-
               <div className={styles.row}>
                 <div className={styles.field}>
-                  <label>Contraseña</label>
-                  <span>******</span>
+                  <label htmlFor="profile-password">Contraseña</label>
+                  <span id="profile-password" aria-label="Contraseña">
+                    ******
+                  </span>
                 </div>
                 <div className={styles.field}>
-                  <label>Número de teléfono</label>
-                  <span>{user.tel}</span>
+                  <label htmlFor="profile-tel">Número de teléfono</label>
+                  <span id="profile-tel">{user.tel || 'No especificado'}</span>
                 </div>
               </div>
-
               <div className={styles.buttonRow}>
-                <button type="button" className={styles.edit} onClick={() => editActivate(user)}>Editar</button>
+                <Button
+                  type="button"
+                  className={styles.edit}
+                  onClick={() => setEditMode(true)}
+                >
+                  Editar
+                </Button>
               </div>
             </div>
           )}
@@ -238,12 +365,12 @@ export default function ProfilePage() {
 
         <div className={styles.history}>
           <h2>Historial de Compras</h2>
-
           <div className={styles.purchaseTableWrapper}>
             <table className={styles.purchases}>
               <thead>
                 <tr>
                   <th>Título</th>
+                  <th>Tipo</th>
                   <th>Autor</th>
                   <th>Cantidad</th>
                   <th>Total</th>
@@ -259,17 +386,25 @@ export default function ProfilePage() {
                       const cantidad = item.amount;
                       const descuento = item.subscriptionDiscount / 100;
                       const total = precioU * cantidad;
-                      const totalN = total - (total * descuento);
-
+                      const totalN = total - total * descuento;
                       return (
                         <tr key={`${purchase.id}-${item.id_book}-${index}`}>
                           <td>{item.title}</td>
+                          <td>{item.virtual ? 'Virtual' : 'Físico'}</td>
                           <td>{item.author}</td>
                           <td>{cantidad}</td>
-                          <td>{totalN.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</td>
+                          <td>
+                            {totalN.toLocaleString('es-AR', {
+                              style: 'currency',
+                              currency: 'ARS',
+                            })}
+                          </td>
                           <td>{formatDate(new Date(purchase.purchaseDate))}</td>
                           <td>
-                            <AddBookReview id_user={purchase.id_user} id_book={item.id_book} />
+                            <AddBookReview
+                              id_user={purchase.id_user}
+                              id_book={item.id_book}
+                            />
                           </td>
                         </tr>
                       );
@@ -277,11 +412,30 @@ export default function ProfilePage() {
                   )
                 ) : (
                   <tr>
-                    <td colSpan={8} className={styles.noPurchases}>No hay compras realizadas</td>
+                    <td colSpan={8} className={styles.noPurchases}>
+                      No hay compras realizadas
+                    </td>
                   </tr>
                 )}
               </tbody>
             </table>
+            <div className={styles.pagination}>
+              <Button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+              >
+                Anterior
+              </Button>
+              <span>
+                Página {currentPage} de {Math.ceil(totalItems / itemsPerPage)}
+              </span>
+              <Button
+                disabled={currentPage >= Math.ceil(totalItems / itemsPerPage)}
+                onClick={() => setCurrentPage((p) => p + 1)}
+              >
+                Siguiente
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -28,3 +28,8 @@ export interface BookFileUpdate {
     price: number;
     content: File | string;
 }
+
+export interface PaginatedBooksResponse {
+    items: BookFileUpdate[];
+    total: number;
+}

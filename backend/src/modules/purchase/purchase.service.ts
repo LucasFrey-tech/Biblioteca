@@ -24,15 +24,15 @@ export class PurchasesService {
 
   constructor(
     @InjectRepository(Purchase)
-    private purchaseRepository: Repository<Purchase>,
+    private readonly purchaseRepository: Repository<Purchase>,
     @InjectRepository(ShoppingCartBook)
-    private cartRepository: Repository<ShoppingCartBook>,
+    private readonly cartRepository: Repository<ShoppingCartBook>,
     @InjectRepository(Book)
-    private booksRepository: Repository<Book>,
+    private readonly booksRepository: Repository<Book>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserSubscriptionDiscount)
-    private discountRepository: Repository<UserSubscriptionDiscount>,
+    private readonly discountRepository: Repository<UserSubscriptionDiscount>,
   ) { }
 
   /**
@@ -65,22 +65,26 @@ export class PurchasesService {
    * @param {number} limit - Cantidad de compras por página
    * @returns {Promise<PaginatedPurchaseDTO>} - Una promesa que resuelve con un objeto que contiene la lista de compras y el total
    */
-  async getAllPurchasesPaginated(page: number = 1, limit: number = 10): Promise<PaginatedPurchaseDTO> {
-    this.logger.log(`Obteniendo compras paginadas (página: ${page}, límite: ${limit})`);
+  async getAllPurchasesPaginated(page: number = 1, limit: number = 10, search: string = ''): Promise<PaginatedPurchaseDTO> {
+    this.logger.log(`Obteniendo compras paginadas (página: ${page}, límite: ${limit}, búsqueda: ${search})`);
 
     const skip = (page - 1) * limit;
-    const [purchases, total] = await this.purchaseRepository.findAndCount({
-      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
-      order: { purchaseDate: 'DESC' },
-      skip,
-      take: limit
-    });
+    const query = this.purchaseRepository.createQueryBuilder('purchase')
+      .leftJoinAndSelect('purchase.book', 'book')
+      .leftJoinAndSelect('book.author', 'author')
+      .leftJoinAndSelect('purchase.user', 'user')
+      .leftJoinAndSelect('user.userSubscriptions', 'userSubscriptions')
+      .leftJoinAndSelect('userSubscriptions.subscription', 'subscription')
+      .where('purchase.purchaseDate IS NOT NULL')
+      .orderBy('purchase.purchaseDate', 'DESC')
+      .skip(skip)
+      .take(limit);
 
-    if (!purchases.length) {
-      this.logger.log('No se encontraron compras en el sistema');
-      return new PaginatedPurchaseDTO([], 0);
+    if (search) {
+      query.andWhere('user.username ILIKE :search', { search: `%${search}%` });
     }
 
+    const [purchases, total] = await query.getManyAndCount();
     const groupedPurchases = await this.getGroupPurchases(purchases);
 
     return new PaginatedPurchaseDTO(groupedPurchases, total);
@@ -150,33 +154,18 @@ export class PurchasesService {
    * @param {number} idUser - ID del usuario a buscar
    * @returns {Promise<PurchaseDTO[] | null>} - Una promesa que resuelve con un arreglo de DTOs de las compras de ese usuario
    */
-  async getUserPurchaseHistory(idUser: number): Promise<PurchaseDTO[] | null> {
-    const user = await this.userRepository.findOne({ where: { id: idUser } });
-    if (!user) {
-      this.logger.log('Usuario No Encontrado');
-      return null;
-    }
-
-    const purchases = await this.purchaseRepository.find({
-      where: { user: { id: idUser } },
-      relations: [
-        'book',
-        'book.author',
-        'user',
-        'user.userSubscriptions',
-        'user.userSubscriptions.subscription',
-      ],
+  async getUserPurchaseHistoryPaginated(userId: number, page: number, limit: number): Promise<[PurchaseDTO[], number]> {
+    const [items, total] = await this.purchaseRepository.findAndCount({
+      where: { user: { id: userId } },
+      relations: ['book', 'book.author', 'user', 'user.userSubscriptions', 'user.userSubscriptions.subscription'],
+      skip: (page - 1) * limit,
+      take: limit,
       order: { purchaseDate: 'DESC' }
     });
 
-    if (typeof purchases === 'undefined' || !purchases.length) {
-      this.logger.log('Historial Vacío');
-      return null;
-    }
-
-    const groupedPurchases = await this.getGroupPurchases(purchases);
-
-    return groupedPurchases;
+    // Map Purchase entities to PurchaseDTOs
+    const purchaseDTOs: PurchaseDTO[] = await this.getGroupPurchases(items);
+    return [purchaseDTOs, total];
   }
 
   private async getGroupPurchases(purchases: Purchase[]): Promise<PurchaseDTO[]> {
@@ -199,16 +188,6 @@ export class PurchasesService {
         }
       }
 
-      const purchaseItem = new PurchaseItemDTO(
-        purchase.book.id,
-        purchase.book.title,
-        purchase.book.author.name,
-        purchase.book.image,
-        purchase.book.price,
-        purchase.virtual,
-        purchase.amount,
-        resDiscount
-      );
 
       const totalItem = purchase.book.price * purchase.amount * (1 - resDiscount / 100);
 
@@ -221,14 +200,16 @@ export class PurchasesService {
           purchase.user.username,
           [
             new PurchaseItemDTO(
-              purchase.book.id,
-              purchase.book.title,
-              purchase.book.author.name,
-              purchase.book.image,
-              purchase.book.price,
-              purchase.virtual,
-              purchase.amount,
-              resDiscount,
+              {
+                id_book: purchase.book.id,
+                title: purchase.book.title,
+                author: purchase.book.author.name,
+                image: purchase.book.image,
+                price: purchase.book.price,
+                virtual: purchase.virtual,
+                amount: purchase.amount,
+                subscriptionDiscount: resDiscount,
+              },
             ),
           ],
           new Date(purchase.purchaseDate),
@@ -237,16 +218,16 @@ export class PurchasesService {
         console.log(`Total inicial para fecha ${dateTime}: ${totalItem}`);
       } else {
         acc[dateTime].purchaseItems.push(
-          new PurchaseItemDTO(
-            purchase.book.id,
-            purchase.book.title,
-            purchase.book.author.name,
-            purchase.book.image,
-            purchase.book.price,
-            purchase.virtual,
-            purchase.amount,
-            resDiscount,
-          )
+          new PurchaseItemDTO({
+            id_book: purchase.book.id,
+            title: purchase.book.title,
+            author: purchase.book.author.name,
+            image: purchase.book.image,
+            price: purchase.book.price,
+            virtual: purchase.virtual,
+            amount: purchase.amount,
+            subscriptionDiscount: resDiscount,
+          })
         );
         acc[dateTime].total += totalItem;
         console.log(`Total actualizado para fecha ${dateTime}: ${acc[dateTime].total}`);

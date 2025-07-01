@@ -133,3 +133,11 @@
         justify-content: space-between;
     }
 }
+
+.inputSearch {
+    max-width: 400px;
+    margin: 20px auto 30px auto; /* Centrado con márgenes superior e inferior */
+    padding: 8px;
+    font-size: 1rem;
+    border-radius: 6px;
+}

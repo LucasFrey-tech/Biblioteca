@@ -34,23 +34,23 @@ export class BookCartDTO {
   @IsInt()
   amount: number;
 
-  constructor(
+  constructor(data: {
     id: number,
-    idBook:number,
+    idBook: number,
     title: string,
     author: string,
     image: string,
     price: number,
-    virtual:boolean,
+    virtual: boolean,
     amount: number,
-  ) {
-    this.id = id;
-    this.idBook = idBook;
-    this.title = title;
-    this.author = author;
-    this.image = image;
-    this.price = price;
-    this.virtual = virtual;
-    this.amount = amount;
+  }) {
+    this.id = data.id;
+    this.idBook = data.idBook;
+    this.title = data.title;
+    this.author = data.author;
+    this.image = data.image;
+    this.price = data.price;
+    this.virtual = data.virtual;
+    this.amount = data.amount;
   }
 }

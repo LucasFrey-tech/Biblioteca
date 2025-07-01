@@ -5,7 +5,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { SettingsService } from "../../../settings/settings.service";
 
-
 /**
  * Servicio que maneja la lógica de negocio para el carousel.
  */
@@ -14,25 +13,30 @@ export class CarouselService {
     private readonly logger = new Logger(CarouselDTO.name);
     constructor(
         private readonly settingsService: SettingsService,
-
         @InjectRepository(Carousel)
-        private carouselRepository: Repository<Carousel>,
+        private readonly carouselRepository: Repository<Carousel>,
     ) { }
 
     /**
      * Obtiene todos los carousel disponible
      * 
-     * @returns {Promise<CarouselDTO[]} - Una promesa que resuelve con un arreglo de DTOs de carousel.
+     * @returns {Promise<CarouselDTO[]>} - Una promesa que resuelve con un arreglo de DTOs de carousel.
      */
     async findAll(): Promise<CarouselDTO[]> {
         return this.carouselRepository.find({});
     }
 
-    async findOne(id: number): Promise<CarouselDTO | null> {
+    /**
+     * Obtiene un carousel por su ID
+     * 
+     * @param {number} id - ID del carousel a buscar
+     * @returns {Promise<CarouselDTO>} - Promesa que resuelve con el carousel encontrado
+     */
+    async findOne(id: number): Promise<CarouselDTO> {
         const carousel = await this.carouselRepository.findOne({ where: { id } });
     
         if (!carousel) {
-          throw new NotFoundException(`Carousel with ID ${id} not found`)
+            throw new NotFoundException(`Carousel with ID ${id} not found`);
         }
     
         this.logger.log('Carousel Recibido');
@@ -42,34 +46,40 @@ export class CarouselService {
     /**
      * Crea un nuevo carousel en el sistema.
      * 
-     * @param {CarouselDTO} body - Objeto de transferencia de datos con la información del carousel a crear. 
+     * @param {Partial<CarouselDTO>} body - Objeto de transferencia de datos con la información del carousel a crear. 
      * @returns {Promise<CarouselDTO>} - Promesa que resuelve con la entidad del carousel recién creada.
      */
     async create(body: Partial<CarouselDTO>): Promise<CarouselDTO> {
-        const author = this.carouselRepository.create(body);
-        return this.carouselRepository.save(author);
+        const carousel = this.carouselRepository.create(body);
+        return this.carouselRepository.save(carousel);
     }
 
     /**
      * Actualiza un carousel en el sistema.
      * 
      * @param {number} id - ID del carousel a actualizar
-     * @param {Partial<CarouselDTO>} updateData - DTO con los nuevos datos para el carousel.
-     * @returns {Promise<CarouselEntity[]>} - Promesa que resuelve con un arreglo del elemento actualizado
+     * @param {CarouselDTO} updateData - DTO con los nuevos datos para el carousel.
+     * @returns {Promise<CarouselDTO>} - Promesa que resuelve con el carousel actualizado
      */
-    async update(id: number, updateData: CarouselDTO) {
-        
-        const carousel = await this.carouselRepository.findOne({ where: {id} });
+    async update(id: number, updateData: CarouselDTO): Promise<CarouselDTO> {
+        const carousel = await this.carouselRepository.findOne({ where: { id } });
 
-        if(!carousel) return null;
+        if (!carousel) {
+            throw new NotFoundException(`Carousel with ID ${id} not found`);
+        }
 
-        carousel.idBook = updateData.idBook;
-        carousel.image = updateData.image
-        
+        // Actualizar solo los campos proporcionados
+        if (updateData.idBook !== undefined) {
+            carousel.idBook = updateData.idBook;
+        }
+        if (updateData.image !== undefined) {
+            carousel.image = updateData.image;
+        }
+
         await this.carouselRepository.save(carousel);
         
-        this.logger.log('Carrito Actualizado');
-        return this.carouselRepository.find({ where: { id: updateData.id } });
+        this.logger.log('Carousel Actualizado');
+        return carousel;
     }
 
     /**

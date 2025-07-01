@@ -54,5 +54,10 @@ export class CreateReviewDto {
     id_book: number,
     comment: string,
     rating: number,
-  ) { this.id_user = id_user, this.id_book = id_book, this.comment = comment, this.rating = rating }
+  ) {
+    this.id_user = id_user;
+    this.id_book = id_book;
+    this.comment = comment;
+    this.rating = rating;
+  }
 };

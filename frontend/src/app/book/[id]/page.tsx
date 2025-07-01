@@ -52,11 +52,22 @@ export default function BookDetail() {
           const api = new BaseApi(token);
           apiRef.current = api;
 
-          const userData = await api.users.getOne(Number(userId));
-          setUser(userData);
+          try {
+            const userData = await api.users.getOne(Number(userId));
+            setUser(userData);
+          } catch (userError) {
+            console.warn('No se pudo cargar información del usuario:', userError);
+            // Opcional: limpiar token si el usuario no existe
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+          }
 
-          const reviewsData = await api.review.getByBookId(bookId);
-          setReview(reviewsData);
+          try {
+            const reviewsData = await api.review.getByBookId(bookId);
+            setReview(reviewsData);
+          } catch (reviewError) {
+            console.warn('No se pudieron cargar las reviews:', reviewError);
+          }
         } else {
           const api = new BaseApi();
           const reviewsData = await api.review.getByBookId(bookId);
@@ -64,7 +75,7 @@ export default function BookDetail() {
         }
       } catch (error) {
         console.error('Error al cargar los datos', error);
-        setError('Error al cargar los datos.');
+        setError(error instanceof Error ? error.message : 'Error desconocido al cargar los datos');
       } finally {
         setLoading(false);
       }

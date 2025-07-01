@@ -8,28 +8,25 @@ interface BooksDisplayerProps {
     books: BookRecommendationDTO[];
 }
 
-export default function BooksDisplayerFlexGrid({ title, rows, books }: BooksDisplayerProps): React.JSX.Element {
-    const booksXRow = Math.ceil(books.length / rows);
+export default function BooksDisplayerFlexGrid({ title, books }: BooksDisplayerProps): React.JSX.Element {
     return (
         <div className={Styles.container}>
             <div className={Styles.title}>
                 <h3>{title}</h3>
-                <hr></hr>
+                <hr />
             </div>
             <div className={Styles.contentContainer}>
-                {Array.from({ length: rows }).map((_, i) => (
-                    <div key={i} id={`${i}`} className={Styles.content}>
-                        {books.slice(i * booksXRow, i === 0 ? booksXRow : booksXRow * (i + 1)).map((book) => {
-                            return <BookCardWithColumnInfo
-                                key={book.id}
-                                id={book.id}
-                                title={book.title}
-                                writer={book.author}
-                                img={book.image}
-                            />
-                        })}
-                    </div>
-                ))}
+                <div className={Styles.content}>
+                    {books.map((book) => (
+                        <BookCardWithColumnInfo
+                            key={book.id}
+                            id={book.id}
+                            title={book.title}
+                            writer={book.author}
+                            img={book.image}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

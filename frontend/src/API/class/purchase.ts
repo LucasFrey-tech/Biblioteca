@@ -9,8 +9,8 @@ export class Purchases extends Crud<Purchase> {
         this.endPoint = 'purchases';
     }
 
-    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Purchase>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+    async getAllPaginated(page: number = 1, limit: number = 10, search: string = ''): Promise<PaginatedResponse<Purchase>> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}&search=${search}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
@@ -76,8 +76,8 @@ export class Purchases extends Crud<Purchase> {
         }
     }
 
-    async getUserPurchaseHistory(idUser: number): Promise<Purchase[] | null> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${idUser}`, {
+    async getUserPurchaseHistoryPaginated(idUser: number, page = 1, limit = 10): Promise<{ items: Purchase[]; total: number } | null> {
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/${idUser}/paginated?page=${page}&limit=${limit}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
@@ -92,11 +92,18 @@ export class Purchases extends Crud<Purchase> {
         if (!text) return null;
 
         const data = JSON.parse(text);
-        if (!data || !Array.isArray(data) || data.length === 0) return null;
 
-        return data.map((item: Purchase) => ({
+        if (!data || !Array.isArray(data.items)) {
+            console.error("La respuesta no tiene items válidos:", data);
+            return null;
+        }
+
+        return {
+            items: data.items.map((item: Purchase) => ({
             ...item,
             purchaseDate: new Date(item.purchaseDate),
-        }));
+            })),
+            total: data.total,
+        };
     }
 }

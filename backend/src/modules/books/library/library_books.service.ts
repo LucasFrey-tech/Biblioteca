@@ -12,11 +12,11 @@ export class LibraryBooksService {
 
   constructor(
     @InjectRepository(UserVirtualBooks)
-    private userVirtualBooksRepository: Repository<UserVirtualBooks>,
+    private readonly userVirtualBooksRepository: Repository<UserVirtualBooks>,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(Book)
-    private bookRepository: Repository<Book>,
+    private readonly bookRepository: Repository<Book>,
   ) { }
 
   async findAllByUserPaginated(idUser: number, page: number = 1, limit: number = 10): Promise<{ items: LibraryBookDTO[]; total: number }> {

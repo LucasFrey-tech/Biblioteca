@@ -204,6 +204,37 @@
   color: black;
 }
 
+.pagination {
+  display: flex;
+  justify-self: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 20px;
+  background: linear-gradient(to bottom, #ff2100, #ff7500, #ffda00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: #0070f3;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: 600;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .info {

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength, IsOptional } from 'class-validator';
+import { IsBoolean, IsInt, IsString, IsArray, Min, IsOptional } from 'class-validator';
 
 /**
  * DTO para la creación de un nuevo libro.
@@ -70,32 +70,5 @@ export class CreateBookDTO {
   @IsInt({ each: true })
   genre: number[];
 
-  /**
-   * Constructor del DTO.
-   */
-  constructor(
-    title: string,
-    author_id: number,
-    description: string,
-    anio: number,
-    isbn: string,
-    image: string,
-    stock: number,
-    subscriber_exclusive: boolean,
-    price: number,
-    isActive: boolean,
-    genre: number[]
-  ) {
-    this.title = title;
-    this.author_id = author_id;
-    this.description = description;
-    this.anio = anio;
-    this.isbn = isbn;
-    this.image = image;
-    this.stock = stock;
-    this.subscriber_exclusive = subscriber_exclusive;
-    this.price = price;
-    this.isActive = isActive;
-    this.genre = genre;
-  }
+  // No explicit constructor needed; properties will be populated automatically.
 }

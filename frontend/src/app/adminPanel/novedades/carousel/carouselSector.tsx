@@ -13,31 +13,65 @@ import { BaseApi } from "@/API/baseApi";
 import { CarouselItemDTO } from '@/API/types/carousel.dto';
 import BookSelector from '../bookSelector';
 import AddCarouselDialog from "@/components/pages/AddCarousel";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { carouselSchema, CarouselType } from "@/validations/carouselSchema";
 
 export default function CarouselPanel(): React.JSX.Element {
     const [carouselItems, setCarouselItems] = useState<CarouselItemDTO[]>([]);
     const [itemOpenIds, setItemOpenIds] = useState<number[]>([]);
     const [search, setSearch] = useState('');
-    const apiRef = useRef(new BaseApi());
-    const [tempImages, setTempImages] = useState<{ [key: number]: File | null }>({});
-    const [editState, setEditState] = useState<{
-        [key: number]: {
-            editMode: boolean;
-            formData: CarouselItemDTO;
-			tempImages?: File;
-        };
-    }>({});
+    const [editItemId, setEditItemId] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
+    const apiRef = useRef(new BaseApi());
+
+    const form = useForm<CarouselType>({
+        resolver: zodResolver(carouselSchema),
+        defaultValues: {
+            idBook: 0,
+            image: undefined,
+        },
+    });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const itemsData = await apiRef.current.carousel.getAll();
+                setCarouselItems(itemsData);
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudieron cargar los items del carrusel',
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
 
     const startEdit = (item: CarouselItemDTO) => {
-        setEditState(prev => ({
-            ...prev,
-			tempImages: undefined,
-            [item.id]: {
-                editMode: true,
-                formData: { ...item }
-            }
-        }));
+        setEditItemId(item.id);
+        form.reset({
+            idBook: item.idBook,
+            image: item.image,
+        });
+    };
+
+    const cancelEdit = () => {
+        setEditItemId(null);
+        form.reset();
     };
 
     const eliminarItem = async (itemId: number) => {
@@ -82,113 +116,47 @@ export default function CarouselPanel(): React.JSX.Element {
         }
     };
 
-    const handleItemChange = (itemId: number, field: string, value: string | number) => {
-        setEditState(prev => {
-            const itemState = prev[itemId];
-            if (!itemState) return prev;
-            return {
-                ...prev,
-                [itemId]: {
-                    ...itemState,
-                    formData: {
-                        ...itemState.formData,
-                        [field]: value
-                    }
-                }
-            };
-        });
-    };
-
     const saveChanges = async (itemId: number) => {
-        const itemState = editState[itemId];
-        if (!itemState) {
-            Swal.fire("Error", "No hay estado de edición", "error");
+        if (!form.formState.isValid) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Por favor, corrige los errores en el formulario',
+            });
             return;
         }
-		
-		const imageToSend = tempImages[itemId] ?? itemState.formData.image;
+
         try {
-            // Preparar los datos exactamente como los espera tu API
+            const values = form.getValues();
             const updateData: Partial<CarouselItemDTO> = {
-                idBook: itemState.formData.idBook
+                idBook: values.idBook,
+                image: values.image instanceof File ? values.image : values.image || undefined,
             };
 
-            // Solo incluir la imagen si hay una nueva
-            if (tempImages[itemId]) {
-                updateData.image = tempImages[itemId] as File;
-            } else {
-                // Mantener referencia a la imagen existente
-                updateData.image = itemState.formData.image;
-            }
+            const updatedItem = await apiRef.current.carousel.update(itemId, updateData);
 
-            // Debug: Verificar datos antes de enviar
-            console.log('Datos a enviar:', {
-                idBook: updateData.idBook,
-                image: updateData.image instanceof File ? 'Nueva imagen' : 'Imagen existente'
-            });
-
-            // Enviar directamente el objeto como lo hace tu API
-            const updatedItem = await apiRef.current.carousel.update(itemId, 
-				{
-					...editState,
-					image: imageToSend
-				}
-			);
-
-            // Actualizar estado
             setCarouselItems(prev => prev.map(item =>
                 item.id === itemId ? updatedItem : item
             ));
 
-            setEditState(prev => ({
-                ...prev,
-                [itemId]: { ...prev[itemId], editMode: false, tempImages: undefined }
-            }));
-
-            setTempImages(prev => {
-                const newTemp = { ...prev };
-                delete newTemp[itemId];
-                return newTemp;
+            setEditItemId(null);
+            form.reset();
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Cambios guardados',
+                timer: 1500,
+                showConfirmButton: false,
             });
-
-            Swal.fire("Éxito", "Cambios guardados", "success");
         } catch (error) {
-            console.error('Error detallado:', error);
-            Swal.fire("Error", "No se pudo guardar", "error");
+            console.error('Error al guardar cambios:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo guardar el item',
+            });
         }
     };
-
-    const cancelEdit = (itemId: number) => {
-        setEditState(prev => ({
-            ...prev,
-            [itemId]: { ...prev[itemId], editMode: false }
-        }));
-        setTempImages(prev => {
-            const copy = { ...prev };
-            delete copy[itemId];
-            return copy;
-        });
-    };
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const itemsData = await apiRef.current.carousel.getAll();
-                setCarouselItems(itemsData);
-            } catch (error) {
-                console.error("Error al obtener datos:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'No se pudieron cargar los items del carrusel',
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
 
     const toggleItemOpen = (id: number) => {
         setItemOpenIds(prev =>
@@ -200,12 +168,12 @@ export default function CarouselPanel(): React.JSX.Element {
         setCarouselItems(prev => [newItem, ...prev]);
     };
 
-    const getImageUrl = (item: CarouselItemDTO, tempImage: File | null | undefined) => {
-        if (tempImage) {
+    const getImageUrl = (item: CarouselItemDTO, tempImage: File | string | undefined) => {
+        if (tempImage instanceof File) {
             return URL.createObjectURL(tempImage);
         }
-        if (typeof item.image === 'string' && item.image) {
-            return item.image;
+        if (typeof tempImage === 'string' && tempImage) {
+            return tempImage;
         }
         return '/libros/placeholder.png';
     };
@@ -230,12 +198,8 @@ export default function CarouselPanel(): React.JSX.Element {
                     .filter(item => item?.id?.toString()?.toLowerCase()?.includes(search.toLowerCase()))
                     .sort((a, b) => (b?.id || 0) - (a?.id || 0))
                     .map((item) => {
-                        const itemState = editState[item.id] || {
-                            editMode: false,
-                            formData: { ...item }
-                        };
-                        const tempImage = tempImages[item.id];
-                        const imageUrl = getImageUrl(item, tempImage || undefined);
+                        const isEditing = editItemId === item.id;
+                        const imageUrl = getImageUrl(item, isEditing ? form.getValues('image') : item.image);
 
                         return (
                             <div key={item.id} className={styles.bookCard}>
@@ -246,48 +210,74 @@ export default function CarouselPanel(): React.JSX.Element {
 
                                 {itemOpenIds.includes(item.id) && (
                                     <div className={styles.bookDetails}>
-                                        {itemState.editMode ? (
-                                            <>
-                                                <Label>Libro asociado:</Label>
-                                                <BookSelector
-                                                    id={item.id}
-                                                    idBook={itemState.formData.idBook}
-                                                    onBookIdChange={(id, idBook) => handleItemChange(id, 'idBook', idBook)}
-                                                />
-
-                                                <Label>Imagen:</Label>
-                                                <Image
-                                                    src={imageUrl}
-                                                    alt="Imagen del carrusel"
-                                                    width={300}
-                                                    height={150}
-                                                    unoptimized
-                                                    onLoad={() => {
-                                                        if (tempImage) {
-                                                            URL.revokeObjectURL(imageUrl);
-                                                        }
-                                                    }}
-                                                />
-
-                                                <DragAndDrop onFileDrop={file => {
-                                                    setTempImages(prev => ({ ...prev, [item.id]: file }));
-                                                }} />
-
-                                                <div className={styles.editButtons}>
-                                                    <Button
-                                                        className={styles.botonEditar}
-                                                        onClick={() => saveChanges(item.id)}
-                                                    >
-                                                        Guardar
-                                                    </Button>
-                                                    <Button
-                                                        className={styles.botonEditar}
-                                                        onClick={() => cancelEdit(item.id)}
-                                                    >
-                                                        Cancelar
-                                                    </Button>
-                                                </div>
-                                            </>
+                                        {isEditing ? (
+                                            <Form {...form}>
+                                                <form id={`carousel-form-${item.id}`} onSubmit={(e) => { e.preventDefault(); saveChanges(item.id); }}>
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="idBook"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Libro asociado:</FormLabel>
+                                                                <FormControl>
+                                                                    <BookSelector
+                                                                        id={item.id}
+                                                                        idBook={field.value}
+                                                                        onBookIdChange={(id, idBook) => field.onChange(idBook)}
+                                                                    />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    <FormField
+                                                        control={form.control}
+                                                        name="image"
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel>Imagen:</FormLabel>
+                                                                <FormControl>
+                                                                    <div className="flex flex-col gap-2"> {/* Replaced Fragment with div */}
+                                                                        <Image
+                                                                            src={imageUrl}
+                                                                            alt="Imagen del carrusel"
+                                                                            width={300}
+                                                                            height={150}
+                                                                            unoptimized
+                                                                            onLoad={() => {
+                                                                                if (field.value instanceof File) {
+                                                                                    URL.revokeObjectURL(imageUrl);
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <DragAndDrop
+                                                                            onFileDrop={(file) => field.onChange(file)}
+                                                                        />
+                                                                    </div>
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                    <div className={styles.editButtons}>
+                                                        <Button
+                                                            type="submit"
+                                                            className={styles.botonEditar}
+                                                            disabled={form.formState.isSubmitting}
+                                                        >
+                                                            Guardar
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            className={styles.botonEditar}
+                                                            onClick={() => cancelEdit()}
+                                                            disabled={form.formState.isSubmitting}
+                                                        >
+                                                            Cancelar
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            </Form>
                                         ) : (
                                             <>
                                                 <p><strong>ID Libro:</strong> {item.idBook}</p>

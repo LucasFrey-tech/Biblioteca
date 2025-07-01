@@ -1,6 +1,6 @@
 import { Book } from 'src/entidades/book.entity';
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, MinLength, IsOptional } from 'class-validator';
+import { IsBoolean, IsInt, IsString, IsArray, IsNumber, Min, IsOptional } from 'class-validator';
 import { Author } from 'src/entidades/author.entity';
 import { Genre } from 'src/entidades/genre.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -128,11 +128,11 @@ export class BookDTO {
   /**
    * Constructor del DTO.
    */
-  constructor(
+  constructor(params: {
     id: number,
     title: string,
-    author: string,
-    author_id: number | undefined,
+    author?: string,
+    author_id?: number,
     description: string,
     genre: Genre[],
     anio: number,
@@ -142,20 +142,20 @@ export class BookDTO {
     subscriber_exclusive: boolean,
     price: number,
     is_active: boolean,
-  ) {
-    this.id = id;
-    this.title = title;
-    this.author = author;
-    this.author_id = author_id;
-    this.description = description;
-    this.genre = genre;
-    this.anio = anio;
-    this.isbn = isbn;
-    this.image = image;
-    this.stock = stock;
-    this.subscriber_exclusive = subscriber_exclusive;
-    this.price = price;
-    this.is_active = is_active;
+  }) {
+    this.id = params.id;
+    this.title = params.title;
+    this.author = params.author;
+    this.author_id = params.author_id;
+    this.description = params.description;
+    this.genre = params.genre;
+    this.anio = params.anio;
+    this.isbn = params.isbn;
+    this.image = params.image;
+    this.stock = params.stock;
+    this.subscriber_exclusive = params.subscriber_exclusive;
+    this.price = params.price;
+    this.is_active = params.is_active;
   }
 
   /**
@@ -185,20 +185,20 @@ export class BookDTO {
    * @returns DTO del libro
    */
   static BookEntity2BookDTO(book: Book): BookDTO {
-    return new BookDTO(
-      book.id,
-      book.title,
-      book.author?.name || "",
-      book.author?.id,
-      book.description,
-      book.genres? book.genres:[],
-      book.anio,
-      book.isbn,
-      book.image,
-      book.stock,
-      book.subscriber_exclusive,
-      book.price,
-      book.is_active,
-    );
+    return new BookDTO({
+      id: book.id,
+      title: book.title,
+      author: book.author?.name || "",
+      author_id: book.author?.id,
+      description: book.description,
+      genre: book.genres ?? [],
+      anio: book.anio,
+      isbn: book.isbn,
+      image: book.image,
+      stock: book.stock,
+      subscriber_exclusive: book.subscriber_exclusive,
+      price: book.price,
+      is_active: book.is_active,
+    });
   }
 }

@@ -12,7 +12,7 @@ export class GenresService {
   private readonly logger = new Logger(GenresService.name);
   constructor(
     @InjectRepository(Genre)
-    private genreRepository: Repository<Genre>,
+    private readonly genreRepository: Repository<Genre>,
   ) { }
 
   /**

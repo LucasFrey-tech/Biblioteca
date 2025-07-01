@@ -12,13 +12,13 @@ export class UserSubscriptionService {
 
   constructor(
     @InjectRepository(UserSubscription)
-    private userSubscriptionRepository: Repository<UserSubscription>,
+    private readonly userSubscriptionRepository: Repository<UserSubscription>,
 
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
 
     @InjectRepository(Subscription)
-    private subscriptionRepository: Repository<Subscription>,
+    private readonly subscriptionRepository: Repository<Subscription>,
   ) { }
 
   async createSubscription(userId: number, startDate: Date, endDate: Date): Promise<UserSubscription> {

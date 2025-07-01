@@ -15,20 +15,20 @@ export class CatalogueBooksService {
      */
     async findAll(): Promise<CatalogueBookDTO[]> {
         const books = await this.booksService.findAll();
-
-        const catalogueBooks = books.map(book => new CatalogueBookDTO(
-            book.id,
-            book.title,
-            book.author ?? "",
-            book.author_id ?? book.author_id,
-            book.description,
-            book.genre,
-            book.anio,
-            book.image,
-            book.stock,
-            book.subscriber_exclusive,
-            book.price
-        ));
+        
+        const catalogueBooks = books.map(book => new CatalogueBookDTO({
+            id: book.id,
+            title: book.title,
+            author: book.author ?? "",
+            author_id: book.author_id ?? book.author_id,
+            description: book.description,
+            genre: book.genre,
+            anio: book.anio,
+            image: book.image,
+            stock: book.stock,
+            subscriber_exclusive: book.subscriber_exclusive,
+            price: book.price
+        }));
 
         this.logger.log('Listado de Libros del Catálogo Obtenido (sin paginación)');
         return catalogueBooks;
@@ -44,19 +44,19 @@ export class CatalogueBooksService {
     async findAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedCatalogueBooksDTO> {
         const { books, total } = await this.booksService.findAllPaginated(page, limit);
 
-        const catalogueBooks = books.map(book => new CatalogueBookDTO(
-            book.id,
-            book.title,
-            book.author ?? "",
-            book.author_id ?? book.author_id,
-            book.description,
-            book.genre,
-            book.anio,
-            book.image,
-            book.stock,
-            book.subscriber_exclusive,
-            book.price
-        ));
+        const catalogueBooks = books.map(book => new CatalogueBookDTO({
+            id: book.id,
+            title: book.title,
+            author: book.author ?? "",
+            author_id: book.author_id ?? book.author_id,
+            description: book.description,
+            genre: book.genre,
+            anio: book.anio,
+            image: book.image,
+            stock: book.stock,
+            subscriber_exclusive: book.subscriber_exclusive,
+            price: book.price
+        }));
 
         this.logger.log('Listado de Libros del Catálogo Obtenido (paginada)');
         return { books: catalogueBooks, total };
@@ -77,18 +77,18 @@ export class CatalogueBooksService {
         }
 
         this.logger.log('Libro Encontrado');
-        return new CatalogueBookDTO(
-            book.id,
-            book.title,
-            book.author ?? '',
-            book.author_id ?? book.author_id,
-            book.description,
-            book.genre,
-            book.anio,
-            book.image,
-            book.stock,
-            book.subscriber_exclusive,
-            book.price
-        );
+        return new CatalogueBookDTO({
+            id: book.id,
+            title: book.title,
+            author: book.author ?? '',
+            author_id: book.author_id ?? book.author_id,
+            description: book.description,
+            genre: book.genre,
+            anio: book.anio,
+            image: book.image,
+            stock: book.stock,
+            subscriber_exclusive: book.subscriber_exclusive,
+            price: book.price
+        });
     }
 }
