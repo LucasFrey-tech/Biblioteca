@@ -67,6 +67,6 @@ describe('PurchasesService', () => {
   });
 
   it('should have a method getPurchaseHistory()', async () => {
-    expect(service.getUserPurchaseHistory).toBeTruthy();
+    expect(service.getUserPurchaseHistoryPaginated).toBeTruthy();
   });
 });

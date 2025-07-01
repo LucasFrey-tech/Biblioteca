@@ -88,37 +88,33 @@
       "ts"
     ],
     "rootDir": ".",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1",
+      "^test/(.*)$": "<rootDir>/test/$1"
+    },
     "testRegex": [
-      ".*\\.spec\\.ts$",
       ".*\\.test\\.ts$"
     ],
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "src/**/*.{ts,js}",
+      "src/modules/**/*.{ts,js}",
+      "!src/modules/**/*.dto.{ts,js}",
+      "!src/modules/**/*.module.{ts,js}",
       "!src/**/*.spec.{ts,js}",
       "!src/**/*.test.{ts,js}",
-      "!src/**/__tests__/**"
+      "!src/**/__tests__/**",
+      "!src/app.**.**",
+      "!src/modules/**/dto",
+      "!src/modules/**/DTO",
+      "!src/modules/**/**/dto",
+      "!src/index.ts",
+      "!src/logger/logger.ts",
+      "!src/main.ts"
     ],
     "coverageDirectory": "../coverage",
-    "coveragePathIgnorePatterns": [
-      ".json$",
-      ".md$",
-      "mjs$",
-      ".gitignore$",
-      ".prettierrc$",
-      ".js$",
-      ".d.ts$",
-      ".module.ts$",
-      ".mock.ts",
-      "app.controller.ts",
-      "app.service.ts",
-      "main.ts",
-      "index.ts",
-      ".entity.ts",
-      ".dto.ts"
-    ],
+    "coverageReporters": ["lcov", "text"],
     "testEnvironment": "node"
   }
 }

@@ -1,6 +1,6 @@
 import { UserSubscriptionController } from '../../src/modules/subscriptions/users_subscriptions/subscription_user.controller';
 import { UserSubscriptionService } from '../../src/modules/subscriptions/users_subscriptions/subscription_user.service';
-import { UserSubscriptionDTO } from '../../src/modules/subscriptions/users_subscriptions/user_subscription.dto';
+import { UserSubscriptionDTO } from '../../src/modules/subscriptions/users_subscriptions/dto/user_subscription.dto';
 import { UserSubscription } from '../../src/entidades/subscription_user.entity';
 
 describe('UserSubscriptionController', () => {
