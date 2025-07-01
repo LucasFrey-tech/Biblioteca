@@ -61,19 +61,21 @@ export class Books extends Crud<Book> {
         return data;
     }
 
-    async getBooksWithGenrePaginated(idGenre: number, page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-        const idStr = idGenre.toString();
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genre/${idStr}?page=${page}&limit=${limit}`, {
+    async getBooksWithGenresPaginated(genreIds: number[], page = 1, limit = 10): Promise<PaginatedResponse<Book>> {
+        const genreQuery = genreIds.join(',');
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/with_genres?genres=${genreQuery}&page=${page}&limit=${limit}`, {
             method: 'GET',
             headers: this.getHeaders(),
         });
+
         if (!res.ok) {
             const errorDetails = await res.text();
-            throw new Error(`Error al obtener libros paginados por género (${res.status}): ${errorDetails}`);
+            throw new Error(`Error al obtener libros por géneros múltiples (${res.status}): ${errorDetails}`);
         }
+
         const data = await res.json();
         return {
-            items: data.books || data.items || [], // Mapear 'books' o 'items' a 'items'
+            items: data.books || [],
             total: data.total || 0
         };
     }
