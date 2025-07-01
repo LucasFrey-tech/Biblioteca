@@ -58,7 +58,7 @@ describe('BooksService', () => {
   });
 
   it('findAllWithGenre should filter by genre', async () => {
-    expect(service.findAllWithGenre).toBeTruthy();
+    expect(service.findAllWithGenres).toBeTruthy();
     // const result = await service.findAllWithGenre(mockGenre1.id);
     // expect(mockBooksRepository.find).toHaveBeenCalledWith({  where: {  is_active: true }, relations: ['genres', 'author'] });
     // expect(result).toEqual(mockDtoBooksWithGenreAccion);

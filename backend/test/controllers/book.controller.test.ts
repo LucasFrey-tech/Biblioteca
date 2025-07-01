@@ -24,7 +24,7 @@ describe('BooksController', () => {
   });
 
   it('should have a method getBooksWithGenre()', async () => {
-    expect(controller.getBooksWithGenre).toBeTruthy()
+    expect(controller.getBooksWithGenres).toBeTruthy()
     // expect(typeof controller.getBooksWithGenre).toBe('function');
     // const result = await controller.getBooksWithGenre(1);
     // expect(Array.isArray(result)).toBe(true);
