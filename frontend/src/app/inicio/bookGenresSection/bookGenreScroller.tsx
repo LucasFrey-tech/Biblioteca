@@ -17,7 +17,7 @@ export default function BooksGenreScroller({ genreId, name, booksAmount }: Books
     useEffect(() => {
     async function getCarouselItems() {
         try {
-            const response = await apiRef.current.books.getBooksWithGenrePaginated(genreId, 1, booksAmount);
+            const response = await apiRef.current.books.getBooksWithGenresPaginated([genreId], 1, booksAmount);
 
             const booksArray = response.items || [];
 

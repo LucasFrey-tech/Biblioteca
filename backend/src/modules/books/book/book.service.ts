@@ -75,21 +75,30 @@ export class BooksService {
    * @param {number} limit - Cantidad de libros por página
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllWithGenre(genreId: number, page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+  async findAllWithGenres(genreIds: number[], page = 1, limit = 10): Promise<{ books: BookDTO[], total: number }> {
     const skip = (page - 1) * limit;
-    const [books, total] = await this.booksRepository
+
+    const query = this.booksRepository
       .createQueryBuilder('book')
       .leftJoinAndSelect('book.genres', 'genres')
       .leftJoinAndSelect('book.author', 'author')
-      .where('book.is_active = :isActive', { isActive: true })
-      .andWhere('genres.id = :genreId', { genreId })
-      .skip(skip)
-      .take(limit)
-      .getManyAndCount();
+      .where('book.is_active = :isActive', { isActive: true });
 
-    const result = books.map((book) => BookDTO.BookEntity2BookDTO(book));
+    genreIds.forEach((id, index) => {
+      query.andWhere(
+        `EXISTS (
+          SELECT 1 FROM book_genres bg
+          WHERE bg.id_book = book.id AND bg.id_genre = :genreId${index}
+        )`,
+        { [`genreId${index}`]: id }
+      );
+    });
 
-    this.logger.log(`Lista de libros recibidos para género ${genreId} (paginada)`);
+    const [books, total] = await query.skip(skip).take(limit).getManyAndCount();
+
+    const result = books.map(book => BookDTO.BookEntity2BookDTO(book));
+
+    this.logger.log(`Lista de libros filtrados para géneros: ${genreIds.join(', ')} (paginada)`);
     return { books: result, total };
   }
 

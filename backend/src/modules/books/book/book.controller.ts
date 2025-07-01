@@ -54,18 +54,27 @@ export class BooksController {
    * @param {number} limit - Cantidad de libros por página
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  @Get('/with_genre/:id')
-  @ApiOperation({ summary: 'Listar Todos los Libros de un mismo género.' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
-  @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
-  @ApiResponse({ status: 200, description: 'Lista de Todos los Libros de un mismo género.', type: Object })
-  async getBooksWithGenre(
-    @Param('id', ParseIntPipe) id: number,
-    @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
-    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10
+  @Get('/with_genres')
+  @ApiOperation({ summary: 'Listar libros que pertenecen a TODOS los géneros seleccionados' })
+  @ApiQuery({ name: 'genres', type: String, required: true, description: 'IDs de géneros separados por coma', example: '1,2,3' })
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  @ApiResponse({ status: 200, description: 'Lista de libros con TODOS los géneros seleccionados', type: Object })
+  async getBooksWithGenres(
+    @Query('genres') genres: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page = 1,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit = 10,
   ): Promise<{ books: BookDTO[], total: number }> {
-    return this.booksService.findAllWithGenre(id, page, limit);
+    const genreIds = genres
+      .split(',')
+      .map((id) => parseInt(id.trim()))
+      .filter((id) => !isNaN(id));
+
+    if (genreIds.length === 0) {
+      throw new BadRequestException('Debe proporcionar al menos un género válido');
+    }
+
+    return this.booksService.findAllWithGenres(genreIds, page, limit);
   }
 
   /**

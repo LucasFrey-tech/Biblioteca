@@ -59,7 +59,7 @@ export default function BookPage() {
             let resBooks: PaginatedResponse<BookCatalogo> | undefined;
 
             if (selectedGenres.length > 0) {
-                resBooks = await apiRef.current?.books.getBooksWithGenrePaginated(selectedGenres[0], page, limit);
+                resBooks = await apiRef.current?.books.getBooksWithGenresPaginated(selectedGenres, page, limit);
             } else if (selectedAuthors.length > 0) {
                 resBooks = await apiRef.current?.books.getBooksByAuthorPaginated(selectedAuthors[0], page, limit);
             } else {
@@ -90,7 +90,7 @@ export default function BookPage() {
         setSelectedGenres((prev) =>
             prev.includes(genreId)
                 ? prev.filter((id) => id !== genreId)
-                : [genreId] // Solo permitimos un género a la vez para simplificar
+                : [...prev, genreId] // Solo permitimos un género a la vez para simplificar
         );
         setPage(1); // Reiniciar a la primera página al cambiar filtros
     };
