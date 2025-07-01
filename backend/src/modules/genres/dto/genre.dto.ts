@@ -12,7 +12,7 @@ export class PaginatedGenresDTO {
      * @type { Genre[] }
      */
     @ApiProperty({ type: [Genre], description: 'Lista de géneros' }) 
-    genres: Genre[];
+    items: Genre[];
     
     /**
      * Total de géneros disponibles

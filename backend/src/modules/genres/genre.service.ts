@@ -41,7 +41,7 @@ export class GenresService {
     });
 
     this.logger.log('Lista de Géneros Obtenida (paginada)');
-    return { genres, total };
+    return { items: genres, total };
   }
 
   /**
