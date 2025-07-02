@@ -39,9 +39,17 @@ describe('BookReviewsService', () => {
 
   describe('findAll', () => {
     it('should return all reviews', async () => {
+      await service.findAll()
+      expect(mockReviewsRepository.find).toHaveBeenCalled()
       expect(service.findAll).toBeTruthy()
-      // const result = await service.findAll();
-      // expect(result).toEqual(mockReviews);
+    });
+  });
+
+  describe('findAllPaginated', () => {
+    it('should return reviews paginated', async () => {
+      await service.findAllPaginated()
+      expect(mockReviewsRepository.findAndCount).toHaveBeenCalled()
+      expect(service.findAllPaginated).toBeTruthy()
     });
   });
 
@@ -66,6 +74,22 @@ describe('BookReviewsService', () => {
       const result = await service.findReviewsByBookId(searchReviewBookId);
       expect(repo.find).toHaveBeenCalledWith({ where: { book: { id: searchReviewBookId } }, relations: ['user'] });
       expect(result).toEqual(mockReviewDtosSearchByBookId);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a review', async () => {
+      await service.update(1,{
+        id: 1,
+        id_user: 1,
+        id_book: 1,
+        username: 'username',
+        comment: 'comment',
+        rating: 5,
+        reviewDate: 'hoy'
+      })
+      expect(mockReviewsRepository.update).toHaveBeenCalled()
+      expect(service.update).toBeTruthy()
     });
   });
 

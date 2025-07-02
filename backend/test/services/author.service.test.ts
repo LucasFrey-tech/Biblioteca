@@ -31,10 +31,10 @@ describe('AuthorService', () => {
 
   describe('findAll', () => {
     it('should return all authors', async () => {
+      const result = await service.findAll();
       expect(service.findAll).toBeTruthy()
-      // const result = await service.findAll();
-      // expect(mockAuthorsRepository.find).toHaveBeenCalledWith({});
-      // expect(result).toEqual(mockAuthors);
+      expect(mockAuthorsRepository.find).toHaveBeenCalled();
+      expect(result).toEqual(mockAuthors);
     });
   });
 
@@ -61,9 +61,15 @@ describe('AuthorService', () => {
     });
     it('should throw NotFoundException if author not found', async () => {
       const authorToDeleteId = 4
-      // Simulate delete result with 0 affected rows
       mockAuthorsRepository.delete.mockResolvedValueOnce({ affected: 0 });
       await expect(service.remove(authorToDeleteId)).rejects.toThrow(NotFoundException);
+    });
+  });
+  describe('findAllPaginated', () => {
+    it('should have findAllPaginated', async () => {
+      await service.findAllPaginated();
+      expect(mockAuthorsRepository.findAndCount).toHaveBeenCalled()
+      expect(service.findAllPaginated).toBeTruthy()
     });
   });
 });

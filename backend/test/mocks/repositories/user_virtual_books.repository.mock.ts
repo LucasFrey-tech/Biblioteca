@@ -36,4 +36,7 @@ export const mockUserVirtualBookRepository = {
     delete: jest.fn().mockResolvedValue(mockDeletedUserVirtualBooks),
     save: jest.fn().mockResolvedValue(mockNewUserVirtualBooks),    
     remove: jest.fn().mockResolvedValue(mockDeletedUserVirtualBooks),    
+    update: jest.fn().mockResolvedValue(mockNewUserVirtualBooks),    
+    findAndCount: jest.fn().mockResolvedValue(mockNewUserVirtualBooks),    
+    
   };

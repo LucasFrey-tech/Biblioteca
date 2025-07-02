@@ -28,31 +28,39 @@ describe('UserSubscriptionDiscountService', () => {
   });
 
   it('instance should be an instanceof UserSubscriptionDiscountService', () => {
-    expect(service instanceof UserSubscriptionDiscountService).toBeTruthy();
+    expect(service).toBeTruthy();
   });
 
   it('should have a method create()', async () => {
-    // await instance.create(data);
+    const result = service.create({
+      id_subscription: 1,
+      discount: 10
+    })
+    expect(mockSubscriptionRepository.findOne).toHaveBeenCalled()
     expect(service.create).toBeTruthy();
   });
-
+  
   it('should have a method findAll()', async () => {
-    // await instance.findAll();
+    const result = service.findAll()
+    expect(mockUserSubscriptionDiscountRepository.find).toHaveBeenCalled()
     expect(service.findAll).toBeTruthy();
   });
-
+  
   it('should have a method findOne()', async () => {
-    // await instance.findOne(id);
+    const result = service.findOne(1)
+    expect(mockUserSubscriptionDiscountRepository.findOne).toHaveBeenCalled()
     expect(service.findOne).toBeTruthy();
   });
-
+  
   it('should have a method update()', async () => {
-    // await instance.update(id,data);
+    const result = service.update(1,{
+      discount: 10
+    });
     expect(service.update).toBeTruthy();
   });
-
+  
   it('should have a method delete()', async () => {
-    // await instance.delete(id);
+    const result = service.delete(1);
     expect(service.delete).toBeTruthy();
   });
 });

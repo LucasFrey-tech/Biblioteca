@@ -42,7 +42,6 @@ describe('UserSubscriptionService', () => {
 
   describe('createSubscription', () => {
     it('should throw NotFoundException if user does not exist', async () => {
-      // Arrange: mock findOne to return undefined for this test
       (mockUsersRepository.findOne as jest.Mock).mockResolvedValueOnce(undefined);
       await expect(
         service.createSubscription(1, new Date(), new Date()),
@@ -50,7 +49,6 @@ describe('UserSubscriptionService', () => {
     });
 
     it('should throw NotFoundException if subscription config does not exist', async () => {
-      // Arrange: mock subscription repository to return undefined for this test
       (mockSubscriptionRepository.findOne as jest.Mock).mockResolvedValueOnce(undefined);
       await expect(
         service.createSubscription(1, new Date(), new Date()),
@@ -68,7 +66,6 @@ describe('UserSubscriptionService', () => {
 
   describe('getUserSubscription', () => {
     it('should throw NotFoundException if user subscription does not exist', async () => {
-      // Arrange: mock findOne to return undefined for this test
       (mockUserSubscriptionRepository.findOne as jest.Mock).mockResolvedValueOnce(undefined);
       await expect(service.getUserSubscription(1)).rejects.toThrow(NotFoundException);
     });
