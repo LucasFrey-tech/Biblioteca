@@ -19,7 +19,7 @@ export const mockUpdatedPurchase = {
 
 export const mockPurchase1: Purchase = {
     id: 1,
-    amount: 0,
+    amount: 2,
     price: 0,
     virtual: false,
     purchaseDate: new Date(""),
@@ -29,7 +29,7 @@ export const mockPurchase1: Purchase = {
 
 export const mockPurchase2: Purchase = {
     id: 2,
-    amount: 0,
+    amount: 1,
     price: 0,
     virtual: false,
     purchaseDate: new Date(""),
@@ -39,7 +39,7 @@ export const mockPurchase2: Purchase = {
 
 export const mockPurchase3: Purchase = {
     id: 3,
-    amount: 0,
+    amount: 1,
     price: 0,
     virtual: false,
     purchaseDate: new Date(""),
@@ -58,5 +58,7 @@ export const mockPurchasesRepository = {
   delete: jest.fn().mockResolvedValue(mockDeletedPurchases),
   save: jest.fn().mockResolvedValue(mockNewPurchase),    
   remove: jest.fn().mockResolvedValue(mockPurchase1),    
+  findAndCount: jest.fn().mockResolvedValue([mockPurchases,1]),    
+  createQueryBuilder: jest.fn().mockResolvedValue(mockPurchases),    
 };
 

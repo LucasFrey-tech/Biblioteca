@@ -1,4 +1,4 @@
-import { PurchaseDTO, PurchaseItemDTO } from "../../../src/modules/purchase/DTO/purchase.dto";
+import { PaginatedPurchaseDTO, PurchaseDTO, PurchaseItemDTO } from "../../../src/modules/purchase/DTO/purchase.dto";
 
 export const mockDtoPurchaseItem1: PurchaseItemDTO = {
     id_book: 1,
@@ -49,7 +49,7 @@ export const mockDtoPurchase2: PurchaseDTO = {
     username: "curt",
     purchaseItems: mockDtoPurchaseItems1,
     purchaseDate: new Date("hoy"),
-    total: 0
+    total: 112998
 };
 
 export const mockDtoPurchases = [mockDtoPurchase1,mockDtoPurchase2]
@@ -68,3 +68,8 @@ export const mockDtoNewPurchase = {
   items: mockDtoNewPurchasesItems,
   price: 0,
 }
+
+export const mockDtoPaginatedPurchase: PaginatedPurchaseDTO = {
+    items: mockDtoPurchases,
+    total: 0
+}; 

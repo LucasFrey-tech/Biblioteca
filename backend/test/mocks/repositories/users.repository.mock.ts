@@ -6,7 +6,7 @@ export const mockUser1: User = {
     firstname: "truc",
     lastname: "is",
     email: "curt@si.com",
-    password: "a",
+    password: "12345678",
     admin: false,
     disabled: false,
     registrationDate: new Date("2020-05-02"),

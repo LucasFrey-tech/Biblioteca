@@ -39,18 +39,35 @@ describe('AuthService', () => {
 
     service = module.get<AuthService>(AuthService);
     repo = module.get(getRepositoryToken(User));
-    
-    });
-  
-    it('test method register()', async () => {
-      expect(service.register).toBeTruthy()
-    });
-  
-    it('test method login()', async () => {
-      expect(service.login).toBeTruthy()
-    });
-  
-    it('test method validateUser()', async () => {
-      expect(service.validateUser).toBeTruthy()
-    });
+
   });
+
+  it('test method register()', async () => {
+    mockUsersService.findByEmail = jest.fn().mockResolvedValue(null)
+    mockUsersService.findByUser = jest.fn().mockResolvedValue(null)
+    const result = service.register({
+      username: 'usuario',
+      firstname: 'nombre',
+      lastname: 'apellido',
+      email: 'z@x.com',
+      password: '1234'
+    })
+    expect(service.register).toBeTruthy()
+  });
+  
+  it('test method login()', async () => {
+    mockUsersService.findByEmail = jest.fn().mockResolvedValue(mockUser1)
+    const result = service.login({
+      email: 'curt@si.com',
+      password: '12345678'
+    })
+    expect(mockUsersService.findByEmail).toHaveBeenCalled()
+    expect(service.login).toBeTruthy()
+  });
+  
+  it('test method validateUser()', async () => {
+    const result = service.validateUser("curt@si.com", "12345678");
+    expect(mockUsersService.findByEmail).toHaveBeenCalled()
+    expect(service.validateUser).toBeTruthy()
+  });
+});

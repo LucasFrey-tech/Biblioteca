@@ -30,11 +30,11 @@ export const mockDeletedBooksRecomendation = [mockBookRecomendation1, mockBookRe
 
 export const mockBooksRecomendationRepository = {
   find: jest.fn().mockResolvedValue(mockBooksRecomendation),
-  findOne: jest.fn().mockResolvedValue(mockBook1),
+  findOne: jest.fn().mockResolvedValue(mockBookRecomendation1),
   create: jest.fn().mockResolvedValue(mockNewBookRecomendation),
   update: jest.fn().mockResolvedValue(mockUpdatedBookRecomendation),
   delete: jest.fn().mockResolvedValue(mockDeletedBooksRecomendation),
   save: jest.fn().mockResolvedValue(mockNewBookRecomendation),    
-  remove: jest.fn().mockResolvedValue(mockBook1),    
+  remove: jest.fn().mockResolvedValue({}),    
 };
 
