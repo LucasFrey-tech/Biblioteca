@@ -133,5 +133,6 @@ export const mockBooksRepository = {
   delete: jest.fn().mockResolvedValue(mockDeletedBooks),
   save: jest.fn().mockResolvedValue(mockNewBook),    
   remove: jest.fn().mockResolvedValue(mockBook1),    
+  createQueryBuilder: jest.fn().mockResolvedValue(mockBook1),    
 };
 

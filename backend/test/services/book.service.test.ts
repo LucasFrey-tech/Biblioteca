@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Book } from '../../src/entidades/book.entity';
 import { Genre } from '../../src/entidades/genre.entity';
-import { mockBook1,mockNewBook, mockUpdatedBook as mockUpdatedBook } from '../mocks/repositories/books.repository.mock';
+import { mockBook1, mockNewBook, mockUpdatedBook as mockUpdatedBook } from '../mocks/repositories/books.repository.mock';
 import { BooksService } from '../../src/modules/books/book/book.service';
 import { mockDtoBook1, mockDtoBooks, mockDtoBooksByAuthorIdOne, mockDtoBooksWithGenreAccion, mockDtoDeletedBooks, mockDtoNewBook, mockDtoNewBookWithUnexistingGenre, mockDtoUpdateBook, mockDtoUpdateBookId } from '../mocks/dtos/bookDTOs.mock';
 import { SettingsService } from '../../src/settings/settings.service';
@@ -11,6 +11,7 @@ import { mockGenre1, mockGenresRepository } from '../mocks/repositories/genres.r
 import { mockSettingsService } from '../mocks/services/settings.service.mock'
 import { mockBooksRepository } from '../mocks/repositories/books.repository.mock';
 import { mockAuthor1 } from '../mocks/repositories/authors.repository.mock';
+import { mockGenres } from 'test/mocks/dtos/genreDTOs.mock';
 
 
 describe('BooksService', () => {
@@ -58,17 +59,37 @@ describe('BooksService', () => {
   });
 
   it('findAllWithGenre should filter by genre', async () => {
+    const mockQueryBuilder: any = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(mockGenres,),
+      getManyAndCount: jest.fn().mockResolvedValue([mockGenres, mockGenres.length]),
+      andWhere: jest.fn().mockReturnThis(),
+    };
+
+    mockBooksRepository.createQueryBuilder = jest.fn(() => mockQueryBuilder);
+    await service.findAllWithGenres([1])
     expect(service.findAllWithGenres).toBeTruthy();
-    // const result = await service.findAllWithGenre(mockGenre1.id);
-    // expect(mockBooksRepository.find).toHaveBeenCalledWith({  where: {  is_active: true }, relations: ['genres', 'author'] });
-    // expect(result).toEqual(mockDtoBooksWithGenreAccion);
   });
   
   it('findAllByAuthor should filter by author', async () => {
+    const mockQueryBuilder: any = {
+      leftJoinAndSelect: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orderBy: jest.fn().mockReturnThis(),
+      skip: jest.fn().mockReturnThis(),
+      take: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(mockGenres,),
+      getManyAndCount: jest.fn().mockResolvedValue([mockGenres, mockGenres.length]),
+      andWhere: jest.fn().mockReturnThis(),
+    };
+  
+    mockBooksRepository.createQueryBuilder = jest.fn(() => mockQueryBuilder);
+    await service.findAllByAuthor(mockAuthor1.id);
     expect(service.findAllByAuthor).toBeTruthy();
-    // const result = await service.findAllByAuthor(mockAuthor1.id);
-    // expect(mockBooksRepository.find).toHaveBeenCalledWith({ where: {  is_active: true },relations: ['genres', 'author'] });
-    // expect(result).toEqual(mockDtoBooksByAuthorIdOne);
   });
 
   it('create should save and return a book', async () => {
@@ -93,24 +114,24 @@ describe('BooksService', () => {
     const result = await service.update(999, mockDtoUpdateBook);
     expect(result).toBeNull();
   });
-  
+
   it('delete should remove book and return true', async () => {
     mockBooksRepository.findOne = jest.fn().mockResolvedValue(mockBook1);
     const bookId = 1
     const result = await service.delete(bookId);
     expect(result).toBe(true);
   });
-  
+
   it('delete should return false if book not found', async () => {
     mockBooksRepository.findOne = jest.fn().mockResolvedValue(null);
     const result = await service.delete(999);
     expect(result).toBe(false);
   });
-  
+
   it('bookImageUrl should return correct url', async () => {
     const imageFileName = 'test.png';
-    const result =  service.bookImageUrl(imageFileName);
-    const expectedResult = mockedSettingService.getHostUrl()+mockedSettingService.getBooksImagesPrefix()+"/"+imageFileName
+    const result = service.bookImageUrl(imageFileName);
+    const expectedResult = mockedSettingService.getHostUrl() + mockedSettingService.getBooksImagesPrefix() + "/" + imageFileName
     expect(result).toEqual(expectedResult);
   });
 });

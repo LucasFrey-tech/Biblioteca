@@ -3,6 +3,7 @@ import { BooksService } from '../../src/modules/books/book/book.service';
 import { CatalogueBooksService } from '../../src/modules/books/catalogue/catalogue_books.service';
 import { mockBooksService } from '../mocks/services/book.service.mock';
 import { mockDtoCatalogueBook1, mockDtoCatalogueBooks } from '../mocks/dtos/catalogueBookDTOs.mock';
+import { mockDtoBooks } from 'test/mocks/dtos/bookDTOs.mock';
 
 describe('CatalogueBooksService', () => {
   let service: CatalogueBooksService;
@@ -31,6 +32,13 @@ describe('CatalogueBooksService', () => {
       const result = await service.findAll();
       expect(result).toEqual(mockDtoCatalogueBooks);
     });
+  });
+
+  it('findAllPaginated',async () => {
+      mockBooksService.findAllPaginated = jest.fn().mockResolvedValue({books: mockDtoBooks,total: 1})
+      const result = await service.findAllPaginated(1,10);
+      expect(mockBooksService.findAllPaginated).toHaveBeenCalled()
+      expect(service.findAllPaginated).toBeTruthy()
   });
 
   describe('findOne', () => {

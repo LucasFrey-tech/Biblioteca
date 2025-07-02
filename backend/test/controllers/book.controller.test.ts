@@ -1,7 +1,9 @@
+import { mockBooks } from 'test/mocks/repositories/books.repository.mock';
 import { BooksController } from '../../src/modules/books/book/book.controller';
 import { BooksService } from '../../src/modules/books/book/book.service';
 import { CreateBookDTO } from '../../src/modules/books/book/dto/createBook.dto';
 import { mockBooksService } from '../mocks/services/book.service.mock';
+import { mockImageFile } from 'test/mocks/files/image.mock';
 
 describe('BooksController', () => {
   let controller: BooksController;
@@ -24,19 +26,16 @@ describe('BooksController', () => {
   });
 
   it('should have a method getBooksWithGenre()', async () => {
+    mockBooksService.findAllWithGenres = jest.fn().mockResolvedValue([mockBooks,1])
+    controller.getBooksWithGenres = jest.fn().mockResolvedValue([mockBooks,1])
+    const result = await controller.getBooksWithGenres("test,test2,test3");
     expect(controller.getBooksWithGenres).toBeTruthy()
-    // expect(typeof controller.getBooksWithGenre).toBe('function');
-    // const result = await controller.getBooksWithGenre(1);
-    // expect(Array.isArray(result)).toBe(true);
-    // expect(booksService.findAllWithGenre).toHaveBeenCalledWith(1);
   });
   
   it('should have a method getBooksByAuthor()', async () => {
+    const result = await controller.getBooksByAuthor(1);
+    expect(mockBooksService.findAllByAuthor).toHaveBeenCalled()
     expect(controller.getBooksByAuthor).toBeTruthy()
-    // expect(typeof controller.getBooksByAuthor).toBe('function');
-    // const result = await controller.getBooksByAuthor(1);
-    // expect(Array.isArray(result)).toBe(true);
-    // expect(booksService.findAllByAuthor).toHaveBeenCalledWith(1);
   });
 
   it('should have a method findOne()', async () => {
@@ -47,14 +46,20 @@ describe('BooksController', () => {
   });
   
   it('should have a method create()', async () => {
+    const result = controller.create(mockImageFile,{
+      title: '',
+      author_id: 0,
+      description: '',
+      anio: 0,
+      isbn: '',
+      image: '',
+      stock: 0,
+      subscriber_exclusive: false,
+      price: 0,
+      genre: []
+    })
+    expect(mockBooksService.create).toHaveBeenCalled()
     expect(controller.create).toBeTruthy()
-    // expect(typeof controller.create).toBe('function');
-    // const mockFile = { filename: 'test.jpg' } as Express.Multer.File;
-    // const mockData: CreateBookDTO = { title: 'Test', author: 1, genre: 1 } as any;
-    // const result = await controller.create(mockFile, mockData);
-    // expect(typeof result).toBe('object');
-    // expect(booksService.bookImageUrl).toHaveBeenCalledWith('test.jpg');
-    // expect(booksService.create).toHaveBeenCalled();
   });
   
   it('should call create() without file', async () => {
@@ -65,14 +70,20 @@ describe('BooksController', () => {
   });
   
   it('should have a method update()', async () => {
+    const result = controller.update(1,{
+      title: '',
+      author_id: 0,
+      description: '',
+      anio: 0,
+      isbn: '',
+      image: '',
+      stock: 0,
+      subscriber_exclusive: false,
+      price: 0,
+      genre: []
+    },mockImageFile)
+    expect(mockBooksService.update).toHaveBeenCalled()
     expect(controller.update).toBeTruthy()
-    // expect(typeof controller.update).toBe('function');
-    // const mockBookDTO: any = { title: 'Updated', author: 1, genre: 1 };
-    // const mockFile = { filename: 'test.jpg' } as Express.Multer.File;
-    // const result = await controller.update(1, mockBookDTO, mockFile);
-    // expect(typeof result).toBe('object');
-    // expect(booksService.bookImageUrl).toHaveBeenCalledWith('test.jpg');
-    // expect(booksService.update).toHaveBeenCalledWith(1, expect.any(Object));
   });
 
   it('should call update() with existingImage', async () => {

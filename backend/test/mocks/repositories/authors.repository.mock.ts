@@ -38,4 +38,5 @@ export const mockAuthorsRepository = {
     delete: jest.fn().mockResolvedValue(mockDeleteAuthors),
     save: jest.fn().mockResolvedValue(mockNewAuthor),    
     remove: jest.fn().mockResolvedValue(mockAuthor1),  
+    findAndCount: jest.fn().mockResolvedValue([mockAuthors,1]),  
   }

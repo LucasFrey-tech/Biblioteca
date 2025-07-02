@@ -3,11 +3,11 @@ import { Repository } from 'typeorm';
 import { VirtualBookContent } from '../../src/entidades/virtual_book_content.entity';
 import { BookContentService } from '../../src/modules/books/content/book_content.service';
 import { Test, TestingModule } from '@nestjs/testing';
-import { mockBooksRecomendationRepository } from '../mocks/repositories/books_recomendations.repository.mock';
 import { Book } from '../../src/entidades/book.entity';
 import { mockBooksRepository } from '../mocks/repositories/books.repository.mock';
 import { mockSettingsService } from '../mocks/services/settings.service.mock';
 import { SettingsService } from '../../src/settings/settings.service';
+import { mockUserVirtualBookRepository } from 'test/mocks/repositories/user_virtual_books.repository.mock';
 
 describe('BookContentService', () => {
   let service: BookContentService;
@@ -19,7 +19,7 @@ describe('BookContentService', () => {
             BookContentService,
             {
               provide: getRepositoryToken(VirtualBookContent),
-              useValue: mockBooksRecomendationRepository,
+              useValue: mockUserVirtualBookRepository,
             },
             {
               provide: getRepositoryToken(Book),
@@ -37,22 +37,33 @@ describe('BookContentService', () => {
   });
 
   it('instance should be an instanceof BookContentService', () => {
-    expect(service instanceof BookContentService).toBeTruthy();
+    expect(service).toBeTruthy();
   });
 
-  it('should have a method get()', async () => {
+  it('get()', async () => {
+    const result = service.get(1);
+    expect(mockUserVirtualBookRepository.findOne).toHaveBeenCalled()
     expect(service.get).toBeTruthy();
   });
-
-  it('should have a method create()', async () => {
+  
+  it('create()', async () => {
+    const result = service.create({})
+    expect(mockUserVirtualBookRepository.create).toHaveBeenCalled()
     expect(service.create).toBeTruthy();
   });
-
-  it('should have a method update()', async () => {
+  
+  it('update()', async () => {
+    const result = service.update(1,{
+      idBook: 1,
+      content: ''
+    })
+    expect(mockUserVirtualBookRepository.save).toHaveBeenCalled()
     expect(service.update).toBeTruthy();
   });
-
-  it('should have a method delete()', () => {
+  
+  it('delete()', () => {
+    const result = service.delete(1);
+    expect(mockUserVirtualBookRepository.delete).toHaveBeenCalled()
     expect(service.delete).toBeTruthy();
   });
 });

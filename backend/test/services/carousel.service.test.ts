@@ -34,19 +34,25 @@ describe('CarouselService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should have a method findAll()', async () => {
+  it('findAll()', async () => {
     const result = service.findAll()
     expect(mockCarouselItemRepository.find).toHaveBeenCalled()
     expect(service.findAll).toBeTruthy();
   });
+
+  it('findOne()', async () => {
+    const result = service.findOne(1)
+    expect(mockCarouselItemRepository.findOne).toHaveBeenCalled()
+    expect(service.findOne).toBeTruthy();
+  });
   
-  it('should have a method create()', async () => {
+  it('create()', async () => {
     const result = service.create({});
     expect(mockCarouselItemRepository.create).toHaveBeenCalled()
     expect(service.create).toBeTruthy();
   });
   
-  it('should have a method update()', async () => {
+  it('update()', async () => {
     const result = service.update(1,{
       idBook: 1
     });
@@ -54,9 +60,15 @@ describe('CarouselService', () => {
     expect(service.update).toBeTruthy();
   });
   
-  it('should have a method remove()', async () => {
+  it('remove()', async () => {
     const result = service.remove(1);
     expect(mockCarouselItemRepository.delete).toHaveBeenCalled()
     expect(service.remove).toBeTruthy();
+  });
+  it('bookImageUrl()', async () => {
+    const result = service.bookImageUrl("");
+    expect(mockSettingsService.getHostUrl).toHaveBeenCalled()
+    expect(mockSettingsService.getBooksImagesPrefix).toHaveBeenCalled()
+    expect(service.bookImageUrl).toBeTruthy();
   });
 });

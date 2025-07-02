@@ -31,13 +31,10 @@ describe('PurchasesController', () => {
     expect(result).toEqual({ message: 'Compra procesada exitosamente' });
   });
 
-  it('should have a method getPurchaseHistory()', async () => {
+  it('getUserPurchaseHistoryPaginated()', async () => {
+    const result = controller.getUserPurchaseHistoryPaginated(1,1,10);
+    expect(mockPurchasesService.getUserPurchaseHistoryPaginated).toHaveBeenCalled()
     expect(controller.getUserPurchaseHistoryPaginated).toBeTruthy();
-    // expect(typeof controller.getUserPurchaseHistoryPaginated).toBe('function');
-    // const userID = 1
-    // const result = await controller.getUserPurchaseHistoryPaginated(userID);
-    // expect(Array.isArray(result)).toBe(true);
-    // expect(service.getUserPurchaseHistoryPaginated).toHaveBeenCalledWith(1);
   });
 
   it('getAllPurchases() should return an array of PurchaseDTO', async () => {
@@ -50,11 +47,10 @@ describe('PurchasesController', () => {
     expect(result).toEqual(mockPurchases);
   });
 
-  it('getPurchaseHistory() should return null if service returns null', async () => {
-    expect(controller.getAllPurchases).toBeTruthy()
-    // service.getUserPurchaseHistoryPaginated.mockResolvedValueOnce(0);
-    // const result = await controller.getUserPurchaseHistoryPaginated(999);
-    // expect(result).toBeNull();
+  it('getAllPurchasesPaginated() ', async () => {
+    const result = controller.getAllPurchasesPaginated(1,10);
+    expect(mockPurchasesService.getAllPurchasesPaginated).toHaveBeenCalled()
+    expect(controller.getAllPurchasesPaginated).toBeTruthy()
   });
 
   it('processPurchase() should call service with correct arguments', async () => {

@@ -59,4 +59,5 @@ export const mockReviewsRepository = {
     delete: jest.fn().mockResolvedValue(mockDeletedReviews),
     save: jest.fn().mockResolvedValue(mockUpdatedReview),    
     remove: jest.fn().mockResolvedValue(mockDeletedReviews),    
+    findAndCount: jest.fn().mockResolvedValue([mockReviews,1]),    
   };
