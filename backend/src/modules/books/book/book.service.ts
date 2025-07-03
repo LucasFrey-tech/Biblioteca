@@ -57,6 +57,7 @@ export class BooksService {
       relations: ['genres', 'author'],
       skip,
       take: limit,
+      order: { id: 'ASC' },
     });
 
     const result = books.map((book) => {
