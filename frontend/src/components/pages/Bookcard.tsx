@@ -18,23 +18,15 @@ type BookCardProps = Pick<Book, 'id' | 'title' | 'price' | 'image' | 'subscriber
   } | null;
 };
 
-export default function BookCard({ book }: { book: BookCardProps }) {
+export default function BookCard({ book, user }: { book: BookCardProps, user: User | null }) {
     const authorName = book.author?.name || 'Desconocido';
     const router = useRouter();
-    const [user, setUser] = useState<User>();
     const refAPI = useRef<BaseApi | null>(null);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-
-        if (token && userId) {
-            const api = new BaseApi(token);
-            refAPI.current = api;
-
-            api.users.getOne(Number(userId))
-                .then(userData => setUser(userData))
-                .catch(error => console.error('Error al cargar usuario', error));
+    const token = localStorage.getItem('token');
+        if (token) {
+            refAPI.current = new BaseApi(token);
         }
     }, []);
 
