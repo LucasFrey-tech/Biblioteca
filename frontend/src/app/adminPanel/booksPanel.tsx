@@ -35,13 +35,16 @@ export default function BooksPanel(): React.JSX.Element {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [search, setSearch] = useState('');
-  const apiRef = useRef(new BaseApi());
   const [editBookId, setEditBookId] = useState<number | null>(null);
+
+  const apiRef = useRef(new BaseApi());
+  const dataFetchedRef = useRef(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 5;
   const [totalBooks, setTotalBooks] = useState(0);
+
 
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
@@ -98,33 +101,35 @@ export default function BooksPanel(): React.JSX.Element {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
+  const fetchAll = async () => {
+    try {
+      if (!dataFetchedRef.current) {
         const authorsData = await apiRef.current.authors.getAll();
         setAuthors(authorsData);
 
         const genresData = await apiRef.current.genre.getAll();
         setGenres(genresData);
 
-        await fetchBooks();
-      } catch (error) {
-        console.error("Error al obtener datos:", error);
-        setBooks([]);
-        setAuthors([]);
-        setGenres([]);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'No se pudieron cargar los datos iniciales.',
-        });
+        dataFetchedRef.current = true;
       }
-    };
-    fetchData();
-  }, []);
 
-  useEffect(() => {
-    fetchBooks();
-  }, [currentPage]);
+      await fetchBooks();
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+      setBooks([]);
+      setAuthors([]);
+      setGenres([]);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudieron cargar los datos iniciales.',
+      });
+    }
+  };
+
+  fetchAll();
+}, [currentPage]);
+
 
   const startEdit = (book: BookFileUpdate) => {
     setEditBookId(book.id);
