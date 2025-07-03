@@ -51,7 +51,6 @@ export default function BookPage() {
                 setGenres(resGenres?.items ?? []);
                 setAuthors(resAuthors?.items ?? []);
 
-                await fetchBooks();
             } catch (error) {
                 console.error("Error al obtener datos:", error);
                 setBooks([]);
@@ -63,50 +62,49 @@ export default function BookPage() {
         fetchData();
     }, []);
 
-    const fetchBooks = async () => {
-        try {
-            let resBooks: PaginatedResponse<BookCatalogo> | undefined;
+    useEffect(() => {
+        const fetchBooks = async () => {
+            try {
+                let resBooks: PaginatedResponse<BookCatalogo> | undefined;
 
-            if (selectedGenres.length > 0) {
-                resBooks = await apiRef.current?.books.getBooksWithGenresPaginated(
+                if (selectedGenres.length > 0) {
+                    resBooks = await apiRef.current?.books.getBooksWithGenresPaginated(
+                        selectedGenres,
+                        page,
+                        limit
+                    );
+                } else if (selectedAuthors.length > 0) {
+                    resBooks = await apiRef.current?.books.getBooksByAuthorPaginated(
+                        selectedAuthors[0],
+                        page,
+                        limit
+                    );
+                } else {
+                    resBooks = await apiRef.current?.catalogo.getAllPaginated(page, limit);
+                }
+
+                if (!resBooks || !Array.isArray(resBooks.items)) {
+                    console.error("Respuesta inválida de la API:", resBooks);
+                    setBooks([]);
+                    setTotalBooks(0);
+                    return;
+                }
+
+                setBooks(resBooks.items.sort((a, b) => a.id - b.id));
+                setTotalBooks(resBooks.total);
+            } catch (error) {
+                console.error("Error al obtener libros:", error, {
                     selectedGenres,
+                    selectedAuthors,
                     page,
-                    limit
-                );
-            } else if (selectedAuthors.length > 0) {
-                resBooks = await apiRef.current?.books.getBooksByAuthorPaginated(
-                    selectedAuthors[0],
-                    page,
-                    limit
-                );
-            } else {
-                resBooks = await apiRef.current?.catalogo.getAllPaginated(page, limit);
-            }
-
-            if (!resBooks || !Array.isArray(resBooks.items)) {
-                console.error("Respuesta inválida de la API:", resBooks);
+                    limit,
+                });
                 setBooks([]);
                 setTotalBooks(0);
-                return;
             }
-
-            setBooks(resBooks.items.sort((a, b) => a.id - b.id));
-            setTotalBooks(resBooks.total);
-        } catch (error) {
-            console.error("Error al obtener libros:", error, {
-                selectedGenres,
-                selectedAuthors,
-                page,
-                limit,
-            });
-            setBooks([]);
-            setTotalBooks(0);
-        }
-    };
-
-    useEffect(() => {
+        };
         fetchBooks();
-    }, [page, selectedGenres, selectedAuthors]);
+    }, [page, selectedGenres, selectedAuthors, limit]);
 
     const handleGenreToggle = (genreId: number) => {
         setSelectedGenres(
