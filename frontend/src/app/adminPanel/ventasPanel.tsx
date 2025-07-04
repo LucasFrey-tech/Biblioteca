@@ -15,7 +15,7 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 
-const ITEMS_PER_PAGE = 10; // Consistente con el backend
+const ITEMS_PER_PAGE = 4; // Consistente con el backend
 
 export default function VentasPanel(): React.JSX.Element {
   const [purchases, setPurchases] = useState<Purchase[]>([]);

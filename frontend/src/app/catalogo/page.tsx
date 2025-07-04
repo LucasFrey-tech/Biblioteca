@@ -10,6 +10,7 @@ import { PaginatedResponse } from "@/API/service";
 import BookCard from "../../components/pages/Bookcard";
 import styles from "../../styles/catalogo.module.css";
 import { User } from "@/API/types/user";
+import { Input } from "@/components/ui/input";
 
 export default function BookPage() {
     const [books, setBooks] = useState<BookCatalogo[]>([]);
@@ -22,7 +23,7 @@ export default function BookPage() {
     const [showMoreGenres, setShowMoreGenres] = useState(false);
     const [showMoreAuthors, setShowMoreAuthors] = useState(false);
     const [page, setPage] = useState(1);
-    const [limit] = useState(10);
+    const [limit] = useState(5);
     const [totalBooks, setTotalBooks] = useState(0);
     const [user, setUser] = useState<User | null>(null);
 
@@ -142,15 +143,14 @@ export default function BookPage() {
         <>
             <form className={styles.searchForm} onSubmit={handleSubmit}>
                 <div className={styles.searchBarContainer}>
-                    <input
-                        type="search"
-                        name="q"
-                        placeholder="¿Qué estás buscando?"
-                        aria-label="¿Qué estás buscando?"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className={styles.searchBar}
-                    />
+                    <Input
+                    placeholder="Buscar libro"
+                    className={styles.inputSearch}
+                    value={searchTerm}
+                    onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    }}
+                />
                     <button
                         type="submit"
                         className={styles.searchSubmitBtn}
