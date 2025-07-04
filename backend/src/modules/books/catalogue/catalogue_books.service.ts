@@ -63,6 +63,37 @@ export class CatalogueBooksService {
     }
 
     /**
+     * Busca libros en el catálogo por título, autor o género con paginación y filtros opcionales de géneros y autores.
+     * 
+     * @param {string} query - Término de búsqueda
+     * @param {number[]} genreIds - IDs de géneros para filtrar (opcional)
+     * @param {number[]} authorIds - IDs de autores para filtrar (opcional)
+     * @param {number} page - Página solicitada (basada en 1)
+     * @param {number} limit - Cantidad de libros por página
+     * @returns {Promise<PaginatedCatalogueBooksDTO>} Una promesa que resuelve con un objeto que contiene la lista de libros y el total
+     */
+    async searchBooks(query: string, genreIds: number[] = [], authorIds: number[] = [], page: number = 1, limit: number = 10): Promise<PaginatedCatalogueBooksDTO> {
+        const { books, total } = await this.booksService.searchBooks(query, genreIds, authorIds, page, limit);
+
+        const catalogueBooks = books.map(book => new CatalogueBookDTO({
+            id: book.id,
+            title: book.title,
+            author: book.author ?? "",
+            author_id: book.author_id ?? book.author_id,
+            description: book.description,
+            genre: book.genre,
+            anio: book.anio,
+            image: book.image,
+            stock: book.stock,
+            subscriber_exclusive: book.subscriber_exclusive,
+            price: book.price
+        }));
+
+        this.logger.log(`Búsqueda de libros con query "${query}", géneros [${genreIds.join(', ')}], autores [${authorIds.join(', ')}] (paginada)`);
+        return { books: catalogueBooks, total };
+    }
+
+    /**
      * Busca un libro específico del catálogo por su ID.
      * 
      * @param {number} id - El ID del libro a buscar.

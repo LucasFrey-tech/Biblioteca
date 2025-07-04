@@ -44,7 +44,26 @@ export class Catalogo extends Crud<BookCatalogo> {
         };
     }
 
+    async searchBooks(query: string, genreIds: number[] = [], authorIds: number[] = [], page: number = 1, limit: number = 10): Promise<PaginatedResponse<BookCatalogo>> {
+        const genreIdsParam = genreIds.length > 0 ? `&genreIds=${genreIds.join(',')}` : '';
+        const authorIdsParam = authorIds.length > 0 ? `&authorIds=${authorIds.join(',')}` : '';
+        const res = await fetch(`${this.baseUrl}/${this.endPoint}/search?query=${encodeURIComponent(query)}${genreIdsParam}${authorIdsParam}&page=${page}&limit=${limit}`, {
+            method: 'GET',
+            headers: this.getHeaders(),
+        });
 
+        if (!res.ok) {
+            const errorDetails = await res.text();
+            throw new Error(`Error al buscar libros del catálogo (${res.status}): ${errorDetails}`);
+        }
+
+        const data = await res.json();
+
+        return {
+            items: data.books || [],
+            total: data.total || 0
+        };
+    }
 
     getOne(_id: number): Promise<BookCatalogo> {
         throw new Error("Method not implemented.");

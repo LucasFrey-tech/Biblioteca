@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Repository, Like } from 'typeorm';
 import { BookDTO } from './dto/book.dto';
 import { Book } from '../../../entidades/book.entity';
 import { SettingsService } from '../../../settings/settings.service';
@@ -44,13 +44,18 @@ export class BooksService {
   }
 
   /**
-   * Obtiene todos los libros disponibles con paginación.
+   * Obtiene todos los libros disponibles con paginación, opcionalmente filtrados por término de búsqueda.
    * 
    * @param {number} page - Página solicitada (basada en 1)
    * @param {number} limit - Cantidad de libros por página
+   * @param {string} query - Término de búsqueda (opcional)
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
-  async findAllPaginated(page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+  async findAllPaginated(page: number = 1, limit: number = 10, query: string = ''): Promise<{ books: BookDTO[], total: number }> {
+    if (query) {
+      return this.searchBooks(query, [], [], page, limit);
+    }
+
     const skip = (page - 1) * limit;
     const [books, total] = await this.booksRepository.findAndCount({
       where: { is_active: true },
@@ -69,9 +74,60 @@ export class BooksService {
   }
 
   /**
+   * Busca libros por título, autor o género con paginación y filtros opcionales de géneros y autores.
+   * 
+   * @param {string} query - Término de búsqueda
+   * @param {number[]} genreIds - IDs de géneros para filtrar (opcional)
+   * @param {number[]} authorIds - IDs de autores para filtrar (opcional)
+   * @param {number} page - Página solicitada (basada en 1)
+   * @param {number} limit - Cantidad de libros por página
+   * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
+   */
+  async searchBooks(query: string, genreIds: number[] = [], authorIds: number[] = [], page: number = 1, limit: number = 10): Promise<{ books: BookDTO[], total: number }> {
+    const skip = (page - 1) * limit;
+
+    const queryBuilder = this.booksRepository
+      .createQueryBuilder('book')
+      .leftJoinAndSelect('book.genres', 'genres')
+      .leftJoinAndSelect('book.author', 'author')
+      .where('book.is_active = :isActive', { isActive: true })
+      .andWhere(
+        '(book.title ILIKE :query OR author.name ILIKE :query OR genres.name ILIKE :query)',
+        { query: `%${query}%` }
+      );
+
+    if (genreIds.length > 0) {
+      genreIds.forEach((id, index) => {
+        queryBuilder.andWhere(
+          `EXISTS (
+            SELECT 1 FROM book_genres bg
+            WHERE bg.id_book = book.id AND bg.id_genre = :genreId${index}
+          )`,
+          { [`genreId${index}`]: id }
+        );
+      });
+    }
+
+    if (authorIds.length > 0) {
+      queryBuilder.andWhere('author.id IN (:...authorIds)', { authorIds });
+    }
+
+    const [books, total] = await queryBuilder
+      .skip(skip)
+      .take(limit)
+      .orderBy('book.id', 'ASC')
+      .getManyAndCount();
+
+    const result = books.map((book) => BookDTO.BookEntity2BookDTO(book));
+
+    this.logger.log(`Búsqueda de libros con query "${query}", géneros [${genreIds.join(', ')}], autores [${authorIds.join(', ')}] (paginada)`);
+    return { books: result, total };
+  }
+
+  /**
    * Obtiene libros filtrados por un género específico con paginación.
    * 
-   * @param {number} genreId - El id del género a buscar
+   * @param {number[]} genreIds - Los IDs de los géneros a buscar
    * @param {number} page - Página solicitada (basada en 1)
    * @param {number} limit - Cantidad de libros por página
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros

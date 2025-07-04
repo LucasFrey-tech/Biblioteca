@@ -68,19 +68,17 @@ export default function BookPage() {
             try {
                 let resBooks: PaginatedResponse<BookCatalogo> | undefined;
 
-                if (selectedGenres.length > 0) {
-                    resBooks = await apiRef.current?.books.getBooksWithGenresPaginated(
+                // Si hay un término de búsqueda, géneros o autores seleccionados, usar el endpoint de búsqueda
+                if (searchQuery || selectedGenres.length > 0 || selectedAuthors.length > 0) {
+                    resBooks = await apiRef.current?.catalogo.searchBooks(
+                        searchQuery || "", // Enviar cadena vacía si no hay término de búsqueda
                         selectedGenres,
-                        page,
-                        limit
-                    );
-                } else if (selectedAuthors.length > 0) {
-                    resBooks = await apiRef.current?.books.getBooksByAuthorPaginated(
-                        selectedAuthors[0],
+                        selectedAuthors,
                         page,
                         limit
                     );
                 } else {
+                    // Si no hay filtros, obtener todos los libros paginados
                     resBooks = await apiRef.current?.catalogo.getAllPaginated(page, limit);
                 }
 
@@ -95,6 +93,7 @@ export default function BookPage() {
                 setTotalBooks(resBooks.total);
             } catch (error) {
                 console.error("Error al obtener libros:", error, {
+                    searchQuery,
                     selectedGenres,
                     selectedAuthors,
                     page,
@@ -105,14 +104,14 @@ export default function BookPage() {
             }
         };
         fetchBooks();
-    }, [page, selectedGenres, selectedAuthors, limit]);
+    }, [page, selectedGenres, selectedAuthors, searchQuery, limit]);
 
     const handleGenreToggle = (genreId: number) => {
         setSelectedGenres(
             (prev) =>
                 prev.includes(genreId)
                     ? prev.filter((id) => id !== genreId)
-                    : [...prev, genreId] // Solo permitimos un género a la vez para simplificar
+                    : [...prev, genreId]
         );
         setPage(1); // Reiniciar a la primera página al cambiar filtros
     };
@@ -122,7 +121,7 @@ export default function BookPage() {
             (prev) =>
                 prev.includes(authorId)
                     ? prev.filter((id) => id !== authorId)
-                    : [authorId] // Solo permitimos un autor a la vez para simplificar
+                    : [...prev, authorId] // Permitir múltiples autores
         );
         setPage(1); // Reiniciar a la primera página al cambiar filtros
     };
@@ -144,13 +143,13 @@ export default function BookPage() {
             <form className={styles.searchForm} onSubmit={handleSubmit}>
                 <div className={styles.searchBarContainer}>
                     <Input
-                    placeholder="Buscar libro"
-                    className={styles.inputSearch}
-                    value={searchTerm}
-                    onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    }}
-                />
+                        placeholder="Buscar libro"
+                        className={styles.inputSearch}
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                        }}
+                    />
                     <button
                         type="submit"
                         className={styles.searchSubmitBtn}
@@ -253,7 +252,7 @@ export default function BookPage() {
                                             },
                                             subscriber_exclusive: book.subscriber_exclusive,
                                         }}
-                                        user = {user}
+                                        user={user}
                                     />
                                 </div>
                             ))

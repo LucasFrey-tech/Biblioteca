@@ -28,22 +28,25 @@ export class BooksController {
   }
 
   /**
-   * Obtiene todos los libros disponibles con paginación.
+   * Obtiene todos los libros disponibles con paginación, opcionalmente filtrados por término de búsqueda.
    * 
    * @param {number} page - Página solicitada (basada en 1)
    * @param {number} limit - Cantidad de libros por página
+   * @param {string} query - Término de búsqueda (opcional)
    * @returns {Promise<{ books: BookDTO[], total: number }>} Lista de libros paginados y total de registros
    */
   @Get('paginated')
   @ApiOperation({ summary: 'Listar Libros Paginados' })
   @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
-  @ApiResponse({ status: 200, description: 'Lista de Libros Paginada', type: [BookDTO] })
+  @ApiQuery({ name: 'query', type: String, required: false, description: 'Término de búsqueda', example: 'fantasy' })
+  @ApiResponse({ status: 200, description: 'Lista de Libros Paginada', type: Object })
   async findAllPaginated(
     @Query('page', ParseIntPipe) page: number = 1,
-    @Query('limit', ParseIntPipe) limit: number = 10
+    @Query('limit', ParseIntPipe) limit: number = 10,
+    @Query('query') query: string = ''
   ): Promise<{ books: BookDTO[], total: number }> {
-    return await this.booksService.findAllPaginated(page, limit);
+    return await this.booksService.findAllPaginated(page, limit, query);
   }
 
   /**

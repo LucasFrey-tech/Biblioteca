@@ -41,6 +41,36 @@ export class CatalogueBooksController {
     }
 
     /**
+     * Busca libros en el catálogo por título, autor o género con paginación y filtros opcionales de géneros y autores.
+     * 
+     * @param {string} query - Término de búsqueda
+     * @param {string} genreIds - IDs de géneros separados por comas (opcional)
+     * @param {string} authorIds - IDs de autores separados por comas (opcional)
+     * @param {number} page - Página solicitada (basada en 1)
+     * @param {number} limit - Cantidad de libros por página
+     * @returns {Promise<PaginatedCatalogueBooksDTO>} Lista de libros que coinciden con la búsqueda y total de registros
+     */
+    @Get('search')
+    @ApiOperation({ summary: 'Buscar Libros en el Catálogo' })
+    @ApiQuery({ name: 'query', type: String, required: true, description: 'Término de búsqueda', example: 'fantasy' })
+    @ApiQuery({ name: 'genreIds', type: String, required: false, description: 'IDs de géneros separados por comas', example: '1,2' })
+    @ApiQuery({ name: 'authorIds', type: String, required: false, description: 'IDs de autores separados por comas', example: '1,2' })
+    @ApiQuery({ name: 'page', type: Number, required: false, description: 'Página solicitada (basada en 1)', example: 1 })
+    @ApiQuery({ name: 'limit', type: Number, required: false, description: 'Cantidad de libros por página', example: 10 })
+    @ApiResponse({ status: 200, description: 'Lista de Libros Encontrados', type: PaginatedCatalogueBooksDTO })
+    searchBooks(
+        @Query('query') query: string,
+        @Query('genreIds') genreIds: string = '',
+        @Query('authorIds') authorIds: string = '',
+        @Query('page', ParseIntPipe) page: number = 1,
+        @Query('limit', ParseIntPipe) limit: number = 10
+    ): Promise<PaginatedCatalogueBooksDTO> {
+        const genreIdArray = genreIds ? genreIds.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id)) : [];
+        const authorIdArray = authorIds ? authorIds.split(',').map(id => parseInt(id, 10)).filter(id => !isNaN(id)) : [];
+        return this.booksService.searchBooks(query, genreIdArray, authorIdArray, page, limit);
+    }
+
+    /**
      * Obtiene un libro específico del catálogo por su ID.
      * 
      * @param {number} id - ID del libro a buscar.

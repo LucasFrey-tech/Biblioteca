@@ -25,8 +25,12 @@ export class Books extends Crud<Book> {
         return data;
     }
 
-    async getAllPaginated(page: number = 1, limit: number = 10): Promise<PaginatedResponse<Book>> {
-        const res = await fetch(`${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`, {
+    async getAllPaginated(page: number = 1, limit: number = 10, query: string = ''): Promise<PaginatedResponse<Book>> {
+        const url = query 
+            ? `${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}&query=${encodeURIComponent(query)}`
+            : `${this.baseUrl}/${this.endPoint}/paginated?page=${page}&limit=${limit}`;
+        
+        const res = await fetch(url, {
             method: 'GET',
             headers: this.getHeaders(),
         });
@@ -40,8 +44,8 @@ export class Books extends Crud<Book> {
 
         // Adaptador para compatibilidad
         return {
-            items: data.books || [], // Mapea books a items
-            total: data.total
+            items: data.books || [],
+            total: data.total || 0
         };
     }
 
@@ -108,11 +112,10 @@ export class Books extends Crud<Book> {
         }
         const data = await res.json();
         return {
-            items: data.books || data.items || [], // Mapear 'books' o 'items' a 'items'
+            items: data.books || data.items || [],
             total: data.total || 0
         };
     }
-
 
     async getOne(id: number): Promise<Book> {
         const res = await fetch(`${this.baseUrl}/${this.endPoint}/${id}`, {

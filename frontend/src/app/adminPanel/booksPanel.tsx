@@ -36,6 +36,8 @@ export default function BooksPanel(): React.JSX.Element {
   const [bookOpenIds, setBookOpenIds] = useState<number[]>([]);
   const [search, setSearch] = useState('');
   const [editBookId, setEditBookId] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<'id' | 'title' | 'author'>('id');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   const apiRef = useRef(new BaseApi());
   const dataFetchedRef = useRef(false);
@@ -44,7 +46,6 @@ export default function BooksPanel(): React.JSX.Element {
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 5;
   const [totalBooks, setTotalBooks] = useState(0);
-
 
   const form = useForm<BookType>({
     resolver: zodResolver(bookSchema),
@@ -65,7 +66,7 @@ export default function BooksPanel(): React.JSX.Element {
 
   const fetchBooks = async () => {
     try {
-      const booksData: PaginatedBooksResponse = await apiRef.current.books.getAllPaginated(currentPage, limit);
+      const booksData: PaginatedBooksResponse = await apiRef.current.books.getAllPaginated(currentPage, limit, search);
       if (!booksData || !Array.isArray(booksData.items) || typeof booksData.total !== 'number') {
         console.error('Respuesta inválida de la API:', booksData);
         throw new Error('Respuesta de la API no tiene el formato esperado: { items: BookFileUpdate[], total: number }');
@@ -86,10 +87,23 @@ export default function BooksPanel(): React.JSX.Element {
         } as BookFileUpdate;
       }));
 
-      setBooks(items.sort((a: BookFileUpdate, b: BookFileUpdate) => b.id - a.id));
+      // Aplicar ordenamiento local
+      const sortedItems = [...items].sort((a, b) => {
+        let comparison = 0;
+        if (sortBy === 'title') {
+          comparison = a.title.localeCompare(b.title);
+        } else if (sortBy === 'author') {
+          comparison = a.author.localeCompare(b.author);
+        } else {
+          comparison = a.id - b.id;
+        }
+        return sortOrder === 'asc' ? comparison : -comparison;
+      });
+
+      setBooks(sortedItems);
       setTotalBooks(booksData.total);
     } catch (error) {
-      console.error("Error al obtener libros:", error, { currentPage, limit });
+      console.error("Error al obtener libros:", error, { currentPage, limit, search });
       setBooks([]);
       setTotalBooks(0);
       Swal.fire({
@@ -101,35 +115,34 @@ export default function BooksPanel(): React.JSX.Element {
   };
 
   useEffect(() => {
-  const fetchAll = async () => {
-    try {
-      if (!dataFetchedRef.current) {
-        const authorsData = await apiRef.current.authors.getAll();
-        setAuthors(authorsData);
+    const fetchAll = async () => {
+      try {
+        if (!dataFetchedRef.current) {
+          const authorsData = await apiRef.current.authors.getAll();
+          setAuthors(authorsData);
 
-        const genresData = await apiRef.current.genre.getAll();
-        setGenres(genresData);
+          const genresData = await apiRef.current.genre.getAll();
+          setGenres(genresData);
 
-        dataFetchedRef.current = true;
+          dataFetchedRef.current = true;
+        }
+
+        await fetchBooks();
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+        setBooks([]);
+        setAuthors([]);
+        setGenres([]);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar los datos iniciales.',
+        });
       }
+    };
 
-      await fetchBooks();
-    } catch (error) {
-      console.error("Error al obtener datos:", error);
-      setBooks([]);
-      setAuthors([]);
-      setGenres([]);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudieron cargar los datos iniciales.',
-      });
-    }
-  };
-
-  fetchAll();
-}, [currentPage]);
-
+    fetchAll();
+  }, [currentPage, search, sortBy, sortOrder]);
 
   const startEdit = (book: BookFileUpdate) => {
     setEditBookId(book.id);
@@ -257,38 +270,73 @@ export default function BooksPanel(): React.JSX.Element {
     );
   };
 
-  const filteredBooks = books.filter(book =>
-    book.title.toLowerCase().includes(search.toLowerCase())
-  );
-
   const totalPages = Math.ceil(totalBooks / limit);
 
   return (
     <>
-      <Input
-        placeholder="Buscar libro"
-        className={styles.inputSearch}
-        value={search}
-        onChange={(e) => {
-          setSearch(e.target.value);
-          setCurrentPage(1);
-        }}
-      />
+      <div className="flex gap-4 mb-4">
+        <Input
+          placeholder="Buscar libro"
+          className={styles.inputSearch}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setCurrentPage(1);
+          }}
+        />
+        <div className="flex gap-2">
+          <Select
+            value={sortBy}
+            onValueChange={(value) => setSortBy(value as 'id' | 'title' | 'author')}
+          >
+            <SelectTrigger className="w-40 bg-white border border-gray-300">
+              <SelectValue placeholder="Ordenar por" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="id">ID</SelectItem>
+              <SelectItem value="title">Alfabéticamente</SelectItem>
+              <SelectItem value="author">Autor</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={sortOrder}
+            onValueChange={(value) => setSortOrder(value as 'asc' | 'desc')}
+          >
+            <SelectTrigger className="w-32 bg-white border border-gray-300">
+              <SelectValue placeholder="Orden" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="asc">Ascendente</SelectItem>
+              <SelectItem value="desc">Descendente</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
       <div className={styles.agregarLibro}>
         <AddBookDialog
           onAuthorAdded={(author) => setAuthors(prev => [...prev, author])}
           onGenreAdded={(genre) => setGenres(prev => [...prev, genre])}
           onBookCreated={(newBook) => {
-            setBooks(prev => [newBook, ...prev].sort((a, b) => b.id - a.id));
+            setBooks(prev => [newBook, ...prev].sort((a, b) => {
+              let comparison = 0;
+              if (sortBy === 'title') {
+                comparison = a.title.localeCompare(b.title);
+              } else if (sortBy === 'author') {
+                comparison = a.author.localeCompare(b.author);
+              } else {
+                comparison = a.id - b.id;
+              }
+              return sortOrder === 'asc' ? comparison : -comparison;
+            }));
             setCurrentPage(1);
           }}
         />
       </div>
 
       <div className={styles.bookList}>
-        {filteredBooks.length > 0 ? (
-          filteredBooks.map((book) => (
+        {books.length > 0 ? (
+          books.map((book) => (
             <div key={book.id} className={styles.bookCard}>
               <div className={styles.bookHeader} onClick={() => toggleBookOpen(book.id)}>
                 <span className={styles.bookName}>{book.title}</span>
@@ -404,7 +452,7 @@ export default function BooksPanel(): React.JSX.Element {
                                 <Select
                                   value={field.value ? "true" : "false"}
                                   onValueChange={(value) => field.onChange(value === "true")}
-                                  >
+                                >
                                   <SelectTrigger className="bg-white border border-gray-300">
                                     <SelectValue placeholder="Seleccionar opción" />
                                   </SelectTrigger>
@@ -487,7 +535,7 @@ export default function BooksPanel(): React.JSX.Element {
                             <FormItem>
                               <FormLabel>Imagen</FormLabel>
                               <FormControl>
-                                <div className="flex flex-col gap-2"> {/* Replaced Fragment with div */}
+                                <div className="flex flex-col gap-2">
                                   <Image
                                     src={
                                       field.value
@@ -517,7 +565,7 @@ export default function BooksPanel(): React.JSX.Element {
                             <FormItem>
                               <FormLabel>Contenido</FormLabel>
                               <FormControl>
-                                <div className="flex flex-col gap-2"> {/* Replaced Fragment with div */}
+                                <div className="flex flex-col gap-2">
                                   <DragAndDropFile
                                     defaultFile={book.content}
                                     onSetCurrentFile={(file) => field.onChange(file)}
@@ -570,7 +618,7 @@ export default function BooksPanel(): React.JSX.Element {
           <p>No se encontraron libros.</p>
         )}
       </div>
-      {filteredBooks.length > 0 && (
+      {books.length > 0 && (
         <div className={styles.pagination}>
           <Button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
